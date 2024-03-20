@@ -23,7 +23,7 @@ namespace lve {
         void Run();
 
     private:
-        LveWindow lveWindow{ WIDTH, HEIGHT, "Hello Vulkan!" }; ///< Fenêtre de l'application.
+        LveWindow lveWindow{ WIDTH, HEIGHT, "Hello Vulkan!" }; /// Fenêtre de l'application.
         LvePipeline lvePipeline{ "Shaders/simple_shader.vert.spv", "Shaders/simple_shader.frag.spv" };
     };
 
