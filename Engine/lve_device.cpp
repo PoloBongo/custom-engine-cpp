@@ -363,7 +363,7 @@ namespace lve {
 	 *
 	 * @param createInfo La structure de données à remplir pour la création du gestionnaire de débogage.
 	 */
-	void populateDebugMessengerCreateInfo(
+	void LveDevice::populateDebugMessengerCreateInfo(
 		VkDebugUtilsMessengerCreateInfoEXT& createInfo) {
 		// Initialise la structure avec des valeurs par défaut.
 		createInfo = {};

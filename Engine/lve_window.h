@@ -40,6 +40,8 @@ namespace lve {
          */
         bool ShouldClose() { return glfwWindowShouldClose(window); }
 
+        VkExtent2D GetExtent() { return { static_cast<uint32_t>(width), static_cast<uint32_t>(height) }; }
+
         /**
         * @brief Crée une surface Vulkan associée à une fenêtre.
         *

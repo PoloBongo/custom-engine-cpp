@@ -1,9 +1,28 @@
 #pragma once
 
+#include "lve_device.h"
+
 #include <string>
 #include <vector>
 
 namespace lve {
+
+	struct PipelineConfigInfo {
+		VkViewport viewport;
+		VkRect2D scissor;
+		VkPipelineInputAssemblyStateCreateInfo inputAssemblyInfo;
+		VkPipelineRasterizationStateCreateInfo rasterizationInfo;
+		VkPipelineMultisampleStateCreateInfo multisampleInfo;
+		VkPipelineColorBlendAttachmentState colorBlendAttachment;
+		VkPipelineColorBlendStateCreateInfo colorBlendInfo;
+		VkPipelineDepthStencilStateCreateInfo depthStencilInfo;
+		VkPipelineLayout pipelineLayout = nullptr;
+		VkRenderPass renderPass = nullptr;
+		uint32_t subpass = 0;
+	};
+
+
+
 	class LvePipeline
 	{
 	public:
@@ -16,7 +35,14 @@ namespace lve {
 		 * @param _vertFilepath Le chemin d'accès au fichier contenant le code source du shader de vertex.
 		 * @param _fragFilepath Le chemin d'accès au fichier contenant le code source du shader de fragment.
 		 */
-		LvePipeline(const std::string& _vertFilepath, const std::string& _fragFilepath);
+		LvePipeline(LveDevice & _device, const std::string& _vertFilepath, const std::string& _fragFilepath, const PipelineConfigInfo& _configInfo);
+
+		~LvePipeline();
+
+		LvePipeline(const LvePipeline&) = delete;
+		void operator=(const LvePipeline&) = delete;
+
+		static PipelineConfigInfo DefaultPipelineConfigInfo(uint32_t _width, uint32_t _height);
 
 	private:
 
@@ -40,7 +66,14 @@ namespace lve {
 		* @param _vertFilepath Le chemin d'accès au fichier contenant le code source du shader de vertex.
 		* @param _fragFilepath Le chemin d'accès au fichier contenant le code source du shader de fragment.
 		*/
-		void CreateGraphicsPipeline(const std::string& _vertFilepath, const std::string& _fragFilepath);
+		void CreateGraphicsPipeline(const std::string& _vertFilepath, const std::string& _fragFilepath, const PipelineConfigInfo& _configInfo);
+
+		void CreateShaderModule(const std::vector<char>& _code, VkShaderModule* _shaderModule);
+
+		LveDevice& lveDevice;
+		VkPipeline graphicsPipeline;
+		VkShaderModule vertShaderModule;
+		VkShaderModule fragShaderModule;
 	};
 
 } //namespace lve
