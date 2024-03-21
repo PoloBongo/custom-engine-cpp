@@ -113,6 +113,17 @@
       <AdditionalLibraryDirectories>$(SolutionDir)Librairies\glfw-3.4.bin.WIN64\lib-vc2022;$(SolutionDir)Librairies\VulkanSDK\Lib</AdditionalLibraryDirectories>
       <AdditionalDependencies>vulkan-1.lib;glfw3.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <CustomBuildStep>
+      <Command>
+      </Command>
+    </CustomBuildStep>
+    <PreBuildEvent>
+      <Command>
+      </Command>
+    </PreBuildEvent>
+    <PostBuildEvent>
+      <Command>$(ProjectDir)compile.bat</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -133,10 +144,22 @@
       <AdditionalLibraryDirectories>$(SolutionDir)Librairies\glfw-3.4.bin.WIN64\lib-vc2022;$(SolutionDir)Librairies\VulkanSDK\Lib</AdditionalLibraryDirectories>
       <AdditionalDependencies>vulkan-1.lib;glfw3.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <CustomBuildStep>
+      <Command>
+      </Command>
+    </CustomBuildStep>
+    <PreBuildEvent>
+      <Command>
+      </Command>
+    </PreBuildEvent>
+    <PostBuildEvent>
+      <Command>$(ProjectDir)compile.bat</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Engine.cpp" />
     <ClCompile Include="first_app.cpp" />
+    <ClCompile Include="lve_model.cpp" />
     <ClCompile Include="lve_pipeline.cpp" />
     <ClCompile Include="lve_swap_chain.cpp" />
     <ClCompile Include="lve_window.cpp" />
@@ -144,6 +167,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="first_app.h" />
+    <ClInclude Include="lve_model.h" />
     <ClInclude Include="lve_pipeline.h" />
     <ClInclude Include="lve_swap_chain.h" />
     <ClInclude Include="lve_window.h" />

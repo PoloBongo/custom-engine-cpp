@@ -59,7 +59,7 @@ namespace lve {
 		shaderStages[0].pSpecializationInfo = nullptr;
 		shaderStages[1].sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
 		shaderStages[1].stage = VK_SHADER_STAGE_FRAGMENT_BIT;
-		shaderStages[1].module = vertShaderModule;
+		shaderStages[1].module = fragShaderModule;
 		shaderStages[1].pName = "main";
 		shaderStages[1].flags = 0;
 		shaderStages[1].pNext = nullptr;
@@ -106,7 +106,7 @@ namespace lve {
 	}
 	void LvePipeline::CreateShaderModule(const std::vector<char>& _code, VkShaderModule* _shaderModule) {
 		VkShaderModuleCreateInfo createInfo{};
-		createInfo.sType = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_CREATE_INFO_KHR;
+		createInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
 		createInfo.codeSize = _code.size(); 
 		createInfo.pCode = reinterpret_cast<const uint32_t*>(_code.data());
 
@@ -114,6 +114,11 @@ namespace lve {
 			throw std::runtime_error("failed to create shader module");
 		}
 	}
+
+	void LvePipeline::Bind(VkCommandBuffer commandBuffer) {
+		vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, graphicsPipeline);
+	}
+
 
 	PipelineConfigInfo LvePipeline::DefaultPipelineConfigInfo(uint32_t _width, uint32_t _height) {
 		PipelineConfigInfo configInfo{};
