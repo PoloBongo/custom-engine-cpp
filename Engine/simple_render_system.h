@@ -1,0 +1,47 @@
+#pragma once
+
+#include "lve_pipeline.h"
+#include "lve_device.h"
+#include "lve_game_object.h"
+
+//std
+#include <memory>
+#include <vector>
+
+namespace lve {
+
+    struct SimplePushConstantData {
+        glm::mat2 transform{ 1.f };
+        glm::vec2 offset;
+        alignas(16) glm::vec3 color;
+    };
+
+    /**
+     * @brief Classe représentant la première application utilisant Vulkan.
+     *
+     * Cette classe gère l'exécution de la première application Vulkan, incluant la création de la fenêtre.
+     */
+    class SimpleRenderSystem {
+    public:
+
+        SimpleRenderSystem(LveDevice& _device, VkRenderPass _renderPass);
+        ~SimpleRenderSystem();
+
+        SimpleRenderSystem(const SimpleRenderSystem&) = delete;
+        SimpleRenderSystem operator=(const SimpleRenderSystem&) = delete;
+
+
+        void RenderGameObjects(VkCommandBuffer _commandBuffer, std::vector<LveGameObject> &gameObjects);
+
+    private:
+        void CreatePipelineLayout();
+        void CreatePipeline(VkRenderPass _renderPass);
+
+        LveDevice &lveDevice;
+
+
+        std::unique_ptr<LvePipeline> lvePipeline;
+        VkPipelineLayout pipelineLayout;
+    };
+
+} // namespace lve
