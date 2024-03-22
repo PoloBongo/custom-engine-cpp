@@ -11,6 +11,12 @@ public:
 
 	~RenderManager() {}
 
+	void Awake() {}
+
+	void Create() {}
+
+	void Update() {}
+
 	void start() {}
 
 	void stop() {}

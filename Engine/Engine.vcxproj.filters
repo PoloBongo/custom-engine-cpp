@@ -25,6 +25,12 @@
     <Filter Include="Header Files\Manager\StartManager">
       <UniqueIdentifier>{9c4e9aa3-631b-43cf-86bf-9f81c5fd96c8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Manager\ComponentsManager">
+      <UniqueIdentifier>{4b0983b1-0c39-4fc6-b9e3-c00dcd31a40a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Manager\ComponentManager">
+      <UniqueIdentifier>{bfeb9038-46e0-4c78-b875-a13dcfddda39}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Engine.cpp">
@@ -42,6 +48,18 @@
     <ClCompile Include="SubSystem.cpp">
       <Filter>Source Files\Manager\StartManager</Filter>
     </ClCompile>
+    <ClCompile Include="GameObject.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="RigidbodyManager.cpp">
+      <Filter>Source Files\Manager\ComponentManager</Filter>
+    </ClCompile>
+    <ClCompile Include="ColliderManager.cpp">
+      <Filter>Source Files\Manager\ComponentManager</Filter>
+    </ClCompile>
+    <ClCompile Include="AudioManager.cpp">
+      <Filter>Source Files\Manager\ComponentManager</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CollisionManager.h">
@@ -55,6 +73,18 @@
     </ClInclude>
     <ClInclude Include="SubSystem.h">
       <Filter>Header Files\Manager\StartManager</Filter>
+    </ClInclude>
+    <ClInclude Include="GameObject.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RigidbodyManager.h">
+      <Filter>Header Files\Manager\ComponentsManager</Filter>
+    </ClInclude>
+    <ClInclude Include="ColliderManager.h">
+      <Filter>Header Files\Manager\ComponentsManager</Filter>
+    </ClInclude>
+    <ClInclude Include="AudioManager.h">
+      <Filter>Header Files\Manager\ComponentsManager</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -23,6 +23,14 @@ public:
 		// nothing
 	}
 
+	void Awake() {}
+
+	void Create() {}
+
+	void OnCollisionEnter() {}
+
+	void Update() {}
+
 	void start() {}
 
 	void stop() {}
