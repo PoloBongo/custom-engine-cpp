@@ -122,7 +122,8 @@
       </Command>
     </PreBuildEvent>
     <PostBuildEvent>
-      <Command>$(ProjectDir)compile.bat</Command>
+      <Command>
+      </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -153,7 +154,8 @@
       </Command>
     </PreBuildEvent>
     <PostBuildEvent>
-      <Command>$(ProjectDir)compile.bat</Command>
+      <Command>
+      </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>

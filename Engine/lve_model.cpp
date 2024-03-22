@@ -1,6 +1,7 @@
 #include "lve_model.h"
 
 #include <cassert>
+#include <cstring>
 
 namespace lve {
 	/*struct Vertex {
@@ -20,10 +21,12 @@ namespace lve {
 
 
 	void LveModel::Bind(VkCommandBuffer _commandBuffer){
-	
+		VkBuffer buffers[] = { vertexBuffer };
+		VkDeviceSize offsets[] = { 0 };
+		vkCmdBindVertexBuffers(_commandBuffer, 0, 1, buffers, offsets);
 	}
 	void LveModel::Draw(VkCommandBuffer _commandBuffer){
-	
+		vkCmdDraw(_commandBuffer, vertexCount, 1, 0, 0);
 	}
 
 	void LveModel::CreateVertexBuffer(const std::vector<Vertex>& _vertices) {
@@ -41,5 +44,28 @@ namespace lve {
 
 		void* data;
 		vkMapMemory(lveDevice.device(), vertexBufferMemory, 0, bufferSize, 0, &data);
+		memcpy(data, _vertices.data(), static_cast<size_t>(bufferSize));
+		vkUnmapMemory(lveDevice.device(), vertexBufferMemory);
 	}
+
+	std::vector<VkVertexInputBindingDescription> LveModel::Vertex::GetBindingDescriptions() {
+		std::vector< VkVertexInputBindingDescription> bindingDescriptions(1);
+		bindingDescriptions[0].binding = 0;
+		bindingDescriptions[0].stride =sizeof(Vertex);
+		bindingDescriptions[0].inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
+		return bindingDescriptions;
+	 }
+	std::vector<VkVertexInputAttributeDescription> LveModel::Vertex::GetAttributeDescriptions() {
+		std::vector< VkVertexInputAttributeDescription> attributeDescriptions(2);
+		attributeDescriptions[0].binding = 0;
+		attributeDescriptions[0].location = 0;
+		attributeDescriptions[0].format = VK_FORMAT_R32G32_SFLOAT;
+		attributeDescriptions[0].offset = offsetof(Vertex, position);
+
+		attributeDescriptions[1].binding = 0;
+		attributeDescriptions[1].location = 1;
+		attributeDescriptions[1].format = VK_FORMAT_R32G32B32_SFLOAT;
+		attributeDescriptions[1].offset = offsetof(Vertex,color);
+		return attributeDescriptions;
+	 }
 } //namespace lve

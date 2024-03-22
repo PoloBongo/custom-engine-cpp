@@ -15,10 +15,12 @@ namespace lve {
 
         // Configure la fenêtre pour ne pas être redimensionnable
         glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
-        glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
+        glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
 
         // Crée la fenêtre GLFW avec la taille et le nom spécifiés
         window = glfwCreateWindow(width, height, windowName.c_str(), nullptr, nullptr);
+        glfwSetWindowUserPointer(window, this);
+        glfwSetFramebufferSizeCallback(window, FramebufferResizeCallBack);
     }
 
     void LveWindow::CreateWindowSurface(VkInstance _instance, VkSurfaceKHR* _surface) {
@@ -33,6 +35,13 @@ namespace lve {
         glfwDestroyWindow(window);
         // Termine GLFW
         glfwTerminate();
+    }
+
+    void LveWindow::FramebufferResizeCallBack(GLFWwindow* _window, int _width, int _height) {
+        auto lveWindow = reinterpret_cast<LveWindow*>(glfwGetWindowUserPointer(_window));
+        lveWindow->frameBufferResize = true;
+        lveWindow->width = _width;
+        lveWindow->height = _height;
     }
 
 } // namespace lve

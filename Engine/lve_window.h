@@ -42,6 +42,10 @@ namespace lve {
 
         VkExtent2D GetExtent() { return { static_cast<uint32_t>(width), static_cast<uint32_t>(height) }; }
 
+        bool WasWindowResized() { return frameBufferResize;  }
+
+        void ResetWindowResizedFlag() { frameBufferResize = false;  }
+
         /**
         * @brief Crée une surface Vulkan associée à une fenêtre.
         *
@@ -55,6 +59,8 @@ namespace lve {
 
     private:
 
+        static void FramebufferResizeCallBack(GLFWwindow* _window, int _width, int _height);
+
         /**
          * @brief Initialise la fenêtre GLFW.
          *
@@ -62,8 +68,9 @@ namespace lve {
          */
         void InitWindow();
 
-        const int width; // Largeur de la fenêtre
-        const int height; // Hauteur de la fenêtre
+        int width; // Largeur de la fenêtre
+        int height; // Hauteur de la fenêtre
+        bool frameBufferResize = false;
 
         std::string windowName; // Nom de la fenêtre
         GLFWwindow* window; // Fenêtre GLFW

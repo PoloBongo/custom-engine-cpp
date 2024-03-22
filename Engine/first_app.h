@@ -4,6 +4,7 @@
 #include "lve_pipeline.h"
 #include "lve_device.h"
 #include "lve_swap_chain.h"
+#include "lve_model.h"
 
 //std
 #include <memory>
@@ -35,18 +36,22 @@ namespace lve {
         void Run();
 
     private:
-
+        void LoadModels();
         void CreatePipelineLayout();
         void CreatePipeline();
         void CreateCommandBuffers();
         void DrawFrame();
+        void FreeCommandBuffers();
+        void RecreateSwapChain();
+        void RecordCommandBuffer(int _imageIndex);
 
         LveWindow lveWindow{ WIDTH, HEIGHT, "Hello Vulkan!" }; /// Fenêtre de l'application.
         LveDevice lveDevice{ lveWindow };
-        LveSwapChain lveSwapChain{ lveDevice, lveWindow.GetExtent() };
+        std::unique_ptr<LveSwapChain> lveSwapChain;
         std::unique_ptr<LvePipeline> lvePipeline;
         VkPipelineLayout pipelineLayout;
         std::vector<VkCommandBuffer> commandBuffers;
+        std::unique_ptr<LveModel> lveModel;
     };
 
 } // namespace lve

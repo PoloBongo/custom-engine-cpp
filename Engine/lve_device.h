@@ -63,7 +63,7 @@ namespace lve {
         *
         * Empêche la copie des membres d'une instance de LveDevice vers une autre instance existante.
         */
-        void operator=(const LveDevice&) = delete;
+        LveDevice &operator=(const LveDevice&) = delete;
 
         /**
         * @brief Constructeur de déplacement supprimé.
