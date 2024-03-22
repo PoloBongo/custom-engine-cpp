@@ -1,10 +1,14 @@
 #include "SubSystem.h"
 
-CollisionManager gCollisionManager; // global variable
-RenderManager gRendererManager; // global variable
+CollisionManager* gCollisionManager; // global variable
+RenderManager* gRendererManager; // global variable
 
 void startUp()
 {
-	gCollisionManager.start();
-	gRendererManager.start();
+	// Collision Manager
+	gCollisionManager = new CollisionManager();
+	gCollisionManager->start();
+	// Render Manager
+	gRendererManager = new RenderManager();
+	gRendererManager->start();
 }

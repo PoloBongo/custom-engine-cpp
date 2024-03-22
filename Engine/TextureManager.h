@@ -1,12 +1,17 @@
 #pragma once
+#include <cassert>
+
 class TextureManager
 {
 public:
-	static TextureManager& get()
-	{
-		// la fonction static va être créer lors du première appel de la fonction
-		static TextureManager sSingleton;
-		return sSingleton;
+	// la fonction static va être créer lors du première appel de la fonction
+	static RenderManager& get() {
+		static RenderManager* gpSingleton = NULL;
+		if (gpSingleton == NULL) {
+			gpSingleton = new RenderManager;
+		}
+		assert(gpSingleton);
+		return *gpSingleton;
 	}
 private:
 	TextureManager() {}
