@@ -1,5 +1,6 @@
 #pragma once
 #include "CollisionManager.h"
+#include "RenderManager.h"
 
 class SubSystem
 {

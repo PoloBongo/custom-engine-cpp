@@ -13,10 +13,48 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Source Files\Manager">
+      <UniqueIdentifier>{b0848033-fa53-4fb0-a808-1b1e51500fac}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Manager">
+      <UniqueIdentifier>{876b4bff-97c3-4b0c-9375-a0e4ecfd9e06}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Manager\StartManager">
+      <UniqueIdentifier>{8745760c-f1d2-4347-81e8-34e6d3a4c2ab}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Manager\StartManager">
+      <UniqueIdentifier>{9c4e9aa3-631b-43cf-86bf-9f81c5fd96c8}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Engine.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="CollisionManager.cpp">
+      <Filter>Source Files\Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="RenderManager.cpp">
+      <Filter>Source Files\Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="TextureManager.cpp">
+      <Filter>Source Files\Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="SubSystem.cpp">
+      <Filter>Source Files\Manager\StartManager</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="CollisionManager.h">
+      <Filter>Header Files\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="RenderManager.h">
+      <Filter>Header Files\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="TextureManager.h">
+      <Filter>Header Files\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="SubSystem.h">
+      <Filter>Header Files\Manager\StartManager</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
