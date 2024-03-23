@@ -1,5 +1,6 @@
 #pragma once
 
+#include "lve_camera.h"
 #include "lve_pipeline.h"
 #include "lve_device.h"
 #include "lve_game_object.h"
@@ -11,8 +12,7 @@
 namespace lve {
 
     struct SimplePushConstantData {
-        glm::mat2 transform{ 1.f };
-        glm::vec2 offset;
+        glm::mat4 transform{ 1.f };
         alignas(16) glm::vec3 color;
     };
 
@@ -31,7 +31,7 @@ namespace lve {
         SimpleRenderSystem operator=(const SimpleRenderSystem&) = delete;
 
 
-        void RenderGameObjects(VkCommandBuffer _commandBuffer, std::vector<LveGameObject> &gameObjects);
+        void RenderGameObjects(VkCommandBuffer _commandBuffer, std::vector<LveGameObject> &g_ameObjects, const LveCamera& _camera);
 
     private:
         void CreatePipelineLayout();

@@ -57,6 +57,8 @@ namespace lve {
         */
         void CreateWindowSurface(VkInstance _instance, VkSurfaceKHR* _surface);
 
+        GLFWwindow* GetGLFWwindow() const { return window; }
+
     private:
 
         static void FramebufferResizeCallBack(GLFWwindow* _window, int _width, int _height);

@@ -34,6 +34,8 @@ namespace lve {
          */
         void Run();
 
+        std::unique_ptr<LveModel> CreateCubeModel(LveDevice& _device, glm::vec3 _offset);
+
     private:
         void LoadGameObjects();
 
