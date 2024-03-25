@@ -66,6 +66,9 @@
     <ClCompile Include="EngineTestCode.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="RessourceManager.cpp">
+      <Filter>Source Files\Manager</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CollisionManager.h">
@@ -97,6 +100,9 @@
     </ClInclude>
     <ClInclude Include="EngineTestCode.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RessourceManager.h">
+      <Filter>Header Files\Manager</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

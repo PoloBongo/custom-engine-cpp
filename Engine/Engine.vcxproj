@@ -134,6 +134,7 @@
     <ClCompile Include="EngineTestCode.cpp" />
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="RenderManager.cpp" />
+    <ClCompile Include="RessourceManager.cpp" />
     <ClCompile Include="RigidbodyManager.cpp" />
     <ClCompile Include="SceneManager.cpp" />
     <ClCompile Include="SubSystem.cpp" />
@@ -146,6 +147,7 @@
     <ClInclude Include="EngineTestCode.h" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="RenderManager.h" />
+    <ClInclude Include="RessourceManager.h" />
     <ClInclude Include="RigidbodyManager.h" />
     <ClInclude Include="SceneManager.h" />
     <ClInclude Include="SubSystem.h" />

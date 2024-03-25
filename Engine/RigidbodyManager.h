@@ -5,10 +5,6 @@
 
 class RigidbodyManager
 {
-
-private:
-	std::vector<GameObject*> rigidbody;
-
 public:
 	RigidbodyManager() {}
 
@@ -29,5 +25,7 @@ public:
 		}
 	}
 
+private:
+	std::vector<GameObject*> rigidbody;
 };
 

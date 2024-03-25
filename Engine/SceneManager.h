@@ -5,10 +5,6 @@
 
 class SceneManager
 {
-private:
-	std::map<std::string, bool> listScenes;
-	int sceneCount;
-	bool sceneActive;
 public:
 	SceneManager() {}
 
@@ -20,7 +16,15 @@ public:
 
 	std::string GetActiveScene();
 
-	int SceneCount();
+	std::string GetListScenes();
 
+	int SceneCount();
+	
+	std::pair<std::string, bool> GetSceneAt(int _index);
+
+private:
+	std::map<std::string, bool> listScenes;
+	int sceneCount;
+	bool sceneActive;
 };
 

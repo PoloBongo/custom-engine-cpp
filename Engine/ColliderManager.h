@@ -5,10 +5,6 @@
 
 class ColliderManager
 {
-
-private:
-	std::vector<GameObject*> collider;
-
 public:
 	ColliderManager() {}
 
@@ -29,4 +25,6 @@ public:
 		}
 	}
 
+private:
+	std::vector<GameObject*> collider;
 };

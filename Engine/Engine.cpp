@@ -2,9 +2,13 @@
 //
 
 #include <iostream>
+#include "EngineTestCode.h"
 
 int main()
 {
+    EngineTestCode engine;
+    engine.TestCode();
+
     std::cout << "Hello World!\n";
 }
 

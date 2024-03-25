@@ -1,5 +1,6 @@
 #pragma once
 #include <cassert>
+#include <iostream>
 
 class TextureManager
 {
@@ -13,8 +14,12 @@ public:
 		assert(gpSingleton);
 		return *gpSingleton;
 	}
-private:
-	TextureManager() {}
+
+	TextureManager() {};
+
+	TextureManager(const std::string& _filePath) : filePath(_filePath) {
+		std::cout << "Chargement de la texture depuis : " << filePath << std::endl;
+	}
 
 	~TextureManager() {}
 
@@ -24,8 +29,11 @@ private:
 
 	void Update() {}
 
-	void start() {}
+	void Start() {}
 
-	void stop() {}
+	void Stop() {}
+
+private:
+	std::string filePath;
 };
 

@@ -30,3 +30,24 @@ std::string SceneManager::GetActiveScene()
 	}
 	return "None";
 }
+std::string SceneManager::GetListScenes()
+{
+	std::string _name;
+	for (const auto scene : listScenes)
+	{
+		_name = scene.first;
+		return _name;
+	}
+	return "None";
+}
+
+std::pair<std::string, bool> SceneManager::GetSceneAt(int _index)
+{
+	if (!listScenes.empty())
+	{
+		auto findName = listScenes.begin();
+		std::advance(findName, _index);
+		return *findName;
+	}
+	return { "None", false };
+}

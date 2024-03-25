@@ -5,9 +5,6 @@
 
 class AudioManager
 {
-private:
-	std::vector<GameObject*> audio;
-
 public:
 	AudioManager() {}
 
@@ -28,4 +25,6 @@ public:
 		}
 	}
 
+private:
+	std::vector<GameObject*> audio;
 };
