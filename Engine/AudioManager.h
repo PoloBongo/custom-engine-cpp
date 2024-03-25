@@ -1,6 +1,7 @@
 #pragma once
 #include "GameObject.h"
 
+#include <iostream>
 #include <vector>
 
 class AudioManager
@@ -10,21 +11,38 @@ public:
 
 	~AudioManager() {}
 
-	void addAudio(GameObject* gameObject)
+	void addAudios(GameObject* gameObject)
 	{
-		audio.push_back(gameObject);
+		audios.push_back(gameObject);
 	}
 
-	void removeAudio(GameObject* gameObject) {} // enlever le audio ciblé
+	void removeAudios(GameObject* gameObject) {} // enlever le audio ciblé
 
-	void Update()
+	void addMusic(GameObject* gameObject)
 	{
-		for (GameObject* gameObject : audio)
-		{
-
-		}
+		musics.push_back(gameObject);
 	}
+
+	void removeMusics(GameObject* gameObject) {} // enlever le audio ciblé
+
+	void Update();
+
+	float GetCurrentVolume() { return volume; }
+	float GetMaxVolume() { return maxVolume; }
+	void SetVolume(float _volume);
+
+	void Pause(const std::string& _key);
+	void Stop(const std::string& _key);
+
+	void PlayAudio(const std::string& _key);
+	void PlayMusic(const std::string& _key);
+
+	void DeleteAudio(const std::string& _key);
+	void DeleteMusic(const std::string& _key);
 
 private:
-	std::vector<GameObject*> audio;
+	std::vector<GameObject*> audios;
+	std::vector<GameObject*> musics;
+	float volume;
+	float maxVolume;
 };
