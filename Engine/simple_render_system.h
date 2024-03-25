@@ -4,6 +4,7 @@
 #include "lve_pipeline.h"
 #include "lve_device.h"
 #include "lve_game_object.h"
+#include "lve_frame_info.h"
 
 //std
 #include <memory>
@@ -12,7 +13,7 @@
 namespace lve {
 
     struct SimplePushConstantData {
-        glm::mat4 transform{ 1.f };
+        glm::mat4 modelMatrix{ 1.f };
         glm::mat4 normalMatrix{ 1.f };
         
     };
@@ -25,17 +26,17 @@ namespace lve {
     class SimpleRenderSystem {
     public:
 
-        SimpleRenderSystem(LveDevice& _device, VkRenderPass _renderPass);
+        SimpleRenderSystem(LveDevice& _device, VkRenderPass _renderPass, VkDescriptorSetLayout _globalSetLayout);
         ~SimpleRenderSystem();
 
         SimpleRenderSystem(const SimpleRenderSystem&) = delete;
         SimpleRenderSystem operator=(const SimpleRenderSystem&) = delete;
 
 
-        void RenderGameObjects(VkCommandBuffer _commandBuffer, std::vector<LveGameObject> &g_ameObjects, const LveCamera& _camera);
+        void RenderGameObjects(FrameInfo &_frameInfo, std::vector<LveGameObject> &_gameObjects);
 
     private:
-        void CreatePipelineLayout();
+        void CreatePipelineLayout(VkDescriptorSetLayout _globalSetLayout);
         void CreatePipeline(VkRenderPass _renderPass);
 
         LveDevice &lveDevice;

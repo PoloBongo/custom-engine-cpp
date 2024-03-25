@@ -4,6 +4,7 @@
 #include "lve_device.h"
 #include "lve_renderer.h"
 #include "lve_game_object.h"
+#include "lve_descriptors.h"
 
 //std
 #include <memory>
@@ -41,7 +42,8 @@ namespace lve {
         LveDevice lveDevice{ lveWindow };
         LveRenderer lveRenderer{ lveWindow, lveDevice };
 
-        VkPipelineLayout pipelineLayout;
+        // note : order of declarations matters
+        std::unique_ptr<LveDescriptorPool> globalPool{};
         std::vector<LveGameObject> gameObjects;
     };
 
