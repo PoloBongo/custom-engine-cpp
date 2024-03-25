@@ -29,9 +29,7 @@ public:
 
 	void Update() {}
 
-	void Start() {}
-
-	void Stop() {}
+	void LoadTexture() {}
 
 private:
 	std::string filePath;

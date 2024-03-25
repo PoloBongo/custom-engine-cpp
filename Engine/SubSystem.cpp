@@ -28,6 +28,6 @@ void startUp()
     gCollisionsManager->start();
 
 	// deuxième option pour instancier le manager //
-	SubSystem::Set<CollisionManager>(new CollisionManager());
+	SubSystem::Set<CollisionManager>(&CollisionManager::get()); // ou SubSystem::Set<CollisionManager>(new CollisionManager());
 	SubSystem::Get<CollisionManager>()->start();
 }

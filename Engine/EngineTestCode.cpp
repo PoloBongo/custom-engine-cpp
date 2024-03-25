@@ -1,5 +1,6 @@
 #include "EngineTestCode.h"
 #include "RessourceManager.h"
+#include "DebugManager.h"
 
 void EngineTestCode::TestCode()
 {
@@ -16,4 +17,8 @@ void EngineTestCode::TestCode()
     std::cout << "SCENE COUNT : " + std::to_string(sceneManager.SceneCount()) << std::endl;
 
     std::shared_ptr<TextureManager> texture1 = ressourceManager.LoadTexture("texture1.png");
+
+    DebugManager::LogInfo("Initialisation terminee avec succes.");
+    DebugManager::LogWarning("Attention : Memoire faible.");
+    DebugManager::LogError("Echec de l'ouverture du fichier.");
 }
