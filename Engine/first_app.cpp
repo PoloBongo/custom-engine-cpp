@@ -1,6 +1,6 @@
 #include "first_app.h"
 
-#include "simple_render_system.h"   
+#include "systems/simple_render_system.h"   
 #include "lve_camera.h"   
 #include "keyboard_movement_controller.h"   
 #include "lve_buffer.h"   
@@ -21,7 +21,8 @@
 namespace lve {
 
     struct GlobalUbo {
-        glm::mat4 projectionView{ 1.f };
+        glm::mat4 projection{ 1.f };
+        glm::mat4 view{ 1.f };
         glm::vec4 ambientLightColor{ 1.f, 1.f, 1.f,0.02f }; // light ambient
         glm::vec3 lightPosition{ -1.f };
         alignas(16) glm::vec4 lightColor{ 1.f }; // light intensity
@@ -100,7 +101,8 @@ namespace lve {
 
                 // update
                 GlobalUbo ubo{};
-                ubo.projectionView = camera.GetProjection() * camera.GetView();
+                ubo.view = camera.GetView();
+                ubo.projection = camera.GetProjection();
                 uboBuffers[frameIndex]->writeToBuffer(&ubo);
                 uboBuffers[frameIndex]->flush();
 

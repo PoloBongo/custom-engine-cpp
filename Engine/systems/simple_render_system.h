@@ -1,10 +1,10 @@
 #pragma once
 
-#include "lve_camera.h"
-#include "lve_pipeline.h"
-#include "lve_device.h"
-#include "lve_game_object.h"
-#include "lve_frame_info.h"
+#include "../lve_camera.h"
+#include "../lve_pipeline.h"
+#include "../lve_device.h"
+#include "../lve_game_object.h"
+#include "../lve_frame_info.h"
 
 //std
 #include <memory>

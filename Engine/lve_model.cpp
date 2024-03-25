@@ -14,6 +14,11 @@
 #include <iostream>
 #include <unordered_map>
 
+#ifndef ENGINE_DIR
+#define ENGINE_DIR "../"
+#endif
+
+
 namespace std {
 	template<>
 	struct hash<lve::LveModel::Vertex> {
@@ -43,7 +48,7 @@ namespace lve {
 
 	std::unique_ptr<LveModel> LveModel::CreateModelFromFile(LveDevice& _device, const std::string& _filepath){
 		Builder builder{};
-		builder.LoadModel(_filepath);
+		builder.LoadModel(ENGINE_DIR + _filepath);
 		std::cout << "Vertex Count" << builder.vertices.size() << std::endl;
 
 		return std::make_unique<LveModel>(_device, builder);
