@@ -16,14 +16,14 @@ public:
 		audios.push_back(gameObject);
 	}
 
-	void removeAudios(GameObject* gameObject) {} // enlever le audio ciblé
+	void removeAudios(GameObject* gameObject); // enlever l' audio ciblé
 
 	void addMusic(GameObject* gameObject)
 	{
 		musics.push_back(gameObject);
 	}
 
-	void removeMusics(GameObject* gameObject) {} // enlever le audio ciblé
+	void removeMusics(GameObject* gameObject); // enlever la music ciblé
 
 	void Update();
 

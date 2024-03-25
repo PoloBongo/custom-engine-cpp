@@ -15,15 +15,9 @@ public:
 		collider.push_back(gameObject);
 	}
 
-	void removeCollider(GameObject* gameObject) {} // enlever le collider ciblé
+	void removeCollider(GameObject* gameObject); // enlever le collider ciblé
 
-	void Update()
-	{
-		for (GameObject* gameObject : collider)
-		{
-
-		}
-	}
+	void Update();
 
 private:
 	std::vector<GameObject*> collider;

@@ -35,3 +35,6 @@ public:
 
 	void stop() {}
 };
+
+// A voir si c'est utile de mettre ceci pour la global variable
+//extern CollisionManager* gCollisionManager;
