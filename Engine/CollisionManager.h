@@ -5,8 +5,8 @@ class CollisionManager
 {
 public:
 	static CollisionManager& get() {
-		static CollisionManager* gpSingleton = NULL;
-		if (gpSingleton == NULL) {
+		static CollisionManager* gpSingleton = nullptr;
+		if (gpSingleton == nullptr) {
 			gpSingleton = new CollisionManager;
 		}
 		assert(gpSingleton);
