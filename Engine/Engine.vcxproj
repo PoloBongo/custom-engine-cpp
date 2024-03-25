@@ -131,9 +131,11 @@
     <ClCompile Include="ColliderManager.cpp" />
     <ClCompile Include="CollisionManager.cpp" />
     <ClCompile Include="Engine.cpp" />
+    <ClCompile Include="EngineTestCode.cpp" />
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="RenderManager.cpp" />
     <ClCompile Include="RigidbodyManager.cpp" />
+    <ClCompile Include="SceneManager.cpp" />
     <ClCompile Include="SubSystem.cpp" />
     <ClCompile Include="TextureManager.cpp" />
   </ItemGroup>
@@ -141,9 +143,11 @@
     <ClInclude Include="AudioManager.h" />
     <ClInclude Include="ColliderManager.h" />
     <ClInclude Include="CollisionManager.h" />
+    <ClInclude Include="EngineTestCode.h" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="RenderManager.h" />
     <ClInclude Include="RigidbodyManager.h" />
+    <ClInclude Include="SceneManager.h" />
     <ClInclude Include="SubSystem.h" />
     <ClInclude Include="TextureManager.h" />
   </ItemGroup>

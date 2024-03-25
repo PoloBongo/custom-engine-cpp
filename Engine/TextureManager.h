@@ -5,10 +5,10 @@ class TextureManager
 {
 public:
 	// la fonction static va être créer lors du première appel de la fonction
-	static RenderManager& get() {
-		static RenderManager* gpSingleton = nullptr;
+	static TextureManager& get() {
+		static TextureManager* gpSingleton = nullptr;
 		if (gpSingleton == nullptr) {
-			gpSingleton = new RenderManager;
+			gpSingleton = new TextureManager;
 		}
 		assert(gpSingleton);
 		return *gpSingleton;
