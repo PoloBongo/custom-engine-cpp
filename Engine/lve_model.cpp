@@ -14,6 +14,11 @@
 #include <iostream>
 #include <unordered_map>
 
+#ifndef ENGINE_DIR
+#define ENGINE_DIR "../"
+#endif
+
+
 namespace std {
 	template<>
 	struct hash<lve::LveModel::Vertex> {
@@ -43,7 +48,7 @@ namespace lve {
 
 	std::unique_ptr<LveModel> LveModel::CreateModelFromFile(LveDevice& _device, const std::string& _filepath){
 		Builder builder{};
-		builder.LoadModel(_filepath);
+		builder.LoadModel(ENGINE_DIR + _filepath);
 		std::cout << "Vertex Count" << builder.vertices.size() << std::endl;
 
 		return std::make_unique<LveModel>(_device, builder);
@@ -176,12 +181,12 @@ namespace lve {
 						attrib.vertices[3 * index.vertex_index + 1],
 						attrib.vertices[3 * index.vertex_index + 2],
 					};
+
 					vertex.color = {
 						attrib.colors[3 * index.vertex_index + 0],
 						attrib.colors[3 * index.vertex_index + 1],
 						attrib.colors[3 * index.vertex_index + 2],
 					};
-
 				}
 
 				if (index.normal_index >= 0) {
@@ -194,11 +199,10 @@ namespace lve {
 
 				if (index.texcoord_index >= 0) {
 					vertex.uv = {
-						attrib.texcoords[2 * index.normal_index + 0],
-						attrib.texcoords[2 * index.normal_index + 1],
+						attrib.texcoords[2 * index.texcoord_index + 0],
+						attrib.texcoords[2 * index.texcoord_index + 1],
 					};
 				}
-
 
 				if (uniqueVertices.count(vertex) == 0) {
 					uniqueVertices[vertex] = static_cast<uint32_t>(vertices.size());
@@ -208,5 +212,6 @@ namespace lve {
 			}
 		}
 	}
+
 
 } //namespace lve

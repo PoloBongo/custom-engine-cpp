@@ -4,6 +4,7 @@
 
 //std
 #include <memory>
+#include <unordered_map>
 #include <gtc/matrix_transform.hpp>
 
 namespace lve {
@@ -23,6 +24,7 @@ namespace lve {
 	{
 	public:
 		using id_t = unsigned int;
+		using Map = std::unordered_map<id_t, LveGameObject>;
 		
 		static LveGameObject CreateGameObject() {
 			static id_t currentId = 0;
@@ -34,7 +36,7 @@ namespace lve {
 		LveGameObject(LveGameObject&&) = default;
 		LveGameObject& operator=(LveGameObject&&) = default;
 
-		id_t GetIde() { return id; }
+		id_t GetId() { return id; }
 
 		std::shared_ptr<LveModel> model{};
 		glm::vec3 color{};

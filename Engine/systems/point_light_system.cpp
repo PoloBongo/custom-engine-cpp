@@ -1,4 +1,4 @@
-#include "simple_render_system.h"
+#include "point_light_system.h"
 
 //libs
 #define GLM_FORCE_RADIANS
@@ -13,18 +13,18 @@
 
 namespace lve {
 
-    SimpleRenderSystem::SimpleRenderSystem(LveDevice& _device, VkRenderPass _renderPass, VkDescriptorSetLayout _globalSetLayout) : lveDevice(_device) {
+    PointLightSystem::PointLightSystem(LveDevice& _device, VkRenderPass _renderPass, VkDescriptorSetLayout _globalSetLayout) : lveDevice(_device) {
         CreatePipelineLayout(_globalSetLayout);
         CreatePipeline(_renderPass);
     }
 
-    SimpleRenderSystem::~SimpleRenderSystem() { vkDestroyPipelineLayout(lveDevice.device(), pipelineLayout, nullptr); }
+    PointLightSystem::~PointLightSystem() { vkDestroyPipelineLayout(lveDevice.device(), pipelineLayout, nullptr); }
 
-    void SimpleRenderSystem::CreatePipelineLayout(VkDescriptorSetLayout _globalSetLayout) {
-        VkPushConstantRange pushConstantRange{};
+    void PointLightSystem::CreatePipelineLayout(VkDescriptorSetLayout _globalSetLayout) {
+     /*   VkPushConstantRange pushConstantRange{};
         pushConstantRange.stageFlags = VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT;
         pushConstantRange.offset = 0;
-        pushConstantRange.size = sizeof(SimplePushConstantData);
+        pushConstantRange.size = sizeof(SimplePushConstantData);*/
 
         std::vector<VkDescriptorSetLayout> descriptorSetLayouts{ _globalSetLayout };
 
@@ -32,8 +32,8 @@ namespace lve {
         pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
         pipelineLayoutInfo.setLayoutCount = static_cast<uint32_t>(descriptorSetLayouts.size());
         pipelineLayoutInfo.pSetLayouts = descriptorSetLayouts.data();
-        pipelineLayoutInfo.pushConstantRangeCount = 1;
-        pipelineLayoutInfo.pPushConstantRanges = &pushConstantRange;
+        pipelineLayoutInfo.pushConstantRangeCount = 0;
+        pipelineLayoutInfo.pPushConstantRanges = nullptr;
         if (vkCreatePipelineLayout(lveDevice.device(), &pipelineLayoutInfo, nullptr, &pipelineLayout) !=
             VK_SUCCESS) {
             throw std::runtime_error("failed to create pipeline layout!");
@@ -41,7 +41,7 @@ namespace lve {
     }
 
 
-    void SimpleRenderSystem::CreatePipeline(VkRenderPass _renderPass) {
+    void PointLightSystem::CreatePipeline(VkRenderPass _renderPass) {
         assert(pipelineLayout != nullptr && "Cannot create pipeline before pipeline layout");
 
         PipelineConfigInfo pipelineConfig{};
@@ -50,12 +50,12 @@ namespace lve {
         pipelineConfig.pipelineLayout = pipelineLayout;
         lvePipeline = std::make_unique<LvePipeline>(
             lveDevice,
-            "shaders/simple_shader.vert.spv",
-            "shaders/simple_shader.frag.spv",
+            "shaders/point_light.vert.spv",
+            "shaders/point_light.frag.spv",
             pipelineConfig);
     }
 
-    void SimpleRenderSystem::RenderGameObjects(FrameInfo& _frameInfo, std::vector<LveGameObject>& _gameObjects) {
+    void PointLightSystem::Render(FrameInfo& _frameInfo) {
         lvePipeline->Bind(_frameInfo.commandBuffer);
 
         vkCmdBindDescriptorSets(
@@ -68,16 +68,7 @@ namespace lve {
             0,
             nullptr);
 
-        for (auto& obj : _gameObjects) {
-
-            SimplePushConstantData push{};
-            push.modelMatrix = obj.transform.mat4();
-            push.normalMatrix = obj.transform.normalMatrix();
-
-            vkCmdPushConstants(_frameInfo.commandBuffer, pipelineLayout, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT, 0, sizeof(SimplePushConstantData), &push);
-            obj.model->Bind(_frameInfo.commandBuffer);
-            obj.model->Draw(_frameInfo.commandBuffer);
-        }
+        vkCmdDraw(_frameInfo.commandBuffer, 6, 1, 0, 0);
     }
 
 }  // namespace lve

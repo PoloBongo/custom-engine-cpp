@@ -1,10 +1,10 @@
 #pragma once
 
-#include "lve_camera.h"
-#include "lve_pipeline.h"
-#include "lve_device.h"
-#include "lve_game_object.h"
-#include "lve_frame_info.h"
+#include "../lve_camera.h"
+#include "../lve_pipeline.h"
+#include "../lve_device.h"
+#include "../lve_game_object.h"
+#include "../lve_frame_info.h"
 
 //std
 #include <memory>
@@ -33,7 +33,7 @@ namespace lve {
         SimpleRenderSystem operator=(const SimpleRenderSystem&) = delete;
 
 
-        void RenderGameObjects(FrameInfo &_frameInfo, std::vector<LveGameObject> &_gameObjects);
+        void RenderGameObjects(FrameInfo &_frameInfo);
 
     private:
         void CreatePipelineLayout(VkDescriptorSetLayout _globalSetLayout);
