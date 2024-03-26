@@ -32,11 +32,36 @@ namespace lve {
         SimpleRenderSystem(const SimpleRenderSystem&) = delete;
         SimpleRenderSystem operator=(const SimpleRenderSystem&) = delete;
 
-
+        /**
+         * @brief Rend les objets de jeu avec le système de rendu simple.
+         *
+         * Cette méthode rend les objets de jeu avec le système de rendu simple en utilisant le pipeline graphique
+         * et le layout du pipeline spécifiés dans le cadre d'une Frame.
+         *
+         * @param _frameInfo Les informations de frame, y compris le tampon de commandes, le descripteur global, et les objets de jeu.
+         */
         void RenderGameObjects(FrameInfo &_frameInfo);
 
     private:
+
+        /**
+         * @brief Crée le layout du pipeline pour le système de rendu simple.
+         *
+         * Cette méthode crée le layout du pipeline pour le système de rendu simple en spécifiant le layout du descripteur global
+         * ainsi que la plage des constantes poussées utilisées par les shaders.
+         *
+         * @param _globalSetLayout Le layout du descripteur global.
+         */
         void CreatePipelineLayout(VkDescriptorSetLayout _globalSetLayout);
+
+        /**
+         * @brief Crée le pipeline pour le système de rendu simple.
+         *
+         * Cette méthode crée le pipeline pour le système de rendu simple en utilisant les shaders spécifiés et le layout de pipeline
+         * préalablement créé. Le rendu se fait selon le render pass spécifié.
+         *
+         * @param _renderPass Le render pass utilisé pour le rendu.
+         */
         void CreatePipeline(VkRenderPass _renderPass);
 
         LveDevice &lveDevice;

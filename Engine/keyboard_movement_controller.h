@@ -22,6 +22,18 @@ namespace lve {
 			int lookDown = GLFW_KEY_DOWN;
 		};
 
+		/**
+		 * @brief Déplace l'objet dans le plan XZ en réponse aux entrées clavier.
+		 *
+		 * Cette fonction ajuste la rotation et la translation d'un objet en fonction des entrées clavier, pour lui permettre de se déplacer dans le plan XZ.
+		 *
+		 * @param _window La fenêtre GLFW où les entrées clavier sont détectées.
+		 * @param _deltaTime Le temps écoulé depuis la dernière mise à jour.
+		 * @param _gameObject L'objet à déplacer.
+		 *
+		 * @note Les touches du clavier utilisées pour contrôler le mouvement et la rotation sont configurées dans l'attribut "keys" de cet objet.
+		 * @note L'objet est déplacé vers l'avant et vers l'arrière le long de l'axe Z, et vers la gauche et vers la droite le long de l'axe X. Il peut également monter et descendre le long de l'axe Y.
+		 */
 		void MoveInPlaneXZ(GLFWwindow* _window, float _deltaTime, LveGameObject& _gameObject);
 
 		KeyMappings keys{};
