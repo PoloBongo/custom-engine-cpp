@@ -1,9 +1,11 @@
 #include "first_app.h"
 
-#include "systems/simple_render_system.h"   
+
 #include "lve_camera.h"   
 #include "keyboard_movement_controller.h"   
 #include "lve_buffer.h"   
+#include "systems/simple_render_system.h"   
+#include "systems/point_light_system.h"  
 
 //libs
 #define GLM_FORCE_RADIANS
@@ -65,6 +67,7 @@ namespace lve {
         }
 
         SimpleRenderSystem simpleRenderSystem{ lveDevice, lveRenderer.GetSwapChainRenderPass(), globalSetLayout->GetDescriptorSetLayout()};
+        PointLightSystem pointLightSystem{ lveDevice, lveRenderer.GetSwapChainRenderPass(), globalSetLayout->GetDescriptorSetLayout()};
         LveCamera camera{};
         
         auto viewerObject = LveGameObject::CreateGameObject();
@@ -109,6 +112,7 @@ namespace lve {
                 // render
                 lveRenderer.BeginSwapChainRenderPass(commandBuffer);//begin offscreen shadow pass
                 simpleRenderSystem.RenderGameObjects(frameInfo);//render shadow casting objects
+                pointLightSystem.Render(frameInfo);//render shadow casting objects
                 lveRenderer.EndSwapChainRenderPass(commandBuffer);
                 lveRenderer.EndFrame();//end offscreen shadow pass
             }

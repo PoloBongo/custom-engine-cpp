@@ -118,7 +118,7 @@
       </Command>
     </CustomBuildStep>
     <PreBuildEvent>
-      <Command>$(SolutionDir)Engine\compile.bat</Command>
+      <Command>$(SolutionDir)compile.bat</Command>
     </PreBuildEvent>
     <PostBuildEvent>
       <Command>
