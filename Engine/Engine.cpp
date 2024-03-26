@@ -3,7 +3,6 @@
 #include <iostream>
 #include <cstdlib>
 #include <stdexcept>
-#include "EngineTestCode.h"
 
 int main() {
     /**
@@ -22,13 +21,6 @@ int main() {
         std::cerr << e.what() << std::endl;
         return EXIT_FAILURE;
     }
-int main()
-{
-    EngineTestCode engine;
-    engine.TestCode();
-
-    std::cout << "Hello World!\n";
-}
 
     return EXIT_SUCCESS;
 }
