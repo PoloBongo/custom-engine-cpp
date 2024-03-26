@@ -1,6 +1,6 @@
 #include "EngineTestCode.h"
-#include "RessourceManager.h"
-#include "DebugManager.h"
+#include "Managers/RessourceManager.h"
+#include "Managers/DebugManager.h"
 
 void EngineTestCode::TestCode()
 {

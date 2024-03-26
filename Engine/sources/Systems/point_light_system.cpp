@@ -1,4 +1,4 @@
-#include "point_light_system.h"
+#include "Systems/point_light_system.h"
 
 //libs
 #define GLM_FORCE_RADIANS
