@@ -24,23 +24,129 @@ namespace lve {
         LveSwapChain(const LveSwapChain&) = delete;
         LveSwapChain &operator=(const LveSwapChain&) = delete;
 
+        /**
+         * @brief Obtient le framebuffer correspondant à l'indice spécifié.
+         *
+         * Cette fonction retourne le framebuffer de la swap chain qui correspond à l'indice spécifié.
+         *
+         * @param index L'indice du framebuffer à récupérer.
+         * @return VkFramebuffer Le framebuffer correspondant à l'indice spécifié.
+         */
         VkFramebuffer getFrameBuffer(int index) { return swapChainFramebuffers[index]; }
+
+        /**
+         * @brief Obtient le passe de rendu.
+         *
+         * Cette fonction retourne le passe de rendu associé à la swap chain.
+         *
+         * @return VkRenderPass Le passe de rendu associé à la swap chain.
+         */
         VkRenderPass getRenderPass() { return renderPass; }
+
+        /**
+         * @brief Obtient la vue d'image correspondant à l'indice spécifié.
+         *
+         * Cette fonction retourne la vue d'image de la swap chain qui correspond à l'indice spécifié.
+         *
+         * @param index L'indice de la vue d'image à récupérer.
+         * @return VkImageView La vue d'image correspondant à l'indice spécifié.
+         */
         VkImageView getImageView(int index) { return swapChainImageViews[index]; }
+
+        /**
+         * @brief Obtient le nombre d'images dans la swap chain.
+         *
+         * Cette fonction retourne le nombre d'images actuellement présentes dans la swap chain.
+         *
+         * @return size_t Le nombre d'images dans la swap chain.
+         */
         size_t imageCount() { return swapChainImages.size(); }
+
+        /**
+         * @brief Obtient le format d'image de la swap chain.
+         *
+         * Cette fonction retourne le format d'image utilisé par la swap chain.
+         *
+         * @return VkFormat Le format d'image de la swap chain.
+         */
         VkFormat getSwapChainImageFormat() { return swapChainImageFormat; }
+
+        /**
+         * @brief Obtient l'étendue de la swap chain.
+         *
+         * Cette fonction retourne l'étendue (largeur et hauteur) de la swap chain.
+         *
+         * @return VkExtent2D L'étendue de la swap chain.
+         */
         VkExtent2D getSwapChainExtent() { return swapChainExtent; }
+
+        /**
+         * @brief Obtient la largeur de la swap chain.
+         *
+         * Cette fonction retourne la largeur de la swap chain.
+         *
+         * @return uint32_t La largeur de la swap chain.
+         */
         uint32_t width() { return swapChainExtent.width; }
+
+        /**
+         * @brief Obtient la hauteur de la swap chain.
+         *
+         * Cette fonction retourne la hauteur de la swap chain.
+         *
+         * @return uint32_t La hauteur de la swap chain.
+         */
         uint32_t height() { return swapChainExtent.height; }
 
+        /**
+         * @brief Calcule le rapport d'aspect de l'étendue de la swap chain.
+         *
+         * Cette fonction calcule le rapport d'aspect (largeur/hauteur) de l'étendue de la swap chain.
+         *
+         * @return float Le rapport d'aspect de l'étendue de la swap chain.
+         */
         float extentAspectRatio() {
             return static_cast<float>(swapChainExtent.width) / static_cast<float>(swapChainExtent.height);
         }
+
+        /**
+         * @brief Recherche le format de profondeur adapté.
+         *
+         * Cette fonction recherche le format de profondeur adapté parmi une liste de formats donnée, en tenant compte des caractéristiques spécifiées.
+         *
+         * @return VkFormat Le format de profondeur adapté.
+         */
         VkFormat findDepthFormat();
 
+        /**
+         * @brief Acquiert l'index de l'image suivante dans la chaîne de swaps.
+         *
+         * Cette fonction acquiert l'index de l'image suivante dans la chaîne de swaps.
+         *
+         * @param imageIndex Pointeur vers la variable où stocker l'index de l'image acquise.
+         * @return VkResult Le résultat de l'opération.
+         */
         VkResult acquireNextImage(uint32_t* imageIndex);
+
+        /**
+         * @brief Soumet les command buffers pour exécution et présente le résultat.
+         *
+         * Cette fonction soumet les command buffers spécifiés pour exécution, attend leur achèvement, puis présente le résultat à l'écran.
+         *
+         * @param buffers Tableau des command buffers à soumettre.
+         * @param imageIndex Pointeur vers l'index de l'image à présenter.
+         * @return VkResult Le résultat de l'opération.
+         */
         VkResult submitCommandBuffers(const VkCommandBuffer* buffers, uint32_t* imageIndex);
 
+        /**
+         * @brief Compare les formats de profondeur et d'image avec une autre LveSwapChain.
+         *
+         * Cette fonction compare les formats de profondeur et d'image de cette LveSwapChain avec ceux d'une autre LveSwapChain spécifiée.
+         *
+         * @param _swapChain La LveSwapChain avec laquelle comparer les formats.
+         * @return bool True si les formats de profondeur et d'image sont identiques, sinon False.
+         */
         bool CompareSwapFormats(const LveSwapChain& _swapChain) const {
             return  _swapChain.swapChainDepthFormat == swapChainDepthFormat && 
                     _swapChain.swapChainImageFormat == swapChainImageFormat;
