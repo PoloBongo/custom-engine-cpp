@@ -157,7 +157,35 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="AudioManager.cpp" />
+    <ClCompile Include="ColliderManager.cpp" />
+    <ClCompile Include="CollisionManager.cpp" />
+    <ClCompile Include="DebugManager.cpp" />
     <ClCompile Include="Engine.cpp" />
+    <ClCompile Include="EngineTestCode.cpp" />
+    <ClCompile Include="GameObject.cpp" />
+    <ClCompile Include="InputManager.cpp" />
+    <ClCompile Include="RenderManager.cpp" />
+    <ClCompile Include="RessourceManager.cpp" />
+    <ClCompile Include="RigidbodyManager.cpp" />
+    <ClCompile Include="SceneManager.cpp" />
+    <ClCompile Include="SubSystem.cpp" />
+    <ClCompile Include="TextureManager.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="AudioManager.h" />
+    <ClInclude Include="ColliderManager.h" />
+    <ClInclude Include="CollisionManager.h" />
+    <ClInclude Include="DebugManager.h" />
+    <ClInclude Include="EngineTestCode.h" />
+    <ClInclude Include="GameObject.h" />
+    <ClInclude Include="InputManager.h" />
+    <ClInclude Include="RenderManager.h" />
+    <ClInclude Include="RessourceManager.h" />
+    <ClInclude Include="RigidbodyManager.h" />
+    <ClInclude Include="SceneManager.h" />
+    <ClInclude Include="SubSystem.h" />
+    <ClInclude Include="TextureManager.h" />
     <ClCompile Include="first_app.cpp" />
     <ClCompile Include="keyboard_movement_controller.cpp" />
     <ClCompile Include="lve_buffer.cpp" />
