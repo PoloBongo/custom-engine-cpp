@@ -21,4 +21,5 @@ void EngineTestCode::TestCode()
     DebugManager::LogInfo("Initialisation terminee avec succes.");
     DebugManager::LogWarning("Attention : Memoire faible.");
     DebugManager::LogError("Echec de l'ouverture du fichier.");
+    DebugManager::LogSuccess("Succes de l'ouverture du fichier.");
 }

@@ -7,8 +7,6 @@ class InputManager
 public:
 	void Update();
 
-	bool IsKeyPressed(int _key);
-
 	bool IsMouseButtonPressed(int _button);
 
 	bool AnyKeyPressed(int _key);
