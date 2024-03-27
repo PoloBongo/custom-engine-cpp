@@ -10,7 +10,7 @@
 #include <array>
 #include <cassert>
 #include <stdexcept>
-#include <iostream>
+#include <map>
 
 namespace lve {
 
@@ -46,6 +46,7 @@ namespace lve {
 
         PipelineConfigInfo pipelineConfig{};
         LvePipeline::DefaultPipelineConfigInfo(pipelineConfig);
+        LvePipeline::EnableAlphaBlending(pipelineConfig);
         pipelineConfig.attributeDescriptions.clear();
         pipelineConfig.bindingDescriptions.clear();
         pipelineConfig.renderPass = _renderPass;
@@ -63,7 +64,7 @@ namespace lve {
         for (auto& kv : _frameInfo.gameObjects) {
             auto& obj = kv.second;
             if (obj.pointLight == nullptr) continue;
-            std::cout << obj.GetId() << " : " << obj.transform.translation.x << std::endl;
+
             assert(lightIndex < MAX_LIGHTS && "Point lights exceed maximum specified");
 
             // update light position
@@ -79,6 +80,19 @@ namespace lve {
     }
 
     void PointLightSystem::Render(FrameInfo& _frameInfo) {
+
+        //sort lights
+        std::map<float, LveGameObject::id_t> sorted;
+        for (auto& kv : _frameInfo.gameObjects) {
+            auto& obj = kv.second;
+            if (obj.pointLight == nullptr) continue;
+
+            // calculate distance 
+            auto offset = _frameInfo.camera.GetPosition() - obj.transform.translation;
+            float distanceSquared = glm::dot(offset, offset);
+            sorted[distanceSquared] = obj.GetId();
+        }
+
         lvePipeline->Bind(_frameInfo.commandBuffer);
 
         vkCmdBindDescriptorSets(
@@ -90,10 +104,12 @@ namespace lve {
             &_frameInfo.globalDescriptorSet,
             0,
             nullptr);
+        // iterate through sorted lights in reverse order
 
-        for (auto& kv : _frameInfo.gameObjects) {
-            auto& obj = kv.second;
-            if (obj.pointLight == nullptr) continue;
+        for (auto it = sorted.rbegin(); it != sorted.rend(); ++it) {
+
+            // use game obj id to find light object
+            auto& obj = _frameInfo.gameObjects.at(it->second);
 
             PointLightPushConstants push{};
             push.position = glm::vec4(obj.transform.translation, 1.f);

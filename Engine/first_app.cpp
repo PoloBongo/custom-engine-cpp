@@ -98,7 +98,7 @@ namespace lve {
                 GlobalUbo ubo{};
                 ubo.projection = camera.GetProjection();
                 ubo.view = camera.GetView();
-                
+                ubo.inverseView = camera.GetInverseView();
                 pointLightSystem.Update(frameInfo, ubo);
 
                 uboBuffers[frameIndex]->writeToBuffer(&ubo);
@@ -106,8 +106,12 @@ namespace lve {
 
                 // render
                 lveRenderer.BeginSwapChainRenderPass(commandBuffer);//begin offscreen shadow pass
+
+                // order here matters
                 simpleRenderSystem.RenderGameObjects(frameInfo);//render shadow casting objects
                 pointLightSystem.Render(frameInfo);//render shadow casting objects
+
+
                 lveRenderer.EndSwapChainRenderPass(commandBuffer);
                 lveRenderer.EndFrame();//end offscreen shadow pass
             }
@@ -158,7 +162,6 @@ namespace lve {
                 { 0.f, -1.f, 0.f });
             pointLight.transform.translation = glm::vec3(rotateLight * glm::vec4(-1.f, -1.f, -1.f, 1.f));
             gameObjects.emplace(pointLight.GetId(), std::move(pointLight));
-            std::cout << pointLight.transform.translation.x << std::endl;
         }
 
     }

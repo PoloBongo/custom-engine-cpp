@@ -39,12 +39,6 @@
     <ClCompile Include="first_app.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="systems\point_light_system.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="systems\simple_render_system.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="sources\GameObject\GameObject.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -129,12 +123,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="first_app.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="systems\point_light_system.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="systems\simple_render_system.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClCompile Include="EngineTestCode.cpp">
