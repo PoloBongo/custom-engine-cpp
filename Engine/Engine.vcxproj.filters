@@ -84,6 +84,9 @@
     <ClCompile Include="systems\simple_render_system.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="SoundSystemClass.cpp">
+      <Filter>Source Files\Manager\ComponentManager</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="lve_window.h">
@@ -173,6 +176,9 @@
     <ClCompile Include="InputManager.cpp">
       <Filter>Source Files\Manager</Filter>
     </ClCompile>
+    <ClInclude Include="SoundSystemClass.h">
+      <Filter>Header Files\Manager\ComponentsManager</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CollisionManager.h">
@@ -214,5 +220,13 @@
     <ClInclude Include="InputManager.h">
       <Filter>Header Files\Manager</Filter>
     </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <CopyFileToFolders Include="..\Librairies\FMOD\lib\fmodL.dll">
+      <Filter>Resource Files</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\Librairies\FMOD\lib\fmod.dll">
+      <Filter>Resource Files</Filter>
+    </CopyFileToFolders>
   </ItemGroup>
 </Project>

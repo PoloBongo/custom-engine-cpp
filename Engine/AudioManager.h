@@ -4,12 +4,15 @@
 #include <iostream>
 #include <vector>
 
+#include <fmod.hpp>
+#include <fmod_errors.h>
+
 class AudioManager
 {
 public:
-	AudioManager() {}
+	AudioManager();
 
-	~AudioManager() {}
+	~AudioManager();
 
 	void addAudios(GameObject* gameObject)
 	{
@@ -40,9 +43,18 @@ public:
 	void DeleteAudio(const std::string& _key);
 	void DeleteMusic(const std::string& _key);
 
+	void CreateSound();
+
 private:
 	std::vector<GameObject*> audios;
 	std::vector<GameObject*> musics;
 	float volume;
 	float maxVolume;
+
+	// FMOD PART
+	FMOD_SYSTEM* sys;
+	FMOD_SOUND* sound;
+	FMOD_CHANNEL* channel;
+	FMOD_CHANNELGROUP* channelGroup;
+	FMOD_RESULT result;
 };
