@@ -18,20 +18,20 @@ namespace lve {
         LveBuffer(const LveBuffer&) = delete;
         LveBuffer& operator=(const LveBuffer&) = delete;
 
-        VkResult map(vk::DeviceSize _size = VK_WHOLE_SIZE, vk::DeviceSize _offset = 0);
+        vk::Result map(vk::DeviceSize _size = VK_WHOLE_SIZE, vk::DeviceSize _offset = 0);
         void unmap();
 
         void writeToBuffer(void* _data, vk::DeviceSize _size = VK_WHOLE_SIZE, vk::DeviceSize _offset = 0);
-        VkResult flush(vk::DeviceSize _size = VK_WHOLE_SIZE, vk::DeviceSize _offset = 0);
-        VkDescriptorBufferInfo descriptorInfo(vk::DeviceSize _size = VK_WHOLE_SIZE, vk::DeviceSize _offset = 0);
-        VkResult invalidate(vk::DeviceSize _size = VK_WHOLE_SIZE, vk::DeviceSize _offset = 0);
+        vk::Result flush(vk::DeviceSize _size = VK_WHOLE_SIZE, vk::DeviceSize _offset = 0);
+        vk::DescriptorBufferInfo descriptorInfo(vk::DeviceSize _size = VK_WHOLE_SIZE, vk::DeviceSize _offset = 0);
+        vk::Result invalidate(vk::DeviceSize _size = VK_WHOLE_SIZE, vk::DeviceSize _offset = 0);
 
         void writeToIndex(void* _data, int _index);
-        VkResult flushIndex(int _index);
-        VkDescriptorBufferInfo descriptorInfoForIndex(int _index);
-        VkResult invalidateIndex(int _index);
+        vk::Result flushIndex(int _index);
+        vk::DescriptorBufferInfo descriptorInfoForIndex(int _index);
+        vk::Result invalidateIndex(int _index);
 
-        VkBuffer getBuffer() const { return buffer; }
+        vk::Buffer getBuffer() const { return buffer; }
         void* getMappedMemory() const { return mapped; }
         uint32_t getInstanceCount() const { return instanceCount; }
         vk::DeviceSize getInstanceSize() const { return instanceSize; }
@@ -45,8 +45,8 @@ namespace lve {
 
         LveDevice& lveDevice;
         void* mapped = nullptr;
-        VkBuffer buffer = VK_NULL_HANDLE;
-        VkDeviceMemory memory = VK_NULL_HANDLE;
+        vk::Buffer buffer = VK_NULL_HANDLE;
+        vk::DeviceMemory memory = VK_NULL_HANDLE;
 
         vk::DeviceSize bufferSize;
         uint32_t instanceCount;

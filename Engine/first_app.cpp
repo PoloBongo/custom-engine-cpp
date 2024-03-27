@@ -24,10 +24,11 @@
 namespace lve {
     // VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER
     FirstApp::FirstApp() {
-        globalPool = LveDescriptorPool::Builder(lveDevice)
-            .SetMaxSets(LveSwapChain::MAX_FRAMES_IN_FLIGHT)
-            .AddPoolSize(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, LveSwapChain::MAX_FRAMES_IN_FLIGHT)
-            .Build();
+        LveDescriptorPool::Builder builder{ lveDevice };
+        builder.SetMaxSets(LveSwapChain::MAX_FRAMES_IN_FLIGHT)
+            .AddPoolSize(vk::DescriptorType::eUniformBuffer, LveSwapChain::MAX_FRAMES_IN_FLIGHT);
+
+        globalPool = builder.Build();
         LoadGameObjects();
     }
 
@@ -40,17 +41,17 @@ namespace lve {
                 lveDevice,
                 sizeof(GlobalUbo),
                 1,
-                VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
-                VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT);
+                vk::BufferUsageFlagBits::eUniformBuffer,
+                vk::MemoryPropertyFlagBits::eHostVisible);
 
             uboBuffers[i]->map();
         }
 
         auto globalSetLayout = LveDescriptorSetLayout::Builder(lveDevice)
-            .AddBinding(0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_ALL_GRAPHICS)
+            .AddBinding(0, vk::DescriptorType::eUniformBuffer, vk::ShaderStageFlagBits::eAllGraphics)
             .Build();
 
-        std::vector<VkDescriptorSet> globalDescriptorSets(LveSwapChain::MAX_FRAMES_IN_FLIGHT);
+        std::vector<vk::DescriptorSet> globalDescriptorSets(LveSwapChain::MAX_FRAMES_IN_FLIGHT);
         for (int i = 0; i < globalDescriptorSets.size(); i++) {
             auto bufferInfo = uboBuffers[i]->descriptorInfo();
             LveDescriptorWriter(*globalSetLayout, *globalPool)
@@ -58,10 +59,10 @@ namespace lve {
                 .Build(globalDescriptorSets[i]);
         }
 
-        SimpleRenderSystem simpleRenderSystem{ lveDevice, lveRenderer.GetSwapChainRenderPass(), globalSetLayout->GetDescriptorSetLayout()};
-        PointLightSystem pointLightSystem{ lveDevice, lveRenderer.GetSwapChainRenderPass(), globalSetLayout->GetDescriptorSetLayout()};
+        SimpleRenderSystem simpleRenderSystem{ lveDevice, lveRenderer.GetSwapChainRenderPass(), globalSetLayout->GetDescriptorSetLayout() };
+        PointLightSystem pointLightSystem{ lveDevice, lveRenderer.GetSwapChainRenderPass(), globalSetLayout->GetDescriptorSetLayout() };
         LveCamera camera{};
-        
+
         auto viewerObject = LveGameObject::CreateGameObject();
         viewerObject.transform.translation.z = -2.5f;
         KeyboardMovementController cameraController{};
@@ -84,7 +85,7 @@ namespace lve {
 
             if (auto commandBuffer = lveRenderer.BeginFrame()) {
                 int frameIndex = lveRenderer.GetFrameIndex();
-                
+
                 FrameInfo frameInfo{
                     frameIndex,
                     frameTime,
@@ -117,10 +118,10 @@ namespace lve {
             }
         }
 
-        vkDeviceWaitIdle(lveDevice.device());
+        lveDevice.device().waitIdle();
     }
-    
 
+    
     void FirstApp::LoadGameObjects() {
         std::shared_ptr<LveModel> lveModel = LveModel::CreateModelFromFile(lveDevice, "Models\\flat_vase.obj");
 

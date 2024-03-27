@@ -1,5 +1,6 @@
 #pragma once
 
+#include <vulkan/vulkan.hpp>
 #include "lve_device.h"
 #include "lve_buffer.h"
 
@@ -35,7 +36,7 @@ public:
 		 *
 		 * @return Un vecteur contenant les descriptions de liaison des entrées de vertex.
 		 */
-		static std::vector<VkVertexInputBindingDescription> GetBindingDescriptions();
+		static std::vector<vk::VertexInputBindingDescription> GetBindingDescriptions();
 
 		/**
 		 * @brief Obtient les descriptions d'attribut des entrées de vertex.
@@ -46,7 +47,7 @@ public:
 		 *
 		 * @return Un vecteur contenant les descriptions d'attribut des entrées de vertex.
 		 */
-		static std::vector<VkVertexInputAttributeDescription> GetAttributeDescriptions();
+		static std::vector<vk::VertexInputAttributeDescription> GetAttributeDescriptions();
 
 		bool operator==(const Vertex& _other) const {
 			return position == _other.position && color == _other.color && normal == _other.normal && uv == _other.uv;
@@ -99,7 +100,7 @@ public:
 	 *
 	 * @param _commandBuffer Le tampon de commande auquel lier les tampons de vertex et d'index.
 	 */
-	void Bind(VkCommandBuffer _commandBuffer);
+	void Bind(vk::CommandBuffer _commandBuffer);
 
 	/**
 	 * @brief Dessine les primitives géométriques à l'aide du tampon de commande spécifié.
@@ -109,7 +110,7 @@ public:
 	 *
 	 * @param _commandBuffer Le tampon de commande utilisé pour dessiner les primitives géométriques.
 	 */
-	void Draw(VkCommandBuffer _commandBuffer);
+	void Draw(vk::CommandBuffer _commandBuffer);
 
 private:
 	/**

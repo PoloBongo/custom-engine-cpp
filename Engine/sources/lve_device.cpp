@@ -21,7 +21,7 @@ namespace lve {
 	 * @param pUserData Des données utilisateur optionnelles.
 	 * @return VK_FALSE indiquant que le traitement du message est terminé, et aucune action supplémentaire n'est nécessaire.
 	 */
-	static VKAPI_ATTR vk::Bool32 VKAPI_CALL debugCallback(
+	static VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(
 		vk::DebugUtilsMessageSeverityFlagBitsEXT messageSeverity,
 		vk::DebugUtilsMessageTypeFlagsEXT messageType,
 		const vk::DebugUtilsMessengerCallbackDataEXT* pCallbackData,
@@ -53,24 +53,13 @@ namespace lve {
 		const vk::AllocationCallbacks* pAllocator,
 		vk::DebugUtilsMessengerEXT* pDebugMessenger) {
 
-		// Récupère le pointeur de fonction pour vkCreateDebugUtilsMessengerEXT
-		auto func = reinterpret_cast<PFN_vkCreateDebugUtilsMessengerEXT>(
-			instance.getProcAddr("vkCreateDebugUtilsMessengerEXT"));
+		// Appelle la fonction createDebugUtilsMessengerEXT pour créer le gestionnaire de messager de débogage
+		*pDebugMessenger = instance.createDebugUtilsMessengerEXT(*pCreateInfo, *pAllocator);
 
-		// Vérifie si la fonction est disponible
-		if (func != nullptr) {
-			// Appelle la fonction vkCreateDebugUtilsMessengerEXT pour créer le gestionnaire de messager de débogage
-			return static_cast<vk::Result>(func(
-				static_cast<vk:Instance>(instance),
-				reinterpret_cast<const VkDebugUtilsMessengerCreateInfoEXT*>(pCreateInfo),
-				reinterpret_cast<const VkAllocationCallbacks*>(pAllocator),
-				reinterpret_cast<VkDebugUtilsMessengerEXT*>(pDebugMessenger)));
-		}
-		else {
-			// L'extension VK_EXT_debug_utils n'est pas prise en charge
-			return vk::Result::eErrorExtensionNotPresent;
-		}
+		// Vérifie si la création a réussi
+		return *pDebugMessenger ? vk::Result::eSuccess : vk::Result::eErrorExtensionNotPresent;
 	}
+
 
 	/**
 	 * @brief Détruit un gestionnaire de messager de débogage Vulkan créé avec l'extension VK_EXT_debug_utils.
@@ -94,7 +83,7 @@ namespace lve {
 		// Vérifie si la fonction est disponible
 		if (func != nullptr) {
 			// Appelle la fonction vkDestroyDebugUtilsMessengerEXT pour détruire le gestionnaire de messager de débogage
-			func(static_cast<vk:Instance>(instance), static_cast<VkDebugUtilsMessengerEXT>(debugMessenger), reinterpret_cast<const VkAllocationCallbacks*>(pAllocator));
+			func(static_cast<vk::Instance > (instance), static_cast<VkDebugUtilsMessengerEXT>(debugMessenger), reinterpret_cast<const VkAllocationCallbacks*>(pAllocator));
 		}
 	}
 
@@ -367,20 +356,23 @@ namespace lve {
 		_createInfo.sType = vk::StructureType::eDebugUtilsMessengerCreateInfoEXT;
 
 		// Spécifie les niveaux de sévérité des messages à intercepter.
-		_createInfo.messageSeverity = vk::DebugUtilsMessageSeverityFlagBitsEXT::eWarning |
-			vk::DebugUtilsMessageSeverityFlagBitsEXT::eError;
+		_createInfo.setMessageSeverity(
+			vk::DebugUtilsMessageSeverityFlagBitsEXT::eWarning |
+			vk::DebugUtilsMessageSeverityFlagBitsEXT::eError);
 
 		// Spécifie les types de messages à intercepter.
-		_createInfo.messageType = vk::DebugUtilsMessageTypeFlagBitsEXT::eGeneral |
+		_createInfo.setMessageType(
+			vk::DebugUtilsMessageTypeFlagBitsEXT::eGeneral |
 			vk::DebugUtilsMessageTypeFlagBitsEXT::eValidation |
-			vk::DebugUtilsMessageTypeFlagBitsEXT::ePerformance;
+			vk::DebugUtilsMessageTypeFlagBitsEXT::ePerformance);
 
 		// Spécifie la fonction de rappel à appeler pour chaque message de débogage.
-		_createInfo.pfnUserCallback = debugCallback;
+		_createInfo.setPfnUserCallback((PFN_vkDebugUtilsMessengerCallbackEXT)debugCallback);
 
 		// Spécifie des données utilisateur facultatives.
-		_createInfo.pUserData = nullptr;  // Optionnel
+		_createInfo.setPUserData(nullptr);  // Optionnel
 	}
+
 
 
 	/**
@@ -403,10 +395,10 @@ namespace lve {
 
 		// Crée le gestionnaire de débogage avec les informations fournies.
 		try {
-			debugMessenger = CreateDebugUtilsMessengerEXT(instance, &createInfo, nullptr);
+			debugMessenger = instance.createDebugUtilsMessengerEXT(createInfo, nullptr);
 		}
-		catch (const std::runtime_error& e) {
-			throw std::runtime_error("failed to set up debug messenger!");
+		catch (const vk::SystemError& e) {
+			throw std::runtime_error("failed to set up debug messenger: " + std::string(e.what()));
 		}
 	}
 
@@ -849,8 +841,8 @@ namespace lve {
 		region.imageSubresource.baseArrayLayer = 0;
 		region.imageSubresource.layerCount = layerCount;
 
-		region.imageOffset = { 0, 0, 0 };
-		region.imageExtent = { width, height, 1 };
+		region.imageOffset = vk::Offset3D{ 0, 0, 0 };
+		region.imageExtent = vk::Extent3D{ width, height, 1 };
 
 		// Copie les données du tampon vers l'image Vulkan
 		commandBuffer.copyBufferToImage(

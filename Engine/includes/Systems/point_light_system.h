@@ -26,7 +26,7 @@ namespace lve {
     class PointLightSystem {
     public:
 
-        PointLightSystem(LveDevice& _device, VkRenderPass _renderPass, VkDescriptorSetLayout _globalSetLayout);
+        PointLightSystem(LveDevice& _device, vk::RenderPass _renderPass, VkDescriptorSetLayout _globalSetLayout);
         ~PointLightSystem();
 
         PointLightSystem(const PointLightSystem&) = delete;
@@ -65,7 +65,7 @@ namespace lve {
         * @param _renderPass Le passe de rendu auquel ce pipeline est lié.
         * @throws std::runtime_error Si la création du pipeline échoue.
         */
-        void CreatePipeline(VkRenderPass _renderPass);
+        void CreatePipeline(vk::RenderPass _renderPass);
 
         LveDevice &lveDevice;
 
