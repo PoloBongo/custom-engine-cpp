@@ -64,6 +64,11 @@ namespace lve {
         CreateShaderModule(vertCode, &vertShaderModule);
         CreateShaderModule(fragCode, &fragShaderModule);
 
+
+        /***********************/
+        /**** SHADER STAGES ****/
+        /***********************/
+
         VkPipelineShaderStageCreateInfo shaderStages[2];
         shaderStages[0].sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
         shaderStages[0].stage = VK_SHADER_STAGE_VERTEX_BIT;
@@ -137,35 +142,107 @@ namespace lve {
     }
 
     void LvePipeline::DefaultPipelineConfigInfo(PipelineConfigInfo& _configInfo) {
+        
+        // Configure le type d'informations d'assemblage pour le pipeline
         _configInfo.inputAssemblyInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;
+
+        // Spécifie la topologie des primitives, qui peut être :
+        // - VK_PRIMITIVE_TOPOLOGY_POINT_LIST : liste de points
+        // - VK_PRIMITIVE_TOPOLOGY_LINE_LIST : liste de lignes
+        // - VK_PRIMITIVE_TOPOLOGY_LINE_STRIP : bande de lignes
+        // - VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST : liste de triangles
+        // - VK_PRIMITIVE_TOPOLOGY_TRIANGLE_STRIP : bande de triangles
         _configInfo.inputAssemblyInfo.topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST;
+
+
+        // Active ou désactive la possibilité de redémarrer les primitives, 
+        // ce qui signifie que si cela est activé, lorsqu'un certain index 
+        // est rencontré dans le flux d'indices, une nouvelle primitive est commencée
         _configInfo.inputAssemblyInfo.primitiveRestartEnable = VK_FALSE;
 
+
+        /******************/
+        /**** VIEWPORT ****/
+        /******************/
+
+        // Configuration de l'état des viewports pour le pipeline
         _configInfo.viewportInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO;
+        
+        // Nombre de viewports à utiliser. Un viewport définit la région de l'image à dessiner
         _configInfo.viewportInfo.viewportCount = 1;
+        
+        // Pointeur vers un tableau de viewports, nullptr signifie que la valeur par défaut est utilisée
         _configInfo.viewportInfo.pViewports = nullptr;
+        
+        // Nombre de ciseaux de découpe à utiliser. Un ciseau de découpe définit la zone de l'image sur laquelle le dessin est limité
         _configInfo.viewportInfo.scissorCount = 1;
+        
+        // Pointeur vers un tableau de ciseaux de découpe, nullptr signifie que la valeur par défaut est utilisée
         _configInfo.viewportInfo.pScissors = nullptr;
 
+
+        /***********************/
+        /**** RASTERIZATION ****/
+        /***********************/
+
+        // Configuration de l'état de la rasterisation pour le pipeline
         _configInfo.rasterizationInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO;
-        _configInfo.rasterizationInfo.depthClampEnable = VK_FALSE;
-        _configInfo.rasterizationInfo.rasterizerDiscardEnable = VK_FALSE;
-        _configInfo.rasterizationInfo.polygonMode = VK_POLYGON_MODE_FILL;
-        _configInfo.rasterizationInfo.lineWidth = 1.0f;
-        _configInfo.rasterizationInfo.cullMode = VK_CULL_MODE_NONE;
-        _configInfo.rasterizationInfo.frontFace = VK_FRONT_FACE_CLOCKWISE;
-        _configInfo.rasterizationInfo.depthBiasEnable = VK_FALSE;
-        _configInfo.rasterizationInfo.depthBiasConstantFactor = 0.0f;  // Optional
-        _configInfo.rasterizationInfo.depthBiasClamp = 0.0f;           // Optional
-        _configInfo.rasterizationInfo.depthBiasSlopeFactor = 0.0f;     // Optional
+
+        // Activation ou désactivation de la clamping de profondeur. Si activé, les fragments en dehors de la plage de profondeur sont clippés plutôt que d'être rejetés
+        _configInfo.rasterizationInfo.depthClampEnable = VK_FALSE; // ou VK_FALSE
+
+        // Activation ou désactivation du rejet de rasterization. Si activé, la géométrie de la primitive n'est pas envoyée au pipeline de rasterization.
+        _configInfo.rasterizationInfo.rasterizerDiscardEnable = VK_FALSE; // ou VK_FALSE
+
+        // Mode de remplissage des polygones. Les options incluent VK_POLYGON_MODE_FILL, VK_POLYGON_MODE_LINE et VK_POLYGON_MODE_POINT
+        _configInfo.rasterizationInfo.polygonMode = VK_POLYGON_MODE_FILL; // ou VK_POLYGON_MODE_LINE ou VK_POLYGON_MODE_POINT
+
+        // Épaisseur de ligne lors du rendu en mode ligne (si utilisé)
+        _configInfo.rasterizationInfo.lineWidth = 1.0f; // tout float
+        
+        // Mode de culling des faces. Les options incluent VK_CULL_MODE_NONE, VK_CULL_MODE_FRONT_BIT et VK_CULL_MODE_BACK_BIT
+        _configInfo.rasterizationInfo.cullMode = VK_CULL_MODE_NONE; // ou VK_CULL_MODE_FRONT_BIT ou VK_CULL_MODE_BACK_BIT ou VK_CULL_MODE_FRONT_AND_BACK
+        
+        // Orientation des faces à culler. VK_FRONT_FACE_CLOCKWISE ou VK_FRONT_FACE_COUNTER_CLOCKWISE
+        _configInfo.rasterizationInfo.frontFace = VK_FRONT_FACE_CLOCKWISE; // ou VK_FRONT_FACE_COUNTER_CLOCKWISE
+        
+        // Activation ou désactivation du décalage de profondeur. Si activé, il ajuste la profondeur des fragments pour éviter le z-fighting.
+        _configInfo.rasterizationInfo.depthBiasEnable = VK_FALSE; // ou VK_FALSE
+        
+        // Facteur de décalage constant pour chaque fragment
+        _configInfo.rasterizationInfo.depthBiasConstantFactor = 0.0f; // tout float
+        
+        // Valeur maximale (ou minimale) du décalage de profondeur
+        _configInfo.rasterizationInfo.depthBiasClamp = 0.0f; // tout float
+
+        _configInfo.rasterizationInfo.depthBiasSlopeFactor = 0.0f;
+
+
+        /*********************/
+        /**** MULTISAMPLE ****/
+        /*********************/
 
         _configInfo.multisampleInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO;
         _configInfo.multisampleInfo.sampleShadingEnable = VK_FALSE;
-        _configInfo.multisampleInfo.rasterizationSamples = VK_SAMPLE_COUNT_1_BIT;
+
+        // Le nombre d'échantillons de rasterization utilisés. Les options incluent :
+        // - VK_SAMPLE_COUNT_1_BIT : Aucun échantillonnage. Un seul échantillon est utilisé.
+        // - VK_SAMPLE_COUNT_2_BIT : 2 échantillons par pixel.
+        // - VK_SAMPLE_COUNT_4_BIT : 4 échantillons par pixel.
+        // - VK_SAMPLE_COUNT_8_BIT : 8 échantillons par pixel.
+        // - VK_SAMPLE_COUNT_16_BIT : 16 échantillons par pixel.
+        // - VK_SAMPLE_COUNT_32_BIT : 32 échantillons par pixel.
+        // - VK_SAMPLE_COUNT_64_BIT : 64 échantillons par pixel.
+        _configInfo.multisampleInfo.rasterizationSamples = VK_SAMPLE_COUNT_1_BIT; // Choisissez la valeur appropriée en fonction des besoins de qualité d'image et de performances.
         _configInfo.multisampleInfo.minSampleShading = 1.0f;           // Optional
         _configInfo.multisampleInfo.pSampleMask = nullptr;             // Optional
         _configInfo.multisampleInfo.alphaToCoverageEnable = VK_FALSE;  // Optional
         _configInfo.multisampleInfo.alphaToOneEnable = VK_FALSE;       // Optional
+
+
+        /********************************/
+        /**** COLORBLEND ATTACHEMENT ****/
+        /********************************/
 
         _configInfo.colorBlendAttachment.colorWriteMask =
             VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT |
@@ -178,15 +255,43 @@ namespace lve {
         _configInfo.colorBlendAttachment.dstAlphaBlendFactor = VK_BLEND_FACTOR_ZERO;  // Optional
         _configInfo.colorBlendAttachment.alphaBlendOp = VK_BLEND_OP_ADD;              // Optional
 
+
+        /********************/
+        /**** COLORBLEND ****/
+        /********************/
+
         _configInfo.colorBlendInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO;
         _configInfo.colorBlendInfo.logicOpEnable = VK_FALSE;
-        _configInfo.colorBlendInfo.logicOp = VK_LOGIC_OP_COPY;  // Optional
+
+        // L'opération logique à appliquer. Les options incluent :
+        // - VK_LOGIC_OP_CLEAR : Résultat de 0.
+        // - VK_LOGIC_OP_AND : Résultat de A & B.
+        // - VK_LOGIC_OP_AND_REVERSE : Résultat de A & ~B.
+        // - VK_LOGIC_OP_COPY : Résultat de A.
+        // - VK_LOGIC_OP_SET : Résultat de 1.
+        // - VK_LOGIC_OP_COPY_INVERTED : Résultat de ~A.
+        // - VK_LOGIC_OP_NO_OP : Ne fait rien.
+        // - VK_LOGIC_OP_INVERT : Résultat de ~A & B.
+        // - VK_LOGIC_OP_OR : Résultat de A | B.
+        // - VK_LOGIC_OP_NOR : Résultat de ~(A | B).
+        // - VK_LOGIC_OP_XOR : Résultat de A ^ B.
+        // - VK_LOGIC_OP_EQUIVALENT : Résultat de ~(A ^ B).
+        // - VK_LOGIC_OP_AND_INVERTED : Résultat de ~A & B.
+        // - VK_LOGIC_OP_OR_REVERSE : Résultat de A | ~B.
+        // - VK_LOGIC_OP_OR_INVERTED : Résultat de ~A | B.
+        // - VK_LOGIC_OP_NAND : Résultat de ~(A & B).
+        _configInfo.colorBlendInfo.logicOp = VK_LOGIC_OP_COPY; // ou une autre opération logique selon les besoins. // Optional
         _configInfo.colorBlendInfo.attachmentCount = 1;
         _configInfo.colorBlendInfo.pAttachments = &_configInfo.colorBlendAttachment;
         _configInfo.colorBlendInfo.blendConstants[0] = 0.0f;  // Optional
         _configInfo.colorBlendInfo.blendConstants[1] = 0.0f;  // Optional
         _configInfo.colorBlendInfo.blendConstants[2] = 0.0f;  // Optional
         _configInfo.colorBlendInfo.blendConstants[3] = 0.0f;  // Optional
+
+
+        /***********************/
+        /**** DEPTH STENCIL ****/
+        /***********************/
 
         _configInfo.depthStencilInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO;
         _configInfo.depthStencilInfo.depthTestEnable = VK_TRUE;
@@ -198,6 +303,11 @@ namespace lve {
         _configInfo.depthStencilInfo.stencilTestEnable = VK_FALSE;
         _configInfo.depthStencilInfo.front = {};  // Optional
         _configInfo.depthStencilInfo.back = {};   // Optional
+
+
+        /***********************/
+        /**** DYNAMIC STATE ****/
+        /***********************/
 
         _configInfo.dynamicStateEnables = { VK_DYNAMIC_STATE_VIEWPORT, VK_DYNAMIC_STATE_SCISSOR };
         _configInfo.dynamicStateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO;

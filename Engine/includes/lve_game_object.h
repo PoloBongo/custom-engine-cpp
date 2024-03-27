@@ -42,6 +42,17 @@ namespace lve {
 
 		id_t GetId() { return id; }
 
+
+		/**
+		 * @brief Crée un objet de jeu représentant une lumière ponctuelle.
+		 *
+		 * Cette méthode statique crée un objet de jeu représentant une lumière ponctuelle avec les paramètres spécifiés.
+		 *
+		 * @param _intensity L'intensité de la lumière.
+		 * @param _radius Le rayon d'éclairage de la lumière.
+		 * @param _color La couleur de la lumière.
+		 * @return L'objet de jeu représentant la lumière ponctuelle.
+		 */
 		static LveGameObject MakePointLight(
 			float intensity = 10.f, float radius = 0.1f, glm::vec3 color = glm::vec3(1.f));
 		

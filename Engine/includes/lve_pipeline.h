@@ -48,8 +48,22 @@ namespace lve {
 		LvePipeline(const LvePipeline&) = delete;
 		LvePipeline &operator=(const LvePipeline&) = delete;
 
-
+		/**
+		 * @brief Lie le pipeline graphique au tampon de commandes spécifié.
+		 *
+		 * Cette méthode lie le pipeline graphique associé à ce LvePipeline à un tampon de commandes spécifié.
+		 *
+		 * @param _commandBuffer Le tampon de commandes auquel le pipeline graphique doit être lié.
+		 */
 		void Bind(VkCommandBuffer commandBuffer);
+
+		/**
+		 * @brief Configure les paramètres par défaut du pipeline.
+		 *
+		 * Cette méthode configure les paramètres par défaut du pipeline en remplissant la structure PipelineConfigInfo fournie.
+		 *
+		 * @param _configInfo Une référence vers la structure PipelineConfigInfo à remplir avec les paramètres par défaut du pipeline.
+		 */
 		static void DefaultPipelineConfigInfo(PipelineConfigInfo& _configInfo);
 
 	private:
@@ -76,6 +90,16 @@ namespace lve {
 		*/
 		void CreateGraphicsPipeline(const std::string& _vertFilepath, const std::string& _fragFilepath, const PipelineConfigInfo& _configInfo);
 
+		/**
+		 * @brief Crée un module de shader à partir du code du shader spécifié.
+		 *
+		 * Cette méthode crée un module de shader Vulkan à partir du code du shader spécifié.
+		 *
+		 * @param _code Le code du shader sous forme d'un vecteur de caractères.
+		 * @param _shaderModule Un pointeur vers l'emplacement où stocker le module de shader créé.
+		 *
+		 * @throw std::runtime_error si la création du module de shader échoue.
+		 */
 		void CreateShaderModule(const std::vector<char>& _code, VkShaderModule* _shaderModule);
 
 		LveDevice& lveDevice;
