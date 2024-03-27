@@ -8,8 +8,9 @@
 namespace lve {
 
 	struct PipelineConfigInfo {
-		//PipelineConfigInfo(const PipelineConfigInfo&) = delete;
-		//PipelineConfigInfo& operator=(const PipelineConfigInfo&) = delete;
+		PipelineConfigInfo() = default;
+		PipelineConfigInfo(const PipelineConfigInfo&) = delete;
+		PipelineConfigInfo& operator=(const PipelineConfigInfo&) = delete;
 
 		std::vector<VkVertexInputAttributeDescription> attributeDescriptions{};
 		std::vector<VkVertexInputBindingDescription> bindingDescriptions{};
@@ -65,6 +66,7 @@ namespace lve {
 		 * @param _configInfo Une référence vers la structure PipelineConfigInfo à remplir avec les paramètres par défaut du pipeline.
 		 */
 		static void DefaultPipelineConfigInfo(PipelineConfigInfo& _configInfo);
+		static void EnableAlphaBlending(PipelineConfigInfo& _configInfo);
 
 	private:
 
