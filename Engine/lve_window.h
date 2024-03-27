@@ -9,6 +9,28 @@ namespace lve {
 
     class LveWindow {
     public:
+
+        enum GLFW_CURSOR_TYPE{
+            ARROW,
+            IBEAM,
+            CROSSHAIR,
+            POINTING_HAND,
+            RESIZE_EW,
+            RESIZE_NS,
+            RESIZE_NWSE,
+            RESIZE_NESW,
+            RESIZE_ALL,
+            NOT_ALLOWED
+        };
+
+        enum GLFW_CURSOR_MODE {
+            DISABLED,
+            HIDDEN,
+            NORMAL,
+            CAPTURED
+        };
+
+
         /**
          * @brief Constructeur de la classe LveWindow.
          *
@@ -58,6 +80,14 @@ namespace lve {
         void CreateWindowSurface(VkInstance _instance, VkSurfaceKHR* _surface);
 
         GLFWwindow* GetGLFWwindow() const { return window; }
+
+        void ResetCursorWindow() { glfwSetCursor(window, NULL); }
+
+        void CubeCursorWindow(int color = 255);
+
+        void StandarCursorWindow(GLFW_CURSOR_TYPE CursorType);
+
+        void SetInputCursorMode(GLFW_CURSOR_MODE mode);
 
     private:
 
