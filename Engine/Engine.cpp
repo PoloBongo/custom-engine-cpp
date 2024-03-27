@@ -1,15 +1,26 @@
 #include "first_app.h"
-#include "SoundSystemClass.h"
+#include "Managers/SoundSystemManager.h"
+#include "EngineTestCode.h"
 
 #include <iostream>
 #include <cstdlib>
 
 int main() {
-    SoundSystemClass sound;
+    SoundSystemManager sound;
+    EngineTestCode engineTestCode;
+
+    FMOD::ChannelGroup* mouseGroup;
+    sound.createChannelGroup(&mouseGroup);
+
+    engineTestCode.TestCode();
 
     SoundClass soundSample;
     sound.createSound(&soundSample, "C:\\Users\\polob\\OneDrive\\Bureau\\projet\\Projet13\\engine-mmaqjlkf\\x64\\Debug\\test.wav");
-    sound.playSound(soundSample, true);
+    
+    // ajoute le son au groupe "MouseGroup"
+    sound.addSoundToGroup(soundSample, mouseGroup);
+    
+    sound.playSound(soundSample, false);
 
 
     /**

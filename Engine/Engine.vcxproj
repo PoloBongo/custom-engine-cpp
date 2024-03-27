@@ -104,7 +104,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)Librairies\glm;$(SolutionDir)Librairies\tinyObjLoader;$(SolutionDir)Librairies\glfw-3.4.bin.WIN64\include;$(SolutionDir)Librairies\VulkanSDK\Include;$(SolutionDir)Librairies\FMOD\inc;$(SolutionDir)\Engine;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Librairies\glm;$(SolutionDir)Librairies\tinyObjLoader;$(SolutionDir)Librairies\glfw-3.4.bin.WIN64\include;$(SolutionDir)Librairies\VulkanSDK\Include;$(SolutionDir)Librairies\FMOD\inc;$(SolutionDir)\Engine;$(SolutionDir)\Engine\includes;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
@@ -160,29 +160,13 @@
     <ClCompile Include="Component.cpp" />
     <ClCompile Include="Engine.cpp" />
     <ClCompile Include="EngineTestCode.cpp" />
-    <ClCompile Include="GameObject.cpp" />
-    <ClCompile Include="InputManager.cpp" />
-    <ClCompile Include="RenderManager.cpp" />
-    <ClCompile Include="RessourceManager.cpp" />
-    <ClCompile Include="RigidbodyManager.cpp" />
-    <ClCompile Include="SceneManager.cpp" />
-    <ClCompile Include="SoundSystemClass.cpp" />
-    <ClCompile Include="SubSystem.cpp" />
-    <ClCompile Include="TextureManager.cpp" />
+    <ClCompile Include="sources\Managers\SoundSystemManager.cpp" />
     <ClCompile Include="Transform.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Component.h" />
     <ClInclude Include="EngineTestCode.h" />
-    <ClInclude Include="GameObject.h" />
-    <ClInclude Include="InputManager.h" />
-    <ClInclude Include="RenderManager.h" />
-    <ClInclude Include="RessourceManager.h" />
-    <ClInclude Include="RigidbodyManager.h" />
-    <ClInclude Include="SceneManager.h" />
-    <ClInclude Include="SoundSystemClass.h" />
-    <ClInclude Include="SubSystem.h" />
-    <ClInclude Include="TextureManager.h" />
+    <ClInclude Include="includes\Managers\SoundSystemManager.h" />
     <ClCompile Include="first_app.cpp" />
     <ClCompile Include="sources\GameObject\GameObject.cpp" />
     <ClCompile Include="sources\keyboard_movement_controller.cpp" />
@@ -198,7 +182,6 @@
     <ClCompile Include="sources\lve_swap_chain.cpp" />
     <ClCompile Include="sources\lve_utils.cpp" />
     <ClCompile Include="sources\lve_window.cpp" />
-    <ClCompile Include="sources\Managers\AudioManager.cpp" />
     <ClCompile Include="sources\Managers\ColliderManager.cpp" />
     <ClCompile Include="sources\Managers\CollisionManager.cpp" />
     <ClCompile Include="sources\Managers\DebugManager.cpp" />
@@ -229,7 +212,6 @@
     <ClInclude Include="includes\lve_swap_chain.h" />
     <ClInclude Include="includes\lve_utils.h" />
     <ClInclude Include="includes\lve_window.h" />
-    <ClInclude Include="includes\Managers\AudioManager.h" />
     <ClInclude Include="includes\Managers\ColliderManager.h" />
     <ClInclude Include="includes\Managers\CollisionManager.h" />
     <ClInclude Include="includes\Managers\DebugManager.h" />
