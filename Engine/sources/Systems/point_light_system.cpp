@@ -63,7 +63,7 @@ namespace lve {
         for (auto& kv : _frameInfo.gameObjects) {
             auto& obj = kv.second;
             if (obj.pointLight == nullptr) continue;
-            std::cout << obj.transform.translation.x << std::endl;
+            std::cout << obj.GetId() << " : " << obj.transform.translation.x << std::endl;
             assert(lightIndex < MAX_LIGHTS && "Point lights exceed maximum specified");
 
             // update light position
