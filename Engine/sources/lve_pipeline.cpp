@@ -309,6 +309,8 @@ namespace lve {
         /**** DYNAMIC STATE ****/
         /***********************/
 
+        // Configuration des états dynamiques pour le pipeline
+        // La liste des états dynamiques activés pour ce pipeline.
         _configInfo.dynamicStateEnables = { VK_DYNAMIC_STATE_VIEWPORT, VK_DYNAMIC_STATE_SCISSOR };
         _configInfo.dynamicStateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO;
         _configInfo.dynamicStateInfo.pDynamicStates = _configInfo.dynamicStateEnables.data();
