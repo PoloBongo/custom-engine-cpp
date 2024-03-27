@@ -144,6 +144,14 @@ namespace lve {
         quadGO.transform.scale = { 3.f, 1.f, 3.f };
         gameObjects.emplace(quadGO.GetId(), std::move(quadGO));
 
+        lveModel = LveModel::CreateModelFromFile(lveDevice, "Models\\viking_room.obj");
+        auto Viking = LveGameObject::CreateGameObject();
+        Viking.model = lveModel;
+        Viking.transform.translation = { 0.f, 0.f, 5.f };
+        Viking.transform.scale = { 3.f, 3.f, 3.f };
+        Viking.transform.rotation = { glm::radians(90.0f), glm::radians(90.0f), 0.0f };
+        gameObjects.emplace(Viking.GetId(), std::move(Viking));
+
         std::vector<glm::vec3> lightColors{
     {1.f, .1f, .1f},
     {.1f, .1f, 1.f},
