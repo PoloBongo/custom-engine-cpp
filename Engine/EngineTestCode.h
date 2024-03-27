@@ -3,6 +3,7 @@
 #include "RessourceManager.h"
 #include "DebugManager.h"
 #include "SoundSystemClass.h"
+#include "Managers/SceneManager.h"
 
 class EngineTestCode
 {

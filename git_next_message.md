@@ -1,3 +1,3 @@
-NEW: Create Window
+NEW: Hiérarchie
 
--Création de la fenêtre
+- Hiérarchisation des fichiers .h dans le \includes et .cpp dans le \sources
