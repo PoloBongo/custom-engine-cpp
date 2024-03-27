@@ -11,6 +11,13 @@
 #include <vector>
 
 namespace lve {
+
+    struct PointLightPushConstants {
+        glm::vec4 position{};
+        glm::vec4 color{};
+        float radius;
+    };
+
     /**
      * @brief Classe représentant la première application utilisant Vulkan.
      *
@@ -34,6 +41,7 @@ namespace lve {
          *
          * @param _frameInfo Informations sur le frame actuel, contenant notamment le tampon de commandes.
          */
+        void Update(FrameInfo &_frameInfo, GlobalUbo& _ubo);
         void Render(FrameInfo &_frameInfo);
 
     private:
