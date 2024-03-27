@@ -157,10 +157,13 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Component.cpp" />
     <ClCompile Include="Engine.cpp" />
     <ClCompile Include="EngineTestCode.cpp" />
+    <ClCompile Include="Transform.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Component.h" />
     <ClInclude Include="EngineTestCode.h" />
     <ClCompile Include="first_app.cpp" />
     <ClCompile Include="sources\GameObject\GameObject.cpp" />
@@ -190,6 +193,7 @@
     <ClCompile Include="sources\SubSystem.cpp" />
     <ClCompile Include="sources\Systems\point_light_system.cpp" />
     <ClCompile Include="sources\Systems\simple_render_system.cpp" />
+    <ClInclude Include="Transform.h" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="first_app.h" />
