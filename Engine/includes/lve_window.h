@@ -1,5 +1,7 @@
 #pragma once
 
+#include <vulkan/vulkan.hpp>
+
 #define GLFW_INCLUDE_VULKAN
 #include <GLFW/glfw3.h>
 
@@ -40,7 +42,7 @@ namespace lve {
          */
         bool ShouldClose() { return glfwWindowShouldClose(window); }
 
-        VkExtent2D GetExtent() { return { static_cast<uint32_t>(width), static_cast<uint32_t>(height) }; }
+        vk::Extent2D GetExtent() { return { static_cast<uint32_t>(width), static_cast<uint32_t>(height) }; }
 
         bool WasWindowResized() { return frameBufferResize;  }
 
@@ -55,7 +57,7 @@ namespace lve {
         * @param _surface Un pointeur vers l'objet de surface Vulkan à créer. Ce pointeur sera mis à jour pour contenir la surface créée.
         * @throws Une exception en cas d'échec lors de la création de la surface.
         */
-        void CreateWindowSurface(VkInstance _instance, VkSurfaceKHR* _surface);
+        void CreateWindowSurface(vk::Instance _instance, vk::SurfaceKHR* _surface);
 
         GLFWwindow* GetGLFWwindow() const { return window; }
 

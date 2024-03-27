@@ -22,7 +22,7 @@
 #include <numeric>
 
 namespace lve {
-
+    // VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER
     FirstApp::FirstApp() {
         globalPool = LveDescriptorPool::Builder(lveDevice)
             .SetMaxSets(LveSwapChain::MAX_FRAMES_IN_FLIGHT)

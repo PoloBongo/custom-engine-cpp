@@ -57,7 +57,7 @@ namespace lve {
 
 	void LveModel::Bind(VkCommandBuffer _commandBuffer){
 		VkBuffer buffers[] = { vertexBuffer->getBuffer()};
-		VkDeviceSize offsets[] = { 0 };
+		vk::DeviceSize offsets[] = { 0 };
 		vkCmdBindVertexBuffers(_commandBuffer, 0, 1, buffers, offsets);
 
 		if (hasIndexBuffer) {
@@ -77,7 +77,7 @@ namespace lve {
 	void LveModel::CreateVertexBuffer(const std::vector<Vertex>& _vertices) {
 		vertexCount = static_cast<uint32_t>(_vertices.size());
 		assert(vertexCount >= 3 && "Vertex count must be at least 3");
-		VkDeviceSize bufferSize = sizeof(_vertices[0]) * vertexCount;
+		vk::DeviceSize bufferSize = sizeof(_vertices[0]) * vertexCount;
 		uint32_t vertexSize = sizeof(_vertices[0]);
 
 		LveBuffer stagingBuffer{
@@ -111,7 +111,7 @@ namespace lve {
 			return;
 		}
 
-		VkDeviceSize bufferSize = sizeof(_indices[0]) * indexCount;
+		vk::DeviceSize bufferSize = sizeof(_indices[0]) * indexCount;
 		uint32_t indexSize = sizeof(_indices[0]);
 
 

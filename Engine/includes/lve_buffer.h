@@ -8,23 +8,23 @@ namespace lve {
     public:
         LveBuffer(
             LveDevice& _device,
-            VkDeviceSize _instanceSize,
+            vk::DeviceSize _instanceSize,
             uint32_t _instanceCount,
-            VkBufferUsageFlags _usageFlags,
-            VkMemoryPropertyFlags _memoryPropertyFlags,
-            VkDeviceSize _minOffsetAlignment = 1);
+            vk::BufferUsageFlags _usageFlags,
+            vk::MemoryPropertyFlags _memoryPropertyFlags,
+            vk::DeviceSize _minOffsetAlignment = 1);
         ~LveBuffer();
 
         LveBuffer(const LveBuffer&) = delete;
         LveBuffer& operator=(const LveBuffer&) = delete;
 
-        VkResult map(VkDeviceSize _size = VK_WHOLE_SIZE, VkDeviceSize _offset = 0);
+        VkResult map(vk::DeviceSize _size = VK_WHOLE_SIZE, vk::DeviceSize _offset = 0);
         void unmap();
 
-        void writeToBuffer(void* _data, VkDeviceSize _size = VK_WHOLE_SIZE, VkDeviceSize _offset = 0);
-        VkResult flush(VkDeviceSize _size = VK_WHOLE_SIZE, VkDeviceSize _offset = 0);
-        VkDescriptorBufferInfo descriptorInfo(VkDeviceSize _size = VK_WHOLE_SIZE, VkDeviceSize _offset = 0);
-        VkResult invalidate(VkDeviceSize _size = VK_WHOLE_SIZE, VkDeviceSize _offset = 0);
+        void writeToBuffer(void* _data, vk::DeviceSize _size = VK_WHOLE_SIZE, vk::DeviceSize _offset = 0);
+        VkResult flush(vk::DeviceSize _size = VK_WHOLE_SIZE, vk::DeviceSize _offset = 0);
+        VkDescriptorBufferInfo descriptorInfo(vk::DeviceSize _size = VK_WHOLE_SIZE, vk::DeviceSize _offset = 0);
+        VkResult invalidate(vk::DeviceSize _size = VK_WHOLE_SIZE, vk::DeviceSize _offset = 0);
 
         void writeToIndex(void* _data, int _index);
         VkResult flushIndex(int _index);
@@ -34,26 +34,26 @@ namespace lve {
         VkBuffer getBuffer() const { return buffer; }
         void* getMappedMemory() const { return mapped; }
         uint32_t getInstanceCount() const { return instanceCount; }
-        VkDeviceSize getInstanceSize() const { return instanceSize; }
-        VkDeviceSize getAlignmentSize() const { return instanceSize; }
-        VkBufferUsageFlags getUsageFlags() const { return usageFlags; }
-        VkMemoryPropertyFlags getMemoryPropertyFlags() const { return memoryPropertyFlags; }
-        VkDeviceSize getBufferSize() const { return bufferSize; }
+        vk::DeviceSize getInstanceSize() const { return instanceSize; }
+        vk::DeviceSize getAlignmentSize() const { return instanceSize; }
+        vk::BufferUsageFlags getUsageFlags() const { return usageFlags; }
+        vk::MemoryPropertyFlags getMemoryPropertyFlags() const { return memoryPropertyFlags; }
+        vk::DeviceSize getBufferSize() const { return bufferSize; }
 
     private:
-        static VkDeviceSize getAlignment(VkDeviceSize _instanceSize, VkDeviceSize _minOffsetAlignment);
+        static vk::DeviceSize getAlignment(vk::DeviceSize _instanceSize, vk::DeviceSize _minOffsetAlignment);
 
         LveDevice& lveDevice;
         void* mapped = nullptr;
         VkBuffer buffer = VK_NULL_HANDLE;
         VkDeviceMemory memory = VK_NULL_HANDLE;
 
-        VkDeviceSize bufferSize;
+        vk::DeviceSize bufferSize;
         uint32_t instanceCount;
-        VkDeviceSize instanceSize;
-        VkDeviceSize alignmentSize;
-        VkBufferUsageFlags usageFlags;
-        VkMemoryPropertyFlags memoryPropertyFlags;
+        vk::DeviceSize instanceSize;
+        vk::DeviceSize alignmentSize;
+        vk::BufferUsageFlags usageFlags;
+        vk::MemoryPropertyFlags memoryPropertyFlags;
     };
 
 }  // namespace lve
