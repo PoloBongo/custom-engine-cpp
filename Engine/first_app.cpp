@@ -4,8 +4,8 @@
 #include "lve_camera.h"   
 #include "keyboard_movement_controller.h"   
 #include "lve_buffer.h"   
-#include "systems/simple_render_system.h"   
-#include "systems/point_light_system.h"  
+#include "Systems/simple_render_system.h"   
+#include "Systems/point_light_system.h"  
 
 //libs
 #define GLM_FORCE_RADIANS
@@ -15,21 +15,13 @@
 
 // std
 #include <array>
+#include <iostream>
 #include <cassert>
 #include <chrono>
 #include <stdexcept>
 #include <numeric>
 
 namespace lve {
-
-    struct GlobalUbo {
-        glm::mat4 projection{ 1.f };
-        glm::mat4 view{ 1.f };
-        glm::vec4 ambientLightColor{ 1.f, 1.f, 1.f,0.02f }; // light ambient
-        glm::vec3 lightPosition{ -1.f };
-        alignas(16) glm::vec4 lightColor{ 1.f }; // light intensity
-       
-    };
 
     FirstApp::FirstApp() {
         globalPool = LveDescriptorPool::Builder(lveDevice)
@@ -104,8 +96,11 @@ namespace lve {
 
                 // update
                 GlobalUbo ubo{};
-                ubo.view = camera.GetView();
                 ubo.projection = camera.GetProjection();
+                ubo.view = camera.GetView();
+                
+                pointLightSystem.Update(frameInfo, ubo);
+
                 uboBuffers[frameIndex]->writeToBuffer(&ubo);
                 uboBuffers[frameIndex]->flush();
 
@@ -144,5 +139,27 @@ namespace lve {
         quadGO.transform.translation = { .0f, .5f, 0.f };
         quadGO.transform.scale = { 3.f, 1.f, 3.f };
         gameObjects.emplace(quadGO.GetId(), std::move(quadGO));
+
+        std::vector<glm::vec3> lightColors{
+    {1.f, .1f, .1f},
+    {.1f, .1f, 1.f},
+    {.1f, 1.f, .1f},
+    {1.f, 1.f, .1f},
+    {.1f, 1.f, 1.f},
+    {1.f, 1.f, 1.f}  //
+        };
+
+        for (int i = 0; i < lightColors.size(); i++) {
+            auto pointLight = LveGameObject::MakePointLight(0.2f);
+            pointLight.color = lightColors[i];
+            auto rotateLight = glm::rotate(
+                glm::mat4(1.f),
+                (i * glm::two_pi<float>()) / lightColors.size(),
+                { 0.f, -1.f, 0.f });
+            pointLight.transform.translation = glm::vec3(rotateLight * glm::vec4(-1.f, -1.f, -1.f, 1.f));
+            gameObjects.emplace(pointLight.GetId(), std::move(pointLight));
+            std::cout << pointLight.transform.translation.x << std::endl;
+        }
+
     }
 }  // namespace lve
