@@ -2,6 +2,8 @@
 
 #include "lve_device.h"
 
+#include <vulkan/vulkan.hpp>
+
 // std
 #include <memory>
 #include <unordered_map>

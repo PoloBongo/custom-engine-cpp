@@ -70,7 +70,7 @@ namespace lve {
 
     vk::Result LveSwapChain::acquireNextImage(uint32_t* imageIndex) {
         // Attend que les barrières de synchronisation soient satisfaites
-        device.device().waitForFences(1, &inFlightFences[currentFrame], true, std::numeric_limits<uint64_t>::max());
+        device.device().waitForFences(1, &inFlightFences[currentFrame], VK_TRUE, std::numeric_limits<uint64_t>::max());
 
         // Acquiert l'index de l'image suivante dans la chaîne de swap
         // en utilisant l'extension KHR_swapchain
@@ -88,7 +88,7 @@ namespace lve {
         const vk::CommandBuffer* buffers, uint32_t* imageIndex) {
         // Attend la fin des commandes en cours d'exécution pour l'image en cours d'acquisition
         if (imagesInFlight[*imageIndex] != vk::Fence()) {
-            device.device().waitForFences(imagesInFlight[*imageIndex], true, std::numeric_limits<uint64_t>::max());
+            device.device().waitForFences(imagesInFlight[*imageIndex], VK_TRUE, std::numeric_limits<uint64_t>::max());
         }
         imagesInFlight[*imageIndex] = inFlightFences[currentFrame];
 
@@ -190,6 +190,29 @@ namespace lve {
         swapChainImageFormat = surfaceFormat.format;
         swapChainExtent = extent;
     }
+
+    void LveSwapChain::createImageViews() {
+        swapChainImageViews.resize(swapChainImages.size());
+        for (size_t i = 0; i < swapChainImages.size(); i++) {
+            vk::ImageViewCreateInfo viewInfo;
+            viewInfo.image = swapChainImages[i];
+            viewInfo.viewType = vk::ImageViewType::e2D;
+            viewInfo.format = swapChainImageFormat;
+            viewInfo.subresourceRange.aspectMask = vk::ImageAspectFlagBits::eColor;
+            viewInfo.subresourceRange.baseMipLevel = 0;
+            viewInfo.subresourceRange.levelCount = 1;
+            viewInfo.subresourceRange.baseArrayLayer = 0;
+            viewInfo.subresourceRange.layerCount = 1;
+
+            try {
+                swapChainImageViews[i] = device.device().createImageView(viewInfo);
+            }
+            catch (const vk::SystemError& e) {
+                throw std::runtime_error("failed to create texture image view!");
+            } 
+        }
+    }
+
 
     void LveSwapChain::createRenderPass() {
         vk::AttachmentDescription depthAttachment{};

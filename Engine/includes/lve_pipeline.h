@@ -2,6 +2,8 @@
 
 #include "lve_device.h"
 
+#include <vulkan/vulkan.hpp>
+
 #include <string>
 #include <vector>
 

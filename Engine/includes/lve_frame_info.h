@@ -4,7 +4,7 @@
 #include "lve_game_object.h"
 
 //lib
-#include <vulkan/vulkan.h>
+#include <vulkan/vulkan.hpp>
 
 namespace lve {
 

@@ -52,12 +52,7 @@ namespace lve {
 		const vk::DebugUtilsMessengerCreateInfoEXT* pCreateInfo,
 		const vk::AllocationCallbacks* pAllocator,
 		vk::DebugUtilsMessengerEXT* pDebugMessenger) {
-
-		// Appelle la fonction createDebugUtilsMessengerEXT pour créer le gestionnaire de messager de débogage
-		*pDebugMessenger = instance.createDebugUtilsMessengerEXT(*pCreateInfo, *pAllocator);
-
-		// Vérifie si la création a réussi
-		return *pDebugMessenger ? vk::Result::eSuccess : vk::Result::eErrorExtensionNotPresent;
+		return instance.createDebugUtilsMessengerEXT(pCreateInfo, pAllocator, pDebugMessenger);
 	}
 
 
