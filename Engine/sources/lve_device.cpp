@@ -47,13 +47,14 @@ namespace lve {
 	 * @param pDebugMessenger Un pointeur vers l'objet de gestionnaire de messager de débogage à créer.
 	 * @return VK_SUCCESS si le gestionnaire de messager de débogage a été créé avec succès, VK_ERROR_EXTENSION_NOT_PRESENT si l'extension n'est pas prise en charge.
 	 */
-	vk::Result CreateDebugUtilsMessengerEXT(
-		vk::Instance instance,
-		const vk::DebugUtilsMessengerCreateInfoEXT* pCreateInfo,
-		const vk::AllocationCallbacks* pAllocator,
-		vk::DebugUtilsMessengerEXT* pDebugMessenger) {
-		return instance.createDebugUtilsMessengerEXT(pCreateInfo, pAllocator, pDebugMessenger);
-	}
+	vk::Result CreateDebugUtilsMessengerEXT(vk::Instance instance, const vk::DebugUtilsMessengerCreateInfoEXT* pCreateInfo, const vk::AllocationCallbacks* pAllocator, vk::DebugUtilsMessengerEXT* pDebugMessenger)
+    {
+        PFN_vkVoidFunction function = instance.getProcAddr("vkCreateDebugUtilsMessengerEXT");
+        PFN_vkGetInstanceProcAddr messenger_ext = reinterpret_cast<PFN_vkGetInstanceProcAddr>(function);
+        vk::DispatchLoaderDynamic dispatch(instance, messenger_ext);
+        vk::Result result = instance.createDebugUtilsMessengerEXT(pCreateInfo, pAllocator, pDebugMessenger, dispatch);
+        return result;
+    }
 
 
 	/**
@@ -380,19 +381,25 @@ namespace lve {
 	 *
 	 * @throw std::runtime_error si la configuration du gestionnaire de débogage échoue.
 	 */
-	void LveDevice::setupDebugMessenger() {
+	void LveDevice::setupDebugMessenger()
+	{
 		// Vérifie si les couches de validation sont activées.
-		if (!enableValidationLayers) return;
+		if (!enableValidationLayers)
+			return;
 
 		// Initialise une structure pour la création du gestionnaire de débogage.
 		vk::DebugUtilsMessengerCreateInfoEXT createInfo;
 		populateDebugMessengerCreateInfo(createInfo);
 
 		// Crée le gestionnaire de débogage avec les informations fournies.
-		try {
-			debugMessenger = instance.createDebugUtilsMessengerEXT(createInfo, nullptr);
+		try
+		{
+			vk::DispatchLoaderDynamic dispatcher = vk::DispatchLoaderDynamic(instance, vkGetInstanceProcAddr);
+			if (vk::Result result = instance.createDebugUtilsMessengerEXT(&createInfo, nullptr, &debugMessenger, dispatcher); result != vk::Result::eSuccess)
+				throw std::runtime_error("failed to set up debug messenger!");
 		}
-		catch (const vk::SystemError& e) {
+		catch (const vk::SystemError& e)
+		{
 			throw std::runtime_error("failed to set up debug messenger: " + std::string(e.what()));
 		}
 	}
