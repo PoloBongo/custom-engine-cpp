@@ -30,6 +30,7 @@ std::string SceneManager::GetActiveScene()
 	}
 	return "None";
 }
+
 std::string SceneManager::GetListScenes()
 {
 	std::string _name;
