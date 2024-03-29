@@ -1,5 +1,6 @@
 #include "Managers/SoundSystemManager.h"
 #include <fmod_errors.h>
+#include <string>
 
 SoundSystemManager::SoundSystemManager()
 {
@@ -32,8 +33,40 @@ void SoundSystemManager::createSound(SoundClass* pSound, const char* pathAudio)
     }
 }
 
-void SoundSystemManager::playSound(SoundClass pSound, bool isPlay)
+void SoundSystemManager::createSoundGroup(SoundGroup* pSoundGroup, const char* groupName)
 {
+    FMOD_RESULT result = system->createSoundGroup(groupName, pSoundGroup);
+
+    if (result != FMOD_OK) {
+        std::cout << "le groupe n'a pas charge : " << FMOD_ErrorString(result) << std::endl;
+        return;
+    }
+}
+
+void SoundSystemManager::getMasterSoundGroup(SoundGroup* pSoundGroup)
+{
+    FMOD_RESULT result = system->getMasterSoundGroup(pSoundGroup);
+
+    if (result != FMOD_OK) {
+        std::cout << "le groupe n'a pas charge : " << FMOD_ErrorString(result) << std::endl;
+        return;
+    }
+}
+
+//void SoundSystemManager::getSoundGroup(SoundClass pSound, SoundGroup** soundGroup)
+//{
+    //FMOD_RESULT result = pSound->getSoundGroup(soundGroup);
+
+    //if (result != FMOD_OK) {
+    //    std::cout << "le groupe n'a pas charge : " << FMOD_ErrorString(result) << std::endl;
+    //    return;
+    //}
+//}
+
+void SoundSystemManager::playSound(SoundClass pSound, bool isPlay, int loopCount, float volume, Channel* channelPtr)
+{
+    FMOD::Channel* channel = nullptr;
+
     if (!isPlay)
     {
         pSound->setMode(FMOD_LOOP_OFF);
@@ -41,15 +74,25 @@ void SoundSystemManager::playSound(SoundClass pSound, bool isPlay)
     else
     {
         pSound->setMode(FMOD_LOOP_NORMAL);
-        pSound->setLoopCount(-1);
+        pSound->setLoopCount(loopCount);
     }
 
-    system->playSound(pSound, channelGroup, false, 0);
+    system->playSound(pSound, channelGroup, false, &channel);
+
+    channel->setVolume(volume);
+
+    // Affecter le canal créé au pointeur de pointeur passé en paramètre
+    *channelPtr = channel;
 }
 
 void SoundSystemManager::releaseSound(SoundClass pSound)
 {
     pSound->release();
+}
+
+int SoundSystemManager::getLoopCount(SoundClass pSound, int* loopcount)
+{
+    return pSound->getLoopCount(loopcount);
 }
 
 void SoundSystemManager::createChannelGroup(FMOD::ChannelGroup** channelGroup)

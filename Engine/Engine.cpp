@@ -6,22 +6,16 @@
 #include <cstdlib>
 
 int main() {
-    SoundSystemManager sound;
     EngineTestCode engineTestCode;
-
-    FMOD::ChannelGroup* mouseGroup;
-    sound.createChannelGroup(&mouseGroup);
-
     engineTestCode.TestCode();
 
+    SoundSystemManager sound;
     SoundClass soundSample;
-    sound.createSound(&soundSample, "C:\\Users\\polob\\OneDrive\\Bureau\\projet\\Projet13\\engine-mmaqjlkf\\x64\\Debug\\test.wav");
-    
-    // ajoute le son au groupe "MouseGroup"
-    sound.addSoundToGroup(soundSample, mouseGroup);
-    
-    sound.playSound(soundSample, false);
+    SoundGroup soundGroup;
+    Channel channel;
 
+    sound.createSound(&soundSample, "");
+    sound.playSound(soundSample, true, 5, 0.9f, &channel);
 
     /**
      * @brief Fonction principale du programme.
@@ -34,7 +28,7 @@ int main() {
 
     try {
         app.Run();
-        
+
     }
     catch (const std::exception& e) {
         std::cerr << e.what() << std::endl;
