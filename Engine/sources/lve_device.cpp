@@ -133,9 +133,9 @@ namespace lve {
 
 		// Configuration des informations d'application pour l'instance Vulkan
 		vk::ApplicationInfo appInfo(
-			"LittleVulkanEngine App",
+			"Vulkanity App",
 			VK_MAKE_VERSION(1, 0, 0),
-			"No Engine",
+			"Vulkanity",
 			VK_MAKE_VERSION(1, 0, 0),
 			VK_API_VERSION_1_0
 		);
