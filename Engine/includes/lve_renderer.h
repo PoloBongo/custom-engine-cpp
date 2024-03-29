@@ -1,5 +1,7 @@
 #pragma once
 
+#include <vulkan/vulkan.hpp>
+
 #include "lve_device.h"
 #include "lve_swap_chain.h"
 #include "lve_window.h"
@@ -23,9 +25,9 @@ namespace lve {
          *
          * Cette fonction retourne l'objet de rendu associé à la chaîne de swap.
          *
-         * @return VkRenderPass L'objet de rendu associé à la chaîne de swap.
+         * @return vk::RenderPass L'objet de rendu associé à la chaîne de swap.
          */
-        VkRenderPass GetSwapChainRenderPass() const { return lveSwapChain->getRenderPass(); }
+        vk::RenderPass GetSwapChainRenderPass() const { return lveSwapChain->getRenderPass(); }
 
         /**
          * @brief Obtient le ratio de l'aspect de la fenêtre associée à la chaîne de swap.
@@ -53,7 +55,7 @@ namespace lve {
          * @return VkCommandBuffer Le tampon de commandes actuel.
          * @throws std::runtime_error si aucun cadre n'est en cours.
          */
-        VkCommandBuffer GetCurrentCommandBuffer() const {
+        vk::CommandBuffer GetCurrentCommandBuffer() const {
             assert(isFrameStarted && "Cannot get command buffer when frame not in progress");
             return commandBuffers[currentFrameIndex];
         }
@@ -79,7 +81,7 @@ namespace lve {
          * @return VkCommandBuffer Le tampon de commandes actuel.
          * @throws std::runtime_error si l'acquisition de l'image échoue ou si le tampon de commandes ne peut pas être commencé.
          */
-        VkCommandBuffer BeginFrame();
+        vk::CommandBuffer BeginFrame();
 
         /**
          * @brief Termine le cadre en cours.
@@ -102,7 +104,7 @@ namespace lve {
          *
          * @throws std::runtime_error si la commande de début de la passe de rendu échoue.
          */
-        void BeginSwapChainRenderPass(VkCommandBuffer _commandBuffer);
+        void BeginSwapChainRenderPass(vk::CommandBuffer _commandBuffer);
 
         /**
          * @brief Termine la passe de rendu de la chaîne de swaps.
@@ -112,7 +114,7 @@ namespace lve {
          *
          * @param commandBuffer Le tampon de commandes sur lequel terminer la passe de rendu.
          */
-        void EndSwapChainRenderPass(VkCommandBuffer _commandBuffer);
+        void EndSwapChainRenderPass(vk::CommandBuffer _commandBuffer);
 
     private:
 
@@ -146,7 +148,7 @@ namespace lve {
         LveWindow& lveWindow;
         LveDevice& lveDevice;
         std::unique_ptr<LveSwapChain> lveSwapChain;
-        std::vector<VkCommandBuffer> commandBuffers;
+        std::vector<vk::CommandBuffer> commandBuffers;
 
         uint32_t currentImageIndex = 0;
         int currentFrameIndex = 0;

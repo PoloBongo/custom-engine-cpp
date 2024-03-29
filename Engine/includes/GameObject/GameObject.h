@@ -19,9 +19,10 @@ class Transform;
 class GameObject
 {
 public:
-	GameObject();
-	~GameObject();
 	using id_t = unsigned int;
+	GameObject();
+	GameObject(id_t _id) : id(_id){}
+	~GameObject();
 
 	inline std::string GetName() const { return name; }
 	inline void SetName(const std::string& _newName) { name = _newName; }

@@ -13,35 +13,35 @@
 
 namespace lve {
 
-    SimpleRenderSystem::SimpleRenderSystem(LveDevice& _device, VkRenderPass _renderPass, VkDescriptorSetLayout _globalSetLayout) : lveDevice(_device) {
+    SimpleRenderSystem::SimpleRenderSystem(LveDevice& _device, vk::RenderPass _renderPass, vk::DescriptorSetLayout _globalSetLayout) : lveDevice(_device) {
         CreatePipelineLayout(_globalSetLayout);
         CreatePipeline(_renderPass);
     }
 
-    SimpleRenderSystem::~SimpleRenderSystem() { vkDestroyPipelineLayout(lveDevice.device(), pipelineLayout, nullptr); }
+    SimpleRenderSystem::~SimpleRenderSystem() { lveDevice.device().destroyPipelineLayout(pipelineLayout, nullptr); }
 
-    void SimpleRenderSystem::CreatePipelineLayout(VkDescriptorSetLayout _globalSetLayout) {
-        VkPushConstantRange pushConstantRange{};
-        pushConstantRange.stageFlags = VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT;
+    void SimpleRenderSystem::CreatePipelineLayout(vk::DescriptorSetLayout _globalSetLayout) {
+        vk::PushConstantRange pushConstantRange{};
+        pushConstantRange.stageFlags = vk::ShaderStageFlagBits::eVertex | vk::ShaderStageFlagBits::eFragment;
         pushConstantRange.offset = 0;
         pushConstantRange.size = sizeof(SimplePushConstantData);
 
-        std::vector<VkDescriptorSetLayout> descriptorSetLayouts{ _globalSetLayout };
+        std::vector<vk::DescriptorSetLayout> descriptorSetLayouts{ _globalSetLayout };
 
-        VkPipelineLayoutCreateInfo pipelineLayoutInfo{};
-        pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
+        vk::PipelineLayoutCreateInfo pipelineLayoutInfo{};
+        pipelineLayoutInfo.sType = vk::StructureType::ePipelineLayoutCreateInfo;
         pipelineLayoutInfo.setLayoutCount = static_cast<uint32_t>(descriptorSetLayouts.size());
         pipelineLayoutInfo.pSetLayouts = descriptorSetLayouts.data();
         pipelineLayoutInfo.pushConstantRangeCount = 1;
         pipelineLayoutInfo.pPushConstantRanges = &pushConstantRange;
-        if (vkCreatePipelineLayout(lveDevice.device(), &pipelineLayoutInfo, nullptr, &pipelineLayout) !=
-            VK_SUCCESS) {
+        if (lveDevice.device().createPipelineLayout(&pipelineLayoutInfo, nullptr, &pipelineLayout) !=
+            vk::Result::eSuccess) {
             throw std::runtime_error("failed to create pipeline layout!");
         }
     }
 
 
-    void SimpleRenderSystem::CreatePipeline(VkRenderPass _renderPass) {
+    void SimpleRenderSystem::CreatePipeline(vk::RenderPass _renderPass) {
         assert(pipelineLayout != nullptr && "Cannot create pipeline before pipeline layout");
 
         PipelineConfigInfo pipelineConfig{};
@@ -56,16 +56,15 @@ namespace lve {
     }
 
     void SimpleRenderSystem::RenderGameObjects(FrameInfo& _frameInfo) {
+        // Liaison du pipeline
         lvePipeline->Bind(_frameInfo.commandBuffer);
 
-        vkCmdBindDescriptorSets(
-            _frameInfo.commandBuffer,
-            VK_PIPELINE_BIND_POINT_GRAPHICS,
+        // Liaison de l'ensemble de descripteurs global
+        _frameInfo.commandBuffer.bindDescriptorSets(
+            vk::PipelineBindPoint::eGraphics,
             pipelineLayout,
             0,
-            1,
-            &_frameInfo.globalDescriptorSet,
-            0,
+            _frameInfo.globalDescriptorSet,
             nullptr);
 
         for (auto& kv : _frameInfo.gameObjects) {
@@ -75,10 +74,18 @@ namespace lve {
             push.modelMatrix = obj.transform.mat4();
             push.normalMatrix = obj.transform.normalMatrix();
 
-            vkCmdPushConstants(_frameInfo.commandBuffer, pipelineLayout, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT, 0, sizeof(SimplePushConstantData), &push);
+            // Mise à jour des push constants
+            _frameInfo.commandBuffer.pushConstants<SimplePushConstantData>(
+                pipelineLayout,
+                vk::ShaderStageFlagBits::eVertex | vk::ShaderStageFlagBits::eFragment,
+                0,
+                push);
+
+            // Liaison du modèle et dessin
             obj.model->Bind(_frameInfo.commandBuffer);
             obj.model->Draw(_frameInfo.commandBuffer);
         }
     }
+
 
 }  // namespace lve

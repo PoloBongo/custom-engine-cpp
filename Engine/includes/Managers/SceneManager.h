@@ -6,7 +6,7 @@
 class SceneManager
 {
 public:
-	SceneManager();
+	SceneManager() {};
 	~SceneManager() = default;
 
 	SceneManager(const SceneManager&&) = delete;

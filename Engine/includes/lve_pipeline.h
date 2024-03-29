@@ -2,6 +2,8 @@
 
 #include "lve_device.h"
 
+#include <vulkan/vulkan.hpp>
+
 #include <string>
 #include <vector>
 
@@ -12,21 +14,22 @@ namespace lve {
 		PipelineConfigInfo(const PipelineConfigInfo&) = delete;
 		PipelineConfigInfo& operator=(const PipelineConfigInfo&) = delete;
 
-		std::vector<VkVertexInputAttributeDescription> attributeDescriptions{};
-		std::vector<VkVertexInputBindingDescription> bindingDescriptions{};
-		VkPipelineViewportStateCreateInfo viewportInfo;
-		VkPipelineInputAssemblyStateCreateInfo inputAssemblyInfo;
-		VkPipelineRasterizationStateCreateInfo rasterizationInfo;
-		VkPipelineMultisampleStateCreateInfo multisampleInfo;
-		VkPipelineColorBlendAttachmentState colorBlendAttachment;
-		VkPipelineColorBlendStateCreateInfo colorBlendInfo;
-		VkPipelineDepthStencilStateCreateInfo depthStencilInfo;
-		std::vector<VkDynamicState> dynamicStateEnables;
-		VkPipelineDynamicStateCreateInfo dynamicStateInfo;
-		VkPipelineLayout pipelineLayout = nullptr;
-		VkRenderPass renderPass = nullptr;
+		std::vector<vk::VertexInputAttributeDescription> attributeDescriptions{};
+		std::vector<vk::VertexInputBindingDescription> bindingDescriptions{};
+		vk::PipelineViewportStateCreateInfo viewportInfo;
+		vk::PipelineInputAssemblyStateCreateInfo inputAssemblyInfo;
+		vk::PipelineRasterizationStateCreateInfo rasterizationInfo;
+		vk::PipelineMultisampleStateCreateInfo multisampleInfo;
+		vk::PipelineColorBlendAttachmentState colorBlendAttachment;
+		vk::PipelineColorBlendStateCreateInfo colorBlendInfo;
+		vk::PipelineDepthStencilStateCreateInfo depthStencilInfo;
+		std::vector<vk::DynamicState> dynamicStateEnables;
+		vk::PipelineDynamicStateCreateInfo dynamicStateInfo;
+		vk::PipelineLayout pipelineLayout = nullptr;
+		vk::RenderPass renderPass = nullptr;
 		uint32_t subpass = 0;
 	};
+
 
 
 
@@ -49,6 +52,7 @@ namespace lve {
 		LvePipeline(const LvePipeline&) = delete;
 		LvePipeline &operator=(const LvePipeline&) = delete;
 
+<<<<<<< HEAD
 		/**
 		 * @brief Lie le pipeline graphique au tampon de commandes spécifié.
 		 *
@@ -65,6 +69,10 @@ namespace lve {
 		 *
 		 * @param _configInfo Une référence vers la structure PipelineConfigInfo à remplir avec les paramètres par défaut du pipeline.
 		 */
+=======
+
+		void Bind(vk::CommandBuffer commandBuffer);
+>>>>>>> TestAmelioration
 		static void DefaultPipelineConfigInfo(PipelineConfigInfo& _configInfo);
 		static void EnableAlphaBlending(PipelineConfigInfo& _configInfo);
 
@@ -92,6 +100,7 @@ namespace lve {
 		*/
 		void CreateGraphicsPipeline(const std::string& _vertFilepath, const std::string& _fragFilepath, const PipelineConfigInfo& _configInfo);
 
+<<<<<<< HEAD
 		/**
 		 * @brief Crée un module de shader à partir du code du shader spécifié.
 		 *
@@ -103,11 +112,14 @@ namespace lve {
 		 * @throw std::runtime_error si la création du module de shader échoue.
 		 */
 		void CreateShaderModule(const std::vector<char>& _code, VkShaderModule* _shaderModule);
+=======
+		void CreateShaderModule(const std::vector<char>& _code, vk::ShaderModule* _shaderModule);
+>>>>>>> TestAmelioration
 
 		LveDevice& lveDevice;
-		VkPipeline graphicsPipeline;
-		VkShaderModule vertShaderModule;
-		VkShaderModule fragShaderModule;
+		vk::Pipeline graphicsPipeline;
+		vk::ShaderModule vertShaderModule;
+		vk::ShaderModule fragShaderModule;
 	};
 
 } //namespace lve

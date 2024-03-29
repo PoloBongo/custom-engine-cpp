@@ -5,6 +5,7 @@
 #define GLM_FORCE_DEPTH_ZERO_TO_ONE
 #include <glm.hpp>
 #include <gtc/constants.hpp>
+#include <vulkan/vulkan.hpp>
 
 // std
 #include <array>
@@ -14,34 +15,34 @@
 
 namespace lve {
 
-    PointLightSystem::PointLightSystem(LveDevice& _device, VkRenderPass _renderPass, VkDescriptorSetLayout _globalSetLayout) : lveDevice(_device) {
+    PointLightSystem::PointLightSystem(LveDevice& _device, vk::RenderPass _renderPass, vk::DescriptorSetLayout _globalSetLayout) : lveDevice(_device) {
         CreatePipelineLayout(_globalSetLayout);
         CreatePipeline(_renderPass);
     }
 
-    PointLightSystem::~PointLightSystem() { vkDestroyPipelineLayout(lveDevice.device(), pipelineLayout, nullptr); }
+    PointLightSystem::~PointLightSystem() { lveDevice.device().destroyPipelineLayout(pipelineLayout, nullptr); }
 
-    void PointLightSystem::CreatePipelineLayout(VkDescriptorSetLayout _globalSetLayout) {
-        VkPushConstantRange pushConstantRange{};
-        pushConstantRange.stageFlags = VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT;
+    void PointLightSystem::CreatePipelineLayout(vk::DescriptorSetLayout _globalSetLayout) {
+        vk::PushConstantRange pushConstantRange{};
+        pushConstantRange.stageFlags = vk::ShaderStageFlagBits::eVertex | vk::ShaderStageFlagBits::eFragment;
         pushConstantRange.offset = 0;
         pushConstantRange.size = sizeof(PointLightPushConstants);
 
-        std::vector<VkDescriptorSetLayout> descriptorSetLayouts{ _globalSetLayout };
+        std::vector<vk::DescriptorSetLayout> descriptorSetLayouts{ _globalSetLayout };
 
-        VkPipelineLayoutCreateInfo pipelineLayoutInfo{};
-        pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
+        vk::PipelineLayoutCreateInfo pipelineLayoutInfo{};
+        pipelineLayoutInfo.sType = vk::StructureType::ePipelineLayoutCreateInfo;
         pipelineLayoutInfo.setLayoutCount = static_cast<uint32_t>(descriptorSetLayouts.size());
         pipelineLayoutInfo.pSetLayouts = descriptorSetLayouts.data();
         pipelineLayoutInfo.pushConstantRangeCount = 1;
         pipelineLayoutInfo.pPushConstantRanges = &pushConstantRange;
-        if (vkCreatePipelineLayout(lveDevice.device(), &pipelineLayoutInfo, nullptr, &pipelineLayout) !=
-            VK_SUCCESS) {
+        if (lveDevice.device().createPipelineLayout(&pipelineLayoutInfo, nullptr, &pipelineLayout) !=
+            vk::Result::eSuccess) {
             throw std::runtime_error("failed to create pipeline layout!");
         }
     }
 
-    void PointLightSystem::CreatePipeline(VkRenderPass _renderPass) {
+    void PointLightSystem::CreatePipeline(vk::RenderPass _renderPass) {
         assert(pipelineLayout != nullptr && "Cannot create pipeline before pipeline layout");
 
         PipelineConfigInfo pipelineConfig{};
@@ -80,35 +81,30 @@ namespace lve {
     }
 
     void PointLightSystem::Render(FrameInfo& _frameInfo) {
-
-        //sort lights
+        // Tri des lumières
         std::map<float, LveGameObject::id_t> sorted;
         for (auto& kv : _frameInfo.gameObjects) {
             auto& obj = kv.second;
             if (obj.pointLight == nullptr) continue;
 
-            // calculate distance 
+            // Calcul de la distance 
             auto offset = _frameInfo.camera.GetPosition() - obj.transform.translation;
             float distanceSquared = glm::dot(offset, offset);
             sorted[distanceSquared] = obj.GetId();
         }
-
         lvePipeline->Bind(_frameInfo.commandBuffer);
 
-        vkCmdBindDescriptorSets(
-            _frameInfo.commandBuffer,
-            VK_PIPELINE_BIND_POINT_GRAPHICS,
+        // Liaison de l'ensemble de descripteurs global
+        _frameInfo.commandBuffer.bindDescriptorSets(
+            vk::PipelineBindPoint::eGraphics,
             pipelineLayout,
             0,
-            1,
-            &_frameInfo.globalDescriptorSet,
-            0,
+            _frameInfo.globalDescriptorSet,
             nullptr);
-        // iterate through sorted lights in reverse order
 
+        // Itération à travers les lumières triées
         for (auto it = sorted.rbegin(); it != sorted.rend(); ++it) {
-
-            // use game obj id to find light object
+            // Utilisation de l'ID de l'objet pour trouver l'objet lumière
             auto& obj = _frameInfo.gameObjects.at(it->second);
 
             PointLightPushConstants push{};
@@ -116,17 +112,17 @@ namespace lve {
             push.color = glm::vec4(obj.color, obj.pointLight->lightIntensity);
             push.radius = obj.transform.scale.x;
 
-            vkCmdPushConstants(
-                _frameInfo.commandBuffer,
+            // Mise à jour des push constants
+            _frameInfo.commandBuffer.pushConstants<PointLightPushConstants>(
                 pipelineLayout,
-                VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT,
+                vk::ShaderStageFlagBits::eVertex | vk::ShaderStageFlagBits::eFragment,
                 0,
-                sizeof(PointLightPushConstants),
-                &push);
-            vkCmdDraw(_frameInfo.commandBuffer, 6, 1, 0, 0);
-        }
+                push);
 
-        
+            // Dessin d'une primitive pour représenter la lumière
+            _frameInfo.commandBuffer.draw(6, 1, 0, 0);
+        }
     }
+
 
 }  // namespace lve

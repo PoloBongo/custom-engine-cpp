@@ -55,29 +55,31 @@ namespace lve {
 	}
 
 
-	void LveModel::Bind(VkCommandBuffer _commandBuffer){
-		VkBuffer buffers[] = { vertexBuffer->getBuffer()};
-		VkDeviceSize offsets[] = { 0 };
-		vkCmdBindVertexBuffers(_commandBuffer, 0, 1, buffers, offsets);
+	void LveModel::Bind(vk::CommandBuffer _commandBuffer) {
+		vk::Buffer buffers[] = { vertexBuffer->getBuffer() };
+		vk::DeviceSize offsets[] = { 0 };
+		_commandBuffer.bindVertexBuffers(0, 1, buffers, offsets);
 
 		if (hasIndexBuffer) {
-			vkCmdBindIndexBuffer(_commandBuffer, indexBuffer->getBuffer(), 0, VK_INDEX_TYPE_UINT32);
+			_commandBuffer.bindIndexBuffer(indexBuffer->getBuffer(), 0, vk::IndexType::eUint32);
 		}
+	}
 
-	}
-	void LveModel::Draw(VkCommandBuffer _commandBuffer){
+
+	void LveModel::Draw(vk::CommandBuffer _commandBuffer) {
 		if (hasIndexBuffer) {
-			vkCmdDrawIndexed(_commandBuffer, indexCount, 1,0,0,0);
-		} else {
-			vkCmdDraw(_commandBuffer, vertexCount, 1, 0, 0);
+			_commandBuffer.drawIndexed(indexCount, 1, 0, 0, 0);
 		}
-		
+		else {
+			_commandBuffer.draw(vertexCount, 1, 0, 0);
+		}
 	}
+
 
 	void LveModel::CreateVertexBuffer(const std::vector<Vertex>& _vertices) {
 		vertexCount = static_cast<uint32_t>(_vertices.size());
 		assert(vertexCount >= 3 && "Vertex count must be at least 3");
-		VkDeviceSize bufferSize = sizeof(_vertices[0]) * vertexCount;
+		vk::DeviceSize bufferSize = sizeof(_vertices[0]) * vertexCount;
 		uint32_t vertexSize = sizeof(_vertices[0]);
 
 		// Déclaration et initialisation d'un objet de type LveBuffer nommé stagingBuffer
@@ -88,16 +90,21 @@ namespace lve {
 			vertexSize,
 			// Nombre total de vertices dans les données
 			vertexCount,
+<<<<<<< HEAD
 			// Indique que le tampon sera utilisé comme une source lors des opérations de transfert de données
 			VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
 			// Propriétés de la mémoire dans laquelle le tampon sera alloué :
 			// - VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT : La mémoire est visible pour le CPU
 			// - VK_MEMORY_PROPERTY_HOST_COHERENT_BIT : Les écritures CPU seront visibles par le GPU sans nécessiter d'opérations de synchronisation explicites
 			VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
+=======
+			vk::BufferUsageFlagBits::eTransferSrc,
+			vk::MemoryPropertyFlagBits::eHostVisible | vk::MemoryPropertyFlagBits::eHostCoherent,
+>>>>>>> TestAmelioration
 		};
 
 		stagingBuffer.map();
-		stagingBuffer.writeToBuffer((void*)_vertices.data());
+		stagingBuffer.writeToBuffer((void*)(_vertices.data()));
 
 		// Allocation dynamique d'un objet de type unique_ptr pointant vers un LveBuffer et initialisation avec make_unique
 		vertexBuffer = std::make_unique<LveBuffer>(
@@ -107,6 +114,7 @@ namespace lve {
 			vertexSize,
 			// Nombre total de vertices dans les données
 			vertexCount,
+<<<<<<< HEAD
 			// Combinaison de drapeaux d'utilisation du tampon :
 			// - VK_BUFFER_USAGE_VERTEX_BUFFER_BIT : Le tampon est utilisé comme tampon de vertex
 			// - VK_BUFFER_USAGE_TRANSFER_DST_BIT : Le tampon peut être utilisé comme destination lors des opérations de transfert de données
@@ -115,25 +123,36 @@ namespace lve {
 			// Propriétés de la mémoire dans laquelle le tampon sera alloué :
 			// - VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT : La mémoire est locale au périphérique et n'est pas visible pour le CPU
 			VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT
+=======
+			vk::BufferUsageFlagBits::eVertexBuffer | vk::BufferUsageFlagBits::eTransferDst | vk::BufferUsageFlagBits::eIndexBuffer,
+			vk::MemoryPropertyFlagBits::eDeviceLocal
+>>>>>>> TestAmelioration
 		);
-
 
 		lveDevice.copyBuffer(stagingBuffer.getBuffer(), vertexBuffer->getBuffer(), bufferSize);
 	}
 
+
 	void LveModel::CreateIndexBuffer(const std::vector<uint32_t>& _indices) {
+		// Détermine le nombre d'indices et vérifie s'il y en a au moins un
 		indexCount = static_cast<uint32_t>(_indices.size());
 		hasIndexBuffer = indexCount > 0;
 
+		// Si aucun indice n'est présent, la fonction se termine
 		if (!hasIndexBuffer) {
 			return;
 		}
 
-		VkDeviceSize bufferSize = sizeof(_indices[0]) * indexCount;
+		// Calcul de la taille du tampon en bytes
+		vk::DeviceSize bufferSize = sizeof(_indices[0]) * indexCount;
 		uint32_t indexSize = sizeof(_indices[0]);
 
+<<<<<<< HEAD
 
 		// Création d'un objet de type LveBuffer nommé stagingBuffer en utilisant une initialisation directe
+=======
+		// Création du tampon de transfert pour les données d'indices
+>>>>>>> TestAmelioration
 		LveBuffer stagingBuffer{
 			// Paramètre représentant le périphérique graphique associé au tampon
 			lveDevice,
@@ -141,18 +160,28 @@ namespace lve {
 			indexSize,
 			// Nombre total d'indices dans les données
 			indexCount,
+<<<<<<< HEAD
 			// Indique que le tampon sera utilisé comme une source lors des opérations de transfert de données
 			VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
 			// Propriétés de la mémoire dans laquelle le tampon sera alloué :
 			// - VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT : La mémoire est visible pour le CPU
 			// - VK_MEMORY_PROPERTY_HOST_COHERENT_BIT : Les écritures CPU seront visibles par le GPU sans nécessiter d'opérations de synchronisation explicites
 			VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT
+=======
+			vk::BufferUsageFlagBits::eTransferSrc,
+			vk::MemoryPropertyFlagBits::eHostVisible | vk::MemoryPropertyFlagBits::eHostCoherent,
+>>>>>>> TestAmelioration
 		};
 
+		// Mappage du tampon de transfert et écriture des données
 		stagingBuffer.map();
-		stagingBuffer.writeToBuffer((void*)_indices.data());
+		stagingBuffer.writeToBuffer((void*)(_indices.data()));
 
+<<<<<<< HEAD
 		// Allocation dynamique d'un objet unique_ptr pointant vers un LveBuffer et initialisation avec make_unique
+=======
+		// Création du tampon d'indices sur le GPU
+>>>>>>> TestAmelioration
 		indexBuffer = std::make_unique<LveBuffer>(
 			// Paramètre représentant le périphérique graphique associé au tampon
 			lveDevice,
@@ -160,6 +189,7 @@ namespace lve {
 			indexSize,
 			// Nombre total d'indices dans les données
 			indexCount,
+<<<<<<< HEAD
 			// Combinaison de drapeaux d'utilisation du tampon :
 			// - VK_BUFFER_USAGE_VERTEX_BUFFER_BIT : Le tampon est utilisé comme tampon de vertex
 			// - VK_BUFFER_USAGE_TRANSFER_DST_BIT : Le tampon peut être utilisé comme destination lors des opérations de transfert de données
@@ -168,30 +198,35 @@ namespace lve {
 			// Propriétés de la mémoire dans laquelle le tampon sera alloué :
 			// - VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT : La mémoire est locale au périphérique et n'est pas visible pour le CPU
 			VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT
+=======
+			vk::BufferUsageFlagBits::eVertexBuffer | vk::BufferUsageFlagBits::eTransferDst | vk::BufferUsageFlagBits::eIndexBuffer,
+			vk::MemoryPropertyFlagBits::eDeviceLocal
+>>>>>>> TestAmelioration
 		);
 
+		// Copie des données de l'indice du tampon de transfert vers le tampon d'indices du GPU
 		lveDevice.copyBuffer(stagingBuffer.getBuffer(), indexBuffer->getBuffer(), bufferSize);
-
-
 	}
 
-	std::vector<VkVertexInputBindingDescription> LveModel::Vertex::GetBindingDescriptions() {
-		std::vector< VkVertexInputBindingDescription> bindingDescriptions(1);
-		bindingDescriptions[0].binding = 0;
-		bindingDescriptions[0].stride =sizeof(Vertex);
-		bindingDescriptions[0].inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
-		return bindingDescriptions;
-	 }
-	std::vector<VkVertexInputAttributeDescription> LveModel::Vertex::GetAttributeDescriptions() {
-		std::vector< VkVertexInputAttributeDescription> attributeDescriptions{};
 
-		attributeDescriptions.push_back({ 0,0,VK_FORMAT_R32G32B32_SFLOAT, offsetof(Vertex, position)});
-		attributeDescriptions.push_back({ 1,0,VK_FORMAT_R32G32B32_SFLOAT, offsetof(Vertex, color)});
-		attributeDescriptions.push_back({ 2,0,VK_FORMAT_R32G32B32_SFLOAT, offsetof(Vertex, normal)});
-		attributeDescriptions.push_back({ 1,0,VK_FORMAT_R32G32_SFLOAT, offsetof(Vertex, uv)});
+	std::vector<vk::VertexInputBindingDescription> LveModel::Vertex::GetBindingDescriptions() {
+		std::vector<vk::VertexInputBindingDescription> bindingDescriptions(1);
+		bindingDescriptions[0].setBinding(0);
+		bindingDescriptions[0].setStride(sizeof(Vertex));
+		bindingDescriptions[0].setInputRate(vk::VertexInputRate::eVertex);
+		return bindingDescriptions;
+	}
+
+	std::vector<vk::VertexInputAttributeDescription> LveModel::Vertex::GetAttributeDescriptions() {
+		std::vector<vk::VertexInputAttributeDescription> attributeDescriptions;
+
+		attributeDescriptions.push_back({ 0, 0, vk::Format::eR32G32B32Sfloat, static_cast<uint32_t>(offsetof(Vertex, position)) });
+		attributeDescriptions.push_back({ 1, 0, vk::Format::eR32G32B32Sfloat, static_cast<uint32_t>(offsetof(Vertex, color)) });
+		attributeDescriptions.push_back({ 2, 0, vk::Format::eR32G32B32Sfloat, static_cast<uint32_t>(offsetof(Vertex, normal)) });
+		attributeDescriptions.push_back({ 3, 0, vk::Format::eR32G32Sfloat, static_cast<uint32_t>(offsetof(Vertex, uv)) });
 
 		return attributeDescriptions;
-	 }
+	}
 
 	void LveModel::Builder::LoadModel(const std::string& _filepath) {
 		tinyobj::attrib_t attrib;

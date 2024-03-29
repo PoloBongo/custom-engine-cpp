@@ -1,5 +1,7 @@
 #pragma once
 
+#include <vulkan/vulkan.hpp>
+
 #include "lve_camera.h"
 #include "lve_pipeline.h"
 #include "lve_device.h"
@@ -26,7 +28,7 @@ namespace lve {
     class SimpleRenderSystem {
     public:
 
-        SimpleRenderSystem(LveDevice& _device, VkRenderPass _renderPass, VkDescriptorSetLayout _globalSetLayout);
+        SimpleRenderSystem(LveDevice& _device, vk::RenderPass _renderPass, vk::DescriptorSetLayout _globalSetLayout);
         ~SimpleRenderSystem();
 
         SimpleRenderSystem(const SimpleRenderSystem&) = delete;
@@ -52,7 +54,7 @@ namespace lve {
          *
          * @param _globalSetLayout Le layout du descripteur global.
          */
-        void CreatePipelineLayout(VkDescriptorSetLayout _globalSetLayout);
+        void CreatePipelineLayout(vk::DescriptorSetLayout _globalSetLayout);
 
         /**
          * @brief Crée le pipeline pour le système de rendu simple.
@@ -62,13 +64,13 @@ namespace lve {
          *
          * @param _renderPass Le render pass utilisé pour le rendu.
          */
-        void CreatePipeline(VkRenderPass _renderPass);
+        void CreatePipeline(vk::RenderPass _renderPass);
 
         LveDevice &lveDevice;
 
 
         std::unique_ptr<LvePipeline> lvePipeline;
-        VkPipelineLayout pipelineLayout;
+        vk::PipelineLayout pipelineLayout;
     };
 
 } // namespace lve
