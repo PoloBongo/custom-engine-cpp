@@ -18,17 +18,34 @@ namespace lve {
         LveBuffer(const LveBuffer&) = delete;
         LveBuffer& operator=(const LveBuffer&) = delete;
 
+
         VkResult map(VkDeviceSize _size = VK_WHOLE_SIZE, VkDeviceSize _offset = 0);
+
+
         void unmap();
 
+
         void writeToBuffer(void* _data, VkDeviceSize _size = VK_WHOLE_SIZE, VkDeviceSize _offset = 0);
+
+
         VkResult flush(VkDeviceSize _size = VK_WHOLE_SIZE, VkDeviceSize _offset = 0);
+
+
         VkDescriptorBufferInfo descriptorInfo(VkDeviceSize _size = VK_WHOLE_SIZE, VkDeviceSize _offset = 0);
+
+
         VkResult invalidate(VkDeviceSize _size = VK_WHOLE_SIZE, VkDeviceSize _offset = 0);
 
+
         void writeToIndex(void* _data, int _index);
+
+
         VkResult flushIndex(int _index);
+
+
         VkDescriptorBufferInfo descriptorInfoForIndex(int _index);
+
+
         VkResult invalidateIndex(int _index);
 
         VkBuffer getBuffer() const { return buffer; }
@@ -41,6 +58,8 @@ namespace lve {
         VkDeviceSize getBufferSize() const { return bufferSize; }
 
     private:
+
+
         static VkDeviceSize getAlignment(VkDeviceSize _instanceSize, VkDeviceSize _minOffsetAlignment);
 
         LveDevice& lveDevice;

@@ -118,11 +118,11 @@
       </Command>
     </CustomBuildStep>
     <PreBuildEvent>
-      <Command>$(SolutionDir)compile.bat</Command>
-    </PreBuildEvent>
-    <PostBuildEvent>
       <Command>
       </Command>
+    </PreBuildEvent>
+    <PostBuildEvent>
+      <Command>$(SolutionDir)compile.bat</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
