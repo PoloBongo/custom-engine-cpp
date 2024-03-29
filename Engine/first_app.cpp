@@ -154,7 +154,7 @@ namespace lve {
     {1.f, 1.f, 1.f}  //
         };
 
-        for (int i = 0; i < lightColors.size(); i++) {
+       for (int i = 0; i < lightColors.size(); i++) {
             auto pointLight = LveGameObject::MakePointLight(0.2f);
             pointLight.color = lightColors[i];
             auto rotateLight = glm::rotate(

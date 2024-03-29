@@ -24,9 +24,9 @@ namespace lve {
     }
 
     LvePipeline::~LvePipeline() {
-        lveDevice.device().destroyShaderModule(vertShaderModule, nullptr);
-        lveDevice.device().destroyShaderModule(fragShaderModule, nullptr);
-        lveDevice.device().destroyPipeline(graphicsPipeline, nullptr);
+        lveDevice.device().destroyShaderModule(vertShaderModule);
+        lveDevice.device().destroyShaderModule(fragShaderModule);
+        lveDevice.device().destroyPipeline(graphicsPipeline);
     }
 
     std::vector<char> LvePipeline::ReadFile(const std::string& _filepath) {
@@ -65,20 +65,34 @@ namespace lve {
         CreateShaderModule(fragCode, &fragShaderModule);
 
         vk::PipelineShaderStageCreateInfo shaderStages[2];
+        shaderStages[0].sType = vk::StructureType::ePipelineShaderStageCreateInfo;
         shaderStages[0].setStage(vk::ShaderStageFlagBits::eVertex);
         shaderStages[0].setModule(vertShaderModule);
         shaderStages[0].setPName("main");
+        shaderStages[0].flags = vk::PipelineShaderStageCreateFlags(0);
+        shaderStages[0].pNext = nullptr;
+        shaderStages[0].pSpecializationInfo = nullptr;
+        shaderStages[1].sType = vk::StructureType::ePipelineShaderStageCreateInfo;
         shaderStages[1].setStage(vk::ShaderStageFlagBits::eFragment);
         shaderStages[1].setModule(fragShaderModule);
         shaderStages[1].setPName("main");
+        shaderStages[1].flags = vk::PipelineShaderStageCreateFlags(0);
+        shaderStages[1].pNext = nullptr;
+        shaderStages[1].pSpecializationInfo = nullptr;
 
         auto& bindingDescriptions = _configInfo.bindingDescriptions;
         auto& attributeDescriptions = _configInfo.attributeDescriptions;
         vk::PipelineVertexInputStateCreateInfo vertexInputInfo{};
+        vertexInputInfo.sType = vk::StructureType::ePipelineVertexInputStateCreateInfo;
+        vertexInputInfo.vertexAttributeDescriptionCount = static_cast<uint32_t>(attributeDescriptions.size());
+        vertexInputInfo.vertexBindingDescriptionCount = static_cast<uint32_t>(bindingDescriptions.size());
+        vertexInputInfo.pVertexAttributeDescriptions = attributeDescriptions.data();
+        vertexInputInfo.pVertexBindingDescriptions = bindingDescriptions.data();
         vertexInputInfo.setVertexAttributeDescriptions(attributeDescriptions);
         vertexInputInfo.setVertexBindingDescriptions(bindingDescriptions);
 
         vk::GraphicsPipelineCreateInfo pipelineInfo{};
+        pipelineInfo.sType = vk::StructureType::eGraphicsPipelineCreateInfo;
         pipelineInfo.setStageCount(2);
         pipelineInfo.setPStages(shaderStages);
         pipelineInfo.setPVertexInputState(&vertexInputInfo);
@@ -98,7 +112,7 @@ namespace lve {
         pipelineInfo.setBasePipelineHandle(nullptr);
 
         try {
-            auto result = lveDevice.device().createGraphicsPipeline(nullptr, pipelineInfo);
+            auto result = lveDevice.device().createGraphicsPipeline(nullptr, pipelineInfo,nullptr);
             if (result.result != vk::Result::eSuccess) {
                 throw std::runtime_error("failed to create graphics pipeline!");
             }
@@ -111,6 +125,7 @@ namespace lve {
 
     void LvePipeline::CreateShaderModule(const std::vector<char>& _code, vk::ShaderModule* _shaderModule) {
         vk::ShaderModuleCreateInfo createInfo{};
+        createInfo.sType = vk::StructureType::eShaderModuleCreateInfo;
         createInfo.setCodeSize(_code.size());
         createInfo.setPCode(reinterpret_cast<const uint32_t*>(_code.data()));
 
@@ -195,7 +210,7 @@ namespace lve {
         _configInfo.dynamicStateInfo.pDynamicStates = _configInfo.dynamicStateEnables.data();
         _configInfo.dynamicStateInfo.dynamicStateCount =
             static_cast<uint32_t>(_configInfo.dynamicStateEnables.size());
-        _configInfo.dynamicStateInfo.flags = vk::PipelineDynamicStateCreateFlags{};
+        _configInfo.dynamicStateInfo.flags = vk::PipelineDynamicStateCreateFlags(0);
 
         _configInfo.bindingDescriptions = LveModel::Vertex::GetBindingDescriptions();
         _configInfo.attributeDescriptions = LveModel::Vertex::GetAttributeDescriptions();

@@ -3,6 +3,7 @@
 #include <cassert>
 #include <stdexcept>
 #include <iostream>
+#include <map>
 
 namespace lve {
 
@@ -38,11 +39,17 @@ namespace lve {
     // *************** Descriptor Set Layout *********************
 
     LveDescriptorSetLayout::LveDescriptorSetLayout(
-        LveDevice& _lveDevice, std::unordered_map<uint32_t, vk::DescriptorSetLayoutBinding> _bindings)
+        LveDevice& _lveDevice,
+        std::unordered_map<uint32_t, vk::DescriptorSetLayoutBinding> _bindings)
         : lveDevice{ _lveDevice }, bindings{ _bindings } {
+
+        // Tri des bindings par indice de binding
+        std::map<uint32_t, vk::DescriptorSetLayoutBinding> sortedBindings(
+            _bindings.begin(), _bindings.end());
+
         // Création d'un vecteur contenant les bindings de l'ensemble de descripteurs
         std::vector<vk::DescriptorSetLayoutBinding> setLayoutBindings{};
-        for (auto kv : _bindings) {
+        for (const auto& kv : sortedBindings) {
             setLayoutBindings.push_back(kv.second);
         }
 
@@ -54,7 +61,7 @@ namespace lve {
 
         // Création de l'ensemble de descripteurs
         try {
-            descriptorSetLayout = lveDevice.device().createDescriptorSetLayout(descriptorSetLayoutInfo);
+            descriptorSetLayout = lveDevice.device().createDescriptorSetLayout(descriptorSetLayoutInfo, nullptr);
         }
         catch (const vk::SystemError& e) {
             throw std::runtime_error("failed to create descriptor set layout: " + std::string(e.what()));

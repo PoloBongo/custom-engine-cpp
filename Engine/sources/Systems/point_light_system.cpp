@@ -5,6 +5,7 @@
 #define GLM_FORCE_DEPTH_ZERO_TO_ONE
 #include <glm.hpp>
 #include <gtc/constants.hpp>
+#include <vulkan/vulkan.hpp>
 
 // std
 #include <array>
@@ -14,29 +15,29 @@
 
 namespace lve {
 
-    PointLightSystem::PointLightSystem(LveDevice& _device, vk::RenderPass _renderPass, VkDescriptorSetLayout _globalSetLayout) : lveDevice(_device) {
+    PointLightSystem::PointLightSystem(LveDevice& _device, vk::RenderPass _renderPass, vk::DescriptorSetLayout _globalSetLayout) : lveDevice(_device) {
         CreatePipelineLayout(_globalSetLayout);
         CreatePipeline(_renderPass);
     }
 
-    PointLightSystem::~PointLightSystem() { vkDestroyPipelineLayout(lveDevice.device(), pipelineLayout, nullptr); }
+    PointLightSystem::~PointLightSystem() { lveDevice.device().destroyPipelineLayout(pipelineLayout, nullptr); }
 
-    void PointLightSystem::CreatePipelineLayout(VkDescriptorSetLayout _globalSetLayout) {
-        VkPushConstantRange pushConstantRange{};
-        pushConstantRange.stageFlags = VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT;
+    void PointLightSystem::CreatePipelineLayout(vk::DescriptorSetLayout _globalSetLayout) {
+        vk::PushConstantRange pushConstantRange{};
+        pushConstantRange.stageFlags = vk::ShaderStageFlagBits::eVertex | vk::ShaderStageFlagBits::eFragment;
         pushConstantRange.offset = 0;
         pushConstantRange.size = sizeof(PointLightPushConstants);
 
-        std::vector<VkDescriptorSetLayout> descriptorSetLayouts{ _globalSetLayout };
+        std::vector<vk::DescriptorSetLayout> descriptorSetLayouts{ _globalSetLayout };
 
-        VkPipelineLayoutCreateInfo pipelineLayoutInfo{};
-        pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
+        vk::PipelineLayoutCreateInfo pipelineLayoutInfo{};
+        pipelineLayoutInfo.sType = vk::StructureType::ePipelineLayoutCreateInfo;
         pipelineLayoutInfo.setLayoutCount = static_cast<uint32_t>(descriptorSetLayouts.size());
         pipelineLayoutInfo.pSetLayouts = descriptorSetLayouts.data();
         pipelineLayoutInfo.pushConstantRangeCount = 1;
         pipelineLayoutInfo.pPushConstantRanges = &pushConstantRange;
-        if (vkCreatePipelineLayout(lveDevice.device(), &pipelineLayoutInfo, nullptr, &pipelineLayout) !=
-            VK_SUCCESS) {
+        if (lveDevice.device().createPipelineLayout(&pipelineLayoutInfo, nullptr, &pipelineLayout) !=
+            vk::Result::eSuccess) {
             throw std::runtime_error("failed to create pipeline layout!");
         }
     }
@@ -91,6 +92,7 @@ namespace lve {
             float distanceSquared = glm::dot(offset, offset);
             sorted[distanceSquared] = obj.GetId();
         }
+        lvePipeline->Bind(_frameInfo.commandBuffer);
 
         // Liaison de l'ensemble de descripteurs global
         _frameInfo.commandBuffer.bindDescriptorSets(

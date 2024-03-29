@@ -28,11 +28,10 @@ namespace lve {
             lveSwapChain = std::make_unique<LveSwapChain>(lveDevice, extent);
         }
         else {
-            auto oldSwapChain = std::move(lveSwapChain);
-            std::shared_ptr<LveSwapChain> sharedOldSwapChain = std::move(oldSwapChain);
-            lveSwapChain = std::make_unique<LveSwapChain>(lveDevice, extent, sharedOldSwapChain);
+            std::shared_ptr<LveSwapChain> oldSwapChain = std::move(lveSwapChain);
+            lveSwapChain = std::make_unique<LveSwapChain>(lveDevice, extent, oldSwapChain);
 
-            if (!oldSwapChain->CompareSwapFormats(*lveSwapChain)) {
+            if (!oldSwapChain->CompareSwapFormats(*lveSwapChain.get())) {
                 throw std::runtime_error("Swap chain image(or depth) format has changed!");
             }
         }
@@ -43,15 +42,14 @@ namespace lve {
         commandBuffers.resize(LveSwapChain::MAX_FRAMES_IN_FLIGHT);
 
         vk::CommandBufferAllocateInfo allocInfo{};
+        allocInfo.sType = vk::StructureType::eCommandBufferAllocateInfo;
         allocInfo.level = vk::CommandBufferLevel::ePrimary;
         allocInfo.commandPool = lveDevice.getCommandPool();
         allocInfo.commandBufferCount = static_cast<uint32_t>(commandBuffers.size());
 
-        try {
-            commandBuffers = lveDevice.device().allocateCommandBuffers(allocInfo);
-        }
-        catch (const vk::SystemError& e) {
-            throw std::runtime_error("Failed to allocate command buffers!");
+        if (lveDevice.device().allocateCommandBuffers(&allocInfo, commandBuffers.data()) !=
+            vk::Result::eSuccess) {
+            throw std::runtime_error("failed to allocate command buffers!");
         }
     }
 
@@ -73,6 +71,7 @@ namespace lve {
             RecreateSwapChain();
             return nullptr;
         }
+     
         else if (result != vk::Result::eSuccess) {
             throw std::runtime_error("Failed to acquire swap chain image!");
         }
@@ -81,9 +80,11 @@ namespace lve {
 
         auto commandBuffer = GetCurrentCommandBuffer();
         vk::CommandBufferBeginInfo beginInfo{};
-        beginInfo.flags = vk::CommandBufferUsageFlagBits::eOneTimeSubmit;
+        beginInfo.sType = vk::StructureType::eCommandBufferBeginInfo;
 
-        commandBuffer.begin(beginInfo);
+        if (commandBuffer.begin(&beginInfo) != vk::Result::eSuccess) {
+            throw std::runtime_error("failed to begin recording command buffer!");
+        }
         return commandBuffer;
     }
 
@@ -118,6 +119,7 @@ namespace lve {
             "Can't begin render pass on command buffer from a different frame");
 
         vk::RenderPassBeginInfo renderPassInfo{};
+        renderPassInfo.sType = vk::StructureType::eRenderPassBeginInfo;
         renderPassInfo.renderPass = lveSwapChain->getRenderPass();
         renderPassInfo.framebuffer = lveSwapChain->getFrameBuffer(currentImageIndex);
 
@@ -126,11 +128,11 @@ namespace lve {
 
         std::array<vk::ClearValue, 2> clearValues{};
         clearValues[0].color = vk::ClearColorValue(std::array<float, 4>{0.01f, 0.01f, 0.01f, 1.0f});
-        clearValues[1].depthStencil = vk::ClearDepthStencilValue(1.0f, 0);
+        clearValues[1].depthStencil = vk::ClearDepthStencilValue{ 1.0f, 0 };
         renderPassInfo.clearValueCount = static_cast<uint32_t>(clearValues.size());
         renderPassInfo.pClearValues = clearValues.data();
 
-        commandBuffer.beginRenderPass(renderPassInfo, vk::SubpassContents::eInline);
+        commandBuffer.beginRenderPass(&renderPassInfo, vk::SubpassContents::eInline);
 
         vk::Viewport viewport{};
         viewport.x = 0.0f;
@@ -140,8 +142,8 @@ namespace lve {
         viewport.minDepth = 0.0f;
         viewport.maxDepth = 1.0f;
         vk::Rect2D scissor{ {0, 0}, lveSwapChain->getSwapChainExtent() };
-        commandBuffer.setViewport(0, viewport);
-        commandBuffer.setScissor(0, scissor);
+        commandBuffer.setViewport(0, 1, &viewport);
+        commandBuffer.setScissor(0,1, &scissor);
     }
 
 

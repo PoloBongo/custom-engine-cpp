@@ -265,7 +265,7 @@ namespace lve {
         std::vector<vk::Image> swapChainImages;
         std::vector<vk::ImageView> swapChainImageViews;
 
-        LveDevice& device;
+        LveDevice& lveDevice;
         vk::Extent2D windowExtent;
 
         vk::SwapchainKHR swapChain;

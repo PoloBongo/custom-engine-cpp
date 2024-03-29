@@ -26,7 +26,7 @@ namespace lve {
     class PointLightSystem {
     public:
 
-        PointLightSystem(LveDevice& _device, vk::RenderPass _renderPass, VkDescriptorSetLayout _globalSetLayout);
+        PointLightSystem(LveDevice& _device, vk::RenderPass _renderPass, vk::DescriptorSetLayout _globalSetLayout);
         ~PointLightSystem();
 
         PointLightSystem(const PointLightSystem&) = delete;
@@ -54,7 +54,7 @@ namespace lve {
          *
          * @param _globalSetLayout Layout du jeu de descripteurs globaux utilisé dans le pipeline.
          */
-        void CreatePipelineLayout(VkDescriptorSetLayout _globalSetLayout);
+        void CreatePipelineLayout(vk::DescriptorSetLayout _globalSetLayout);
 
         /**
         * @brief Crée le pipeline pour le système de lumières ponctuelles.
@@ -71,7 +71,7 @@ namespace lve {
 
 
         std::unique_ptr<LvePipeline> lvePipeline;
-        VkPipelineLayout pipelineLayout;
+        vk::PipelineLayout pipelineLayout;
     };
 
 } // namespace lve
