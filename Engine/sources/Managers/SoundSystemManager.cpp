@@ -53,16 +53,6 @@ void SoundSystemManager::getMasterSoundGroup(SoundGroup* pSoundGroup)
     }
 }
 
-//void SoundSystemManager::getSoundGroup(SoundClass pSound, SoundGroup** soundGroup)
-//{
-    //FMOD_RESULT result = pSound->getSoundGroup(soundGroup);
-
-    //if (result != FMOD_OK) {
-    //    std::cout << "le groupe n'a pas charge : " << FMOD_ErrorString(result) << std::endl;
-    //    return;
-    //}
-//}
-
 void SoundSystemManager::playSound(SoundClass pSound, bool isPlay, int loopCount, float volume, Channel* channelPtr)
 {
     FMOD::Channel* channel = nullptr;

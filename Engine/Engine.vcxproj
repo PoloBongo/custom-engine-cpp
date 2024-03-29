@@ -158,6 +158,9 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="lve_image.cpp" />
+    <ClCompile Include="sources\CoreEngine.cpp" />
+    <ClCompile Include="sources\Managers\WindowManager.cpp" />
+    <ClCompile Include="sources\ModuleManager.cpp" />
     <ClCompile Include="sources\Scene\BaseScene.cpp" />
     <ClCompile Include="Component.cpp" />
     <ClCompile Include="Engine.cpp" />
@@ -166,6 +169,10 @@
     <ClCompile Include="Transform.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="includes\CoreEngine.h" />
+    <ClInclude Include="includes\Managers\WindowManager.h" />
+    <ClInclude Include="includes\Module.h" />
+    <ClInclude Include="includes\ModuleManager.h" />
     <ClInclude Include="includes\Scene\BaseScene.h" />
     <ClInclude Include="Component.h" />
     <ClInclude Include="EngineTestCode.h" />
