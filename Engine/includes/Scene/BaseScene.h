@@ -33,7 +33,7 @@ public:
 	// Creates a new file at the specified location and copies this scene's data in to it
 	// Always copies saved file if exists, old files can optionally be deleted
 	bool SetFileName(const std::string& fileName, bool bDeletePreviousFiles);
-	std::string GetFileName() const;
+	//std::string GetFileName() const;
 
 	bool IsUsingSaveFile() const;
 
@@ -64,6 +64,15 @@ public:
 
 	GameObject::id_t FirstObjectWithTag(const std::string& tag);
 
+	std::string m_Name;
+	std::string m_FileName;
 
+	std::vector<GameObject::id_t> m_PendingDestroyObjects; // Objects to destroy at LateUpdate this frame
+	std::vector<GameObject*> m_PendingAddObjects; // Objects to add as root objects at LateUpdate
+	std::vector<GameObject*> m_RootObjects;
+
+
+	bool m_bInitialized = false;
+	bool m_bLoaded = false;
 };
 
