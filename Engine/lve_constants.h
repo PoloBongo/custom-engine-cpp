@@ -3,6 +3,15 @@
 #include <glm.hpp>
 #include <gtc/quaternion.hpp> 
 
+#include <string>
+
+#define PI (glm::pi<float>())
+#define TWO_PI (glm::two_pi<float>())
+#define PI_DIV_TWO (glm::half_pi<float>())
+#define PI_DIV_FOUR (glm::quarter_pi<float>())
+#define THREE_PI_DIV_TWO (glm::three_over_two_pi<float>())
+#define EPSILON (glm::epsilon<float>())
+
 namespace lve
 {
 	// Constants
@@ -35,4 +44,11 @@ namespace lve
 	extern const std::string EMPTY_STRING;
 
 	extern const uint32_t MAX_TEXTURE_DIM;
+
+	#if defined(_MSC_VER) && _MSVC_LANG >= 201703L // C++17
+	#define FLEX_NO_DISCARD [[nodiscard]]
+	#else
+	#define FLEX_NO_DISCARD
+	#endif
+
 }

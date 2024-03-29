@@ -91,7 +91,7 @@ namespace lve {
 		return m_Proj;
 	}
 
-	void BaseCamera::LookAt(glm::vec3 point, real speed)
+	void BaseCamera::LookAt(glm::vec3 point, float speed)
 	{
 		speed = Saturate(speed);
 
@@ -115,7 +115,7 @@ namespace lve {
 		position += translation;
 	}
 
-	void BaseCamera::SetViewDirection(real yawRad, real pitchRad)
+	void BaseCamera::SetViewDirection(float yawRad, float pitchRad)
 	{
 		yaw = yawRad;
 		pitch = pitchRad;

@@ -1,7 +1,8 @@
 #pragma once
 
 // lve
-#include <lve_constants.h>
+#include "lve_constants.h"
+#include "functionHelpers.h"
 
 // Librairies
 #include <glm.hpp>
