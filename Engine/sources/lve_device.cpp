@@ -21,7 +21,7 @@ namespace lve {
 	 * @param pUserData Des données utilisateur optionnelles.
 	 * @return VK_FALSE indiquant que le traitement du message est terminé, et aucune action supplémentaire n'est nécessaire.
 	 */
-	static VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(
+	static VKAPI_ATTR vk::Bool32 VKAPI_CALL debugCallback(
 		vk::DebugUtilsMessageSeverityFlagBitsEXT messageSeverity,
 		vk::DebugUtilsMessageTypeFlagsEXT messageType,
 		const vk::DebugUtilsMessengerCallbackDataEXT* pCallbackData,
