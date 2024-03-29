@@ -45,14 +45,13 @@ namespace lve {
 		 * @param _vertFilepath Le chemin d'accès au fichier contenant le code source du shader de vertex.
 		 * @param _fragFilepath Le chemin d'accès au fichier contenant le code source du shader de fragment.
 		 */
-		LvePipeline(LveDevice & _device, const std::string& _vertFilepath, const std::string& _fragFilepath, const PipelineConfigInfo& _configInfo);
+		LvePipeline(LveDevice& _device, const std::string& _vertFilepath, const std::string& _fragFilepath, const PipelineConfigInfo& _configInfo);
 
 		~LvePipeline();
 
 		LvePipeline(const LvePipeline&) = delete;
-		LvePipeline &operator=(const LvePipeline&) = delete;
+		LvePipeline& operator=(const LvePipeline&) = delete;
 
-<<<<<<< HEAD
 		/**
 		 * @brief Lie le pipeline graphique au tampon de commandes spécifié.
 		 *
@@ -60,7 +59,7 @@ namespace lve {
 		 *
 		 * @param _commandBuffer Le tampon de commandes auquel le pipeline graphique doit être lié.
 		 */
-		void Bind(VkCommandBuffer commandBuffer);
+		void Bind(vk::CommandBuffer commandBuffer);
 
 		/**
 		 * @brief Configure les paramètres par défaut du pipeline.
@@ -69,10 +68,6 @@ namespace lve {
 		 *
 		 * @param _configInfo Une référence vers la structure PipelineConfigInfo à remplir avec les paramètres par défaut du pipeline.
 		 */
-=======
-
-		void Bind(vk::CommandBuffer commandBuffer);
->>>>>>> TestAmelioration
 		static void DefaultPipelineConfigInfo(PipelineConfigInfo& _configInfo);
 		static void EnableAlphaBlending(PipelineConfigInfo& _configInfo);
 
@@ -80,9 +75,9 @@ namespace lve {
 
 		/**
 		* @brief Lit le contenu d'un fichier binaire et le retourne sous forme de vecteur de caractères.
-		 *
-		 * Cette fonction ouvre un fichier binaire, lit son contenu dans un vecteur de caractères et le retourne.
-		 *
+		*
+		* Cette fonction ouvre un fichier binaire, lit son contenu dans un vecteur de caractères et le retourne.
+		*
 		* @param _filepath Le chemin d'accès au fichier à lire.
 		* @return Un vecteur de caractères contenant le contenu du fichier.
 		* @throws std::runtime_error si le fichier ne peut pas être ouvert.
@@ -100,7 +95,7 @@ namespace lve {
 		*/
 		void CreateGraphicsPipeline(const std::string& _vertFilepath, const std::string& _fragFilepath, const PipelineConfigInfo& _configInfo);
 
-<<<<<<< HEAD
+
 		/**
 		 * @brief Crée un module de shader à partir du code du shader spécifié.
 		 *
@@ -111,10 +106,8 @@ namespace lve {
 		 *
 		 * @throw std::runtime_error si la création du module de shader échoue.
 		 */
-		void CreateShaderModule(const std::vector<char>& _code, VkShaderModule* _shaderModule);
-=======
 		void CreateShaderModule(const std::vector<char>& _code, vk::ShaderModule* _shaderModule);
->>>>>>> TestAmelioration
+
 
 		LveDevice& lveDevice;
 		vk::Pipeline graphicsPipeline;

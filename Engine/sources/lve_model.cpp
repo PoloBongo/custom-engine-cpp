@@ -38,7 +38,7 @@ namespace lve {
 		static std::vector<VkVertexInputAttributeDescription> GetAttributeDescription();
 	};*/
 
-	LveModel::LveModel(LveDevice& _lveDevice, const LveModel::Builder& _builder) : lveDevice(_lveDevice){
+	LveModel::LveModel(LveDevice& _lveDevice, const LveModel::Builder& _builder) : lveDevice(_lveDevice) {
 		CreateVertexBuffer(_builder.vertices);
 		CreateIndexBuffer(_builder.indices);
 	}
@@ -46,7 +46,7 @@ namespace lve {
 	LveModel::~LveModel() {}
 
 
-	std::unique_ptr<LveModel> LveModel::CreateModelFromFile(LveDevice& _device, const std::string& _filepath){
+	std::unique_ptr<LveModel> LveModel::CreateModelFromFile(LveDevice& _device, const std::string& _filepath) {
 		Builder builder{};
 		builder.LoadModel(ENGINE_DIR + _filepath);
 		std::cout << "Vertex Count" << builder.vertices.size() << std::endl;
@@ -90,17 +90,12 @@ namespace lve {
 			vertexSize,
 			// Nombre total de vertices dans les données
 			vertexCount,
-<<<<<<< HEAD
 			// Indique que le tampon sera utilisé comme une source lors des opérations de transfert de données
-			VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
-			// Propriétés de la mémoire dans laquelle le tampon sera alloué :
+						vk::BufferUsageFlagBits::eTransferSrc,
+						// Propriétés de la mémoire dans laquelle le tampon sera alloué :
 			// - VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT : La mémoire est visible pour le CPU
 			// - VK_MEMORY_PROPERTY_HOST_COHERENT_BIT : Les écritures CPU seront visibles par le GPU sans nécessiter d'opérations de synchronisation explicites
-			VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
-=======
-			vk::BufferUsageFlagBits::eTransferSrc,
-			vk::MemoryPropertyFlagBits::eHostVisible | vk::MemoryPropertyFlagBits::eHostCoherent,
->>>>>>> TestAmelioration
+						vk::MemoryPropertyFlagBits::eHostVisible | vk::MemoryPropertyFlagBits::eHostCoherent
 		};
 
 		stagingBuffer.map();
@@ -114,19 +109,14 @@ namespace lve {
 			vertexSize,
 			// Nombre total de vertices dans les données
 			vertexCount,
-<<<<<<< HEAD
 			// Combinaison de drapeaux d'utilisation du tampon :
-			// - VK_BUFFER_USAGE_VERTEX_BUFFER_BIT : Le tampon est utilisé comme tampon de vertex
-			// - VK_BUFFER_USAGE_TRANSFER_DST_BIT : Le tampon peut être utilisé comme destination lors des opérations de transfert de données
-			// - VK_BUFFER_USAGE_INDEX_BUFFER_BIT : Le tampon est utilisé comme tampon d'index
-			VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_INDEX_BUFFER_BIT,
+					// - VK_BUFFER_USAGE_VERTEX_BUFFER_BIT : Le tampon est utilisé comme tampon de vertex
+					// - VK_BUFFER_USAGE_TRANSFER_DST_BIT : Le tampon peut être utilisé comme destination lors des opérations de transfert de données
+					// - VK_BUFFER_USAGE_INDEX_BUFFER_BIT : Le tampon est utilisé comme tampon d'index
+			vk::BufferUsageFlagBits::eVertexBuffer | vk::BufferUsageFlagBits::eTransferDst | vk::BufferUsageFlagBits::eIndexBuffer,
 			// Propriétés de la mémoire dans laquelle le tampon sera alloué :
 			// - VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT : La mémoire est locale au périphérique et n'est pas visible pour le CPU
-			VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT
-=======
-			vk::BufferUsageFlagBits::eVertexBuffer | vk::BufferUsageFlagBits::eTransferDst | vk::BufferUsageFlagBits::eIndexBuffer,
 			vk::MemoryPropertyFlagBits::eDeviceLocal
->>>>>>> TestAmelioration
 		);
 
 		lveDevice.copyBuffer(stagingBuffer.getBuffer(), vertexBuffer->getBuffer(), bufferSize);
@@ -147,12 +137,9 @@ namespace lve {
 		vk::DeviceSize bufferSize = sizeof(_indices[0]) * indexCount;
 		uint32_t indexSize = sizeof(_indices[0]);
 
-<<<<<<< HEAD
 
 		// Création d'un objet de type LveBuffer nommé stagingBuffer en utilisant une initialisation directe
-=======
 		// Création du tampon de transfert pour les données d'indices
->>>>>>> TestAmelioration
 		LveBuffer stagingBuffer{
 			// Paramètre représentant le périphérique graphique associé au tampon
 			lveDevice,
@@ -160,28 +147,19 @@ namespace lve {
 			indexSize,
 			// Nombre total d'indices dans les données
 			indexCount,
-<<<<<<< HEAD
-			// Indique que le tampon sera utilisé comme une source lors des opérations de transfert de données
-			VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
-			// Propriétés de la mémoire dans laquelle le tampon sera alloué :
-			// - VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT : La mémoire est visible pour le CPU
-			// - VK_MEMORY_PROPERTY_HOST_COHERENT_BIT : Les écritures CPU seront visibles par le GPU sans nécessiter d'opérations de synchronisation explicites
-			VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT
-=======
-			vk::BufferUsageFlagBits::eTransferSrc,
-			vk::MemoryPropertyFlagBits::eHostVisible | vk::MemoryPropertyFlagBits::eHostCoherent,
->>>>>>> TestAmelioration
+				vk::BufferUsageFlagBits::eTransferSrc, // Indique que le tampon sera utilisé comme une source lors des opérations de transfert de données
+				// Propriétés de la mémoire dans laquelle le tampon sera alloué :
+	// - VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT : La mémoire est visible pour le CPU
+	// - VK_MEMORY_PROPERTY_HOST_COHERENT_BIT : Les écritures CPU seront visibles par le GPU sans nécessiter d'opérations de synchronisation explicites
+				vk::MemoryPropertyFlagBits::eHostVisible | vk::MemoryPropertyFlagBits::eHostCoherent,
 		};
 
 		// Mappage du tampon de transfert et écriture des données
 		stagingBuffer.map();
 		stagingBuffer.writeToBuffer((void*)(_indices.data()));
 
-<<<<<<< HEAD
 		// Allocation dynamique d'un objet unique_ptr pointant vers un LveBuffer et initialisation avec make_unique
-=======
 		// Création du tampon d'indices sur le GPU
->>>>>>> TestAmelioration
 		indexBuffer = std::make_unique<LveBuffer>(
 			// Paramètre représentant le périphérique graphique associé au tampon
 			lveDevice,
@@ -189,19 +167,14 @@ namespace lve {
 			indexSize,
 			// Nombre total d'indices dans les données
 			indexCount,
-<<<<<<< HEAD
 			// Combinaison de drapeaux d'utilisation du tampon :
 			// - VK_BUFFER_USAGE_VERTEX_BUFFER_BIT : Le tampon est utilisé comme tampon de vertex
 			// - VK_BUFFER_USAGE_TRANSFER_DST_BIT : Le tampon peut être utilisé comme destination lors des opérations de transfert de données
 			// - VK_BUFFER_USAGE_INDEX_BUFFER_BIT : Le tampon est utilisé comme tampon d'index
-			VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_INDEX_BUFFER_BIT,
+			vk::BufferUsageFlagBits::eVertexBuffer | vk::BufferUsageFlagBits::eTransferDst | vk::BufferUsageFlagBits::eIndexBuffer,
 			// Propriétés de la mémoire dans laquelle le tampon sera alloué :
 			// - VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT : La mémoire est locale au périphérique et n'est pas visible pour le CPU
-			VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT
-=======
-			vk::BufferUsageFlagBits::eVertexBuffer | vk::BufferUsageFlagBits::eTransferDst | vk::BufferUsageFlagBits::eIndexBuffer,
 			vk::MemoryPropertyFlagBits::eDeviceLocal
->>>>>>> TestAmelioration
 		);
 
 		// Copie des données de l'indice du tampon de transfert vers le tampon d'indices du GPU

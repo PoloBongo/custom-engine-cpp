@@ -19,25 +19,7 @@ namespace lve {
         LveBuffer(const LveBuffer&) = delete;
         LveBuffer& operator=(const LveBuffer&) = delete;
 
-<<<<<<< HEAD
 
-        VkResult map(VkDeviceSize _size = VK_WHOLE_SIZE, VkDeviceSize _offset = 0);
-
-
-        void unmap();
-
-
-        void writeToBuffer(void* _data, VkDeviceSize _size = VK_WHOLE_SIZE, VkDeviceSize _offset = 0);
-
-
-        VkResult flush(VkDeviceSize _size = VK_WHOLE_SIZE, VkDeviceSize _offset = 0);
-
-
-        VkDescriptorBufferInfo descriptorInfo(VkDeviceSize _size = VK_WHOLE_SIZE, VkDeviceSize _offset = 0);
-
-
-        VkResult invalidate(VkDeviceSize _size = VK_WHOLE_SIZE, VkDeviceSize _offset = 0);
-=======
         vk::Result map(vk::DeviceSize _size = VK_WHOLE_SIZE, vk::DeviceSize _offset = 0);
         void unmap();
 
@@ -45,25 +27,14 @@ namespace lve {
         vk::Result flush(vk::DeviceSize _size = VK_WHOLE_SIZE, vk::DeviceSize _offset = 0);
         vk::DescriptorBufferInfo descriptorInfo(vk::DeviceSize _size = VK_WHOLE_SIZE, vk::DeviceSize _offset = 0);
         vk::Result invalidate(vk::DeviceSize _size = VK_WHOLE_SIZE, vk::DeviceSize _offset = 0);
->>>>>>> TestAmelioration
+
 
 
         void writeToIndex(void* _data, int _index);
-<<<<<<< HEAD
 
-
-        VkResult flushIndex(int _index);
-
-
-        VkDescriptorBufferInfo descriptorInfoForIndex(int _index);
-
-
-        VkResult invalidateIndex(int _index);
-=======
         vk::Result flushIndex(int _index);
         vk::DescriptorBufferInfo descriptorInfoForIndex(int _index);
         vk::Result invalidateIndex(int _index);
->>>>>>> TestAmelioration
 
         vk::Buffer getBuffer() const { return buffer; }
         void* getMappedMemory() const { return mapped; }
@@ -75,13 +46,7 @@ namespace lve {
         vk::DeviceSize getBufferSize() const { return bufferSize; }
 
     private:
-<<<<<<< HEAD
-
-
-        static VkDeviceSize getAlignment(VkDeviceSize _instanceSize, VkDeviceSize _minOffsetAlignment);
-=======
         static vk::DeviceSize getAlignment(vk::DeviceSize _instanceSize, vk::DeviceSize _minOffsetAlignment);
->>>>>>> TestAmelioration
 
         LveDevice& lveDevice;
         void* mapped = nullptr;

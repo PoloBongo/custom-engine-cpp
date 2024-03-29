@@ -102,17 +102,9 @@ namespace lve {
         submitInfo.sType = vk::StructureType::eSubmitInfo;
 
         vk::Semaphore waitSemaphores[] = { imageAvailableSemaphores[currentFrame] };
-        vk::PipelineStageFlags waitStages[] = { vk::PipelineStageFlagBits::eColorAttachmentOutput };
-
-<<<<<<< HEAD
-        VkSemaphore waitSemaphores[] = { imageAvailableSemaphores[currentFrame] };
         // Déclaration d'un tableau de type VkPipelineStageFlags
-        VkPipelineStageFlags waitStages[] = {
-            // Initialisation du tableau avec un seul élément contenant le drapeau VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT
-            VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT
-        };
-=======
->>>>>>> TestAmelioration
+        vk::PipelineStageFlags waitStages[] = { vk::PipelineStageFlagBits::eColorAttachmentOutput };  // Initialisation du tableau avec un seul élément contenant le drapeau VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT
+
         submitInfo.waitSemaphoreCount = 1;
         submitInfo.pWaitSemaphores = waitSemaphores;
         submitInfo.pWaitDstStageMask = waitStages;
