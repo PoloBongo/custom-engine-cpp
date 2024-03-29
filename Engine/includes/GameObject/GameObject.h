@@ -21,6 +21,7 @@ class GameObject
 public:
 	GameObject();
 	~GameObject();
+	using id_t = unsigned int;
 
 	inline std::string GetName() const { return name; }
 	inline void SetName(const std::string& _newName) { name = _newName; }
@@ -47,6 +48,12 @@ public:
 	inline LayerType GetLayer() const { return layerType; }
 	inline void SetLayer(const LayerType& _layerType) { layerType = _layerType; }
 
+	id_t GetId() { return id; }
+
+	static GameObject CreateGameObject() {
+		static id_t currentId = 0;
+		return GameObject{ currentId++ };
+	}
 
 	void AddComponent(Component* _component);
 
@@ -119,4 +126,6 @@ protected:
 
 	bool isActive = true;
 	bool isVisible = true;
+
+	id_t id;
 };

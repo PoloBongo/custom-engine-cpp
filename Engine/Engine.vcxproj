@@ -157,6 +157,7 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="sources\Scene\BaseScene.cpp" />
     <ClCompile Include="Component.cpp" />
     <ClCompile Include="Engine.cpp" />
     <ClCompile Include="EngineTestCode.cpp" />
@@ -164,6 +165,7 @@
     <ClCompile Include="Transform.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="includes\Scene\BaseScene.h" />
     <ClInclude Include="Component.h" />
     <ClInclude Include="EngineTestCode.h" />
     <ClInclude Include="includes\Managers\SoundSystemManager.h" />

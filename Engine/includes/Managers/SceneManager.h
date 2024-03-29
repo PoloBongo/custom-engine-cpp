@@ -6,9 +6,14 @@
 class SceneManager
 {
 public:
-	SceneManager() {}
+	SceneManager();
+	~SceneManager() = default;
 
-	~SceneManager() {}
+	SceneManager(const SceneManager&&) = delete;
+	SceneManager(const SceneManager&) = delete;
+	SceneManager& operator=(const SceneManager&&) = delete;
+	SceneManager& operator=(const SceneManager&) = delete;
+	void Destroy();
 
 	void CreateScene(std::string _name, bool _isActive);
 
