@@ -20,9 +20,9 @@ int main() {
     /**
      * @brief Fonction principale du programme.
      *
-     * Cette fonction crée une instance de l'application FirstApp et lance son exécution en appelant la méthode Run().
+     * Cette fonction crï¿½e une instance de l'application FirstApp et lance son exï¿½cution en appelant la mï¿½thode Run().
      *
-     * @return EXIT_SUCCESS si l'application s'est terminée avec succès, EXIT_FAILURE sinon.
+     * @return EXIT_SUCCESS si l'application s'est terminï¿½e avec succï¿½s, EXIT_FAILURE sinon.
      */
     //lve::FirstApp app{};
 
