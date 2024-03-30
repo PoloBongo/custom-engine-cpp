@@ -14,10 +14,22 @@
 namespace lve {
     class LveRenderer {
     public:
+
+        /** Constructeur de LveRenderer.
+         *  @param _window Référence à l'objet LveWindow associé au renderer.
+         *  @param _device Référence à l'objet LveDevice associé au renderer.
+         */
         LveRenderer(LveWindow& _window, LveDevice& _device);
+
+        /** Destructeur de LveRenderer. */
         ~LveRenderer();
 
+        /** Opérateur de copie supprimé pour LveRenderer. */
         LveRenderer(const LveRenderer&) = delete;
+
+        /** Opérateur d'assignation supprimé pour LveRenderer.
+         *  @return Référence à l'objet LveRenderer.
+         */
         LveRenderer& operator=(const LveRenderer&) = delete;
 
         /**
@@ -145,13 +157,14 @@ namespace lve {
          */
         void RecreateSwapChain();
 
-        LveWindow& lveWindow;
-        LveDevice& lveDevice;
-        std::unique_ptr<LveSwapChain> lveSwapChain;
-        std::vector<vk::CommandBuffer> commandBuffers;
+        LveWindow& lveWindow; /**< Référence à l'objet LveWindow associé au renderer. */
+        LveDevice& lveDevice; /**< Référence à l'objet LveDevice associé au renderer. */
+        std::unique_ptr<LveSwapChain> lveSwapChain; /**< Pointeur unique vers l'objet LveSwapChain. */
+        std::vector<vk::CommandBuffer> commandBuffers; /**< Vecteur de command buffers Vulkan. */
 
-        uint32_t currentImageIndex = 0;
-        int currentFrameIndex = 0;
-        bool isFrameStarted = false;
+        uint32_t currentImageIndex = 0; /**< Index de l'image actuelle dans la swap chain. */
+        int currentFrameIndex = 0; /**< Index du frame actuel. */
+        bool isFrameStarted = false; /**< Indique si le frame est en cours de traitement. */
+
     };
 }  // namespace lve
