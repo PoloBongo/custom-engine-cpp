@@ -1,3 +1,3 @@
-NEW: Commentaire
+ENH: Resharper
 
-- Création de commentaires
+- Nomenclature

@@ -254,6 +254,9 @@
     <ClInclude Include="includes\ModuleManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="includes\Managers\HUDManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="EngineTestCode.h">

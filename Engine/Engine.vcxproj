@@ -170,6 +170,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="includes\CoreEngine.h" />
+    <ClInclude Include="includes\Managers\HUDManager.h" />
     <ClInclude Include="includes\Managers\WindowManager.h" />
     <ClInclude Include="includes\Module.h" />
     <ClInclude Include="includes\ModuleManager.h" />

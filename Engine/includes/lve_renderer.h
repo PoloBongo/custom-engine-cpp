@@ -165,6 +165,6 @@ namespace lve {
         uint32_t currentImageIndex = 0; /**< Index de l'image actuelle dans la swap chain. */
         int currentFrameIndex = 0; /**< Index du frame actuel. */
         bool isFrameStarted = false; /**< Indique si le frame est en cours de traitement. */
-
+            
     };
 }  // namespace lve

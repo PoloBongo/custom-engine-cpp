@@ -26,7 +26,9 @@ namespace lve {
 			stagingBuffer, stagingBufferMemory);
 
 		void* data;
-		lveDevice.device().mapMemory(stagingBufferMemory, 0, imageSize, vk::MemoryMapFlags(), &data);
+		if (lveDevice.device().mapMemory(stagingBufferMemory, 0, imageSize, vk::MemoryMapFlags(), &data) != vk::Result::eSuccess) {
+			throw std::runtime_error("failed");
+		}
 		memcpy(data, pixels, static_cast<size_t>(imageSize));
 		lveDevice.device().unmapMemory(stagingBufferMemory);
 		stbi_image_free(pixels);
@@ -40,14 +42,14 @@ namespace lve {
 		lveDevice.device().freeMemory(stagingBufferMemory, nullptr);
 	}
 
-	void LveImage::createImage(uint32_t width, uint32_t height, vk::Format format, vk::ImageTiling tiling, vk::ImageUsageFlags usage, 
-		vk::MemoryPropertyFlags properties, vk::Image& image, vk::DeviceMemory& imageMemory) {
+	void LveImage::createImage(uint32_t _width, uint32_t _height, vk::Format _format, vk::ImageTiling _tiling, vk::ImageUsageFlags _usage, 
+		vk::MemoryPropertyFlags _properties, vk::Image& _image, vk::DeviceMemory& _imageMemory) {
 
 		vk::ImageCreateInfo imageInfo{};
 		imageInfo.sType = vk::StructureType::eImageCreateInfo;
 		imageInfo.imageType = vk::ImageType::e2D;
-		imageInfo.extent.width = width;
-		imageInfo.extent.height = height;
+		imageInfo.extent.width = _width;
+		imageInfo.extent.height = _height;
 		imageInfo.extent.depth = 1;
 		imageInfo.mipLevels = 1;
 		imageInfo.arrayLayers = 1;
@@ -61,19 +63,19 @@ namespace lve {
 		imageInfo.samples = vk::SampleCountFlagBits::e1;
 		//imageInfo.flags = 0; // Optional
 
-		if (lveDevice.device().createImage(&imageInfo, nullptr, &image) != vk::Result::eSuccess) {
+		if (lveDevice.device().createImage(&imageInfo, nullptr, &_image) != vk::Result::eSuccess) {
 			throw std::runtime_error("failed to create image!");
 		}
 
 		vk::MemoryRequirements memRequirements;
-		lveDevice.device().getImageMemoryRequirements(image, &memRequirements);
+		lveDevice.device().getImageMemoryRequirements(_image, &memRequirements);
 
 		vk::MemoryAllocateInfo allocInfo{};
 		allocInfo.sType = vk::StructureType::eMemoryAllocateInfo;
 		allocInfo.allocationSize = memRequirements.size;
-		allocInfo.memoryTypeIndex = lveDevice.findMemoryType(memRequirements.memoryTypeBits, properties);
+		allocInfo.memoryTypeIndex = lveDevice.findMemoryType(memRequirements.memoryTypeBits, _properties);
 
-		if (lveDevice.device().allocateMemory(&allocInfo, nullptr, &imageMemory) != vk::Result::eSuccess) {
+		if (lveDevice.device().allocateMemory(&allocInfo, nullptr, &_imageMemory) != vk::Result::eSuccess) {
 			throw std::runtime_error("failed to allocate image memory!");
 		}
 

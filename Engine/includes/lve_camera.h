@@ -104,14 +104,24 @@ namespace lve {
 		const glm::mat4& GetView() const { return viewMatrix; }
 
 
+		/**
+		 * @brief Obtient la matrice de vue inverse.
+		 *
+		 * @return La référence constante vers la matrice de vue inverse.
+		 */
 		const glm::mat4& GetInverseView() const { return inverseViewMatrix; }
 
+		/**
+		 * @brief Obtient la position de la caméra.
+		 *
+		 * @return La position de la caméra en tant que vecteur glm::vec3.
+		 */
 		const glm::vec3 GetPosition() const { return glm::vec3(inverseViewMatrix[3]); }
 
-	private:
-		glm::mat4 projectionMatrix{ 1.f };
-		glm::mat4 viewMatrix{ 1.f };
-		glm::mat4 inverseViewMatrix{ 1.f };
 
+	private:
+		glm::mat4 projectionMatrix{ 1.f }; /**< Matrice de projection. */
+		glm::mat4 viewMatrix{ 1.f }; /**< Matrice de vue. */
+		glm::mat4 inverseViewMatrix{ 1.f }; /**< Matrice de vue inverse. */
 	};
 }
