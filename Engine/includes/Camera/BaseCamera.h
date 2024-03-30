@@ -48,7 +48,9 @@ namespace lve {
 		void ResetPosition();
 		void ResetOrientation();
 
-		std::string GetName() const;
+		std::string GetName() const {
+			return m_Name;
+		}
 
 		void CalculateExposure();
 
