@@ -6,7 +6,7 @@ SoundSystemManager::SoundSystemManager()
 {
     if (FMOD::System_Create(&system) != FMOD_OK)
     {
-        std::cout << "pas load" << std::endl;
+        std::cout << "une erreur s'est produit lors de la création du Système de FMOD" << std::endl;
         return;
     }
 
@@ -15,14 +15,15 @@ SoundSystemManager::SoundSystemManager()
 
     if (driverCount == 0)
     {
-        std::cout << "error" << std::endl;
+        std::cout << "FMOD n'a pas trouvé de sortie de son" << std::endl;
         return;
     }
 
-    // Initialize our Instance with 36 Channels
+    // Permet d'init le nombre de musique joué simultanément
     system->init(36, FMOD_LOOP_OFF, NULL);
 }
 
+// Permet la création du son avec son chemin d'accès //
 void SoundSystemManager::createSound(SoundClass* pSound, const char* pathAudio)
 {
     FMOD_RESULT result = system->createSound(pathAudio, FMOD_LOOP_OFF, 0, pSound);
@@ -33,6 +34,7 @@ void SoundSystemManager::createSound(SoundClass* pSound, const char* pathAudio)
     }
 }
 
+// Permet la création d'un groupe de son. //
 void SoundSystemManager::createSoundGroup(SoundGroup* pSoundGroup, const char* groupName)
 {
     FMOD_RESULT result = system->createSoundGroup(groupName, pSoundGroup);
@@ -43,6 +45,7 @@ void SoundSystemManager::createSoundGroup(SoundGroup* pSoundGroup, const char* g
     }
 }
 
+// Permet la récupération d'un groupe de son. //
 void SoundSystemManager::getMasterSoundGroup(SoundGroup* pSoundGroup)
 {
     FMOD_RESULT result = system->getMasterSoundGroup(pSoundGroup);
@@ -53,6 +56,7 @@ void SoundSystemManager::getMasterSoundGroup(SoundGroup* pSoundGroup)
     }
 }
 
+// Permet de joué un son spécifique avec ces propres paramètres. //
 void SoundSystemManager::playSound(SoundClass pSound, bool isPlay, int loopCount, float volume, Channel* channelPtr)
 {
     FMOD::Channel* channel = nullptr;
@@ -75,27 +79,31 @@ void SoundSystemManager::playSound(SoundClass pSound, bool isPlay, int loopCount
     *channelPtr = channel;
 }
 
+// Permet de libérer la mémoire et de couper le son. //
 void SoundSystemManager::releaseSound(SoundClass pSound)
 {
     pSound->release();
 }
 
+// Permet d'obtenir le nombre total de tour sur le son //
 int SoundSystemManager::getLoopCount(SoundClass pSound, int* loopcount)
 {
     return pSound->getLoopCount(loopcount);
 }
 
+// Permet la création d'un channel de groupe. //
 void SoundSystemManager::createChannelGroup(FMOD::ChannelGroup** channelGroup)
 {
     system->createChannelGroup(NULL, channelGroup);
 }
 
+// Permet d'ajouter un son à un channel de groupe pour pouvoir modifier les paramètres du son du tout les sons du channel. //
 void SoundSystemManager::addSoundToGroup(SoundClass pSound, FMOD::ChannelGroup* channelGroup)
 {
     system->playSound(pSound, channelGroup, false, nullptr);
 }
 
-// Implémentation des fonctions pour le routing vers les ports et la gestion de la réverbération
+// Implémentation des fonctions pour le routing vers les ports et la gestion de la réverbération //
 FMOD_RESULT SoundSystemManager::attachChannelGroupToPort(FMOD_PORT_TYPE portType, FMOD_PORT_INDEX portIndex, FMOD::ChannelGroup* channelGroup, bool passThru)
 {
     return system->attachChannelGroupToPort(portType, portIndex, channelGroup, passThru);
