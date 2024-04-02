@@ -8,7 +8,7 @@
 class SceneManager
 {
 public:
-	SceneManager() {};
+	SceneManager() {}
 	~SceneManager() = default;
 
 	SceneManager(const SceneManager&&) = delete;
@@ -16,17 +16,17 @@ public:
 	SceneManager& operator=(const SceneManager&&) = delete;
 	SceneManager& operator=(const SceneManager&) = delete;
 
-	void Destroy();
+	void Destroy() {}
 
-	void virtual Init();
-	void virtual Start();
-	void virtual FixedUpdate();
-	void virtual Update();
-	void virtual PreRender();
-	void virtual Render();
-	void virtual RenderGui();
-	void virtual PostRender();
-	void virtual Release();
+	void virtual Init() {}
+	void virtual Start() {}
+	void virtual FixedUpdate() {}
+	void virtual Update() {}
+	void virtual PreRender() {}
+	void virtual Render() {}
+	void virtual RenderGui() {}
+	void virtual PostRender() {}
+	void virtual Release() {}
 
 	void CreateScene(std::string _name, bool _isActive);
 	void DestroyScene(const std::string& sceneName);
@@ -42,7 +42,7 @@ public:
 
 	BaseScene* GetCurrentScene() const;
 
-	void SetCurrentScene(int sceneIndex);
+	void SetCurrentScene(int _sceneIndex);
 	void SetNextSceneActive();
 	void SetPreviousSceneActive();
 
@@ -52,7 +52,7 @@ private:
 	int sceneCount;
 	bool sceneActive;
 
-	bool SceneFileExists(const std::string& filePath) const;
+	bool SceneFileExists(const std::string& _filePath) const {}
 	std::vector<std::unique_ptr<BaseScene>> scenes;
 	int currentSceneIndex = -1;
 };

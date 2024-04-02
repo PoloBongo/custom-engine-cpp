@@ -152,7 +152,7 @@ namespace lve {
 		 * @brief Le module de shader de fragment Vulkan.
 		 */
 		vk::ShaderModule fragShaderModule;
-		*/
+		
 	};
 
 } //namespace lve
