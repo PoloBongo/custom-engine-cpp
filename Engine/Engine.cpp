@@ -12,6 +12,7 @@ int main() {
 
     //SoundSystemManager sound;
     //SoundClass soundSample;
+    //SoundGroup soundGroup;
     //Channel channel;
 
     //sound.createSound(&soundSample, "");
@@ -43,6 +44,7 @@ int main() {
     }
 
     //sound.releaseSound(soundSample);
+
 
     return EXIT_SUCCESS;
 }

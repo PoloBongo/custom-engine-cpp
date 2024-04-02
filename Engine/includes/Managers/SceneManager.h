@@ -2,6 +2,8 @@
 #include <iostream>
 #include <string>
 #include <map>
+#include "Scene/BaseScene.h"
+#include <filesystem>
 
 class SceneManager
 {
@@ -13,6 +15,7 @@ public:
 	SceneManager(const SceneManager&) = delete;
 	SceneManager& operator=(const SceneManager&&) = delete;
 	SceneManager& operator=(const SceneManager&) = delete;
+
 	void Destroy();
 
 	void virtual Init();
@@ -26,8 +29,8 @@ public:
 	void virtual Release();
 
 	void CreateScene(std::string _name, bool _isActive);
+	void DestroyScene(const std::string& sceneName);
 
-	void LoadScene(std::string _name);
 
 	std::string GetActiveScene();
 
@@ -37,9 +40,21 @@ public:
 	
 	std::pair<std::string, bool> GetSceneAt(int _index);
 
+	BaseScene* GetCurrentScene() const;
+
+	void SetCurrentScene(int sceneIndex);
+	void SetNextSceneActive();
+	void SetPreviousSceneActive();
+
+
 private:
 	std::map<std::string, bool> listScenes;
 	int sceneCount;
 	bool sceneActive;
+
+	bool SceneFileExists(const std::string& filePath) const;
+	std::vector<std::unique_ptr<BaseScene>> scenes;
+	int currentSceneIndex = -1;
 };
+
 
