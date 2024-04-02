@@ -25,6 +25,7 @@ void Engine::Run() const
 
 	while (!shouldQuit)
 	{
+
 		moduleManager->Update();
 		moduleManager->PreRender();
 		moduleManager->Render();
