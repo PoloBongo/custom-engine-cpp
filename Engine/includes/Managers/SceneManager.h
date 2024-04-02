@@ -18,6 +18,16 @@ public:
 
 	void Destroy();
 
+	void virtual Init();
+	void virtual Start();
+	void virtual FixedUpdate();
+	void virtual Update();
+	void virtual PreRender();
+	void virtual Render();
+	void virtual RenderGui();
+	void virtual PostRender();
+	void virtual Release();
+
 	void CreateScene(std::string _name, bool _isActive);
 	void DestroyScene(const std::string& sceneName);
 

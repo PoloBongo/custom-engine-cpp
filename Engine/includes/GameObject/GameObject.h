@@ -11,7 +11,6 @@ enum class LayerType {
 	Background
 };
 
-
 class Component;
 
 class Transform;

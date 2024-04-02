@@ -1,3 +1,3 @@
-NEW: Hiérarchie
+ENH: Resharper
 
-- Hiérarchisation des fichiers .h dans le \includes et .cpp dans le \sources
+- Nomenclature

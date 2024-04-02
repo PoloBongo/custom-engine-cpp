@@ -4,10 +4,8 @@
 #define GLM_FORCE_RADIANS
 #define GLM_FORCE_DEPTH_ZERO_TO_ONE
 #include <glm.hpp>
-#include <gtc/constants.hpp>
 
 // std
-#include <array>
 #include <cassert>
 #include <stdexcept>
 
