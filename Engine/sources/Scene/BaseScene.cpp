@@ -11,13 +11,17 @@ void BaseScene::Destroy()
 	{
 		if (rootObject != nullptr)
 		{
-			rootObject->RemoveComponent(false);
+			// Supprimer tous les composants de l'objet
+			for (Component* component : rootObject->GetComponents())
+			{
+				rootObject->RemoveComponent(component);
+			}
 			delete rootObject;
 		}
 	}
 	m_RootObjects.clear();
-
 }
+
 
 GameObject* BaseScene::AddRootObject(GameObject* gameObject)
 {
@@ -66,16 +70,16 @@ std::vector<GameObject*>& BaseScene::GetRootObjects()
 	return m_RootObjects;
 }
 
-GameObject::id_t BaseScene::FirstObjectWithTag(const std::string& tag)
-{
-	for (GameObject* gameObject : m_RootObjects)
-	{
-		GameObjectID result = FindObjectWithTag(tag, gameObject);
-		if (result.IsValid())
-		{
-			return result;
-		}
-	}
-
-	return InvalidGameObjectID;
-}
+//GameObject::id_t BaseScene::FirstObjectWithTag(const std::string& tag)
+//{
+//	for (GameObject* gameObject : m_RootObjects)
+//	{
+//		GameObjectID result = FindObjectWithTag(tag, gameObject);
+//		if (result.IsValid())
+//		{
+//			return result;
+//		}
+//	}
+//
+//	return InvalidGameObjectID;
+//}

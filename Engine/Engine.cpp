@@ -9,13 +9,13 @@ int main() {
     EngineTestCode engineTestCode;
     engineTestCode.TestCode();
 
-    SoundSystemManager sound;
-    SoundClass soundSample;
-    SoundGroup soundGroup;
-    Channel channel;
+    //SoundSystemManager sound;
+    //SoundClass soundSample;
+    //SoundGroup soundGroup;
+    //Channel channel;
 
-    sound.createSound(&soundSample, "");
-    sound.playSound(soundSample, true, 5, 0.9f, &channel);
+    //sound.createSound(&soundSample, "");
+    //sound.playSound(soundSample, true, 5, 0.9f, &channel);
 
     /**
      * @brief Fonction principale du programme.
@@ -35,7 +35,7 @@ int main() {
         return EXIT_FAILURE;
     }
 
-    sound.releaseSound(soundSample);
+ /*   sound.releaseSound(soundSample);*/
 
     return EXIT_SUCCESS;
 }
