@@ -6,6 +6,7 @@
 namespace lve {
 
 	LveImage::LveImage(LveDevice& _lveDevice) : lveDevice(_lveDevice) {
+		createTextureImage();
 	}
 
 	LveImage::~LveImage() {}
@@ -77,7 +78,7 @@ namespace lve {
 			throw std::runtime_error("failed to allocate image memory!");
 		}
 
-		//lveDevice.device().bindImageMemory(image, imageMemory, 0);
+		lveDevice.device().bindImageMemory(image, imageMemory, 0);
 
 	}
 }
