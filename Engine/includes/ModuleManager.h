@@ -3,6 +3,12 @@
 #include <vector>
 #include "Module.h"
 
+/**
+ * @brief Classe ModuleManager.
+ *
+ * Cette classe représente le gestionnaire de modules dans le système.
+ * Le ModuleManager est responsable de la création, de la gestion et de la communication entre les différents modules de l'application.
+ */
 class ModuleManager
 {
 public:

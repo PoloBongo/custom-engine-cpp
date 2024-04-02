@@ -116,7 +116,7 @@ namespace lve
 
 			void JitterMatrix(glm::mat4& _matrix);
 			void ClampPitch();
-
+			 
 			// Exposure calculations taken from Google's Filament rendering engine
 			// Computes the camera's EV100
 			// aperture measured in f-stops
