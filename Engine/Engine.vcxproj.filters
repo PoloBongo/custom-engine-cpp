@@ -48,7 +48,7 @@
     <ClCompile Include="sources\lve_buffer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="sources\lve_camera.cpp">
+    <ClCompile Include="sources\Camera\lve_camera.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="sources\lve_descriptors.cpp">
@@ -153,6 +153,9 @@
     <ClCompile Include="sources\Managers\HUDManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="sources\Camera\CameraManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="first_app.h">
@@ -167,7 +170,7 @@
     <ClInclude Include="includes\lve_buffer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="includes\lve_camera.h">
+    <ClInclude Include="includes\Camera\lve_camera.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="includes\lve_descriptors.h">
@@ -276,6 +279,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="includes\Camera\BaseCamera.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="includes\Camera\CameraManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

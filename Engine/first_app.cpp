@@ -1,7 +1,7 @@
 #include "first_app.h"
 
 
-#include "lve_camera.h"   
+#include "Camera/lve_camera.h"   
 #include "keyboard_movement_controller.h"   
 #include "lve_buffer.h"   
 #include "Systems/simple_render_system.h"   

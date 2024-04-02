@@ -1,6 +1,6 @@
 #pragma once
 
-#include "lve_camera.h"
+#include "Camera/lve_camera.h"
 #include "lve_game_object.h"
 
 //lib

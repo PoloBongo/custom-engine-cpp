@@ -157,6 +157,7 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="sources\Camera\CameraManager.cpp" />
     <ClCompile Include="functionHelpers.cpp" />
     <ClCompile Include="lve_constants.cpp" />
     <ClCompile Include="lve_image.cpp" />
@@ -173,6 +174,7 @@
     <ClCompile Include="Transform.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="includes\Camera\CameraManager.h" />
     <ClInclude Include="functionHelpers.h" />
     <ClInclude Include="includes\Camera\BaseCamera.h" />
     <ClInclude Include="includes\CoreEngine.h" />
@@ -188,7 +190,7 @@
     <ClCompile Include="sources\GameObject\GameObject.cpp" />
     <ClCompile Include="sources\keyboard_movement_controller.cpp" />
     <ClCompile Include="sources\lve_buffer.cpp" />
-    <ClCompile Include="sources\lve_camera.cpp" />
+    <ClCompile Include="sources\Camera\lve_camera.cpp" />
     <ClCompile Include="sources\lve_descriptors.cpp" />
     <ClCompile Include="sources\lve_device.cpp" />
     <ClCompile Include="sources\lve_frame_info.cpp" />
@@ -220,7 +222,7 @@
     <ClInclude Include="includes\GameObject\GameObject.h" />
     <ClInclude Include="includes\keyboard_movement_controller.h" />
     <ClInclude Include="includes\lve_buffer.h" />
-    <ClInclude Include="includes\lve_camera.h" />
+    <ClInclude Include="includes\Camera\lve_camera.h" />
     <ClInclude Include="includes\lve_descriptors.h" />
     <ClInclude Include="includes\lve_device.h" />
     <ClInclude Include="includes\lve_frame_info.h" />
