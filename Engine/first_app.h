@@ -38,7 +38,7 @@ namespace lve {
     private:
         void LoadGameObjects();
 
-        LveWindow lveWindow{ WIDTH, HEIGHT, "Hello Vulkan!" }; /// Fenêtre de l'application.
+        LveWindow lveWindow{ WIDTH, HEIGHT, "Hello Vulkan!" }; ///< Fenêtre de l'application.
         LveDevice lveDevice{ lveWindow };
         LveRenderer lveRenderer{ lveWindow, lveDevice };
 

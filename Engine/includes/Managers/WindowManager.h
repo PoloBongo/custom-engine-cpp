@@ -7,7 +7,7 @@
 #include "lve_game_object.h"
 #include "lve_descriptors.h"
 
-#include "lve_camera.h"   
+#include "Camera/lve_camera.h"   
 #include "keyboard_movement_controller.h"   
 #include "lve_buffer.h"   
 #include "Systems/simple_render_system.h"   
@@ -22,6 +22,13 @@
 #include <map>
 
 
+/**
+ * @brief Classe WindowManager.
+ *
+ * Cette classe représente le gestionnaire de fenêtres dans le système.
+ * Elle hérite de la classe Module, ce qui lui permet d'être intégrée dans le système de modules.
+ * Le WindowManager est responsable de la gestion et de la manipulation des fenêtres de l'application.
+ */
 class WindowManager final : public Module
 {
 public:

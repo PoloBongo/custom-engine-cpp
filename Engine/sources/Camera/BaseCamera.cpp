@@ -1,16 +1,11 @@
 #include "Camera/BaseCamera.h"
 
-namespace lve {
-	BaseCamera::BaseCamera(const std::string& cameraName, CameraType type, bool bIsGameplayCam, float FOV, float zNear, float zFar) :
-		bIsGameplayCam(bIsGameplayCam),
-		type(type),
-		m_Name(cameraName),
-		m_View(MAT4_ZERO),
-		m_Proj(MAT4_ZERO),
-		m_ViewProjection(MAT4_ZERO),
-		FOV(FOV),
-		zNear(zNear),
-		zFar(zFar),
+namespace lve
+{
+	BaseCamera::BaseCamera(const std::string& _cameraName, const CameraType _type, const bool   _bIsGameplayCam,
+	                       const float        _fov, const float             _zNear, const float _zFar) : FOV(_fov),
+		zNear(_zNear),
+		zFar(_zFar),
 		moveSpeed(18.0f),
 		panSpeed(60.0f),
 		dragDollySpeed(25.0f),
@@ -31,7 +26,13 @@ namespace lve {
 		roll(0.0f),
 		forward(VEC3_FORWARD),
 		up(VEC3_UP),
-		right(VEC3_RIGHT)
+		right(VEC3_RIGHT),
+		bIsGameplayCam(_bIsGameplayCam),
+		type(_type),
+		m_Name(_cameraName),
+		m_Proj(MAT4_ZERO),
+		m_View(MAT4_ZERO),
+		m_ViewProjection(MAT4_ZERO)
 	{
 		ResetOrientation();
 		CalculateAxisVectorsFromPitchAndYaw();
@@ -53,73 +54,80 @@ namespace lve {
 	{
 	}
 
-	void BaseCamera::Update()
+	void BaseCamera::Update(float _deltaTime)
 	{
 		prevPosition = position;
 
-		/*roll = Lerp(roll, 0.0f, rollRestorationSpeed * g_DeltaTime);
+		roll = Lerp(roll, 0.0f, rollRestorationSpeed * _deltaTime);
 
+		/*
 		AudioManager::SetListenerPos(position);
 		AudioManager::SetListenerVel(velocity);*/
 	}
 
-	void BaseCamera::LateUpdate()
+	void BaseCamera::LateUpdate(float _deltaTime)
 	{
-	/*	velocity = (position - prevPosition) / g_DeltaTime;*/
-
+		velocity = (position - prevPosition) / _deltaTime;
 	}
 
 	void BaseCamera::Destroy()
 	{
-		if (m_bInitialized)
+		if (m_bInitialized) m_bInitialized = false;
+	}
+
+	void BaseCamera::OnPostSceneChange()
+	{
+	}
+
+	void BaseCamera::OnPossess()
+	{
+		/*Player* player0 = g_SceneManager->CurrentScene()->GetPlayer(0);
+		Player* player1 = g_SceneManager->CurrentScene()->GetPlayer(1);*/
+
+		/*if (player0 != nullptr)
 		{
-			m_bInitialized = false;
+			player0->UpdateIsPossessed();
 		}
-	}
-	glm::mat4 BaseCamera::GetViewProjection() const
-	{
-		return m_ViewProjection;
-	}
 
-	glm::mat4 BaseCamera::GetView() const
-	{
-		return m_View;
+		if (player1 != nullptr)
+		{
+			player1->UpdateIsPossessed();
+		}*/
 	}
 
-	glm::mat4 BaseCamera::GetProjection() const
+	void BaseCamera::OnDepossess()
 	{
-		return m_Proj;
 	}
 
-	void BaseCamera::LookAt(glm::vec3 point, float speed)
+	void BaseCamera::LookAt(const glm::vec3 _point, float _speed)
 	{
-		speed = Saturate(speed);
+		_speed = Saturate(_speed);
 
-		glm::vec3 targetForward = glm::normalize(point - position);
-		forward = glm::normalize(Lerp(forward, targetForward, speed));
+		glm::vec3 targetForward = normalize(_point - position);
+		forward                 = normalize(Lerp(forward, targetForward, _speed));
 
-#if THOROUGH_CHECKS
+		#if THOROUGH_CHECKS
 		if (IsNanOrInf(forward))
 		{
 			PrintError("Forward vector was NaN or Inf!\n");
 			forward = VEC3_FORWARD;
 		}
-#endif
+		#endif
 
 		CalculateYawAndPitchFromForward();
 		RecalculateViewProjection();
 	}
 
-	void BaseCamera::Translate(glm::vec3 translation)
+	void BaseCamera::Translate(const glm::vec3 _translation)
 	{
-		position += translation;
+		position += _translation;
 	}
 
-	void BaseCamera::SetViewDirection(float yawRad, float pitchRad)
+	void BaseCamera::SetViewDirection(const float _yawRad, const float _pitchRad)
 	{
-		yaw = yawRad;
-		pitch = pitchRad;
-		roll = 0.0f;
+		yaw   = _yawRad;
+		pitch = _pitchRad;
+		roll  = 0.0f;
 	}
 
 	void BaseCamera::ResetPosition()
@@ -130,8 +138,8 @@ namespace lve {
 	void BaseCamera::ResetOrientation()
 	{
 		pitch = 0.0f;
-		yaw = PI;
-		roll = 0.0f;
+		yaw   = PI;
+		roll  = 0.0f;
 	}
 
 	void BaseCamera::CalculateAxisVectorsFromPitchAndYaw()
@@ -139,23 +147,23 @@ namespace lve {
 		forward.x = cos(pitch) * cos(yaw);
 		forward.y = sin(pitch);
 		forward.z = cos(pitch) * sin(yaw);
-		forward = normalize(forward);
+		forward   = normalize(forward);
 
 		glm::vec3 worldUp(0.0f, 1.0f, 0.0f);
 		worldUp += right * roll;
 
-		right = normalize(glm::cross(forward, worldUp));
-		up = cross(right, forward);
+		right = normalize(cross(forward, worldUp));
+		up    = cross(right, forward);
 	}
 
 	void BaseCamera::CalculateYawAndPitchFromForward()
 	{
 		pitch = asin(forward.y);
 		ClampPitch();
-		yaw = atan2(forward.z, forward.x);
+		yaw  = atan2(forward.z, forward.x);
 		roll = 0.0f;
 
-#if THOROUGH_CHECKS
+		#if THOROUGH_CHECKS
 		if (IsNanOrInf(pitch))
 		{
 			PrintError("Pitch was NaN or Inf!\n");
@@ -166,7 +174,7 @@ namespace lve {
 			PrintError("Yaw was NaN or Inf!\n");
 			yaw = 0.0f;
 		}
-#endif
+		#endif
 	}
 
 	void BaseCamera::RecalculateViewProjection()
@@ -190,7 +198,7 @@ namespace lve {
 		}*/
 	}
 
-	void BaseCamera::JitterMatrix(glm::mat4& matrix)
+	void BaseCamera::JitterMatrix(glm::mat4& _matrix)
 	{
 		//// [-1.0f, 1.0f]
 		//static const glm::vec2 SAMPLE_LOCS_16[16] =
@@ -260,26 +268,23 @@ namespace lve {
 	void BaseCamera::ClampPitch()
 	{
 		float pitchLimit = glm::radians(89.5f);
-		pitch = glm::clamp(pitch, -pitchLimit, pitchLimit);
+		pitch            = glm::clamp(pitch, -pitchLimit, pitchLimit);
 	}
 
-	float BaseCamera::CalculateEV100(float aperture, float shutterSpeed, float sensitivity)
+	float BaseCamera::CalculateEV100(const float _aperture, const float _shutterSpeed, const float _sensitivity)
 	{
-		return log2((aperture * aperture) / shutterSpeed * 100.0f / sensitivity);
+		return log2((_aperture * _aperture) / _shutterSpeed * 100.0f / _sensitivity);
 	}
 
-	float BaseCamera::ComputeExposureNormFactor(float EV100)
+	float BaseCamera::ComputeExposureNormFactor(const float _EV100)
 	{
-		return pow(2.0f, EV100) * 1.2f;
+		return pow(2.0f, _EV100) * 1.2f;
 	}
-
 
 
 	void BaseCamera::CalculateExposure()
 	{
 		float EV100 = CalculateEV100(aperture, shutterSpeed, lightSensitivity);
-		exposure = ComputeExposureNormFactor(EV100);
+		exposure    = ComputeExposureNormFactor(EV100);
 	}
-
-
 } // namespace lve
