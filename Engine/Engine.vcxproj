@@ -104,7 +104,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)Librairies\stb_lib;$(SolutionDir)Librairies\glm;$(SolutionDir)Librairies\tinyObjLoader;$(SolutionDir)Librairies\glfw-3.4.bin.WIN64\include;$(SolutionDir)Librairies\VulkanSDK\Include;$(SolutionDir)Librairies\FMOD\inc;$(SolutionDir)\Engine;$(SolutionDir)\Engine\includes;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Librairies\stb_lib;$(SolutionDir)Librairies\glm;$(SolutionDir)Librairies\tinyObjLoader;$(SolutionDir)Librairies\glfw-3.4.bin.WIN64\include;$(SolutionDir)Librairies\VulkanSDK\Include;$(SolutionDir)Librairies\FMOD\inc;$(SolutionDir)\Engine;$(SolutionDir)\Engine\includes;$(SolutionDir)Librairies\Json/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
@@ -162,6 +162,7 @@
     <ClCompile Include="lve_image.cpp" />
     <ClCompile Include="sources\Camera\BaseCamera.cpp" />
     <ClCompile Include="sources\CoreEngine.cpp" />
+    <ClCompile Include="sources\Managers\HUDManager.cpp" />
     <ClCompile Include="sources\Managers\WindowManager.cpp" />
     <ClCompile Include="sources\ModuleManager.cpp" />
     <ClCompile Include="sources\Scene\BaseScene.cpp" />
