@@ -157,6 +157,9 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="sources\GameObject\PreGameObject\LightGameObject.cpp" />
+    <ClCompile Include="sources\GameObject\PreGameObject\PlaneGameObject.cpp" />
+    <ClCompile Include="sources\GameObject\PreGameObject\CubeGameObject.cpp" />
     <ClCompile Include="sources\Camera\CameraManager.cpp" />
     <ClCompile Include="functionHelpers.cpp" />
     <ClCompile Include="lve_constants.cpp" />
@@ -174,6 +177,7 @@
     <ClCompile Include="Transform.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="includes\GameObject\PreGameObject\CubeGameObject.h" />
     <ClInclude Include="includes\Camera\CameraManager.h" />
     <ClInclude Include="functionHelpers.h" />
     <ClInclude Include="includes\Camera\BaseCamera.h" />
@@ -213,8 +217,10 @@
     <ClCompile Include="sources\SubSystem.cpp" />
     <ClCompile Include="sources\Systems\point_light_system.cpp" />
     <ClCompile Include="sources\Systems\simple_render_system.cpp" />
+    <ClInclude Include="includes\GameObject\PreGameObject\LightGameObject.h" />
     <ClInclude Include="lve_constants.h" />
     <ClInclude Include="lve_image.h" />
+    <ClInclude Include="includes\GameObject\PreGameObject\PlaneGameObject.h" />
     <ClInclude Include="Transform.h" />
   </ItemGroup>
   <ItemGroup>

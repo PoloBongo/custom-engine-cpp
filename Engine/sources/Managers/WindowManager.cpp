@@ -14,6 +14,10 @@
 #include <stdexcept>
 #include <numeric>
 
+#include "GameObject/PreGameObject/CubeGameObject.h"
+#include "GameObject/PreGameObject/LightGameObject.h"
+#include "GameObject/PreGameObject/PlaneGameObject.h"
+
 void WindowManager::Init() {
 	Module::Init();
 
@@ -118,7 +122,7 @@ void WindowManager::Update()
 		}
 	}
 	else {
-		vkDeviceWaitIdle(lveDevice.device());
+		lveDevice.device().waitIdle();
 		Engine::GetInstance()->Quit();
 	}
 
@@ -141,11 +145,7 @@ void WindowManager::LoadGameObjects() {
 	smoothVaseGO.transform.scale = { 3.f, 1.5f, 3.f };
 	gameObjects->emplace(smoothVaseGO.GetId(), std::move(smoothVaseGO));
 
-	lveModel = lve::LveModel::CreateModelFromFile(lveDevice, "Models\\quad.obj");
-	auto quadGO = lve::LveGameObject::CreateGameObject();
-	quadGO.model = lveModel;
-	quadGO.transform.translation = { .0f, .5f, 0.f };
-	quadGO.transform.scale = { 3.f, 1.f, 3.f };
+	auto quadGO = lve::PlaneGameObject::Create(lveDevice, { .0f, .5f, 0.f }, { 3.f, 1.f, 3.f });
 	gameObjects->emplace(quadGO.GetId(), std::move(quadGO));
 
 	lveModel = lve::LveModel::CreateModelFromFile(lveDevice, "Models\\viking_room.obj");
@@ -155,6 +155,12 @@ void WindowManager::LoadGameObjects() {
 	Viking.transform.scale = { 3.f, 3.f, 3.f };
 	Viking.transform.rotation = { glm::radians(90.0f), glm::radians(90.0f), 0.0f };
 	gameObjects->emplace(Viking.GetId(), std::move(Viking));
+
+	auto cube = lve::CubeGameObject::Create(lveDevice);
+	gameObjects->emplace(cube.GetId(), std::move(cube));
+
+	auto colorCube = lve::CubeGameObject::CreateColor(lveDevice, glm::vec3{ 0.f, 0.f, 10.f });
+	gameObjects->emplace(colorCube.GetId(), std::move(colorCube));
 
 	std::vector<glm::vec3> lightColors{
 {1.f, .1f, .1f},
@@ -166,7 +172,7 @@ void WindowManager::LoadGameObjects() {
 	};
 
 	for (int i = 0; i < lightColors.size(); i++) {
-		auto pointLight = lve::LveGameObject::MakePointLight(0.2f);
+		auto pointLight = lve::LightGameObject::Create(0.2f, 0.1f);
 		pointLight.color = lightColors[i];
 		auto rotateLight = glm::rotate(
 			glm::mat4(1.f),
@@ -175,6 +181,9 @@ void WindowManager::LoadGameObjects() {
 		pointLight.transform.translation = glm::vec3(rotateLight * glm::vec4(-1.f, -1.f, -1.f, 1.f));
 		gameObjects->emplace(pointLight.GetId(), std::move(pointLight));
 	}
+
+	auto sun = lve::LightGameObject::Create(1000000.f, 2.0f, glm::vec3{0.f, -1000.f, 0.f});
+	gameObjects->emplace(sun.GetId(), std::move(sun));
 
 }
 
