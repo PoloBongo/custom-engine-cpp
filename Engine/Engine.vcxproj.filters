@@ -165,6 +165,15 @@
     <ClCompile Include="sources\GameObject\PreGameObject\LightGameObject.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="RHIVulkanModule.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="VulkanHooks.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="rhi.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="first_app.h">
@@ -300,6 +309,15 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="includes\GameObject\PreGameObject\LightGameObject.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RHIVulkanModule.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="VulkanHooks.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="rhi.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

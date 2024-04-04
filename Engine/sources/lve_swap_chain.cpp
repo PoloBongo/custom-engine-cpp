@@ -9,6 +9,8 @@
 #include <set>
 #include <stdexcept>
 
+#include "VulkanHooks.h"
+
 namespace lve {
 
 

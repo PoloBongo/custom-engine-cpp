@@ -158,6 +158,8 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="rhi.cpp" />
+    <ClCompile Include="RHIVulkanModule.cpp" />
     <ClCompile Include="sources\GameObject\PreGameObject\LightGameObject.cpp" />
     <ClCompile Include="sources\GameObject\PreGameObject\PlaneGameObject.cpp" />
     <ClCompile Include="sources\GameObject\PreGameObject\CubeGameObject.cpp" />
@@ -177,6 +179,7 @@
     <ClCompile Include="sources\Managers\SoundSystemManager.cpp" />
     <ClCompile Include="SphereCollider.cpp" />
     <ClCompile Include="Transform.cpp" />
+    <ClCompile Include="VulkanHooks.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="includes\GameObject\PreGameObject\CubeGameObject.h" />
@@ -223,7 +226,10 @@
     <ClInclude Include="lve_constants.h" />
     <ClInclude Include="lve_image.h" />
     <ClInclude Include="includes\GameObject\PreGameObject\PlaneGameObject.h" />
+    <ClInclude Include="rhi.h" />
+    <ClInclude Include="RHIVulkanModule.h" />
     <ClInclude Include="Transform.h" />
+    <ClInclude Include="VulkanHooks.h" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="first_app.h" />
