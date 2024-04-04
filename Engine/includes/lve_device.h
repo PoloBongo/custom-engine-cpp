@@ -233,22 +233,25 @@ namespace lve {
          */
         vk::PhysicalDeviceProperties properties;
 
+        /**
+      * @brief Crée une instance Vulkan.
+      *
+      * Cette fonction initialise une instance Vulkan, qui représente la connexion entre l'application et l'API Vulkan.
+      */
+        vk::Instance CreateInstance();
+
+        /**
+        * @brief Configure le gestionnaire de débogage.
+        *
+        * Cette fonction configure un gestionnaire de débogage Vulkan pour recevoir les messages de validation et de débogage de l'API Vulkan.
+        */
+        vk::DebugUtilsMessengerEXT SetupDebugMessenger();
 
     private:
 
-        /**
-         * @brief Crée une instance Vulkan.
-         *
-         * Cette fonction initialise une instance Vulkan, qui représente la connexion entre l'application et l'API Vulkan.
-         */
-        void createInstance();
+     
 
-        /**
-         * @brief Configure le gestionnaire de débogage.
-         *
-         * Cette fonction configure un gestionnaire de débogage Vulkan pour recevoir les messages de validation et de débogage de l'API Vulkan.
-         */
-        void setupDebugMessenger();
+       
 
         /**
          * @brief Crée une surface Vulkan.
