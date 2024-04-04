@@ -9,9 +9,5 @@ public:
     {
         return btVector3(glmVec.x, glmVec.y, glmVec.z);
     }
-
-    static btQuaternion ConvertQuatToBtQuaternion(glm::quat quat) {
-        return btQuaternion(quat.x, quat.y, quat.z, quat.w);
-    }
 };
 
