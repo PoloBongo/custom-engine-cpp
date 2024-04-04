@@ -33,8 +33,6 @@ public:
 	void SetName(const std::string& name);
 	std::string GetName() const;
 	std::string GetDefaultRelativeFilePath() const;
-	//std::string GetRelativeFilePath() const;                 ?? Meme code pour les 3 aucune utiliter a discuter   ??          
-	//std::string GetShortRelativeFilePath() const;
 	bool SetFileName(const std::string& fileName, bool bDeletePreviousFiles);
 
 	bool IsUsingSaveFile() const;
