@@ -52,3 +52,47 @@ std::pair<std::string, bool> SceneManager::GetSceneAt(int _index)
 	}
 	return { "None", false };
 }
+
+
+
+void SceneManager::DestroyScene(const std::string& sceneName)
+{
+	auto it = listScenes.find(sceneName);
+	if (it != listScenes.end())
+	{
+		listScenes.erase(it);
+	}
+}
+
+
+void SceneManager::SetCurrentScene(int sceneIndex) {
+	if (sceneIndex >= 0 && sceneIndex < static_cast<int>(scenes.size())) {
+		currentSceneIndex = sceneIndex;
+	}
+}
+
+void SceneManager::SetNextSceneActive() {
+	if (!scenes.empty()) {
+		currentSceneIndex = (currentSceneIndex + 1) % scenes.size();
+	}
+}
+
+void SceneManager::SetPreviousSceneActive() {
+	if (!scenes.empty()) {
+		currentSceneIndex = (currentSceneIndex - 1 + scenes.size()) % scenes.size();
+	}
+}
+
+
+
+BaseScene* SceneManager::GetCurrentScene() const {
+	return (currentSceneIndex >= 0 && currentSceneIndex < static_cast<int>(scenes.size())) ? scenes[currentSceneIndex].get() : nullptr;
+}
+
+
+
+//bool SceneManager::SceneFileExists(const std::string& filePath) const {
+//	return std::any_of(scenes.begin(), scenes.end(), [&filePath](const auto& scene) {
+//		return scene->GetFileName() == filePath;
+//		});
+//}

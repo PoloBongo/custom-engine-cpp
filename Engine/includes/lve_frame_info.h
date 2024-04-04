@@ -1,6 +1,6 @@
 #pragma once
 
-#include "lve_camera.h"
+#include "Camera/lve_camera.h"
 #include "lve_game_object.h"
 
 //lib
@@ -10,26 +10,36 @@ namespace lve {
 
 #define MAX_LIGHTS 10
 
-	struct PointLight {
-		glm::vec4 position{};  // ignore w
-		glm::vec4 color{};     // w is intensity
-	};
+    /**
+     * @brief Représente une lumière ponctuelle dans l'espace 3D.
+     */
+    struct PointLight {
+        glm::vec4 position{}; /**< Position de la lumière. */
+        glm::vec4 color{};    /**< Couleur de la lumière. */
+    };
 
-	struct GlobalUbo {
-		glm::mat4 projection{ 1.f };
-		glm::mat4 view{ 1.f };
-		glm::mat4 inverseView{ 1.f };
-		glm::vec4 ambientLightColor{ 1.f, 1.f, 1.f, .02f };  // w is intensity
-		PointLight pointLights[MAX_LIGHTS];
-		int numLights;
-	};
+    /**
+     * @brief Représente les données uniformes globales utilisées dans le pipeline de rendu.
+     */
+    struct GlobalUbo {
+        glm::mat4 projection{ 1.f };   /**< Matrice de projection. */
+        glm::mat4 view{ 1.f };         /**< Matrice de vue. */
+        glm::mat4 inverseView{ 1.f };  /**< Matrice de vue inverse. */
+        glm::vec4 ambientLightColor{ 1.f, 1.f, 1.f, .02f }; /**< Couleur de lumière ambiante. */
+        PointLight pointLights[MAX_LIGHTS]; /**< Tableau des lumières ponctuelles. */
+        int numLights; /**< Nombre de lumières ponctuelles. */
+    };
 
-	struct FrameInfo {
-		int frameIndex;
-		float frameTime;
-		vk::CommandBuffer commandBuffer;
-		LveCamera& camera;
-		vk::DescriptorSet globalDescriptorSet;
-		LveGameObject::Map &gameObjects;
-	};
+    /**
+     * @brief Contient les informations de trame utilisées lors du rendu.
+     */
+    struct FrameInfo {
+        int frameIndex; /**< Index de la trame. */
+        float frameTime; /**< Temps de la trame. */
+        vk::CommandBuffer commandBuffer; /**< Tampon de commandes Vulkan. */
+        LveCamera& camera; /**< Caméra utilisée pour le rendu. */
+        vk::DescriptorSet globalDescriptorSet; /**< Ensemble de descripteurs global. */
+        LveGameObject::Map& gameObjects; /**< Carte des objets de jeu. */
+    };
+
 } // namespace lve

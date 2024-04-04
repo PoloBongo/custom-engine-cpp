@@ -104,7 +104,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)Librairies\FMOD\inc;$(SolutionDir)Librairies\glm;$(SolutionDir)Librairies\tinyObjLoader;$(SolutionDir)Librairies\glfw-3.4.bin.WIN64\include;$(SolutionDir)Librairies\VulkanSDK\Include;$(SolutionDir)Librairies\bullet3_x64-windows\include\bullet;$(SolutionDir)\Engine;$(SolutionDir)\Engine\includes;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Librairies\stb_lib;$(SolutionDir)Librairies\glm;$(SolutionDir)Librairies\tinyObjLoader;$(SolutionDir)Librairies\glfw-3.4.bin.WIN64\include;$(SolutionDir)Librairies\VulkanSDK\Include;$(SolutionDir)Librairies\FMOD\inc;$(SolutionDir)\Engine;$(SolutionDir)\Engine\includes;$(SolutionDir)Librairies\Json/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
     </ClCompile>
@@ -134,7 +134,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)Librairies\FMOD\inc;$(SolutionDir)Librairies\glm;$(SolutionDir)Librairies\tinyObjLoader;$(SolutionDir)Librairies\glfw-3.4.bin.WIN64\include;$(SolutionDir)Librairies\VulkanSDK\Include;$(SolutionDir)Librairies\bullet3_x64-windows\include\bullet;$(SolutionDir)\Engine;$(SolutionDir)\Engine\includes;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Librairies\Stb_image;$(SolutionDir)Librairies\FMOD\inc;$(SolutionDir)Librairies\glm;$(SolutionDir)Librairies\tinyObjLoader;$(SolutionDir)Librairies\glfw-3.4.bin.WIN64\include;$(SolutionDir)Librairies\VulkanSDK\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
@@ -158,10 +158,18 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="BoxCollider.cpp" />
-    <ClCompile Include="Convertisseur.cpp" />
+    <ClCompile Include="sources\GameObject\PreGameObject\LightGameObject.cpp" />
+    <ClCompile Include="sources\GameObject\PreGameObject\PlaneGameObject.cpp" />
+    <ClCompile Include="sources\GameObject\PreGameObject\CubeGameObject.cpp" />
+    <ClCompile Include="sources\Camera\CameraManager.cpp" />
+    <ClCompile Include="functionHelpers.cpp" />
+    <ClCompile Include="lve_constants.cpp" />
     <ClCompile Include="lve_image.cpp" />
-    <ClCompile Include="RigidBody.cpp" />
+    <ClCompile Include="sources\Camera\BaseCamera.cpp" />
+    <ClCompile Include="sources\CoreEngine.cpp" />
+    <ClCompile Include="sources\Managers\HUDManager.cpp" />
+    <ClCompile Include="sources\Managers\WindowManager.cpp" />
+    <ClCompile Include="sources\ModuleManager.cpp" />
     <ClCompile Include="sources\Scene\BaseScene.cpp" />
     <ClCompile Include="Component.cpp" />
     <ClCompile Include="Engine.cpp" />
@@ -171,8 +179,15 @@
     <ClCompile Include="Transform.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="BoxCollider.h" />
-    <ClInclude Include="Convertisseur.h" />
+    <ClInclude Include="includes\GameObject\PreGameObject\CubeGameObject.h" />
+    <ClInclude Include="includes\Camera\CameraManager.h" />
+    <ClInclude Include="functionHelpers.h" />
+    <ClInclude Include="includes\Camera\BaseCamera.h" />
+    <ClInclude Include="includes\CoreEngine.h" />
+    <ClInclude Include="includes\Managers\HUDManager.h" />
+    <ClInclude Include="includes\Managers\WindowManager.h" />
+    <ClInclude Include="includes\Module.h" />
+    <ClInclude Include="includes\ModuleManager.h" />
     <ClInclude Include="includes\Scene\BaseScene.h" />
     <ClInclude Include="Component.h" />
     <ClInclude Include="EngineTestCode.h" />
@@ -181,7 +196,7 @@
     <ClCompile Include="sources\GameObject\GameObject.cpp" />
     <ClCompile Include="sources\keyboard_movement_controller.cpp" />
     <ClCompile Include="sources\lve_buffer.cpp" />
-    <ClCompile Include="sources\lve_camera.cpp" />
+    <ClCompile Include="sources\Camera\lve_camera.cpp" />
     <ClCompile Include="sources\lve_descriptors.cpp" />
     <ClCompile Include="sources\lve_device.cpp" />
     <ClCompile Include="sources\lve_frame_info.cpp" />
@@ -204,9 +219,10 @@
     <ClCompile Include="sources\SubSystem.cpp" />
     <ClCompile Include="sources\Systems\point_light_system.cpp" />
     <ClCompile Include="sources\Systems\simple_render_system.cpp" />
+    <ClInclude Include="includes\GameObject\PreGameObject\LightGameObject.h" />
+    <ClInclude Include="lve_constants.h" />
     <ClInclude Include="lve_image.h" />
-    <ClInclude Include="RigidBody.h" />
-    <ClInclude Include="SphereCollider.h" />
+    <ClInclude Include="includes\GameObject\PreGameObject\PlaneGameObject.h" />
     <ClInclude Include="Transform.h" />
   </ItemGroup>
   <ItemGroup>
@@ -214,7 +230,7 @@
     <ClInclude Include="includes\GameObject\GameObject.h" />
     <ClInclude Include="includes\keyboard_movement_controller.h" />
     <ClInclude Include="includes\lve_buffer.h" />
-    <ClInclude Include="includes\lve_camera.h" />
+    <ClInclude Include="includes\Camera\lve_camera.h" />
     <ClInclude Include="includes\lve_descriptors.h" />
     <ClInclude Include="includes\lve_device.h" />
     <ClInclude Include="includes\lve_frame_info.h" />

@@ -1,43 +1,31 @@
-#pragma once
-#include <iostream>
-#include <unordered_set>
+#ifndef INPUT_MANAGER_H
+#define INPUT_MANAGER_H
 
-class InputManager
-{
+#include <GLFW/glfw3.h>
+#include <unordered_map>
+
+class InputManager {
 public:
-	void Update();
+    InputManager(GLFWwindow* window);
+    ~InputManager();
 
-	bool IsMouseButtonPressed(int _button);
+    void processInput();
 
-	bool AnyKeyPressed(int _key);
-
-	float GetMousePosition();
-
-	bool IsMouseScrolledUp() {
-		return scrollUp;
-	}
-
-	bool IsMouseScrolledDown() {
-		return scrollDown;
-	}
-
-	bool IsKeyPressed(int _key) {
-		return keysPressed.count(_key) > 0;
-	}
-
-	bool AreKeysPressed(std::initializer_list<int> _listKeys) {
-		for (int key : _listKeys) {
-			if (keysPressed.count(key) == 0) {
-				return false;
-			}
-		}
-		return true;
-	}
+    bool isKeyPressed(int key);
+    bool isMouseButtonPressed(int button);
+    void getMousePosition(double& xPos, double& yPos);
 
 private:
-	bool scrollUp;
-	bool scrollDown;
-	// unordered_set permet de stocker (dans notre cas) des int qui ne soit pas dupliquer
-	std::unordered_set<int> keysPressed;
+    GLFWwindow* m_window;
+    std::unordered_map<int, bool> m_keys;
+    std::unordered_map<int, bool> m_mouseButtons;
+    double m_mouseX, m_mouseY;
+
+    static void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
+    static void mouseButtonCallback(GLFWwindow* window, int button, int action, int mods);
+    static void cursorPositionCallback(GLFWwindow* window, double xPos, double yPos);
+    static void joystickCallback(int jid, int event);
+    static void gamepadInput(int jid, const GLFWgamepadstate* state);
 };
 
+#endif // INPUT_MANAGER_H
