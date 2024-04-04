@@ -1,6 +1,7 @@
 #include "ModuleManager.h"
 
 #include "Managers/WindowManager.h"
+#include "Managers/SceneManager.h"
 
 ModuleManager::~ModuleManager()
 {
@@ -17,6 +18,7 @@ void ModuleManager::CreateDefaultModules()
 	//CreateModule<CameraModule>();
 	//CreateModule<SceneModule>();
 	//CreateModule<ImGuiModule>();
+	CreateModule<SceneManager>();
 }
 
 void ModuleManager::Init() const

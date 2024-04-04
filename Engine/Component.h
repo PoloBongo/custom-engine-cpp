@@ -1,5 +1,6 @@
 #pragma once
 #include <string>
+#include "lve_window.h"
 
 class GameObject;
 
@@ -15,9 +16,9 @@ public:
 	virtual void Update(const float& _delta);
 
 	//Render Methods
-	/*virtual void Render(sf::RenderWindow* _window);
-	virtual void RenderGUI(sf::RenderWindow* _window);
-	virtual void RenderBackground(sf::RenderWindow* _window);*/
+	virtual void Render(lve::LveWindow* _window);
+	virtual void RenderGUI(lve::LveWindow* _window);
+	virtual void RenderBackground(lve::LveWindow* _window);
 
 	inline GameObject* GetOwner() const { return owner; }
 	inline void SetOwner(GameObject* _owner) { owner = _owner; }
