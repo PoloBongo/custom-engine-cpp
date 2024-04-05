@@ -79,23 +79,23 @@ public:
 	template<typename T>
 	T* GetComponent() {
 		for (size_t i = 0; i < components.size(); i++) {
-			// Vérifie si le composant est un Component
+			// VÃ©rifie si le composant est un Component
 			T* componentResult = dynamic_cast<T*>(components[i]);
 			if (componentResult) {
-				return componentResult; // Renvoie le Component trouvé
+				return componentResult; // Renvoie le Component trouvÃ©
 			}
 		}
-		return nullptr; // Renvoie nullptr si aucun Component n'est trouvé
+		return nullptr; // Renvoie nullptr si aucun Component n'est trouvÃ©
 	}
 
 	template<typename T>
 	std::vector<T*> GetComponentsByType() {
 		std::vector<T*> componentsByType;
 		for (size_t i = 0; i < components.size(); i++) {
-			// Vérifie si le composant est un Component
+			// VÃ©rifie si le composant est un Component
 			T* componentResult = dynamic_cast<T*>(components[i]);
 			if (componentResult) {
-				componentsByType.push_back(componentResult); // Ajout le Component trouvé
+				componentsByType.push_back(componentResult); // Ajout le Component trouvÃ©
 			}
 		}
 		return componentsByType;
@@ -105,13 +105,13 @@ public:
 	T* GetComponentByName(const std::string& _name) {
 		std::vector<T*> componentsByType = GetComponentsByType<T>();
 		for (size_t i = 0; i < componentsByType.size(); i++) {
-			// Vérifie si le composant est un Component
+			// VÃ©rifie si le composant est un Component
 			T* componentResult = dynamic_cast<T*>(componentsByType[i]);
 			if (componentResult && static_cast<Component*>(componentResult)->GetName() == _name) {
-				return componentResult; // Renvoie le Component trouvé
+				return componentResult; // Renvoie le Component trouvÃ©
 			}
 		}
-		return nullptr; // Renvoie nullptr si aucun Component n'est trouvé
+		return nullptr; // Renvoie nullptr si aucun Component n'est trouvÃ©
 	}
 
 	void RemoveComponent(Component* _component);
@@ -129,7 +129,7 @@ protected:
 	//Quel est le layer du gameObject
 	LayerType layerType = LayerType::Normal;
 
-	//Plus c'est proche de 1, plus le GameObject sera proche de l'écran
+	//Plus c'est proche de 1, plus le GameObject sera proche de l'Ã©cran
 	float depth = 0.f;
 
 	bool isActive = true;

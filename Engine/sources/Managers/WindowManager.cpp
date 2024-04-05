@@ -81,7 +81,7 @@ void WindowManager::Update()
 	if (!lveWindow.ShouldClose()) {
 		glfwPollEvents();
 
-		auto newTime = std::chrono::high_resolution_clock::now(); // Bien mettre après la gestion d'event
+		auto newTime = std::chrono::high_resolution_clock::now(); // Bien mettre aprÃ¨s la gestion d'event
 		float frameTime = std::chrono::duration<float, std::chrono::seconds::period>(newTime - currentTime).count();
 		currentTime = newTime;
 
@@ -91,13 +91,15 @@ void WindowManager::Update()
 		float aspect = lveRenderer.GetAspectRatio();
 		camera->SetPerspectiveProjection(glm::radians(50.f), aspect, 0.1f, 100.f);
 
-		if (auto commandBuffer = lveRenderer.BeginFrame()) {
+		p_commandBuffer = new vk::CommandBuffer(lveRenderer.BeginFrame());
+
+		if (p_commandBuffer) {
 			int frameIndex = lveRenderer.GetFrameIndex();
 
 			lve::FrameInfo frameInfo{
 				frameIndex,
 				frameTime,
-				commandBuffer,
+				*p_commandBuffer,
 				*camera,
 				globalDescriptorSets[frameIndex],
 				*gameObjects
@@ -114,11 +116,9 @@ void WindowManager::Update()
 			uboBuffers[frameIndex]->flush();
 
 			// render
-			lveRenderer.BeginSwapChainRenderPass(commandBuffer);//begin offscreen shadow pass
+			lveRenderer.BeginSwapChainRenderPass(*p_commandBuffer);//begin offscreen shadow pass
 			simpleRenderSystem->RenderGameObjects(frameInfo);//render shadow casting objects
 			pointLightSystem->Render(frameInfo);//render shadow casting objects
-			lveRenderer.EndSwapChainRenderPass(commandBuffer);
-			lveRenderer.EndFrame();//end offscreen shadow pass
 		}
 	}
 	else {
@@ -128,6 +128,39 @@ void WindowManager::Update()
 
 }
 
+void WindowManager::PreRender()
+{
+	Module::PreRender();
+
+	//window->clear(sf::Color::Black);
+}
+
+void WindowManager::Render()
+{
+	Module::Render();
+}
+
+void WindowManager::RenderGui()
+{
+	Module::RenderGui();
+}
+
+void WindowManager::PostRender()
+{
+	Module::PostRender();
+
+	lveRenderer.EndSwapChainRenderPass(*p_commandBuffer);
+	lveRenderer.EndFrame();//end offscreen shadow pass
+
+	//window->display();
+}
+
+void WindowManager::Release()
+{
+	Module::Release();
+
+	//window->close();
+}
 
 void WindowManager::LoadGameObjects() {
 	std::shared_ptr<lve::LveModel> lveModel = lve::LveModel::CreateModelFromFile(lveDevice, "Models\\flat_vase.obj");

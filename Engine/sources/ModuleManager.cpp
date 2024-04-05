@@ -1,6 +1,7 @@
 #include "ModuleManager.h"
 
 #include "Managers/WindowManager.h"
+#include "Managers/ImGUIManager.h"
 #include "RHIVulkanModule.h"
 #include "Managers/SceneManager.h"
 
@@ -15,6 +16,7 @@ void ModuleManager::CreateDefaultModules()
 	//CreateModule<TimeModule>();
 	//CreateModule<InputModule>();
 	CreateModule<WindowManager>();
+	CreateModule<ImGuiManager>();
 	//CreateModule<RHIVulkanModule>();
 	//CreateModule<AssetModule>();
 	//CreateModule<CameraModule>();
