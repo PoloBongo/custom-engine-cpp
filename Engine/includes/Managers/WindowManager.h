@@ -46,6 +46,8 @@ public:
 	void Release() override;
 
 	lve::LveWindow* GetWindow() { return &lveWindow; }
+	lve::LveDevice* GetDevice() { return &lveDevice; }
+	lve::LveRenderer* GetRenderer() { return &lveRenderer; }
 
 private:
 	void LoadGameObjects();
@@ -72,4 +74,6 @@ private:
 	// note : order of declarations matters
 	std::unique_ptr<lve::LveDescriptorPool> globalPool{};
 	lve::LveGameObject::Map* gameObjects;
+
+	vk::CommandBuffer* p_commandBuffer;
 };

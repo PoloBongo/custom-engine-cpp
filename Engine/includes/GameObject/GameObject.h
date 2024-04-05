@@ -4,6 +4,7 @@
 #include <vector>
 #include <glm.hpp>
 #include "Component.h"
+#include "lve_window.h"
 
 enum class LayerType {
 	Normal,
@@ -111,7 +112,7 @@ public:
 	virtual void Start();
 	void Physics(const float& _delta) const;
 	void Update(const float& _delta) const;
-	/*void Render(sf::RenderWindow* _window) const;*/
+	//void Render(lve::LveWindow* _window) const;
 
 protected:
 	std::string name = "GameObject";

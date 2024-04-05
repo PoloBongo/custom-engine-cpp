@@ -87,13 +87,15 @@ void WindowManager::Update()
 		float aspect = lveRenderer.GetAspectRatio();
 		camera->SetPerspectiveProjection(glm::radians(50.f), aspect, 0.1f, 100.f);
 
-		if (auto commandBuffer = lveRenderer.BeginFrame()) {
+		p_commandBuffer = new vk::CommandBuffer(lveRenderer.BeginFrame());
+
+		if (p_commandBuffer) {
 			int frameIndex = lveRenderer.GetFrameIndex();
 
 			lve::FrameInfo frameInfo{
 				frameIndex,
 				frameTime,
-				commandBuffer,
+				*p_commandBuffer,
 				*camera,
 				globalDescriptorSets[frameIndex],
 				*gameObjects
@@ -110,11 +112,9 @@ void WindowManager::Update()
 			uboBuffers[frameIndex]->flush();
 
 			// render
-			lveRenderer.BeginSwapChainRenderPass(commandBuffer);//begin offscreen shadow pass
+			lveRenderer.BeginSwapChainRenderPass(*p_commandBuffer);//begin offscreen shadow pass
 			simpleRenderSystem->RenderGameObjects(frameInfo);//render shadow casting objects
 			pointLightSystem->Render(frameInfo);//render shadow casting objects
-			lveRenderer.EndSwapChainRenderPass(commandBuffer);
-			lveRenderer.EndFrame();//end offscreen shadow pass
 		}
 	}
 	else {
@@ -124,6 +124,39 @@ void WindowManager::Update()
 
 }
 
+void WindowManager::PreRender()
+{
+	Module::PreRender();
+
+	//window->clear(sf::Color::Black);
+}
+
+void WindowManager::Render()
+{
+	Module::Render();
+}
+
+void WindowManager::RenderGui()
+{
+	Module::RenderGui();
+}
+
+void WindowManager::PostRender()
+{
+	Module::PostRender();
+
+	lveRenderer.EndSwapChainRenderPass(*p_commandBuffer);
+	lveRenderer.EndFrame();//end offscreen shadow pass
+
+	//window->display();
+}
+
+void WindowManager::Release()
+{
+	Module::Release();
+
+	//window->close();
+}
 
 void WindowManager::LoadGameObjects() {
 	std::shared_ptr<lve::LveModel> lveModel = lve::LveModel::CreateModelFromFile(lveDevice, "Models\\flat_vase.obj");
@@ -175,36 +208,4 @@ void WindowManager::LoadGameObjects() {
 		pointLight.transform.translation = glm::vec3(rotateLight * glm::vec4(-1.f, -1.f, -1.f, 1.f));
 		gameObjects->emplace(pointLight.GetId(), std::move(pointLight));
 	}
-
-}
-
-void WindowManager::PreRender()
-{
-	Module::PreRender();
-
-	//window->clear(sf::Color::Black);
-}
-
-void WindowManager::Render()
-{
-	Module::Render();
-}
-
-void WindowManager::RenderGui()
-{
-	Module::RenderGui();
-}
-
-void WindowManager::PostRender()
-{
-	Module::PostRender();
-
-	//window->display();
-}
-
-void WindowManager::Release()
-{
-	Module::Release();
-
-	//window->close();
 }

@@ -76,6 +76,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>;$(SolutionDir)Librairies/imgui</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -90,6 +91,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>;$(SolutionDir)Librairies/imgui</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -104,7 +106,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)Librairies\stb_lib;$(SolutionDir)Librairies\glm;$(SolutionDir)Librairies\tinyObjLoader;$(SolutionDir)Librairies\glfw-3.4.bin.WIN64\include;$(SolutionDir)Librairies\VulkanSDK\Include;$(SolutionDir)Librairies\FMOD\inc;$(SolutionDir)\Engine;$(SolutionDir)\Engine\includes;$(SolutionDir)Librairies\Json/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Librairies\stb_lib;$(SolutionDir)Librairies\glm;$(SolutionDir)Librairies\tinyObjLoader;$(SolutionDir)Librairies\glfw-3.4.bin.WIN64\include;$(SolutionDir)Librairies\VulkanSDK\Include;$(SolutionDir)Librairies\FMOD\inc;$(SolutionDir)\Engine;$(SolutionDir)\Engine\includes;$(SolutionDir)Librairies\Json/include;%(AdditionalIncludeDirectories);$(SolutionDir)Librairies/imgui</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
@@ -133,7 +135,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)Librairies\Stb_image;$(SolutionDir)Librairies\FMOD\inc;$(SolutionDir)Librairies\glm;$(SolutionDir)Librairies\tinyObjLoader;$(SolutionDir)Librairies\glfw-3.4.bin.WIN64\include;$(SolutionDir)Librairies\VulkanSDK\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Librairies\Stb_image;$(SolutionDir)Librairies\FMOD\inc;$(SolutionDir)Librairies\glm;$(SolutionDir)Librairies\tinyObjLoader;$(SolutionDir)Librairies\glfw-3.4.bin.WIN64\include;$(SolutionDir)Librairies\VulkanSDK\Include;%(AdditionalIncludeDirectories);$(SolutionDir)Librairies/imgui</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
@@ -157,6 +159,13 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\Librairies\imgui\imgui.cpp" />
+    <ClCompile Include="..\Librairies\imgui\imgui_demo.cpp" />
+    <ClCompile Include="..\Librairies\imgui\imgui_draw.cpp" />
+    <ClCompile Include="..\Librairies\imgui\imgui_impl_glfw.cpp" />
+    <ClCompile Include="..\Librairies\imgui\imgui_impl_vulkan.cpp" />
+    <ClCompile Include="..\Librairies\imgui\imgui_tables.cpp" />
+    <ClCompile Include="..\Librairies\imgui\imgui_widgets.cpp" />
     <ClCompile Include="sources\Camera\CameraManager.cpp" />
     <ClCompile Include="functionHelpers.cpp" />
     <ClCompile Include="lve_constants.cpp" />
@@ -164,6 +173,7 @@
     <ClCompile Include="sources\Camera\BaseCamera.cpp" />
     <ClCompile Include="sources\CoreEngine.cpp" />
     <ClCompile Include="sources\Managers\HUDManager.cpp" />
+    <ClCompile Include="sources\Managers\ImGUIManager.cpp" />
     <ClCompile Include="sources\Managers\WindowManager.cpp" />
     <ClCompile Include="sources\ModuleManager.cpp" />
     <ClCompile Include="sources\Scene\BaseScene.cpp" />
@@ -179,6 +189,7 @@
     <ClInclude Include="includes\Camera\BaseCamera.h" />
     <ClInclude Include="includes\CoreEngine.h" />
     <ClInclude Include="includes\Managers\HUDManager.h" />
+    <ClInclude Include="includes\Managers\ImGUIManager.h" />
     <ClInclude Include="includes\Managers\WindowManager.h" />
     <ClInclude Include="includes\Module.h" />
     <ClInclude Include="includes\ModuleManager.h" />

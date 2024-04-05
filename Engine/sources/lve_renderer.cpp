@@ -85,6 +85,7 @@ namespace lve {
         if (commandBuffer.begin(&beginInfo) != vk::Result::eSuccess) {
             throw std::runtime_error("failed to begin recording command buffer!");
         }
+        //return commandBuffer;
         return commandBuffer;
     }
 

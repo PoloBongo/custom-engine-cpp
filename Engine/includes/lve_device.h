@@ -95,6 +95,10 @@ namespace lve {
          */
         vk::Device device() { return device_; }
 
+        // MAURAD
+        vk::Instance GetInstance() { return instance; }
+        vk::PhysicalDevice GetPhysicalDevice() { return physicalDevice; }
+
         /**
          * @brief Récupère la surface Vulkan associée au périphérique.
          *
