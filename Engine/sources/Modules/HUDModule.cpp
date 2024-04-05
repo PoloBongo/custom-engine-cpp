@@ -24,17 +24,17 @@ std::vector<char> HUDModule::ReadFile(const std::string& _filename)
 }
 
 // Méthode pour créer une image Vulkan à partir d'un fichier image sur le disque
-//vk::Image HUDModule::createTextureImage(const std::string& texturePath) {
+//VkImage HUDModule::createTextureImage(const std::string& texturePath) {
 //    int texWidth, texHeight, texChannels;
 //    stbi_uc* pixels = stbi_load(texturePath.c_str(), &texWidth, &texHeight, &texChannels, STBI_rgb_alpha);
 //    if (!pixels) {
 //        throw std::runtime_error("Failed to load texture image: " + texturePath);
 //    }
 //
-//    vk::DeviceSize imageSize = texWidth * texHeight * 4;
+//    VkDeviceSize imageSize = texWidth * texHeight * 4;
 //
-//    vk::Buffer stagingBuffer;
-//    vk::DeviceMemory stagingBufferMemory;
+//    VkBuffer stagingBuffer;
+//    VkDeviceMemory stagingBufferMemory;
 //    createBuffer(imageSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, stagingBuffer, stagingBufferMemory);
 //
 //    void* data;
@@ -44,8 +44,8 @@ std::vector<char> HUDModule::ReadFile(const std::string& _filename)
 //
 //    stbi_image_free(pixels);
 //
-//    vk::Image textureImage;
-//    vk::DeviceMemory textureImageMemory;
+//    VkImage textureImage;
+//    VkDeviceMemory textureImageMemory;
 //    createImage(imageSize, VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, textureImage, textureImageMemory);
 //
 //    transitionImageLayout(textureImage, VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
@@ -59,15 +59,15 @@ std::vector<char> HUDModule::ReadFile(const std::string& _filename)
 //}
 
 // Méthode pour créer une vue d'image Vulkan à partir d'une image Vulkan
-vk::ImageView HUDModule::CreateTextureImageView(const vk::Image _image)
+VkImageView HUDModule::CreateTextureImageView(VkImage _image)
 {
-	return CreateImageView(_image, vk::Format::eR8G8B8A8Unorm , vk::ImageAspectFlagBits::eColor);
+	return CreateImageView(_image, VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_ASPECT_COLOR_BIT);
 }
 
 // Méthode pour créer un échantillonneur Vulkan pour les textures
-vk::Sampler HUDModule::CreateTextureSampler() const
+VkSampler HUDModule::CreateTextureSampler() const
 {
-	vk::SamplerCreateInfo sampler_info{};
+	VkSamplerCreateInfo sampler_info{};
 	sampler_info.sType                   = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO;
 	sampler_info.magFilter               = VK_FILTER_LINEAR;
 	sampler_info.minFilter               = VK_FILTER_LINEAR;
@@ -85,7 +85,7 @@ vk::Sampler HUDModule::CreateTextureSampler() const
 	sampler_info.minLod                  = 0.0f;
 	sampler_info.maxLod                  = 0.0f;
 
-	vk::Sampler sampler;
+	VkSampler sampler;
 	if (vkCreateSampler(device, &sampler_info, nullptr, &sampler) != VK_SUCCESS)
 		throw std::runtime_error(
 			"Failed to create texture sampler");
@@ -93,7 +93,7 @@ vk::Sampler HUDModule::CreateTextureSampler() const
 	return sampler;
 }
 
-HUDModule::HUDModule(const vk::Device _device, const vk::RenderPass _renderPass, const vk::Queue _graphicsQueue, const vk::CommandPool _commandPool): device(
+HUDModule::HUDModule(const VkDevice _device, const VkRenderPass _renderPass, const VkQueue _graphicsQueue, const VkCommandPool _commandPool): device(
 	                                                                                                                                             _device), renderPass(
 	                                                                                                                                             _renderPass), graphicsQueue(
 	                                                                                                                                             _graphicsQueue), commandPool(
@@ -134,20 +134,20 @@ void HUDModule::CleanupComponents()
 }
 
 // Méthode pour dessiner les composants HUD
-void HUDModule::Render(vk::CommandBuffer _commandBuffer)
+void HUDModule::Render(VkCommandBuffer _commandBuffer)
 {
 	// Code pour dessiner les composants HUD avec Vulkan
 	// Utiliser les commandes Vulkan pour dessiner les textures des composants sur l'écran
 }
 
-void HUDModule::TransitionImageLayout(vk::Image _image, vk::Format _format, vk::ImageLayout _oldLayout, vk::ImageLayout _newLayout)
+void HUDModule::TransitionImageLayout(VkImage _image, VkFormat _format, VkImageLayout _oldLayout, VkImageLayout _newLayout)
 {
 }
 
-void HUDModule::CreateBuffer(vk::DeviceSize _size, vk::BufferUsageFlags _usage, vk::MemoryPropertyFlags _properties,
-                             vk::Buffer&    _buffer, vk::DeviceMemory&  _bufferMemory)
+void HUDModule::CreateBuffer(VkDeviceSize _size, VkBufferUsageFlags _usage, VkMemoryPropertyFlags _properties,
+                             VkBuffer&    _buffer, VkDeviceMemory&  _bufferMemory)
 {
-	vk::BufferCreateInfo bufferInfo{};
+	VkBufferCreateInfo bufferInfo{};
 	bufferInfo.sType       = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
 	bufferInfo.size        = _size;
 	bufferInfo.usage       = _usage;
@@ -157,10 +157,10 @@ void HUDModule::CreateBuffer(vk::DeviceSize _size, vk::BufferUsageFlags _usage, 
 		throw std::runtime_error(
 			"Failed to create buffer");
 
-	vk::MemoryRequirements memRequirements;
+	VkMemoryRequirements memRequirements;
 	vkGetBufferMemoryRequirements(device, _buffer, &memRequirements);
 
-	vk::MemoryAllocateInfo allocInfo{};
+	VkMemoryAllocateInfo allocInfo{};
 	allocInfo.sType          = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
 	allocInfo.allocationSize = memRequirements.size;
 	//allocInfo.memoryTypeIndex = findMemoryType(memRequirements.memoryTypeBits, properties);
@@ -172,10 +172,10 @@ void HUDModule::CreateBuffer(vk::DeviceSize _size, vk::BufferUsageFlags _usage, 
 	vkBindBufferMemory(device, _buffer, _bufferMemory, 0);
 }
 
-void HUDModule::CreateImage(vk::DeviceSize          _size, vk::Format _format, vk::ImageTiling _tiling, vk::ImageUsageFlags _usage,
-                            vk::MemoryPropertyFlags _properties, vk::Image& _image, vk::DeviceMemory& _imageMemory)
+void HUDModule::CreateImage(VkDeviceSize          _size, VkFormat _format, VkImageTiling _tiling, VkImageUsageFlags _usage,
+                            VkMemoryPropertyFlags _properties, VkImage& _image, VkDeviceMemory& _imageMemory)
 {
-	vk::ImageCreateInfo imageInfo{};
+	VkImageCreateInfo imageInfo{};
 	imageInfo.sType         = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
 	imageInfo.imageType     = VK_IMAGE_TYPE_2D;
 	imageInfo.extent.width  = WIDTH;
@@ -194,10 +194,10 @@ void HUDModule::CreateImage(vk::DeviceSize          _size, vk::Format _format, v
 		throw std::runtime_error(
 			"Failed to create image");
 
-	vk::MemoryRequirements memRequirements;
+	VkMemoryRequirements memRequirements;
 	vkGetImageMemoryRequirements(device, _image, &memRequirements);
 
-	vk::MemoryAllocateInfo allocInfo{};
+	VkMemoryAllocateInfo allocInfo{};
 	allocInfo.sType          = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
 	allocInfo.allocationSize = memRequirements.size;
 	//allocInfo.memoryTypeIndex = findMemoryType(memRequirements.memoryTypeBits, properties);
@@ -209,12 +209,12 @@ void HUDModule::CreateImage(vk::DeviceSize          _size, vk::Format _format, v
 	vkBindImageMemory(device, _image, _imageMemory, 0);
 }
 
-void HUDModule::CopyBufferToImage(vk::Buffer _buffer, vk::Image _image, uint32_t _width, uint32_t _height)
+void HUDModule::CopyBufferToImage(VkBuffer _buffer, VkImage _image, uint32_t _width, uint32_t _height)
 {
-	vk::CommandBuffer commandBuffer;
+	VkCommandBuffer commandBuffer;
 
 	// Allouer un tampon de commande
-	vk::CommandBufferAllocateInfo allocInfo{};
+	VkCommandBufferAllocateInfo allocInfo{};
 	allocInfo.sType              = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
 	allocInfo.level              = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
 	allocInfo.commandPool        = commandPool;
@@ -222,13 +222,13 @@ void HUDModule::CopyBufferToImage(vk::Buffer _buffer, vk::Image _image, uint32_t
 	vkAllocateCommandBuffers(device, &allocInfo, &commandBuffer);
 
 	// Commencer l'enregistrement des commandes
-	vk::CommandBufferBeginInfo beginInfo{};
+	VkCommandBufferBeginInfo beginInfo{};
 	beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
 	beginInfo.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
 	vkBeginCommandBuffer(commandBuffer, &beginInfo);
 
 	// Copier le tampon vers l'image
-	vk::BufferImageCopy region{};
+	VkBufferImageCopy region{};
 	region.bufferOffset                    = 0;
 	region.bufferRowLength                 = 0;
 	region.bufferImageHeight               = 0;
@@ -244,7 +244,7 @@ void HUDModule::CopyBufferToImage(vk::Buffer _buffer, vk::Image _image, uint32_t
 	vkEndCommandBuffer(commandBuffer);
 
 	// Soumettre le tampon de commande pour exécution
-	vk::SubmitInfo submitInfo{};
+	VkSubmitInfo submitInfo{};
 	submitInfo.sType              = VK_STRUCTURE_TYPE_SUBMIT_INFO;
 	submitInfo.commandBufferCount = 1;
 	submitInfo.pCommandBuffers    = &commandBuffer;
@@ -255,7 +255,7 @@ void HUDModule::CopyBufferToImage(vk::Buffer _buffer, vk::Image _image, uint32_t
 	vkFreeCommandBuffers(device, commandPool, 1, &commandBuffer);
 }
 
-vk::ImageView HUDModule::CreateImageView(vk::Image _image, vk::Format _format, vk::ImageAspectFlags _aspectFlags)
+VkImageView HUDModule::CreateImageView(VkImage _image, VkFormat _format, VkImageAspectFlags _aspectFlags)
 {
 	// Implémentation de la création de la vue d'image Vulkan
 	return nullptr;

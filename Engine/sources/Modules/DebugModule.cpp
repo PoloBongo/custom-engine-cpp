@@ -3,7 +3,6 @@
 
 DebugModule::~DebugModule()
 {
-	throw std::logic_error("Not implemented");
 }
 
 void DebugModule::Init()

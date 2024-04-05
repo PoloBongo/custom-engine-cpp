@@ -23,7 +23,7 @@ namespace lve
 
 		g_InputModule->BindActionCallback(&m_ActionCallback, 12);*/
 
-		m_bInitialized = true;
+		bInitialized = true;
 	}
 
 	void CameraManager::Destroy()
@@ -43,7 +43,7 @@ namespace lve
 		/*
 		g_InputModule->UnbindActionCallback(&m_ActionCallback);*/
 
-		m_bInitialized = false;
+		bInitialized = false;
 	}
 
 	void CameraManager::Update()
@@ -106,7 +106,7 @@ namespace lve
 			if (newIndex < 0) newIndex += numCameras;
 			if (newIndex >= numCameras) newIndex -= numCameras;
 		}
-		while (!cameras[newIndex]->bDEBUGCyclable);
+		while (!cameras[newIndex]->bDebugCyclable);
 
 		return SetCamera(cameras[newIndex], _bAlignWithPrevious);
 	}
@@ -146,7 +146,7 @@ namespace lve
 
 		if (_bAlignWithPrevious && pActiveCam != nullptr) AlignCameras(pActiveCam, _camera);
 
-		if (_bInitialize && m_bInitialized)
+		if (_bInitialize && bInitialized)
 		{
 			/*camera->Initialize();
 			camera->OnPossess();*/
@@ -311,7 +311,7 @@ namespace lve
 		_to->position = _from->position;
 		_to->pitch    = _from->pitch;
 		_to->yaw      = _from->yaw;
-		_to->FOV      = _from->FOV;
+		_to->fov      = _from->fov;
 	}
 
 	/*EventReply CameraManager::OnActionEvent(Action action, ActionEvent actionEvent)

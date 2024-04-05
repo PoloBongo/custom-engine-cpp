@@ -7,15 +7,15 @@
 #include <imgui_impl_glfw.h>
 #include <imgui_impl_vulkan.h>
 
-void ImGuiModule::immediate_submit(std::function<void(vk::CommandBuffer cmd)>&& function)
+void ImGuiModule::ImmediateSubmit(std::function<void(vk::CommandBuffer cmd)>&& _function)
 {
 	vk::Device device        = windowModule->GetDevice()->device();
 	vk::Queue  graphicsQueue = windowModule->GetDevice()->graphicsQueue();
 
-	device.resetFences(_immFence);
-	_immCommandBuffer.reset(vk::CommandBufferResetFlagBits::eReleaseResources);
+	device.resetFences(immFence);
+	immCommandBuffer.reset(vk::CommandBufferResetFlagBits::eReleaseResources);
 
-	vk::CommandBuffer cmd = _immCommandBuffer;
+	vk::CommandBuffer cmd = immCommandBuffer;
 
 	vk::CommandBufferBeginInfo cmdBeginInfo{};
 	cmdBeginInfo.sType = vk::StructureType::eCommandBufferBeginInfo;
@@ -23,7 +23,7 @@ void ImGuiModule::immediate_submit(std::function<void(vk::CommandBuffer cmd)>&& 
 
 	cmd.begin(cmdBeginInfo);
 
-	function(cmd);
+	_function(cmd);
 
 	cmd.end();
 
@@ -39,9 +39,9 @@ void ImGuiModule::immediate_submit(std::function<void(vk::CommandBuffer cmd)>&& 
 	auto dispatcher                   = vk::DispatchLoaderDynamic();
 	// submit command buffer to the queue and execute it.
 	//  _renderFence will now block until the graphic commands finish execution
-	graphicsQueue.submit2KHR(submitInfo, _immFence, dispatcher);
+	graphicsQueue.submit2KHR(submitInfo, immFence, dispatcher);
 
-	device.waitForFences(_immFence, VK_TRUE, 9999999999);
+	device.waitForFences(immFence, VK_TRUE, 9999999999);
 }
 
 void ImGuiModule::Init()
@@ -59,15 +59,15 @@ void ImGuiModule::Init()
 		vk::CommandPoolCreateFlags(),     // Flags de création
 		queueFamilyIndices.graphicsFamily // Indice de la famille de file d'attente de commandes
 	);
-	_immCommandPool = device.createCommandPool(commandPoolInfo);
+	immCommandPool = device.createCommandPool(commandPoolInfo);
 
 	// Allocation du tampon de commande pour les soumissions immédiates
 	vk::CommandBufferAllocateInfo cmdAllocInfo(
-		_immCommandPool,                  // Pool de commandes
+		immCommandPool,                  // Pool de commandes
 		vk::CommandBufferLevel::ePrimary, // Niveau du tampon de commande
 		1                                 // Nombre de tampons à allouer
 	);
-	_immCommandBuffer = device.allocateCommandBuffers(cmdAllocInfo)[0];
+	immCommandBuffer = device.allocateCommandBuffers(cmdAllocInfo)[0];
 
 	// Ajout de la fonction de suppression du pool de commandes à la file de suppression principale
 	//_mainDeletionQueue.push_back([=]() {
@@ -201,7 +201,7 @@ void ImGuiModule::Finalize()
 }
 
 
-void ImGuiModule::GetGUI()
+void ImGuiModule::GetGui()
 {
 	ImGui::Begin("Scene");
 

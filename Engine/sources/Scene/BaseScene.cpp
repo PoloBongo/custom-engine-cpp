@@ -10,10 +10,10 @@
  */
 void BaseScene::Destroy()
 {
-	m_bLoaded      = false;
-	m_bInitialized = false;
+	bLoaded      = false;
+	bInitialized = false;
 
-	for (GameObject* rootObject : m_RootObjects)
+	for (GameObject* rootObject : rootObjects)
 	{
 		if (rootObject != nullptr)
 		{
@@ -24,7 +24,7 @@ void BaseScene::Destroy()
 			delete rootObject;
 		}
 	}
-	m_RootObjects.clear();
+	rootObjects.clear();
 }
 
 /**
@@ -36,7 +36,7 @@ GameObject* BaseScene::AddRootObject(GameObject* _gameObject)
 {
 	if (_gameObject == nullptr) return nullptr;
 
-	m_PendingAddObjects.push_back(_gameObject);
+	pendingAddObjects.push_back(_gameObject);
 
 	return _gameObject;
 }
@@ -46,9 +46,9 @@ GameObject* BaseScene::AddRootObject(GameObject* _gameObject)
  */
 void BaseScene::RemoveAllObjects()
 {
-	for (const GameObject* root_object : m_RootObjects)
+	for (const GameObject* root_object : rootObjects)
 	{
-		m_PendingDestroyObjects.push_back(root_object->GetId());
+		pendingDestroyObjects.push_back(root_object->GetId());
 	}
 }
 
@@ -58,16 +58,16 @@ void BaseScene::RemoveAllObjects()
  */
 bool BaseScene::IsInitialized() const
 {
-	return m_bInitialized;
+	return bInitialized;
 }
 
 /**
  * @brief Définit le nom de la scène.
- * @param name Nouveau nom de la scène.
+ * @param _name Nouveau nom de la scène.
  */
-void BaseScene::SetName(const std::string& name)
+void BaseScene::SetName(const std::string& _name)
 {
-	m_Name = name;
+	_name = _name;
 }
 
 /**
@@ -76,7 +76,7 @@ void BaseScene::SetName(const std::string& name)
  */
 std::string BaseScene::GetName() const
 {
-	return m_Name;
+	return name;
 }
 
 /**
@@ -94,7 +94,7 @@ bool BaseScene::IsUsingSaveFile() const
  */
 std::vector<GameObject*>& BaseScene::GetRootObjects()
 {
-	return m_RootObjects;
+	return rootObjects;
 }
 
 
@@ -104,20 +104,20 @@ std::vector<GameObject*>& BaseScene::GetRootObjects()
  */
 std::string BaseScene::GetFileName() const
 {
-	return m_FileName;
+	return fileName;
 }
 
 /**
  * @brief Définit le nom du fichier de la scène.
- * @param fileName Nouveau nom du fichier de la scène.
- * @param bDeletePreviousFiles Indique s'il faut supprimer les fichiers précédents.
+ * @param _fileName Nouveau nom du fichier de la scène.
+ * @param _bDeletePreviousFiles Indique s'il faut supprimer les fichiers précédents.
  * @return true si le nom du fichier est défini avec succès, sinon false.
  */
-bool BaseScene::SetFileName(const std::string& fileName, bool bDeletePreviousFiles)
+bool BaseScene::SetFileName(const std::string& _fileName, bool _bDeletePreviousFiles)
 {
 	bool success = false;
 
-	if (fileName == m_FileName) return true;
+	if (_fileName == _fileName) return true;
 }
 
 /**
@@ -128,7 +128,7 @@ std::string BaseScene::GetDefaultRelativeFilePath() const
 {
 	//A MODIFIIIIEEEEEEEEEERRRRRR
 	const std::string DEFAULT_SCENE_DIRECTORY = "assets/scenes/";
-	return DEFAULT_SCENE_DIRECTORY + m_FileName;
+	return DEFAULT_SCENE_DIRECTORY + fileName;
 }
 
 /**
@@ -148,15 +148,15 @@ bool FileExists(const std::string& filePath)
  */
 void BaseScene::DeleteSaveFiles()
 {
-	const std::string defaultSaveFilePath = "assets/scenes/" + m_FileName;
-	const std::string savedSaveFilePath   = "saved/scenes/" + m_FileName;
+	const std::string defaultSaveFilePath = "assets/scenes/" + fileName;
+	const std::string savedSaveFilePath   = "saved/scenes/" + fileName;
 
 	bool bDefaultFileExists = FileExists(defaultSaveFilePath);
 	bool bSavedFileExists   = FileExists(savedSaveFilePath);
 
 	if (bSavedFileExists || bDefaultFileExists)
 	{
-		std::cout << "Deleting scene's save files from " << m_FileName << std::endl;
+		std::cout << "Deleting scene's save files from " << fileName << std::endl;
 
 		if (bDefaultFileExists)
 		{
@@ -189,67 +189,67 @@ bool Contains(const std::vector<GameObject::id_t>& container, const GameObject::
 
 /**
  * @brief Supprime un objet de jeu de la scène.
- * @param gameObjectID Identifiant de l'objet de jeu à supprimer.
- * @param bDestroy Indique s'il faut détruire l'objet de jeu.
+ * @param _gameObjectId Identifiant de l'objet de jeu à supprimer.
+ * @param _bDestroy Indique s'il faut détruire l'objet de jeu.
  */
-void BaseScene::RemoveObject(const GameObject::id_t& gameObjectID, bool bDestroy)
+void BaseScene::RemoveObject(const GameObject::id_t& _gameObjectId, bool _bDestroy)
 {
-	if (bDestroy)
+	if (_bDestroy)
 	{
-		if (!Contains(m_PendingDestroyObjects, gameObjectID)) m_PendingDestroyObjects.push_back(gameObjectID);
+		if (!Contains(pendingDestroyObjects, _gameObjectId)) pendingDestroyObjects.push_back(_gameObjectId);
 	}
 	else
 	{
-		if (!Contains(m_PendingRemoveObjects, gameObjectID)) m_PendingRemoveObjects.push_back(gameObjectID);
+		if (!Contains(pendingRemoveObjects, _gameObjectId)) pendingRemoveObjects.push_back(_gameObjectId);
 	}
 }
 
 /**
  * @brief Supprime un objet de jeu de la scène.
- * @param gameObject Pointeur vers l'objet de jeu à supprimer.
- * @param bDestroy Indique s'il faut détruire l'objet de jeu.
+ * @param _gameObject Pointeur vers l'objet de jeu à supprimer.
+ * @param _bDestroy Indique s'il faut détruire l'objet de jeu.
  */
-void BaseScene::RemoveObject(GameObject* gameObject, bool bDestroy)
+void BaseScene::RemoveObject(GameObject* _gameObject, bool _bDestroy)
 {
-	RemoveObject(gameObject->GetId(), bDestroy);
+	RemoveObject(_gameObject->GetId(), _bDestroy);
 }
 
 
 /**
  * @brief Supprime plusieurs objets de jeu de la scène.
- * @param gameObjects Vecteur contenant les identifiants des objets de jeu à supprimer.
- * @param bDestroy Indique s'il faut détruire les objets de jeu.
+ * @param _gameObjects Vecteur contenant les identifiants des objets de jeu à supprimer.
+ * @param _bDestroy Indique s'il faut détruire les objets de jeu.
  */
-void BaseScene::RemoveObjects(const std::vector<GameObject::id_t>& gameObjects, bool bDestroy)
+void BaseScene::RemoveObjects(const std::vector<GameObject::id_t>& _gameObjects, bool _bDestroy)
 {
-	if (bDestroy) m_PendingDestroyObjects.insert(m_PendingDestroyObjects.end(), gameObjects.begin(), gameObjects.end());
-	else m_PendingRemoveObjects.insert(m_PendingRemoveObjects.end(), gameObjects.begin(), gameObjects.end());
+	if (_bDestroy) pendingDestroyObjects.insert(pendingDestroyObjects.end(), _gameObjects.begin(), _gameObjects.end());
+	else pendingRemoveObjects.insert(pendingRemoveObjects.end(), _gameObjects.begin(), _gameObjects.end());
 }
 
 /**
  * @brief Supprime plusieurs objets de jeu de la scène.
- * @param gameObjects Vecteur contenant les pointeurs vers les objets de jeu à supprimer.
- * @param bDestroy Indique s'il faut détruire les objets de jeu.
+ * @param _gameObjects Vecteur contenant les pointeurs vers les objets de jeu à supprimer.
+ * @param _bDestroy Indique s'il faut détruire les objets de jeu.
  */
-void BaseScene::RemoveObjects(const std::vector<GameObject*>& gameObjects, bool bDestroy)
+void BaseScene::RemoveObjects(const std::vector<GameObject*>& _gameObjects, bool _bDestroy)
 {
-	if (bDestroy)
+	if (_bDestroy)
 	{
-		m_PendingDestroyObjects.reserve(m_PendingDestroyObjects.size() + gameObjects.size());
-		for (GameObject* gameObject : gameObjects)
+		pendingDestroyObjects.reserve(pendingDestroyObjects.size() + _gameObjects.size());
+		for (GameObject* gameObject : _gameObjects)
 		{
-			if (!Contains(m_PendingDestroyObjects, gameObject->GetId()))
-				m_PendingDestroyObjects.push_back(
+			if (!Contains(pendingDestroyObjects, gameObject->GetId()))
+				pendingDestroyObjects.push_back(
 					gameObject->GetId());
 		}
 	}
 	else
 	{
-		m_PendingRemoveObjects.reserve(m_PendingRemoveObjects.size() + gameObjects.size());
-		for (GameObject* gameObject : gameObjects)
+		pendingRemoveObjects.reserve(pendingRemoveObjects.size() + _gameObjects.size());
+		for (GameObject* gameObject : _gameObjects)
 		{
-			if (!Contains(m_PendingRemoveObjects, gameObject->GetId()))
-				m_PendingRemoveObjects.push_back(
+			if (!Contains(pendingRemoveObjects, gameObject->GetId()))
+				pendingRemoveObjects.push_back(
 					gameObject->GetId());
 		}
 	}
@@ -263,45 +263,45 @@ void BaseScene::RemoveObjects(const std::vector<GameObject*>& gameObjects, bool 
 GameObject* BaseScene::CreateGameObject()
 {
 	auto gameObject = new GameObject();
-	m_PendingAddObjects.push_back(gameObject);
+	pendingAddObjects.push_back(gameObject);
 	return gameObject;
 }
 
 /**
  * @brief Détruit un objet de jeu.
- * @param gameObject Pointeur vers l'objet de jeu à détruire.
+ * @param _gameObject Pointeur vers l'objet de jeu à détruire.
  */
 
-void BaseScene::DestroyGameObject(GameObject* gameObject)
+void BaseScene::DestroyGameObject(GameObject* _gameObject)
 {
-	if (gameObject != nullptr) RemoveObject(gameObject, true);
+	if (_gameObject != nullptr) RemoveObject(_gameObject, true);
 }
 
 /**
  * @brief Récupère un objet de jeu par son identifiant.
- * @param gameObjectID Identifiant de l'objet de jeu à récupérer.
+ * @param _gameObjectId Identifiant de l'objet de jeu à récupérer.
  * @return Pointeur vers l'objet de jeu correspondant à l'identifiant.
  */
-GameObject* BaseScene::GetGameObjectById(const GameObject::id_t& gameObjectID)
+GameObject* BaseScene::GetGameObjectById(const GameObject::id_t& _gameObjectId)
 {
-	for (GameObject* rootObject : m_RootObjects)
+	for (GameObject* rootObject : rootObjects)
 	{
-		if (rootObject->GetId() == gameObjectID) return rootObject;
+		if (rootObject->GetId() == _gameObjectId) return rootObject;
 	}
 	return nullptr;
 }
 
 /**
  * @brief Recherche des objets de jeu par leur nom.
- * @param name Nom des objets de jeu à rechercher.
+ * @param _name Nom des objets de jeu à rechercher.
  * @return Vecteur contenant les pointeurs vers les objets de jeu trouvés.
  */
-std::vector<GameObject*> BaseScene::FindGameObjectsByName(const std::string& name)
+std::vector<GameObject*> BaseScene::FindGameObjectsByName(const std::string& _name)
 {
 	std::vector<GameObject*> result;
-	for (GameObject* rootObject : m_RootObjects)
+	for (GameObject* rootObject : rootObjects)
 	{
-		std::vector<GameObject*> found = rootObject->FindChildrenByName(name);
+		std::vector<GameObject*> found = rootObject->FindChildrenByName(_name);
 		result.insert(result.end(), found.begin(), found.end());
 	}
 	return result;
@@ -330,7 +330,7 @@ void BaseScene::FixedUpdate(const float& _deltaTime)
 void BaseScene::Update(const float& _deltaTime)
 {
 	// Mettez à jour chaque objet de la scène avec le delta time
-	for (const GameObject* root_object : m_RootObjects)
+	for (const GameObject* root_object : rootObjects)
 	{
 		root_object->Update(_deltaTime); // Mettez à jour chaque objet avec le delta time
 	}
@@ -348,7 +348,7 @@ void BaseScene::PreRender()
 void BaseScene::Render(lve::LveWindow* _lveWindow)
 {
 	// Rendu de chaque objet de la scène
-	for (GameObject* root_object : m_RootObjects)
+	for (GameObject* root_object : rootObjects)
 	{
 		//RenderObject(rootObject);
 	}
