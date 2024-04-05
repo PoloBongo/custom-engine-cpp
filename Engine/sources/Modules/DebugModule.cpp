@@ -1,6 +1,11 @@
 #include "Modules/DebugModule.h"
 
 
+DebugModule::~DebugModule()
+{
+	throw std::logic_error("Not implemented");
+}
+
 void DebugModule::Init()
 {
 	Module::Init();

@@ -20,31 +20,76 @@ namespace lve
 		TERMINAL,
 		VEHICLE,
 
-		_NONE
+		NONE
 	};
 
 	class BaseCamera
 	{
 		public:
-			BaseCamera(const std::string& _cameraName, CameraType _type, bool _bIsGameplayCam,
-			           float              _fov   = glm::radians(45.0f),
-			           float              _zNear = 0.5f, float _zFar = 1000.0f);
+			BaseCamera(std::string _cameraName, CameraType _type, bool _bIsGameplayCam,
+			           float       _fov   = glm::radians(45.0f),
+			           float       _zNear = 0.5f, float _zFar = 1000.0f);
 			virtual ~BaseCamera();
 
-			virtual void Initialize();
-			virtual void FixedUpdate();
-			virtual void Update(float _deltaTime);
-			virtual void LateUpdate(float _deltaTime);
-			virtual void Destroy();
+			/**
+				* @brief Initialise le module.
+				*/
+			virtual void Init() ;
+
+			/**
+			 * @brief Démarre le module.
+			 */
+			virtual void Start();
+
+			/**
+			 * @brief Effectue une mise à jour fixe du module.
+			 */
+			virtual void FixedUpdate(const float& _deltaTime);
+
+			/**
+			 * @brief Met à jour le module.
+			 */
+			virtual void Update(const float& _deltaTime) ;
+
+			/**
+			 * @brief Fonction pré-rendu du module.
+			 */
+			virtual void PreRender();
+
+			/**
+			 * @brief Rendu du module.
+			 */
+			virtual void Render();
+
+			/**
+			 * @brief Rendu de l'interface graphique du module.
+			 */
+			virtual void RenderGui();
+
+			/**
+			 * @brief Fonction post-rendu du module.
+			 */
+			virtual void PostRender();
+
+			/**
+			 * @brief Libère les ressources utilisées par le module.
+			 */
+			virtual void Release();
+
+			/**
+			 * @brief Finalise le module.
+			 */
+			virtual void Finalize();
+
 
 			virtual void OnPostSceneChange();
 
 			virtual void OnPossess();
 			virtual void OnDepossess();
 
-			glm::mat4 GetViewProjection() const { return m_ViewProjection; }
-			glm::mat4 GetView() const { return m_View; }
-			glm::mat4 GetProjection() const { return m_Proj; }
+			[[nodiscard]] glm::mat4               GetViewProjection() const { return viewProjection; }
+			[[nodiscard]] glm::mat4 GetView() const { return view; }
+			[[nodiscard]] glm::mat4 GetProjection() const { return projection; }
 
 			// speed: Lerp amount to new rotation
 			void LookAt(glm::vec3 _point, float _speed = 1.0f);
@@ -56,9 +101,9 @@ namespace lve
 			void ResetPosition();
 			void ResetOrientation();
 
-			std::string GetName() const
+			[[nodiscard]] std::string GetName() const
 			{
-				return m_Name;
+				return name;
 			}
 
 			void CalculateExposure();
@@ -70,7 +115,7 @@ namespace lve
 			float lightSensitivity = 800.0f;      /**< Sensibilité ISO. */
 			float exposure         = 0.0f;        /**< Exposition. */
 
-			float FOV   = 0.0f; /**< Champ de vision (Field of View). */
+			float fov   = 0.0f; /**< Champ de vision (Field of View). */
 			float zNear = 0.0f; /**< Plan rapproché du volume de vue. */
 			float zFar  = 0.0f; /**< Plan éloigné du volume de vue. */
 
@@ -104,7 +149,7 @@ namespace lve
 
 			bool bIsGameplayCam = true;  /**< Indique si la caméra est en mode gameplay. */
 			bool bIsFirstPerson = false; /**< Indique si la caméra est en mode première personne. */
-			bool bDEBUGCyclable = true;  /**< Indique si le mode de débogage est cyclable. */
+			bool bDebugCyclable = true;  /**< Indique si le mode de débogage est cyclable. */
 			bool bPossessPlayer = false; /**< Indique si le joueur est possédé par la caméra. */
 
 
@@ -124,17 +169,17 @@ namespace lve
 			// aperture measured in f-stops
 			// shutterSpeed measured in seconds
 			// sensitivity measured in ISO
-			static float CalculateEV100(float _aperture, float _shutterSpeed, float _sensitivity);
+			static float CalculateEv100(float _aperture, float _shutterSpeed, float _sensitivity);
 
 			// Computes the exposure normalization factor from the camera's EV100
-			static float ComputeExposureNormFactor(float _EV100);
+			static float ComputeExposureNormFactor(float _ev100);
 
-			bool m_bInitialized = false;
+			bool mBInitialized = false;
 
-			std::string m_Name;
+			std::string name;
 
-			glm::mat4 m_View;
-			glm::mat4 m_Proj;
-			glm::mat4 m_ViewProjection;
+			glm::mat4 view;
+			glm::mat4 projection;
+			glm::mat4 viewProjection;
 	};
 } // namespace lve

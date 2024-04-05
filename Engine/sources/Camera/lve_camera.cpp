@@ -18,10 +18,10 @@ namespace lve
 		projectionMatrix[3][2] = -_near / (_far - _near);
 	}
 
-	void LveCamera::SetPerspectiveProjection(float _fovy, float _aspect, float _near, float _far)
+	void LveCamera::SetPerspectiveProjection(float _fovY, float _aspect, float _near, float _far)
 	{
 		assert(glm::abs(_aspect - std::numeric_limits<float>::epsilon()) > 0.0f);
-		const float tanHalfFovy = tan(_fovy / 2.f);
+		const float tanHalfFovy = tan(_fovY / 2.f);
 		projectionMatrix        = glm::mat4{0.0f};
 		projectionMatrix[0][0]  = 1.f / (_aspect * tanHalfFovy);
 		projectionMatrix[1][1]  = 1.f / (tanHalfFovy);

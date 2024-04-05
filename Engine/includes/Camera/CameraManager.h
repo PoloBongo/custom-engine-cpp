@@ -24,7 +24,7 @@ namespace lve
 			void Update();
 			void OnPostSceneChange();
 
-			BaseCamera* CurrentCamera() const;
+			[[nodiscard]] BaseCamera* CurrentCamera() const;
 
 			void AddCamera(BaseCamera* _camera, bool _bSwitchTo = false);
 
@@ -37,7 +37,7 @@ namespace lve
 			BaseCamera* PushCameraByName(const std::string& _name, bool _bAlignWithPrevious, bool _bInitialize);
 			void        PopCamera(bool _bAlignWithCurrent = false);
 
-			BaseCamera* GetCameraByName(const std::string& _name) const;
+			[[nodiscard]] BaseCamera* GetCameraByName(const std::string& _name) const;
 
 			void DrawImGuiObjects();
 
@@ -57,6 +57,6 @@ namespace lve
 			// All cameras, unordered
 			std::vector<BaseCamera*> cameras;
 
-			bool m_bInitialized = false;
+			bool bInitialized = false;
 	};
 };

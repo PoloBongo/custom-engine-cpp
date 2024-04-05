@@ -20,13 +20,13 @@ GameObject::~GameObject()
 Transform* GameObject::GetTransform() const { return transform; }
 
 glm::vec3 GameObject::GetPosition() const { return transform->GetPosition(); }
-void      GameObject::SetPosition(glm::vec3 _newPosition) { transform->SetPosition(_newPosition); }
+void      GameObject::SetPosition(const glm::vec3 _newPosition) const { transform->SetPosition(_newPosition); }
 
 glm::vec3 GameObject::GetScale() const { return transform->GetScale(); }
-void      GameObject::SetScale(glm::vec3 _newScale) { transform->SetScale(_newScale); }
+void      GameObject::SetScale(const glm::vec3 _newScale) const { transform->SetScale(_newScale); }
 
 float GameObject::GetRotation() const { return transform->GetRotation(); }
-void  GameObject::SetRotation(float _newRotation) { transform->SetRotation(_newRotation); }
+void  GameObject::SetRotation(const float _newRotation) const { transform->SetRotation(_newRotation); }
 
 void GameObject::AddComponent(Component* _component)
 {
@@ -40,6 +40,11 @@ void GameObject::RemoveComponent(Component* _component)
 	delete _component;
 }
 
+void GameObject::Init()
+{
+
+}
+
 void GameObject::Start()
 {
 	for (Component* const& component : components)
@@ -48,55 +53,80 @@ void GameObject::Start()
 	}
 }
 
-void GameObject::Physics(const float& _delta) const
+void GameObject::FixedUpdate(const float& _deltaTime) const
 {
 	if (this->isActive)
 		for (size_t i = 0; i < components.size(); i++)
 		{
-			if (components[i]->GetActive()) components[i]->Physics(_delta);
+			if (components[i]->GetActive()) components[i]->Physics(_deltaTime);
 		}
 }
 
-void GameObject::Update(const float& _delta) const
+void GameObject::Update(const float& _deltaTime) const
 {
 	if (this->isActive)
 		for (size_t i = 0; i < components.size(); i++)
 		{
-			if (components[i]->GetActive()) components[i]->Update(_delta);
+			if (components[i]->GetActive()) components[i]->Update(_deltaTime);
 		}
+}
+
+void GameObject::PreRender()
+{
+	
 }
 
 void GameObject::Render(lve::LveWindow* _window) const
 {
 	if (this->isVisible)
-		for (size_t i = 0; i < components.size(); i++)
+		for (const auto component : components)
 		{
-			if (components[i]->GetVisible())
+			if (component->GetVisible())
 			{
-				if (layerType == LayerType::Normal) components[i]->Render(_window);
-				else if (layerType == LayerType::HUD) components[i]->RenderGUI(_window);
-				else if (layerType == LayerType::Background) components[i]->RenderBackground(_window);
+				if (layerType == LayerType::Normal) component->Render(_window);
+				else if (layerType == LayerType::HUD) component->RenderGUI(_window);
+				else if (layerType == LayerType::Background) component->RenderBackground(_window);
 			}
 		}
 }
 
-
-std::vector<GameObject*> GameObject::FindChildrenByName(const std::string& name)
+void GameObject::RenderGui()
 {
-	std::vector<GameObject*> foundObjects;
+	
+}
+
+void GameObject::PostRender()
+{
+
+}
+
+void GameObject::Release()
+{
+	
+}
+
+void GameObject::Finalize()
+{
+	
+}
+
+
+std::vector<GameObject*> GameObject::FindChildrenByName(const std::string& _name) const
+{
+	std::vector<GameObject*> found_objects;
 
 	// Parcourir tous les enfants du GameObject
-	for (GameObject* child : Children)
+	for (GameObject* child : children)
 	{
 		// Vérifier si le nom du GameObject correspond au nom recherché
-		if (child->GetName() == name)
+		if (child->GetName() == _name)
 			// Ajouter le GameObject à la liste des objets trouvés
-			foundObjects.push_back(child);
+			found_objects.push_back(child);
 
 		// Récursivement chercher les enfants du GameObject actuel
-		std::vector<GameObject*> nestedFound = child->FindChildrenByName(name);
-		foundObjects.insert(foundObjects.end(), nestedFound.begin(), nestedFound.end());
+		std::vector<GameObject*> nestedFound = child->FindChildrenByName(_name);
+		found_objects.insert(found_objects.end(), nestedFound.begin(), nestedFound.end());
 	}
 
-	return foundObjects;
+	return found_objects;
 }

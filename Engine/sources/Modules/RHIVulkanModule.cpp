@@ -1,6 +1,6 @@
 #include "Modules/RHIVulkanModule.h"
 
-RHIVulkanModule::RHIVulkanModule() : m_Instance(VK_NULL_HANDLE), m_DebugMessenger(VK_NULL_HANDLE)
+RHIVulkanModule::RHIVulkanModule() : Instance(VK_NULL_HANDLE), m_DebugMessenger(VK_NULL_HANDLE)
 {
 }
 
@@ -11,8 +11,8 @@ RHIVulkanModule::~RHIVulkanModule()
 
 bool RHIVulkanModule::CreateVulkanInstance()
 {
-	m_Instance = new vk::Instance(p_lveDevice->CreateInstance());
-	if (m_Instance != VK_NULL_HANDLE)
+	Instance = new vk::Instance(p_lveDevice->CreateInstance());
+	if (Instance != VK_NULL_HANDLE)
 		// Gestion des erreurs
 		return false;
 
@@ -75,15 +75,15 @@ void RHIVulkanModule::PostRender()
 
 void RHIVulkanModule::Release()
 {
-	if (m_Instance != VK_NULL_HANDLE)
+	if (Instance != VK_NULL_HANDLE)
 	{
-		m_Instance->destroy();
-		delete m_Instance;
+		Instance->destroy();
+		delete Instance;
 	}
-	if (m_Instance != VK_NULL_HANDLE)
+	if (Instance != VK_NULL_HANDLE)
 	{
-		m_Instance->destroy();
-		delete m_Instance;
+		Instance->destroy();
+		delete Instance;
 	}
 }
 

@@ -10,10 +10,10 @@ namespace lve
 			static LveGameObject Create(LveDevice& _lveDevice, glm::vec3 _position = VEC3_ZERO,
 			                            glm::vec3  _scale = VEC3_ONE, glm::vec3 _rotation = VEC3_ZERO)
 			{
-				std::shared_ptr<LveModel> lveModel = LveModel::CreateModelFromFile(_lveDevice, "Models\\cube.obj");
+				std::shared_ptr<LveModel> lve_model = LveModel::CreateModelFromFile(_lveDevice, "Models\\cube.obj");
 
 				auto gameObject                  = LveGameObject::CreateGameObject();
-				gameObject.model                 = lveModel;
+				gameObject.model                 = lve_model;
 				gameObject.transform.translation = _position;
 				gameObject.transform.scale       = _scale;
 				gameObject.transform.rotation    = _rotation;
@@ -24,11 +24,11 @@ namespace lve
 			static LveGameObject CreateColor(LveDevice& _lveDevice, glm::vec3 _position = VEC3_ZERO,
 			                                 glm::vec3  _scale = VEC3_ONE, glm::vec3 _rotation = VEC3_ZERO)
 			{
-				std::shared_ptr<LveModel> lveModel = LveModel::CreateModelFromFile(
+				std::shared_ptr<LveModel> lve_model = LveModel::CreateModelFromFile(
 					_lveDevice, "Models\\colored_cube.obj");
 
 				auto gameObject                  = LveGameObject::CreateGameObject();
-				gameObject.model                 = lveModel;
+				gameObject.model                 = lve_model;
 				gameObject.transform.translation = _position;
 				gameObject.transform.scale       = _scale;
 				gameObject.transform.rotation    = _rotation;

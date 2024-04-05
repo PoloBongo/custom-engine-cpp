@@ -23,30 +23,30 @@ class GameObject
 		using id_t = unsigned int;
 		GameObject();
 
-		GameObject(id_t _id) : id(_id)
+		GameObject(const id_t _id) : id(_id)
 		{
 		}
 
 		~GameObject();
 
-		std::string GetName() const { return name; }
+		[[nodiscard]] std::string GetName() const { return name; }
 		void        SetName(const std::string& _newName) { name = _newName; }
 
-		Transform* GetTransform() const;
+		[[nodiscard]] Transform* GetTransform() const;
 
-		glm::vec3 GetPosition() const;
-		void      SetPosition(glm::vec3 _newPosition);
+		[[nodiscard]] glm::vec3 GetPosition() const;
+		void      SetPosition(glm::vec3 _newPosition) const;
 
-		glm::vec3 GetScale() const;
-		void      SetScale(glm::vec3 _newScale);
+		[[nodiscard]] glm::vec3 GetScale() const;
+		void      SetScale(glm::vec3 _newScale) const;
 
-		float GetRotation() const;
-		void  SetRotation(float _newRotation);
+		[[nodiscard]]  float GetRotation() const;
+		void  SetRotation(float _newRotation) const;
 
 		void SetActive(const bool& _state) { isActive = _state; }
-		bool GetActive() const { return isActive; }
+		[[nodiscard]]  bool GetActive() const { return isActive; }
 
-		bool GetVisible() const { return isVisible; }
+		[[nodiscard]]  bool GetVisible() const { return isVisible; }
 		void SetVisible(const bool& _state) { isVisible = _state; }
 
 		void SetActiveAndVisible(const bool& _state)
@@ -55,23 +55,23 @@ class GameObject
 			isVisible = _state;
 		}
 
-		LayerType GetLayer() const { return layerType; }
+		[[nodiscard]] LayerType GetLayer() const { return layerType; }
 		void      SetLayer(const LayerType& _layerType) { layerType = _layerType; }
 
-		std::vector<GameObject*> FindChildrenByName(const std::string& name);
-		std::vector<GameObject*> Children;
+		std::vector<GameObject*> FindChildrenByName(const std::string& _name) const;
+		std::vector<GameObject*> children;
 
 		const std::vector<GameObject*>& GetChildren() const
 		{
-			return Children;
+			return children;
 		}
 
-		id_t GetId() { return id; }
+		[[nodiscard]] id_t GetId() const { return id; }
 
 		static GameObject CreateGameObject()
 		{
-			static id_t currentId = 0;
-			return GameObject{currentId++};
+			static id_t current_id = 0;
+			return GameObject{current_id++};
 		}
 
 		void AddComponent(Component* _component);
@@ -93,8 +93,7 @@ class GameObject
 			for (size_t i = 0; i < components.size(); i++)
 			{
 				// Vérifie si le composant est un Component
-				T* componentResult = dynamic_cast<T*>(components[i]);
-				if (componentResult) return componentResult; // Renvoie le Component trouvé
+				if (T* component_result = dynamic_cast<T*>(components[i])) return component_result; // Renvoie le Component trouvé
 			}
 			return nullptr; // Renvoie nullptr si aucun Component n'est trouvé
 		}
@@ -102,37 +101,81 @@ class GameObject
 		template <typename T>
 		std::vector<T*> GetComponentsByType()
 		{
-			std::vector<T*> componentsByType;
+			std::vector<T*> components_by_type;
 			for (size_t i = 0; i < components.size(); i++)
 			{
 				// Vérifie si le composant est un Component
-				T* componentResult = dynamic_cast<T*>(components[i]);
-				if (componentResult) componentsByType.push_back(componentResult); // Ajout le Component trouvé
+				if (T* component_result = dynamic_cast<T*>(components[i])) components_by_type.push_back(component_result); // Ajout le Component trouvé
 			}
-			return componentsByType;
+			return components_by_type;
 		}
 
 		template <typename T>
 		T* GetComponentByName(const std::string& _name)
 		{
-			std::vector<T*> componentsByType = GetComponentsByType<T>();
-			for (size_t i = 0; i < componentsByType.size(); i++)
+			std::vector<T*> components_by_type = GetComponentsByType<T>();
+			for (size_t i = 0; i < components_by_type.size(); i++)
 			{
 				// Vérifie si le composant est un Component
-				T* componentResult = dynamic_cast<T*>(componentsByType[i]);
-				if (componentResult && static_cast<Component*>(componentResult)->GetName() == _name)
+				T* component_result = dynamic_cast<T*>(components_by_type[i]);
+				if (component_result && static_cast<Component*>(component_result)->GetName() == _name)
 					return
-						componentResult; // Renvoie le Component trouvé
+						component_result; // Renvoie le Component trouvé
 			}
 			return nullptr; // Renvoie nullptr si aucun Component n'est trouvé
 		}
 
 		void RemoveComponent(Component* _component);
 
+		/**
+					* @brief Initialise le module.
+					*/
+		virtual void Init();
+
+		/**
+		 * @brief Démarre le module.
+		 */
 		virtual void Start();
-		void         Physics(const float& _delta) const;
-		void         Update(const float& _delta) const;
-		void         Render(lve::LveWindow* _window) const;
+
+		/**
+		 * @brief Effectue une mise à jour fixe du module.
+		 */
+		virtual void FixedUpdate(const float& _deltaTime) const;
+
+		/**
+		 * @brief Met à jour le module.
+		 */
+		virtual void Update(const float& _deltaTime) const;
+
+		/**
+		 * @brief Fonction pré-rendu du module.
+		 */
+		virtual void PreRender();
+
+		/**
+		 * @brief Rendu du module.
+		 */
+		virtual void Render(lve::LveWindow* _window) const;
+
+		/**
+		 * @brief Rendu de l'interface graphique du module.
+		 */
+		virtual void RenderGui();
+
+		/**
+		 * @brief Fonction post-rendu du module.
+		 */
+		virtual void PostRender();
+
+		/**
+		 * @brief Libère les ressources utilisées par le module.
+		 */
+		virtual void Release();
+
+		/**
+		 * @brief Finalise le module.
+		 */
+		virtual void Finalize();
 
 	protected:
 		std::string             name = "GameObject";

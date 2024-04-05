@@ -29,16 +29,16 @@ void BaseScene::Destroy()
 
 /**
  * @brief Ajoute un objet de jeu en tant qu'objet racine à la scène.
- * @param gameObject Pointeur vers l'objet de jeu à ajouter.
+ * @param _gameObject Pointeur vers l'objet de jeu à ajouter.
  * @return Pointeur vers l'objet de jeu ajouté.
  */
-GameObject* BaseScene::AddRootObject(GameObject* gameObject)
+GameObject* BaseScene::AddRootObject(GameObject* _gameObject)
 {
-	if (gameObject == nullptr) return nullptr;
+	if (_gameObject == nullptr) return nullptr;
 
-	m_PendingAddObjects.push_back(gameObject);
+	m_PendingAddObjects.push_back(_gameObject);
 
-	return gameObject;
+	return _gameObject;
 }
 
 /**
@@ -46,9 +46,9 @@ GameObject* BaseScene::AddRootObject(GameObject* gameObject)
  */
 void BaseScene::RemoveAllObjects()
 {
-	for (GameObject* rootObject : m_RootObjects)
+	for (const GameObject* root_object : m_RootObjects)
 	{
-		m_PendingDestroyObjects.push_back(rootObject->GetId());
+		m_PendingDestroyObjects.push_back(root_object->GetId());
 	}
 }
 
@@ -308,28 +308,69 @@ std::vector<GameObject*> BaseScene::FindGameObjectsByName(const std::string& nam
 }
 
 
+void BaseScene::Init()
+{
+	
+}
+
+void BaseScene::Start()
+{
+	
+}
+
+void BaseScene::FixedUpdate(const float& _deltaTime)
+{
+
+}
+
+/**
+ * @brief Met à jour la scène.
+ * @param _deltaTime Temps écoulé depuis la dernière mise à jour.
+ */
+void BaseScene::Update(const float& _deltaTime)
+{
+	// Mettez à jour chaque objet de la scène avec le delta time
+	for (const GameObject* root_object : m_RootObjects)
+	{
+		root_object->Update(_deltaTime); // Mettez à jour chaque objet avec le delta time
+	}
+}
+
+void BaseScene::PreRender()
+{
+
+}
+
 /**
  * @brief Effectue le rendu de la scène.
- * @param _window Fenêtre de rendu.
+ * @param _lveWindow Fenêtre de rendu.
  */
-void BaseScene::Render(lve::LveWindow* _window)
+void BaseScene::Render(lve::LveWindow* _lveWindow)
 {
 	// Rendu de chaque objet de la scène
-	for (GameObject* rootObject : m_RootObjects)
+	for (GameObject* root_object : m_RootObjects)
 	{
 		//RenderObject(rootObject);
 	}
 }
 
-/**
- * @brief Met à jour la scène.
- * @param deltaTime Temps écoulé depuis la dernière mise à jour.
- */
-void BaseScene::Update(float deltaTime)
+void BaseScene::RenderGui()
 {
-	// Mettez à jour chaque objet de la scène avec le delta time
-	for (GameObject* rootObject : m_RootObjects)
-	{
-		rootObject->Update(deltaTime); // Mettez à jour chaque objet avec le delta time
-	}
+	
 }
+
+void BaseScene::PostRender()
+{
+	
+}
+
+void BaseScene::Release()
+{
+	
+}
+
+void BaseScene::Finalize()
+{
+
+}
+
