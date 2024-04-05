@@ -15,6 +15,8 @@ class ImGuiManager final : public Module
 	void Render() override;
 	void Finalize() override;
 
+	void GetGUI();
+
 	//TimeModule* timeModule = nullptr;
 
 	vk::Fence _immFence;

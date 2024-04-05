@@ -171,3 +171,13 @@ void ImGuiManager::Finalize()
 
 	ImGui::DestroyContext();
 }
+
+void ImGuiManager::GetGUI() {
+	ImGui::Begin("Scene");
+
+	if (ImGui::Button("New GameObject")) {
+		std::cout << "Pressed Create GameObject." << std::endl;
+	}
+
+	ImGui::End();
+}

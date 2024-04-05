@@ -17,6 +17,9 @@ RigidBody::RigidBody(btDiscreteDynamicsWorld* _dynamicsWorld, btCollisionShape* 
     dynamicsWorld->addRigidBody(rigidBody);
 }
 
+void RigidBody::Update(const float& _delta_time) {
+    dynamicsWorld->stepSimulation(1 / 60.f);
+}
 
 void RigidBody::AddForce(glm::vec3& _force) {
     rigidBody->applyCentralForce(Convertisseur::glmVec3ToBtVector3(_force));

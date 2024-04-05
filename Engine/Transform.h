@@ -13,7 +13,7 @@ class Transform final : public Component
 public:
 	// Méthode pour récupérer et définir la position
 	inline glm::vec3 GetPosition() const { return position; }
-	inline void SetPosition(const float& _x, const float& _y, const float& _z) { position = glm::vec3(_x, _y, _z); }
+	inline void SetPosition(const float& _x, const float& _y, const float& _z) { position = glm::vec3(_x, -_y, -_z); }
 	inline void SetPosition(const glm::vec3& _position) { position = _position; }
 
 	// Méthode pour récupérer et définir la rotation en utilisant un angle
@@ -27,8 +27,6 @@ public:
 
 	glm::vec3 TransformPoint() const
 	{
-
-
 		// Création de la matrice de transformation
 		glm::mat4 rotationMatrix = glm::mat4(1.0f);
 		rotationMatrix = glm::translate(rotationMatrix, position);

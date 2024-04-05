@@ -220,33 +220,33 @@ void WindowManager::LoadGameObjects() {
 
 }
 
-void WindowManager::PreRender()
-{
-	Module::PreRender();
-
-	//window->clear(sf::Color::Black);
-}
-
-void WindowManager::Render()
-{
-	Module::Render();
-}
-
-void WindowManager::RenderGui()
-{
-	Module::RenderGui();
-}
-
-void WindowManager::PostRender()
-{
-	Module::PostRender();
-
-	//window->display();
-}
-
-void WindowManager::Release()
-{
-	Module::Release();
-
-	//window->close();
-}
+//void WindowManager::PreRender()
+//{
+//	Module::PreRender();
+//
+//	//window->clear(sf::Color::Black);
+//}
+//
+//void WindowManager::Render()
+//{
+//	Module::Render();
+//}
+//
+//void WindowManager::RenderGui()
+//{
+//	Module::RenderGui();
+//}
+//
+//void WindowManager::PostRender()
+//{
+//	Module::PostRender();
+//
+//	//window->display();
+//}
+//
+//void WindowManager::Release()
+//{
+//	Module::Release();
+//
+//	//window->close();
+//}
