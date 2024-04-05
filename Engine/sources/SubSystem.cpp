@@ -1,7 +1,6 @@
 #include "SubSystem.h"
 
 // première option pour instancier le manager //
-CollisionModule* gCollisionsModule; // global variable
 
 
 // deuxième option pour instancier le manager //
@@ -23,12 +22,4 @@ T* SubSystem::Get()
 
 void startUp()
 {
-	// première option pour instancier le manager //
-	gCollisionsModule = new CollisionModule;
-	gCollisionsModule->start();
-
-	// deuxième option pour instancier le manager //
-	SubSystem::Set<CollisionModule>(&CollisionModule::get());
-	// ou SubSystem::Set<CollisionModule>(new CollisionModule());
-	SubSystem::Get<CollisionModule>()->start();
 }

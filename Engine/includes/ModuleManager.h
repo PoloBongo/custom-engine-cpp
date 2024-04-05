@@ -1,7 +1,7 @@
 #pragma once
 
 #include <vector>
-#include "Module.h"
+#include "Modules/Module.h"
 
 /**
  * @brief Classe ModuleManager.

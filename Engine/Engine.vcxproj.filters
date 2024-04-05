@@ -109,4 +109,7 @@
     <CopyFileToFolders Include="..\Librairies\FMOD\lib\fmod.dll" />
     <CopyFileToFolders Include="..\Librairies\FMOD\lib\fmodL.dll" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="imgui.ini" />
+  </ItemGroup>
 </Project>

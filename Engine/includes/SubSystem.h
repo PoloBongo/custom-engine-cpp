@@ -1,5 +1,4 @@
 #pragma once
-#include "Modules/CollisionModule.h"
 #include <typeindex>
 #include <unordered_map>
 
