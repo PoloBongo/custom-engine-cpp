@@ -1,5 +1,4 @@
 #include "Managers/ImGUIManager.h"
-#include "Managers/WindowManager.h"
 #include "ModuleManager.h"
 #include "lve_renderer.h"
 
@@ -10,6 +9,7 @@
 void ImGuiManager::Init()
 {
 	windowManager = moduleManager->GetModule<WindowManager>();
+	sceneManager = moduleManager->GetModule<SceneManager>();
 
 	device = windowManager->GetDevice()->device();
 	graphicsQueue = windowManager->GetDevice()->graphicsQueue();
@@ -149,6 +149,7 @@ void ImGuiManager::Update()
 	ImGui::NewFrame();
 
 	ImGui::ShowDemoWindow();
+	GetGUI();
 
 	//imgui commands
 }
@@ -176,7 +177,34 @@ void ImGuiManager::GetGUI() {
 	ImGui::Begin("Scene");
 
 	if (ImGui::Button("New GameObject")) {
-		std::cout << "Pressed Create GameObject." << std::endl;
+		if (sceneManager->GetScene("Default") != nullptr) {
+			sceneManager->GetScene("Default")->CreateGameObject();
+			std::cout << "Added new GameObject." << std::endl;
+		}
+		else {
+			std::cout << "No scene found." << std::endl;
+		}
+	}
+
+	if (ImGui::TreeNode("Game Objects")) {
+		if (sceneManager->GetMainScene() != nullptr) {
+			if (sceneManager->GetMainScene()->GetRootObjects().empty()) {
+				ImGui::Text("Scene is empty.");
+			}
+			else {
+				for (GameObject* gameObject : sceneManager->GetMainScene()->GetRootObjects()) {
+					ImGui::Text(gameObject->GetName().c_str());
+					ImGui::SameLine();
+					if (ImGui::SmallButton("Remove")) {
+						sceneManager->GetMainScene()->DestroyGameObject(gameObject);
+					}
+				}
+			}
+		}
+		else {
+			ImGui::Text("No default scene found.");
+		}
+		ImGui::TreePop();
 	}
 
 	ImGui::End();

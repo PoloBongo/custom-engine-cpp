@@ -13,6 +13,8 @@ void SceneManager::Start() {
 	Module::Start();
 
 	windowManager = moduleManager->GetModule<WindowManager>();
+
+	mainScene = CreateScene("Default", true);
 }
 
 /**
@@ -20,9 +22,13 @@ void SceneManager::Start() {
  * @param _name Nom de la nouvelle scène.
  * @param _isActive Indique si la nouvelle scène est active.
  */
-void SceneManager::CreateScene(std::string _name, bool _isActive)
+BaseScene* SceneManager::CreateScene(std::string _name, bool _isActive)
 {
-	listScenes.insert(std::make_pair(_name, _isActive));
+	BaseScene* newScene = new BaseScene(_name);
+	scenes.push_back(newScene);
+
+	return newScene;
+	//listScenes.insert(std::make_pair(_name, _isActive));
 }
 
 /**
@@ -140,7 +146,7 @@ void SceneManager::SetPreviousSceneActive() {
  * @return Un pointeur vers la scène courante si l'index de la scène courante est valide, sinon nullptr.
  */
 BaseScene* SceneManager::GetCurrentScene() const {
-	return (currentSceneIndex >= 0 && currentSceneIndex < static_cast<int>(scenes.size())) ? scenes[currentSceneIndex].get() : nullptr;
+	return nullptr;//(currentSceneIndex >= 0 && currentSceneIndex < static_cast<int>(scenes.size())) ? scenes[currentSceneIndex].get() : nullptr;
 }
 
 /**
@@ -248,10 +254,14 @@ void SceneManager::SetMainScene(const std::string& sceneName) {
  * @return Un pointeur vers la scène si elle existe, sinon nullptr.
  */
 BaseScene* SceneManager::GetScene(const std::string& sceneName) {
-	auto it = listScenes.find(sceneName);
-	if (it != listScenes.end()) {
-		return scenes[std::distance(listScenes.begin(), it)].get();
+	for (BaseScene* scene : scenes)
+	{
+		if (scene->GetName() == sceneName)
+		{
+			return scene;
+		}
 	}
+
 	return nullptr;
 }
 

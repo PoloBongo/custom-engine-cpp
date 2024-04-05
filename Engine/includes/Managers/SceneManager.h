@@ -22,13 +22,14 @@ public:
 
 	void SetMainScene(const std::string& sceneName);
 	BaseScene* GetScene(const std::string& sceneName);
+	BaseScene* GetMainScene() { return mainScene; }
 	void RenameScene(const std::string& oldName, const std::string& newName);
 	void UpdateMainScene();
 	void RenderMainScene();
 
 	void Destroy();
 
-	void CreateScene(std::string _name, bool _isActive);
+	BaseScene* CreateScene(std::string _name, bool _isActive);
 	void DestroyScene(const std::string& sceneName);
 
 	bool LoadSceneFromFile(const std::string& fileName);
@@ -55,7 +56,7 @@ private:
 	bool sceneActive;
 	BaseScene* mainScene = nullptr;
 	bool SceneFileExists(const std::string& filePath) const;
-	std::vector<std::unique_ptr<BaseScene>> scenes;
+	std::vector<BaseScene*> scenes;
 	int currentSceneIndex = -1;
 };
 

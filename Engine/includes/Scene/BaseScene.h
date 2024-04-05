@@ -7,7 +7,7 @@
 class BaseScene 
 {
 public:
-	explicit BaseScene(const std::string& fileName);
+	BaseScene(const std::string& fileName);
 	~BaseScene() = default;
 
 	BaseScene(const BaseScene&) = delete;
@@ -67,6 +67,7 @@ public:
 
 	GameObject::id_t FirstObjectWithTag(const std::string& tag);
 
+private:
 	std::string m_Name;
 	std::string m_FileName;
 
@@ -76,7 +77,6 @@ public:
 	std::vector<GameObject::id_t> m_PendingRemoveObjects;
 
 	const GameObject::id_t InvalidGameObjectID = {};
-
 
 	bool m_bInitialized = false;
 	bool m_bLoaded = false;

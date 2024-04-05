@@ -4,6 +4,10 @@
 #include <string>
 #include <iostream>
 
+BaseScene::BaseScene(const std::string& _name) {
+	m_Name = _name;
+}
+
 /**
  * @brief Destructeur de la scène.
  * Réinitialise les indicateurs de chargement et d'initialisation, et détruit tous les objets racine de la scène.
@@ -288,10 +292,13 @@ void BaseScene::RemoveObjects(const std::vector<GameObject*>& gameObjects, bool 
  * @return Pointeur vers le nouvel objet de jeu créé.
  */
 GameObject* BaseScene::CreateGameObject() {
-	GameObject* gameObject = new GameObject();
-	m_PendingAddObjects.push_back(gameObject);
-	return gameObject;
-}
+	GameObject* gameObject = new GameObject(); // Alloue dynamiquement un nouvel objet GameObject
+	if (gameObject) { // Vérifie si l'allocation de mémoire a réussi
+		m_PendingAddObjects.push_back(gameObject); // Ajoute l'objet au vecteur
+		m_RootObjects.push_back(gameObject); // A RETIRER
+		return gameObject;
+	}
+} 
 
 /**
  * @brief Détruit un objet de jeu.

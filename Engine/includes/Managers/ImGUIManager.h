@@ -5,6 +5,7 @@
 #include "Module.h"
 //#include "TimeModule.h"
 #include "Managers/WindowManager.h"
+#include "Managers/SceneManager.h"
 
 
 class ImGuiManager final : public Module
@@ -15,8 +16,6 @@ class ImGuiManager final : public Module
 	void Render() override;
 	void Finalize() override;
 
-	void GetGUI();
-
 	//TimeModule* timeModule = nullptr;
 
 	vk::Fence _immFence;
@@ -25,11 +24,14 @@ class ImGuiManager final : public Module
 
 	void immediate_submit(std::function<void(vk::CommandBuffer cmd)>&& function);
 
+	void GetGUI();
+
 protected:
 	vk::Device device;
 	vk::Queue graphicsQueue;
 
 	WindowManager* windowManager = nullptr;
+	SceneManager* sceneManager = nullptr;
 	
 	~ImGuiManager() = default;
 };
