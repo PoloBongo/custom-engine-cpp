@@ -2,6 +2,8 @@
 #include "Transform.h"
 
 
+
+
 GameObject::GameObject()
 {
 	this->isActive = true;
@@ -77,26 +79,50 @@ void GameObject::Update(const float& _delta) const
 	}
 }
 
-//void GameObject::Render(sf::RenderWindow* _window) const
-//{
-//	if (this->isVisible) {
-//		for (size_t i = 0; i < components.size(); i++)
-//		{
-//			if (components[i]->GetVisible())
-//			{
-//				if (layerType == LayerType::Normal)
-//				{
-//					components[i]->Render(_window);
-//				}
-//				else if (layerType == LayerType::HUD)
-//				{
-//					components[i]->RenderGUI(_window);
-//				}
-//				else if (layerType == LayerType::Background)
-//				{
-//					components[i]->RenderBackground(_window);
-//				}
-//			}
-//		}
-//	}
-//}
+void GameObject::Render(lve::LveWindow* _window) const
+{
+	if (this->isVisible) {
+		for (size_t i = 0; i < components.size(); i++)
+		{
+			if (components[i]->GetVisible())
+			{
+				if (layerType == LayerType::Normal)
+				{
+					components[i]->Render(_window);
+				}
+			else if (layerType == LayerType::HUD)
+				{
+					components[i]->RenderGUI(_window);
+				}
+				else if (layerType == LayerType::Background)
+				{
+					components[i]->RenderBackground(_window);
+				}
+			}
+		}
+	}
+}
+
+
+std::vector<GameObject*> GameObject::FindChildrenByName(const std::string& name)
+{
+	std::vector<GameObject*> foundObjects;
+
+	// Parcourir tous les enfants du GameObject
+	for (GameObject* child : Children)
+	{
+		// Vérifier si le nom du GameObject correspond au nom recherché
+		if (child->GetName() == name)
+		{
+			// Ajouter le GameObject à la liste des objets trouvés
+			foundObjects.push_back(child);
+		}
+
+		// Récursivement chercher les enfants du GameObject actuel
+		std::vector<GameObject*> nestedFound = child->FindChildrenByName(name);
+		foundObjects.insert(foundObjects.end(), nestedFound.begin(), nestedFound.end());
+	}
+
+	return foundObjects;
+}
+

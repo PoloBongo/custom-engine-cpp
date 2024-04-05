@@ -4,6 +4,7 @@
 #include <vector>
 #include <glm.hpp>
 #include "Component.h"
+#include "lve_window.h"
 
 enum class LayerType {
 	Normal,
@@ -47,6 +48,13 @@ public:
 
 	inline LayerType GetLayer() const { return layerType; }
 	inline void SetLayer(const LayerType& _layerType) { layerType = _layerType; }
+
+	std::vector<GameObject*> FindChildrenByName(const std::string& name);
+	std::vector<GameObject*> Children;
+
+	const std::vector<GameObject*>& GetChildren() const {
+		return Children;
+	}
 
 	id_t GetId() { return id; }
 
@@ -111,7 +119,7 @@ public:
 	virtual void Start();
 	void Physics(const float& _delta) const;
 	void Update(const float& _delta) const;
-	/*void Render(sf::RenderWindow* _window) const;*/
+	void Render(lve::LveWindow* _window) const;
 
 protected:
 	std::string name = "GameObject";

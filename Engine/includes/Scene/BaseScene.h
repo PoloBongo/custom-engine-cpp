@@ -1,12 +1,10 @@
 #pragma once
 
-// std
 #include <string>
-
-// engine
 #include "GameObject/GameObject.h"
+#include "lve_window.h"
 
-class BaseScene final
+class BaseScene 
 {
 public:
 	explicit BaseScene(const std::string& fileName);
@@ -19,25 +17,30 @@ public:
 	void PostInitialize();
 	void Destroy();
 	void FixedUpdate();
-	void Update();
+	void Update(float deltaTime);
 	void LateUpdate();
-	void Render();
+	void Render(lve::LveWindow* _window);
+
+	GameObject* CreateGameObject();
+	void DestroyGameObject(GameObject* gameObject);
+	GameObject* GetGameObjectById(const GameObject::id_t& gameObjectID);
+	std::vector<GameObject*> FindGameObjectsByName(const std::string& name);
+
+
 
 	bool IsInitialized() const;
 
 	void SetName(const std::string& name);
 	std::string GetName() const;
 	std::string GetDefaultRelativeFilePath() const;
-	std::string GetRelativeFilePath() const;
-	std::string GetShortRelativeFilePath() const;
-	// Creates a new file at the specified location and copies this scene's data in to it
-	// Always copies saved file if exists, old files can optionally be deleted
 	bool SetFileName(const std::string& fileName, bool bDeletePreviousFiles);
-	//std::string GetFileName() const;
 
 	bool IsUsingSaveFile() const;
 
 	void DeleteSaveFiles();
+
+	std::string GetFileName() const;
+
 
 	std::vector<GameObject*>& GetRootObjects();
 
@@ -55,8 +58,8 @@ public:
 	void RemoveAllEditorObjectsImmediate();
 	void RemoveObject(const GameObject::id_t& gameObjectID, bool bDestroy);
 	void RemoveObject(GameObject* gameObject, bool bDestroy);
-	void RemoveObjectImmediate(const GameObject::id_t& gameObjectID, bool bDestroy);
-	void RemoveObjectImmediate(GameObject* gameObject, bool bDestroy);
+	//void RemoveObjectImmediate(const GameObject::id_t& gameObjectID, bool bDestroy);
+	//void RemoveObjectImmediate(GameObject* gameObject, bool bDestroy);
 	void RemoveObjects(const std::vector<GameObject::id_t>& gameObjects, bool bDestroy);
 	void RemoveObjects(const std::vector<GameObject*>& gameObjects, bool bDestroy);
 	void RemoveObjectsImmediate(const std::vector<GameObject::id_t>& gameObjects, bool bDestroy);
@@ -70,6 +73,9 @@ public:
 	std::vector<GameObject::id_t> m_PendingDestroyObjects; // Objects to destroy at LateUpdate this frame
 	std::vector<GameObject*> m_PendingAddObjects; // Objects to add as root objects at LateUpdate
 	std::vector<GameObject*> m_RootObjects;
+	std::vector<GameObject::id_t> m_PendingRemoveObjects;
+
+	const GameObject::id_t InvalidGameObjectID = {};
 
 
 	bool m_bInitialized = false;

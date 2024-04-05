@@ -24,6 +24,9 @@ public:
     void cleanupComponents();
     void render(VkCommandBuffer commandBuffer);
 
+    static constexpr int HEIGHT = 600;
+    static constexpr int WIDTH = 800;
+
 private:
     VkDevice m_device;
     VkRenderPass m_renderPass;
