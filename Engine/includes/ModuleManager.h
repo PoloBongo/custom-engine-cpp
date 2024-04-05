@@ -11,43 +11,43 @@
  */
 class ModuleManager
 {
-public:
-	ModuleManager() = default;
-	~ModuleManager();
+	public:
+		ModuleManager() = default;
+		~ModuleManager();
 
-	void CreateDefaultModules();
+		void CreateDefaultModules();
 
-	void Init() const;
-	void Start() const;
-	void FixedUpdate() const;
-	void Update() const;
-	void PreRender() const;
-	void Render() const;
-	void RenderGui() const;
-	void PostRender() const;
-	void Release() const;
-	void Finalize() const;
+		void Init() const;
+		void Start() const;
+		void FixedUpdate() const;
+		void Update() const;
+		void PreRender() const;
+		void Render() const;
+		void RenderGui() const;
+		void PostRender() const;
+		void Release() const;
+		void Finalize() const;
 
-	template<class T>
-	T* CreateModule();
+		template <class T>
+		T* CreateModule();
 
-	template<class T>
-	T* GetModule();
+		template <class T>
+		T* GetModule();
 
-private:
-	std::vector<Module*> modules;
+	private:
+		std::vector<Module*> modules;
 };
 
-template<class T>
+template <class T>
 T* ModuleManager::CreateModule()
 {
-	T* module = new T();
-	module->moduleManager = this;
+	T* module            = new T();
+	module->moduleModule = this;
 	modules.push_back(module);
 	return module;
 }
 
-template<class T>
+template <class T>
 T* ModuleManager::GetModule()
 {
 	for (Module*& module : modules)

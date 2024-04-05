@@ -1,7 +1,7 @@
 #pragma once
 
 #include <glm.hpp>
-#include <gtc/quaternion.hpp> 
+#include <gtc/quaternion.hpp>
 
 #include <string>
 
@@ -36,8 +36,8 @@ namespace lve
 	extern const glm::mat3 MAT3_IDENTITY;
 	extern const glm::mat4 MAT4_IDENTITY;
 	extern const glm::mat4 MAT4_ZERO;
-	extern const uint32_t COLOUR32U_WHITE;
-	extern const uint32_t COLOUR32U_BLACK;
+	extern const uint32_t  COLOUR32U_WHITE;
+	extern const uint32_t  COLOUR32U_BLACK;
 	extern const glm::vec4 COLOUR128F_WHITE;
 	extern const glm::vec4 COLOUR128F_BLACK;
 
@@ -50,5 +50,4 @@ namespace lve
 	#else
 	#define FLEX_NO_DISCARD
 	#endif
-
 }

@@ -1,8 +1,8 @@
 #include "Scene/BaseScene.h"
-#include "GameObject/GameObject.h"
 #include <fstream>
-#include <string>
 #include <iostream>
+#include <string>
+#include "GameObject/GameObject.h"
 
 /**
  * @brief Destructeur de la scène.
@@ -10,7 +10,7 @@
  */
 void BaseScene::Destroy()
 {
-	m_bLoaded = false;
+	m_bLoaded      = false;
 	m_bInitialized = false;
 
 	for (GameObject* rootObject : m_RootObjects)
@@ -34,10 +34,7 @@ void BaseScene::Destroy()
  */
 GameObject* BaseScene::AddRootObject(GameObject* gameObject)
 {
-	if (gameObject == nullptr)
-	{
-		return nullptr;
-	}
+	if (gameObject == nullptr) return nullptr;
 
 	m_PendingAddObjects.push_back(gameObject);
 
@@ -120,10 +117,7 @@ bool BaseScene::SetFileName(const std::string& fileName, bool bDeletePreviousFil
 {
 	bool success = false;
 
-	if (fileName == m_FileName)
-	{
-		return true;
-	}
+	if (fileName == m_FileName) return true;
 }
 
 /**
@@ -143,7 +137,8 @@ std::string BaseScene::GetDefaultRelativeFilePath() const
  * @return true si le fichier existe, sinon false.
  */
 
-bool FileExists(const std::string& filePath) {
+bool FileExists(const std::string& filePath)
+{
 	std::ifstream file(filePath);
 	return file.good();
 }
@@ -154,10 +149,10 @@ bool FileExists(const std::string& filePath) {
 void BaseScene::DeleteSaveFiles()
 {
 	const std::string defaultSaveFilePath = "assets/scenes/" + m_FileName;
-	const std::string savedSaveFilePath = "saved/scenes/" + m_FileName;
+	const std::string savedSaveFilePath   = "saved/scenes/" + m_FileName;
 
 	bool bDefaultFileExists = FileExists(defaultSaveFilePath);
-	bool bSavedFileExists = FileExists(savedSaveFilePath);
+	bool bSavedFileExists   = FileExists(savedSaveFilePath);
 
 	if (bSavedFileExists || bDefaultFileExists)
 	{
@@ -165,26 +160,18 @@ void BaseScene::DeleteSaveFiles()
 
 		if (bDefaultFileExists)
 		{
-			if (remove(defaultSaveFilePath.c_str()) != 0)
-			{
+			if (remove(defaultSaveFilePath.c_str()) !=
+			    0)
 				std::cerr << "Error deleting default save file: " << defaultSaveFilePath << std::endl;
-			}
-			else
-			{
-				std::cout << "Default save file deleted successfully." << std::endl;
-			}
+			else std::cout << "Default save file deleted successfully." << std::endl;
 		}
 
 		if (bSavedFileExists)
 		{
-			if (remove(savedSaveFilePath.c_str()) != 0)
-			{
+			if (remove(savedSaveFilePath.c_str()) !=
+			    0)
 				std::cerr << "Error deleting saved save file: " << savedSaveFilePath << std::endl;
-			}
-			else
-			{
-				std::cout << "Saved save file deleted successfully." << std::endl;
-			}
+			else std::cout << "Saved save file deleted successfully." << std::endl;
 		}
 	}
 }
@@ -209,17 +196,11 @@ void BaseScene::RemoveObject(const GameObject::id_t& gameObjectID, bool bDestroy
 {
 	if (bDestroy)
 	{
-		if (!Contains(m_PendingDestroyObjects, gameObjectID))
-		{
-			m_PendingDestroyObjects.push_back(gameObjectID);
-		}
+		if (!Contains(m_PendingDestroyObjects, gameObjectID)) m_PendingDestroyObjects.push_back(gameObjectID);
 	}
 	else
 	{
-		if (!Contains(m_PendingRemoveObjects, gameObjectID))
-		{
-			m_PendingRemoveObjects.push_back(gameObjectID);
-		}
+		if (!Contains(m_PendingRemoveObjects, gameObjectID)) m_PendingRemoveObjects.push_back(gameObjectID);
 	}
 }
 
@@ -241,14 +222,8 @@ void BaseScene::RemoveObject(GameObject* gameObject, bool bDestroy)
  */
 void BaseScene::RemoveObjects(const std::vector<GameObject::id_t>& gameObjects, bool bDestroy)
 {
-	if (bDestroy)
-	{
-		m_PendingDestroyObjects.insert(m_PendingDestroyObjects.end(), gameObjects.begin(), gameObjects.end());
-	}
-	else
-	{
-		m_PendingRemoveObjects.insert(m_PendingRemoveObjects.end(), gameObjects.begin(), gameObjects.end());
-	}
+	if (bDestroy) m_PendingDestroyObjects.insert(m_PendingDestroyObjects.end(), gameObjects.begin(), gameObjects.end());
+	else m_PendingRemoveObjects.insert(m_PendingRemoveObjects.end(), gameObjects.begin(), gameObjects.end());
 }
 
 /**
@@ -264,9 +239,8 @@ void BaseScene::RemoveObjects(const std::vector<GameObject*>& gameObjects, bool 
 		for (GameObject* gameObject : gameObjects)
 		{
 			if (!Contains(m_PendingDestroyObjects, gameObject->GetId()))
-			{
-				m_PendingDestroyObjects.push_back(gameObject->GetId());
-			}
+				m_PendingDestroyObjects.push_back(
+					gameObject->GetId());
 		}
 	}
 	else
@@ -275,9 +249,8 @@ void BaseScene::RemoveObjects(const std::vector<GameObject*>& gameObjects, bool 
 		for (GameObject* gameObject : gameObjects)
 		{
 			if (!Contains(m_PendingRemoveObjects, gameObject->GetId()))
-			{
-				m_PendingRemoveObjects.push_back(gameObject->GetId());
-			}
+				m_PendingRemoveObjects.push_back(
+					gameObject->GetId());
 		}
 	}
 }
@@ -287,8 +260,9 @@ void BaseScene::RemoveObjects(const std::vector<GameObject*>& gameObjects, bool 
  * @brief Crée un nouvel objet de jeu.
  * @return Pointeur vers le nouvel objet de jeu créé.
  */
-GameObject* BaseScene::CreateGameObject() {
-	GameObject* gameObject = new GameObject();
+GameObject* BaseScene::CreateGameObject()
+{
+	auto gameObject = new GameObject();
 	m_PendingAddObjects.push_back(gameObject);
 	return gameObject;
 }
@@ -298,10 +272,9 @@ GameObject* BaseScene::CreateGameObject() {
  * @param gameObject Pointeur vers l'objet de jeu à détruire.
  */
 
-void BaseScene::DestroyGameObject(GameObject* gameObject) {
-	if (gameObject != nullptr) {
-		RemoveObject(gameObject, true);
-	}
+void BaseScene::DestroyGameObject(GameObject* gameObject)
+{
+	if (gameObject != nullptr) RemoveObject(gameObject, true);
 }
 
 /**
@@ -309,11 +282,11 @@ void BaseScene::DestroyGameObject(GameObject* gameObject) {
  * @param gameObjectID Identifiant de l'objet de jeu à récupérer.
  * @return Pointeur vers l'objet de jeu correspondant à l'identifiant.
  */
-GameObject* BaseScene::GetGameObjectById(const GameObject::id_t& gameObjectID) {
-	for (GameObject* rootObject : m_RootObjects) {
-		if (rootObject->GetId() == gameObjectID) {
-			return rootObject;
-		}
+GameObject* BaseScene::GetGameObjectById(const GameObject::id_t& gameObjectID)
+{
+	for (GameObject* rootObject : m_RootObjects)
+	{
+		if (rootObject->GetId() == gameObjectID) return rootObject;
 	}
 	return nullptr;
 }
@@ -323,9 +296,11 @@ GameObject* BaseScene::GetGameObjectById(const GameObject::id_t& gameObjectID) {
  * @param name Nom des objets de jeu à rechercher.
  * @return Vecteur contenant les pointeurs vers les objets de jeu trouvés.
  */
-std::vector<GameObject*> BaseScene::FindGameObjectsByName(const std::string& name) {
+std::vector<GameObject*> BaseScene::FindGameObjectsByName(const std::string& name)
+{
 	std::vector<GameObject*> result;
-	for (GameObject* rootObject : m_RootObjects) {
+	for (GameObject* rootObject : m_RootObjects)
+	{
 		std::vector<GameObject*> found = rootObject->FindChildrenByName(name);
 		result.insert(result.end(), found.begin(), found.end());
 	}

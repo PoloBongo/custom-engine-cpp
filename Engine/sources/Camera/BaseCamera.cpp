@@ -30,8 +30,8 @@ namespace lve
 		bIsGameplayCam(_bIsGameplayCam),
 		type(_type),
 		m_Name(_cameraName),
-		m_Proj(MAT4_ZERO),
 		m_View(MAT4_ZERO),
+		m_Proj(MAT4_ZERO),
 		m_ViewProjection(MAT4_ZERO)
 	{
 		ResetOrientation();
@@ -61,8 +61,8 @@ namespace lve
 		roll = Lerp(roll, 0.0f, rollRestorationSpeed * _deltaTime);
 
 		/*
-		AudioManager::SetListenerPos(position);
-		AudioManager::SetListenerVel(velocity);*/
+		AudioModule::SetListenerPos(position);
+		AudioModule::SetListenerVel(velocity);*/
 	}
 
 	void BaseCamera::LateUpdate(float _deltaTime)

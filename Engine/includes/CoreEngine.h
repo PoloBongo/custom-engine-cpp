@@ -4,19 +4,19 @@
 
 class Engine
 {
-public:
-	static Engine* GetInstance();
+	public:
+		static Engine* GetInstance();
 
-	void Init() const;
-	void Run() const;
-	void Quit() { shouldQuit = true; }
+		void Init() const;
+		void Run() const;
+		void Quit() { shouldQuit = true; }
 
-	ModuleManager* GetModuleManager() const { return moduleManager; }
+		ModuleManager* GetModuleManager() const { return moduleModule; }
 
-private:
-	static Engine* instance;
+	private:
+		static Engine* instance;
 
-	ModuleManager* moduleManager = new ModuleManager;
+		ModuleManager* moduleModule = new ModuleManager;
 
-	bool shouldQuit = false;
+		bool shouldQuit = false;
 };

@@ -6,10 +6,18 @@ Component::Component(GameObject* owner)
 {
 	this->owner = owner;
 }
-void Component::Start() {}
 
-void Component::Physics(const float& _delta) {}
-void Component::Update(const float& _delta) {}
+void Component::Start()
+{
+}
+
+void Component::Physics(const float& _delta)
+{
+}
+
+void Component::Update(const float& _delta)
+{
+}
 
 
 void Component::Render(lve::LveWindow* _window)
@@ -19,7 +27,7 @@ void Component::Render(lve::LveWindow* _window)
 
 void Component::RenderGUI(lve::LveWindow* _window)
 {
-	//_window->setView(HUDManager::GetHud());
+	//_window->setView(HUDModule::GetHud());
 }
 
 void Component::RenderBackground(lve::LveWindow* _window)

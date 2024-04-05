@@ -1,33 +1,34 @@
 #include "SubSystem.h"
 
 // première option pour instancier le manager //
-CollisionManager* gCollisionsManager; // global variable
+CollisionModule* gCollisionsModule; // global variable
 
 
 // deuxième option pour instancier le manager //
 std::unordered_map<std::type_index, void*> SubSystem::instances;
 
-template<class T> void SubSystem::Set(T* instance) {
-    instances[typeid(T)] = instance;
+template <class T>
+void SubSystem::Set(T* instance)
+{
+	instances[typeid(T)] = instance;
 }
 
-template<class T> T* SubSystem::Get() {
-    auto it = instances.find(typeid(T));
-    if (it != instances.end()) {
-        return static_cast<T*>(it->second);
-    }
-    else {
-        return nullptr;
-    }
+template <class T>
+T* SubSystem::Get()
+{
+	auto it = instances.find(typeid(T));
+	if (it != instances.end()) return static_cast<T*>(it->second);
+	return nullptr;
 }
 
 void startUp()
 {
-    // première option pour instancier le manager //
-    gCollisionsManager = new CollisionManager;
-    gCollisionsManager->start();
+	// première option pour instancier le manager //
+	gCollisionsModule = new CollisionModule;
+	gCollisionsModule->start();
 
 	// deuxième option pour instancier le manager //
-	SubSystem::Set<CollisionManager>(&CollisionManager::get()); // ou SubSystem::Set<CollisionManager>(new CollisionManager());
-	SubSystem::Get<CollisionManager>()->start();
+	SubSystem::Set<CollisionModule>(&CollisionModule::get());
+	// ou SubSystem::Set<CollisionModule>(new CollisionModule());
+	SubSystem::Get<CollisionModule>()->start();
 }

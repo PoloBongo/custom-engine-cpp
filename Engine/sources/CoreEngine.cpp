@@ -7,32 +7,30 @@ Engine* Engine::instance = nullptr;
 
 Engine* Engine::GetInstance()
 {
-	if (instance == nullptr)
-		instance = new Engine();
+	if (instance == nullptr) instance = new Engine();
 
 	return instance;
 }
 
 void Engine::Init() const
 {
-	moduleManager->CreateDefaultModules();
-	moduleManager->Init();
+	moduleModule->CreateDefaultModules();
+	moduleModule->Init();
 }
 
 void Engine::Run() const
 {
-	moduleManager->Start();
+	moduleModule->Start();
 
 	while (!shouldQuit)
 	{
-
-		moduleManager->Update();
-		moduleManager->PreRender();
-		moduleManager->Render();
-		moduleManager->RenderGui();
-		moduleManager->PostRender();
+		moduleModule->Update();
+		moduleModule->PreRender();
+		moduleModule->Render();
+		moduleModule->RenderGui();
+		moduleModule->PostRender();
 	}
 
-	moduleManager->Release();
-	moduleManager->Finalize();
+	moduleModule->Release();
+	moduleModule->Finalize();
 }

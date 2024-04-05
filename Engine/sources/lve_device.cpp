@@ -133,8 +133,9 @@ namespace lve
 	vk::Instance LveDevice::CreateInstance()
 	{
 		// Vérifie si les couches de validation sont activées et si elles sont supportées
-		if (enableValidationLayers && !checkValidationLayerSupport()) throw std::runtime_error(
-			"validation layers requested, but not available!");
+		if (enableValidationLayers && !checkValidationLayerSupport())
+			throw std::runtime_error(
+				"validation layers requested, but not available!");
 
 		// Configuration des informations d'application pour l'instance Vulkan
 		vk::ApplicationInfo appInfo(
@@ -403,7 +404,8 @@ namespace lve
 		populateDebugMessengerCreateInfo(createInfo);
 
 		auto dispatcher = vk::DispatchLoaderDynamic(instance, vkGetInstanceProcAddr);
-		if (instance.createDebugUtilsMessengerEXT(&createInfo, nullptr, &debugMessenger, dispatcher) != vk::Result::eSuccess) 
+		if (instance.createDebugUtilsMessengerEXT(&createInfo, nullptr, &debugMessenger, dispatcher) !=
+		    vk::Result::eSuccess)
 			throw std::runtime_error("failed to set up debug messenger!");
 
 		return debugMessenger;
