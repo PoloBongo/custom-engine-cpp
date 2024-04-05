@@ -76,9 +76,9 @@ class RHIVulkanModule final : public RHIModule
 		bool SetupDebugMessenger();
 		// Autres méthodes pour la création de la surface, des périphériques logiques, etc.
 
-		vk::Instance*               m_Instance;
-		vk::DebugUtilsMessengerEXT* m_DebugMessenger;
-		std::unique_ptr<vk::CommandBuffer>          m_CurrentCommandBuffer;
+		vk::Instance*                      m_Instance;
+		vk::DebugUtilsMessengerEXT*        m_DebugMessenger;
+		std::unique_ptr<vk::CommandBuffer> m_CurrentCommandBuffer;
 
 
 		lve::LveDevice*              p_lveDevice;

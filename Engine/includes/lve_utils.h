@@ -2,8 +2,8 @@
 
 #include <functional>
 
-namespace lve {
-
+namespace lve
+{
 	// from: https://stackoverflow.com/a/57595105
 	template <typename T, typename... Rest>
 
@@ -20,9 +20,9 @@ namespace lve {
 	 * @param v La première valeur à hasher.
 	 * @param rest Les valeurs restantes à hasher.
 	 */
-	void HashCombine(std::size_t& _seed, const T& _v, const Rest&... _rest) {
-		_seed ^= std::hash<T>{}(_v)+0x9e3779b9 + (_seed << 6) + (_seed >> 2);
+	void HashCombine(std::size_t& _seed, const T& _v, const Rest&... _rest)
+	{
+		_seed ^= std::hash<T>{}(_v) + 0x9e3779b9 + (_seed << 6) + (_seed >> 2);
 		(HashCombine(_seed, _rest), ...);
 	};
-
-}  // namespace lve
+} // namespace lve

@@ -1,4 +1,5 @@
-NEW: Primitives
+NEW: Cleaning Module
 
-- Création d'objet 3D de base
-- TODO : Créer des objets 3D Blender et les inclures en .obj
+- Nettoyage de tout le code avec le nomenclature 
+- Création d'un héritage pour les Modules
+- TODO : Revoir le nom des fonctions et des paramètres

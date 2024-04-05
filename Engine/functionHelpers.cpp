@@ -1,6 +1,7 @@
 #include "functionHelpers.h"
 
-namespace lve {
+namespace lve
+{
 	float Lerp(const float a, const float b, float t)
 	{
 		return a * (1.0f - t) + b * t;

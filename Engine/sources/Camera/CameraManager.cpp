@@ -1,7 +1,7 @@
 #include "Camera/CameraManager.h"
 
 #include "Camera/BaseCamera.h"
-/*#include "InputManager.hpp"
+/*#include "InputModule.hpp"
 #include "StringBuilder.hpp"*/
 
 #include <iostream>
@@ -21,7 +21,7 @@ namespace lve
 		camera->Initialize();
 		camera->OnPossess();
 
-		g_InputManager->BindActionCallback(&m_ActionCallback, 12);*/
+		g_InputModule->BindActionCallback(&m_ActionCallback, 12);*/
 
 		m_bInitialized = true;
 	}
@@ -41,7 +41,7 @@ namespace lve
 		cameras.clear();
 
 		/*
-		g_InputManager->UnbindActionCallback(&m_ActionCallback);*/
+		g_InputModule->UnbindActionCallback(&m_ActionCallback);*/
 
 		m_bInitialized = false;
 	}
@@ -72,21 +72,15 @@ namespace lve
 		{
 			cameras.push_back(_camera);
 
-			if (_bSwitchTo)
-			{
-				SetCamera(_camera, false);
-			}
+			if (_bSwitchTo) SetCamera(_camera, false);
 		}
 	}
 
 	BaseCamera* CameraManager::SetCamera(BaseCamera* _camera, const bool _bAlignWithPrevious)
 	{
-		if (!cameraStack.empty())
-		{
-			BaseCamera* activeCamera = CurrentCamera();
-			/*activeCamera->OnDepossess();
-			activeCamera->Destroy();*/
-		}
+		if (!cameraStack.empty()) BaseCamera* activeCamera = CurrentCamera();
+		/*activeCamera->OnDepossess();
+		activeCamera->Destroy();*/
 
 		while (!cameraStack.empty())
 		{
@@ -100,24 +94,19 @@ namespace lve
 	{
 		/*CHECK_EQ(glm::abs(deltaIndex), 1);*/
 
-		const uint32_t numCameras = (uint32_t)cameras.size();
+		const uint32_t numCameras = static_cast<uint32_t>(cameras.size());
 
 		const uint32_t desiredIndex = GetCameraIndex(cameraStack.top()) + _deltaIndex;
-		uint32_t newIndex;
-		uint32_t offset = 0;
+		uint32_t       newIndex;
+		uint32_t       offset = 0;
 		do
 		{
 			newIndex = desiredIndex + offset;
 			offset += _deltaIndex;
-			if (newIndex < 0)
-			{
-				newIndex += numCameras;
-			}
-			else if (newIndex >= numCameras)
-			{
-				newIndex -= numCameras;
-			}
-		} while (!cameras[newIndex]->bDEBUGCyclable);
+			if (newIndex < 0) newIndex += numCameras;
+			if (newIndex >= numCameras) newIndex -= numCameras;
+		}
+		while (!cameras[newIndex]->bDEBUGCyclable);
 
 		return SetCamera(cameras[newIndex], _bAlignWithPrevious);
 	}
@@ -138,11 +127,11 @@ namespace lve
 	{
 		if (_camera == nullptr)
 		{
-			std::cout <<"Attempted to push null camera\n" << std::endl;
+			std::cout << "Attempted to push null camera\n" << std::endl;
 			return nullptr;
 		}
 
-		/*g_InputManager->ClearAllInputs();*/
+		/*g_InputModule->ClearAllInputs();*/
 
 		BaseCamera* pActiveCam = nullptr;
 		if (!cameraStack.empty())
@@ -155,10 +144,7 @@ namespace lve
 
 		cameraStack.push(_camera);
 
-		if (_bAlignWithPrevious && pActiveCam != nullptr)
-		{
-			AlignCameras(pActiveCam, _camera);
-		}
+		if (_bAlignWithPrevious && pActiveCam != nullptr) AlignCameras(pActiveCam, _camera);
 
 		if (_bInitialize && m_bInitialized)
 		{
@@ -169,7 +155,8 @@ namespace lve
 		return _camera;
 	}
 
-	BaseCamera* CameraManager::PushCameraByName(const std::string& _name, const bool _bAlignWithPrevious, const bool _bInitialize)
+	BaseCamera* CameraManager::PushCameraByName(const std::string& _name, const bool _bAlignWithPrevious,
+	                                            const bool         _bInitialize)
 	{
 		BaseCamera* cam = GetCameraByName(_name);
 		if (cam == nullptr)
@@ -189,7 +176,7 @@ namespace lve
 			return;
 		}
 
-		/*g_InputManager->ClearAllInputs();*/
+		/*g_InputModule->ClearAllInputs();*/
 
 		BaseCamera* currentCamera = CurrentCamera();
 		currentCamera->OnDepossess();
@@ -202,20 +189,14 @@ namespace lve
 		currentCamera->OnPossess();
 		currentCamera->Initialize();
 
-		if (_bAlignWithCurrent)
-		{
-			AlignCameras(prevCamera, currentCamera);
-		}
+		if (_bAlignWithCurrent) AlignCameras(prevCamera, currentCamera);
 	}
 
 	BaseCamera* CameraManager::GetCameraByName(const std::string& _name) const
 	{
-		for (uint32_t i = 0; i < (uint32_t)cameras.size(); ++i)
+		for (uint32_t i = 0; i < static_cast<uint32_t>(cameras.size()); ++i)
 		{
-			if (cameras[i]->GetName().compare(_name) == 0)
-			{
-				return cameras[i];
-			}
+			if (cameras[i]->GetName().compare(_name) == 0) return cameras[i];
 		}
 
 		return nullptr;
@@ -236,7 +217,7 @@ namespace lve
 				{
 					static StringBuilder actionBindingBuff;
 					actionBindingBuff.Clear();
-					if (g_InputManager->GetActionBindingName(Action::DBG_SWITCH_TO_PREV_CAM, actionBindingBuff))
+					if (g_InputModule->GetActionBindingName(Action::DBG_SWITCH_TO_PREV_CAM, actionBindingBuff))
 					{
 						ImGui::SetTooltip("Shortcut: %s", actionBindingBuff.ToCString());
 					}
@@ -258,7 +239,7 @@ namespace lve
 				{
 					static StringBuilder actionBindingBuff;
 					actionBindingBuff.Clear();
-					if (g_InputManager->GetActionBindingName(Action::DBG_SWITCH_TO_NEXT_CAM, actionBindingBuff))
+					if (g_InputModule->GetActionBindingName(Action::DBG_SWITCH_TO_NEXT_CAM, actionBindingBuff))
 					{
 						ImGui::SetTooltip("Shortcut: %s", actionBindingBuff.ToCString());
 					}
@@ -319,10 +300,7 @@ namespace lve
 	{
 		for (uint32_t i = 0; i < cameras.size(); ++i)
 		{
-			if (cameras[i] == _camera)
-			{
-				return i;
-			}
+			if (cameras[i] == _camera) return i;
 		}
 
 		return -1;
@@ -331,9 +309,9 @@ namespace lve
 	void CameraManager::AlignCameras(const BaseCamera* _from, BaseCamera* _to)
 	{
 		_to->position = _from->position;
-		_to->pitch = _from->pitch;
-		_to->yaw = _from->yaw;
-		_to->FOV = _from->FOV;
+		_to->pitch    = _from->pitch;
+		_to->yaw      = _from->yaw;
+		_to->FOV      = _from->FOV;
 	}
 
 	/*EventReply CameraManager::OnActionEvent(Action action, ActionEvent actionEvent)
@@ -354,5 +332,4 @@ namespace lve
 
 		return EventReply::UNCONSUMED;
 	}*/
-
 } // namespace flex

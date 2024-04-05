@@ -1,7 +1,9 @@
 #include "lve_game_object.h"
 
-namespace lve {
-	glm::mat4 TransformComponent::mat4() {
+namespace lve
+{
+	glm::mat4 TransformComponent::mat4()
+	{
 		const float c3 = glm::cos(rotation.z);
 		const float s3 = glm::sin(rotation.z);
 		const float c2 = glm::cos(rotation.x);
@@ -27,16 +29,18 @@ namespace lve {
 				scale.z * (c1 * c2),
 				0.0f,
 			},
-			{translation.x, translation.y, translation.z, 1.0f} };
+			{translation.x, translation.y, translation.z, 1.0f}
+		};
 	}
 
-	glm::mat3 TransformComponent::normalMatrix() {
-		const float c3 = glm::cos(rotation.z);
-		const float s3 = glm::sin(rotation.z);
-		const float c2 = glm::cos(rotation.x);
-		const float s2 = glm::sin(rotation.x);
-		const float c1 = glm::cos(rotation.y);
-		const float s1 = glm::sin(rotation.y);
+	glm::mat3 TransformComponent::normalMatrix()
+	{
+		const float     c3       = glm::cos(rotation.z);
+		const float     s3       = glm::sin(rotation.z);
+		const float     c2       = glm::cos(rotation.x);
+		const float     s2       = glm::sin(rotation.x);
+		const float     c1       = glm::cos(rotation.y);
+		const float     s1       = glm::sin(rotation.y);
 		const glm::vec3 invScale = 1.0f / scale;
 
 		return glm::mat3{
@@ -54,16 +58,17 @@ namespace lve {
 				invScale.z * (c2 * s1),
 				invScale.z * (-s2),
 				invScale.z * (c1 * c2),
-			} };
+			}
+		};
 	}
 
-	LveGameObject LveGameObject::MakePointLight(float _intensity, float _radius, glm::vec3 _color) {
-		LveGameObject gameObj = LveGameObject::CreateGameObject();
-		gameObj.color = _color;
-		gameObj.transform.scale.x = 0.2f;
-		gameObj.pointLight = std::make_unique<PointLightComponent>();
+	LveGameObject LveGameObject::MakePointLight(float _intensity, float _radius, glm::vec3 _color)
+	{
+		LveGameObject gameObj              = CreateGameObject();
+		gameObj.color                      = _color;
+		gameObj.transform.scale.x          = 0.2f;
+		gameObj.pointLight                 = std::make_unique<PointLightComponent>();
 		gameObj.pointLight->lightIntensity = _intensity;
 		return gameObj;
 	}
-
 } // namespace lve

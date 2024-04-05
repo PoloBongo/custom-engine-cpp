@@ -1,381 +1,109 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Source Files">
-      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
-      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
-    </Filter>
-    <Filter Include="Header Files">
-      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
-    </Filter>
-    <Filter Include="Resource Files">
-      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
-      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
-    </Filter>
-    <Filter Include="Source Files\Manager">
-      <UniqueIdentifier>{b0848033-fa53-4fb0-a808-1b1e51500fac}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\Manager">
-      <UniqueIdentifier>{876b4bff-97c3-4b0c-9375-a0e4ecfd9e06}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Manager\StartManager">
-      <UniqueIdentifier>{8745760c-f1d2-4347-81e8-34e6d3a4c2ab}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\Manager\StartManager">
-      <UniqueIdentifier>{9c4e9aa3-631b-43cf-86bf-9f81c5fd96c8}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\Manager\ComponentsManager">
-      <UniqueIdentifier>{4b0983b1-0c39-4fc6-b9e3-c00dcd31a40a}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Manager\ComponentManager">
-      <UniqueIdentifier>{bfeb9038-46e0-4c78-b875-a13dcfddda39}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\ImGui">
-      <UniqueIdentifier>{e6618b7e-3894-4d00-a3bb-77a298ac86f9}</UniqueIdentifier>
-    </Filter>
+    <ClCompile Include="..\Librairies\imgui\imgui.cpp" />
+    <ClCompile Include="..\Librairies\imgui\imgui_demo.cpp" />
+    <ClCompile Include="..\Librairies\imgui\imgui_draw.cpp" />
+    <ClCompile Include="..\Librairies\imgui\imgui_impl_glfw.cpp" />
+    <ClCompile Include="..\Librairies\imgui\imgui_impl_vulkan.cpp" />
+    <ClCompile Include="..\Librairies\imgui\imgui_tables.cpp" />
+    <ClCompile Include="..\Librairies\imgui\imgui_widgets.cpp" />
+    <ClCompile Include="BoxCollider.cpp" />
+    <ClCompile Include="Convertisseur.cpp" />
+    <ClCompile Include="rhi.cpp" />
+    <ClCompile Include="sources\Modules\RHIVulkanModule.cpp" />
+    <ClCompile Include="RigidBody.cpp" />
+    <ClCompile Include="sources\GameObject\PreGameObject\LightGameObject.cpp" />
+    <ClCompile Include="sources\GameObject\PreGameObject\PlaneGameObject.cpp" />
+    <ClCompile Include="sources\GameObject\PreGameObject\CubeGameObject.cpp" />
+    <ClCompile Include="sources\Camera\CameraManager.cpp" />
+    <ClCompile Include="functionHelpers.cpp" />
+    <ClCompile Include="lve_constants.cpp" />
+    <ClCompile Include="lve_image.cpp" />
+    <ClCompile Include="sources\Camera\BaseCamera.cpp" />
+    <ClCompile Include="sources\CoreEngine.cpp" />
+    <ClCompile Include="sources\Modules\HUDModule.cpp" />
+    <ClCompile Include="sources\Modules\ImGUIModule.cpp" />
+    <ClCompile Include="sources\Modules\WindowModule.cpp" />
+    <ClCompile Include="sources\ModuleManager.cpp" />
+    <ClCompile Include="sources\Scene\BaseScene.cpp" />
+    <ClCompile Include="Component.cpp" />
+    <ClCompile Include="Engine.cpp" />
+    <ClCompile Include="EngineTestCode.cpp" />
+    <ClCompile Include="sources\Modules\SoundSystemModule.cpp" />
+    <ClCompile Include="SphereCollider.cpp" />
+    <ClCompile Include="Transform.cpp" />
+    <ClCompile Include="VulkanHooks.cpp" />
+    <ClCompile Include="first_app.cpp" />
+    <ClCompile Include="sources\GameObject\GameObject.cpp" />
+    <ClCompile Include="sources\keyboard_movement_controller.cpp" />
+    <ClCompile Include="sources\lve_buffer.cpp" />
+    <ClCompile Include="sources\Camera\lve_camera.cpp" />
+    <ClCompile Include="sources\lve_descriptors.cpp" />
+    <ClCompile Include="sources\lve_device.cpp" />
+    <ClCompile Include="sources\lve_frame_info.cpp" />
+    <ClCompile Include="sources\lve_game_object.cpp" />
+    <ClCompile Include="sources\lve_model.cpp" />
+    <ClCompile Include="sources\lve_pipeline.cpp" />
+    <ClCompile Include="sources\lve_renderer.cpp" />
+    <ClCompile Include="sources\lve_swap_chain.cpp" />
+    <ClCompile Include="sources\lve_utils.cpp" />
+    <ClCompile Include="sources\lve_window.cpp" />
+    <ClCompile Include="sources\Modules\DebugModule.cpp" />
+    <ClCompile Include="sources\Modules\InputModule.cpp" />
+    <ClCompile Include="sources\Scene\SceneManager.cpp" />
+    <ClCompile Include="sources\SubSystem.cpp" />
+    <ClCompile Include="sources\Systems\point_light_system.cpp" />
+    <ClCompile Include="sources\Systems\simple_render_system.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Engine.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="first_app.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="sources\GameObject\GameObject.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="sources\keyboard_movement_controller.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="sources\lve_buffer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="sources\Camera\lve_camera.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="sources\lve_descriptors.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="sources\lve_device.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="sources\lve_frame_info.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="sources\lve_game_object.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="sources\lve_model.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="sources\lve_pipeline.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="sources\lve_renderer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="sources\lve_swap_chain.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="sources\lve_utils.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="sources\lve_window.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="sources\SubSystem.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="sources\Managers\ColliderManager.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="sources\Managers\CollisionManager.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="sources\Managers\DebugManager.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="sources\Managers\InputManager.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="sources\Managers\RenderManager.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="sources\Managers\RessourceManager.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="sources\Managers\RigidbodyManager.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="sources\Managers\SceneManager.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="sources\Managers\TextureManager.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="sources\Systems\point_light_system.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="sources\Systems\simple_render_system.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Component.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Transform.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="sources\Scene\BaseScene.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="sources\Managers\SoundSystemManager.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="lve_image.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="sources\Managers\WindowManager.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="sources\CoreEngine.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="sources\ModuleManager.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="functionHelpers.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="lve_constants.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="sources\Camera\BaseCamera.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="sources\Managers\HUDManager.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="sources\Camera\CameraManager.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="sources\Managers\ImGUIManager.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Librairies\imgui\imgui_draw.cpp">
-      <Filter>Source Files\ImGui</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Librairies\imgui\imgui_impl_glfw.cpp">
-      <Filter>Source Files\ImGui</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Librairies\imgui\imgui_tables.cpp">
-      <Filter>Source Files\ImGui</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Librairies\imgui\imgui_widgets.cpp">
-      <Filter>Source Files\ImGui</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Librairies\imgui\imgui.cpp">
-      <Filter>Source Files\ImGui</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Librairies\imgui\imgui_demo.cpp">
-      <Filter>Source Files\ImGui</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Librairies\imgui\imgui_impl_vulkan.cpp">
-      <Filter>Source Files\ImGui</Filter>
-    <ClCompile Include="sources\GameObject\PreGameObject\CubeGameObject.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="sources\GameObject\PreGameObject\PlaneGameObject.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="sources\GameObject\PreGameObject\LightGameObject.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="RHIVulkanModule.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="VulkanHooks.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="rhi.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SphereCollider.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="BoxCollider.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Convertisseur.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="RigidBody.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="first_app.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClCompile Include="EngineTestCode.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClInclude Include="includes\keyboard_movement_controller.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="includes\lve_buffer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="includes\Camera\lve_camera.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="includes\lve_descriptors.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="includes\lve_device.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="includes\lve_frame_info.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="includes\lve_game_object.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="includes\lve_model.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="includes\lve_pipeline.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="includes\lve_renderer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="includes\lve_swap_chain.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="includes\lve_utils.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="includes\lve_window.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="includes\SubSystem.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="includes\Systems\simple_render_system.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="includes\Systems\point_light_system.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="includes\GameObject\GameObject.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="includes\Managers\ColliderManager.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="includes\Managers\CollisionManager.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="includes\Managers\DebugManager.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="includes\Managers\InputManager.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="includes\Managers\RenderManager.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="includes\Managers\RessourceManager.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="includes\Managers\RigidbodyManager.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="includes\Managers\SceneManager.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="includes\Managers\TextureManager.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Component.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Transform.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="includes\Scene\BaseScene.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="includes\Managers\SoundSystemManager.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="lve_image.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="includes\Managers\WindowManager.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="includes\CoreEngine.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="includes\Module.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="includes\ModuleManager.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="includes\Managers\HUDManager.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="functionHelpers.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="lve_constants.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="includes\Camera\BaseCamera.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="includes\Camera\CameraManager.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="includes\Managers\ImGUIManager.h">
-    <ClInclude Include="includes\GameObject\PreGameObject\CubeGameObject.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="includes\GameObject\PreGameObject\PlaneGameObject.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="includes\GameObject\PreGameObject\LightGameObject.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="RHIVulkanModule.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="VulkanHooks.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="rhi.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="BoxCollider.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Convertisseur.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="RigidBody.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SphereCollider.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="EngineTestCode.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
+    <ClInclude Include="BoxCollider.h" />
+    <ClInclude Include="Convertisseur.h" />
+    <ClInclude Include="includes\GameObject\PreGameObject\CubeGameObject.h" />
+    <ClInclude Include="includes\Camera\CameraManager.h" />
+    <ClInclude Include="functionHelpers.h" />
+    <ClInclude Include="includes\Camera\BaseCamera.h" />
+    <ClInclude Include="includes\CoreEngine.h" />
+    <ClInclude Include="includes\Modules\HUDModule.h" />
+    <ClInclude Include="includes\Modules\ImGUIModule.h" />
+    <ClInclude Include="includes\Modules\WindowModule.h" />
+    <ClInclude Include="includes\Modules\Module.h" />
+    <ClInclude Include="includes\ModuleManager.h" />
+    <ClInclude Include="includes\Scene\BaseScene.h" />
+    <ClInclude Include="Component.h" />
+    <ClInclude Include="EngineTestCode.h" />
+    <ClInclude Include="includes\Modules\SoundSystemModule.h" />
+    <ClInclude Include="includes\GameObject\PreGameObject\LightGameObject.h" />
+    <ClInclude Include="lve_constants.h" />
+    <ClInclude Include="lve_image.h" />
+    <ClInclude Include="includes\GameObject\PreGameObject\PlaneGameObject.h" />
+    <ClInclude Include="rhi.h" />
+    <ClInclude Include="includes\Modules\RHIVulkanModule.h" />
+    <ClInclude Include="RigidBody.h" />
+    <ClInclude Include="SphereCollider.h" />
+    <ClInclude Include="Transform.h" />
+    <ClInclude Include="VulkanHooks.h" />
+    <ClInclude Include="first_app.h" />
+    <ClInclude Include="includes\GameObject\GameObject.h" />
+    <ClInclude Include="includes\keyboard_movement_controller.h" />
+    <ClInclude Include="includes\lve_buffer.h" />
+    <ClInclude Include="includes\Camera\lve_camera.h" />
+    <ClInclude Include="includes\lve_descriptors.h" />
+    <ClInclude Include="includes\lve_device.h" />
+    <ClInclude Include="includes\lve_frame_info.h" />
+    <ClInclude Include="includes\lve_game_object.h" />
+    <ClInclude Include="includes\lve_model.h" />
+    <ClInclude Include="includes\lve_pipeline.h" />
+    <ClInclude Include="includes\lve_renderer.h" />
+    <ClInclude Include="includes\lve_swap_chain.h" />
+    <ClInclude Include="includes\lve_utils.h" />
+    <ClInclude Include="includes\lve_window.h" />
+    <ClInclude Include="includes\Modules\DebugModule.h" />
+    <ClInclude Include="includes\Modules\InputModule.h" />
+    <ClInclude Include="includes\Scene\SceneManager.h" />
+    <ClInclude Include="includes\SubSystem.h" />
+    <ClInclude Include="includes\Systems\point_light_system.h" />
+    <ClInclude Include="includes\Systems\simple_render_system.h" />
   </ItemGroup>
   <ItemGroup>
     <CopyFileToFolders Include="..\Librairies\FMOD\lib\fmod.dll" />

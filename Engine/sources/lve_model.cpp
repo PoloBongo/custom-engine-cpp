@@ -10,8 +10,8 @@
 
 //std
 #include <cassert>
-#include <stdexcept>
 #include <iostream>
+#include <stdexcept>
 #include <unordered_map>
 
 #ifndef ENGINE_DIR
@@ -19,10 +19,13 @@
 #endif
 
 
-namespace std {
-	template<>
-	struct hash<lve::LveModel::Vertex> {
-		size_t operator()(lve::LveModel::Vertex const& _vertex) const {
+namespace std
+{
+	template <>
+	struct hash<lve::LveModel::Vertex>
+	{
+		size_t operator()(const lve::LveModel::Vertex& _vertex) const
+		{
 			size_t seed = 0;
 			lve::HashCombine(seed, _vertex.position, _vertex.color, _vertex.normal, _vertex.uv);
 			return seed;
@@ -30,7 +33,8 @@ namespace std {
 	};
 }
 
-namespace lve {
+namespace lve
+{
 	/*struct Vertex {
 		glm::vec2 position;
 
@@ -38,15 +42,19 @@ namespace lve {
 		static std::vector<VkVertexInputAttributeDescription> GetAttributeDescription();
 	};*/
 
-	LveModel::LveModel(LveDevice& _lveDevice, const LveModel::Builder& _builder) : lveDevice(_lveDevice) {
+	LveModel::LveModel(LveDevice& _lveDevice, const Builder& _builder) : lveDevice(_lveDevice)
+	{
 		CreateVertexBuffer(_builder.vertices);
 		CreateIndexBuffer(_builder.indices);
 	}
 
-	LveModel::~LveModel() {}
+	LveModel::~LveModel()
+	{
+	}
 
 
-	std::unique_ptr<LveModel> LveModel::CreateModelFromFile(LveDevice& _device, const std::string& _filepath) {
+	std::unique_ptr<LveModel> LveModel::CreateModelFromFile(LveDevice& _device, const std::string& _filepath)
+	{
 		Builder builder{};
 		builder.LoadModel(ENGINE_DIR + _filepath);
 		std::cout << "Vertex Count" << builder.vertices.size() << std::endl;
@@ -55,32 +63,29 @@ namespace lve {
 	}
 
 
-	void LveModel::Bind(vk::CommandBuffer _commandBuffer) {
-		vk::Buffer buffers[] = { vertexBuffer->getBuffer() };
-		vk::DeviceSize offsets[] = { 0 };
+	void LveModel::Bind(vk::CommandBuffer _commandBuffer)
+	{
+		vk::Buffer     buffers[] = {vertexBuffer->getBuffer()};
+		vk::DeviceSize offsets[] = {0};
 		_commandBuffer.bindVertexBuffers(0, 1, buffers, offsets);
 
-		if (hasIndexBuffer) {
-			_commandBuffer.bindIndexBuffer(indexBuffer->getBuffer(), 0, vk::IndexType::eUint32);
-		}
+		if (hasIndexBuffer) _commandBuffer.bindIndexBuffer(indexBuffer->getBuffer(), 0, vk::IndexType::eUint32);
 	}
 
 
-	void LveModel::Draw(vk::CommandBuffer _commandBuffer) {
-		if (hasIndexBuffer) {
-			_commandBuffer.drawIndexed(indexCount, 1, 0, 0, 0);
-		}
-		else {
-			_commandBuffer.draw(vertexCount, 1, 0, 0);
-		}
+	void LveModel::Draw(vk::CommandBuffer _commandBuffer)
+	{
+		if (hasIndexBuffer) _commandBuffer.drawIndexed(indexCount, 1, 0, 0, 0);
+		else _commandBuffer.draw(vertexCount, 1, 0, 0);
 	}
 
 
-	void LveModel::CreateVertexBuffer(const std::vector<Vertex>& _vertices) {
+	void LveModel::CreateVertexBuffer(const std::vector<Vertex>& _vertices)
+	{
 		vertexCount = static_cast<uint32_t>(_vertices.size());
 		assert(vertexCount >= 3 && "Vertex count must be at least 3");
 		vk::DeviceSize bufferSize = sizeof(_vertices[0]) * vertexCount;
-		uint32_t vertexSize = sizeof(_vertices[0]);
+		uint32_t       vertexSize = sizeof(_vertices[0]);
 
 		// Déclaration et initialisation d'un objet de type LveBuffer nommé stagingBuffer
 		LveBuffer stagingBuffer{
@@ -91,11 +96,11 @@ namespace lve {
 			// Nombre total de vertices dans les données
 			vertexCount,
 			// Indique que le tampon sera utilisé comme une source lors des opérations de transfert de données
-						vk::BufferUsageFlagBits::eTransferSrc,
-						// Propriétés de la mémoire dans laquelle le tampon sera alloué :
+			vk::BufferUsageFlagBits::eTransferSrc,
+			// Propriétés de la mémoire dans laquelle le tampon sera alloué :
 			// - VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT : La mémoire est visible pour le CPU
 			// - VK_MEMORY_PROPERTY_HOST_COHERENT_BIT : Les écritures CPU seront visibles par le GPU sans nécessiter d'opérations de synchronisation explicites
-						vk::MemoryPropertyFlagBits::eHostVisible | vk::MemoryPropertyFlagBits::eHostCoherent
+			vk::MemoryPropertyFlagBits::eHostVisible | vk::MemoryPropertyFlagBits::eHostCoherent
 		};
 
 		stagingBuffer.map();
@@ -110,10 +115,11 @@ namespace lve {
 			// Nombre total de vertices dans les données
 			vertexCount,
 			// Combinaison de drapeaux d'utilisation du tampon :
-					// - VK_BUFFER_USAGE_VERTEX_BUFFER_BIT : Le tampon est utilisé comme tampon de vertex
-					// - VK_BUFFER_USAGE_TRANSFER_DST_BIT : Le tampon peut être utilisé comme destination lors des opérations de transfert de données
-					// - VK_BUFFER_USAGE_INDEX_BUFFER_BIT : Le tampon est utilisé comme tampon d'index
-			vk::BufferUsageFlagBits::eVertexBuffer | vk::BufferUsageFlagBits::eTransferDst | vk::BufferUsageFlagBits::eIndexBuffer,
+			// - VK_BUFFER_USAGE_VERTEX_BUFFER_BIT : Le tampon est utilisé comme tampon de vertex
+			// - VK_BUFFER_USAGE_TRANSFER_DST_BIT : Le tampon peut être utilisé comme destination lors des opérations de transfert de données
+			// - VK_BUFFER_USAGE_INDEX_BUFFER_BIT : Le tampon est utilisé comme tampon d'index
+			vk::BufferUsageFlagBits::eVertexBuffer | vk::BufferUsageFlagBits::eTransferDst |
+			vk::BufferUsageFlagBits::eIndexBuffer,
 			// Propriétés de la mémoire dans laquelle le tampon sera alloué :
 			// - VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT : La mémoire est locale au périphérique et n'est pas visible pour le CPU
 			vk::MemoryPropertyFlagBits::eDeviceLocal
@@ -123,19 +129,18 @@ namespace lve {
 	}
 
 
-	void LveModel::CreateIndexBuffer(const std::vector<uint32_t>& _indices) {
+	void LveModel::CreateIndexBuffer(const std::vector<uint32_t>& _indices)
+	{
 		// Détermine le nombre d'indices et vérifie s'il y en a au moins un
-		indexCount = static_cast<uint32_t>(_indices.size());
+		indexCount     = static_cast<uint32_t>(_indices.size());
 		hasIndexBuffer = indexCount > 0;
 
 		// Si aucun indice n'est présent, la fonction se termine
-		if (!hasIndexBuffer) {
-			return;
-		}
+		if (!hasIndexBuffer) return;
 
 		// Calcul de la taille du tampon en bytes
 		vk::DeviceSize bufferSize = sizeof(_indices[0]) * indexCount;
-		uint32_t indexSize = sizeof(_indices[0]);
+		uint32_t       indexSize  = sizeof(_indices[0]);
 
 
 		// Création d'un objet de type LveBuffer nommé stagingBuffer en utilisant une initialisation directe
@@ -147,11 +152,12 @@ namespace lve {
 			indexSize,
 			// Nombre total d'indices dans les données
 			indexCount,
-				vk::BufferUsageFlagBits::eTransferSrc, // Indique que le tampon sera utilisé comme une source lors des opérations de transfert de données
-				// Propriétés de la mémoire dans laquelle le tampon sera alloué :
-	// - VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT : La mémoire est visible pour le CPU
-	// - VK_MEMORY_PROPERTY_HOST_COHERENT_BIT : Les écritures CPU seront visibles par le GPU sans nécessiter d'opérations de synchronisation explicites
-				vk::MemoryPropertyFlagBits::eHostVisible | vk::MemoryPropertyFlagBits::eHostCoherent,
+			vk::BufferUsageFlagBits::eTransferSrc,
+			// Indique que le tampon sera utilisé comme une source lors des opérations de transfert de données
+			// Propriétés de la mémoire dans laquelle le tampon sera alloué :
+			// - VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT : La mémoire est visible pour le CPU
+			// - VK_MEMORY_PROPERTY_HOST_COHERENT_BIT : Les écritures CPU seront visibles par le GPU sans nécessiter d'opérations de synchronisation explicites
+			vk::MemoryPropertyFlagBits::eHostVisible | vk::MemoryPropertyFlagBits::eHostCoherent,
 		};
 
 		// Mappage du tampon de transfert et écriture des données
@@ -171,7 +177,8 @@ namespace lve {
 			// - VK_BUFFER_USAGE_VERTEX_BUFFER_BIT : Le tampon est utilisé comme tampon de vertex
 			// - VK_BUFFER_USAGE_TRANSFER_DST_BIT : Le tampon peut être utilisé comme destination lors des opérations de transfert de données
 			// - VK_BUFFER_USAGE_INDEX_BUFFER_BIT : Le tampon est utilisé comme tampon d'index
-			vk::BufferUsageFlagBits::eVertexBuffer | vk::BufferUsageFlagBits::eTransferDst | vk::BufferUsageFlagBits::eIndexBuffer,
+			vk::BufferUsageFlagBits::eVertexBuffer | vk::BufferUsageFlagBits::eTransferDst |
+			vk::BufferUsageFlagBits::eIndexBuffer,
 			// Propriétés de la mémoire dans laquelle le tampon sera alloué :
 			// - VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT : La mémoire est locale au périphérique et n'est pas visible pour le CPU
 			vk::MemoryPropertyFlagBits::eDeviceLocal
@@ -182,7 +189,8 @@ namespace lve {
 	}
 
 
-	std::vector<vk::VertexInputBindingDescription> LveModel::Vertex::GetBindingDescriptions() {
+	std::vector<vk::VertexInputBindingDescription> LveModel::Vertex::GetBindingDescriptions()
+	{
 		std::vector<vk::VertexInputBindingDescription> bindingDescriptions(1);
 		bindingDescriptions[0].setBinding(0);
 		bindingDescriptions[0].setStride(sizeof(Vertex));
@@ -190,36 +198,47 @@ namespace lve {
 		return bindingDescriptions;
 	}
 
-	std::vector<vk::VertexInputAttributeDescription> LveModel::Vertex::GetAttributeDescriptions() {
+	std::vector<vk::VertexInputAttributeDescription> LveModel::Vertex::GetAttributeDescriptions()
+	{
 		std::vector<vk::VertexInputAttributeDescription> attributeDescriptions;
 
-		attributeDescriptions.push_back({ 0, 0, vk::Format::eR32G32B32Sfloat, static_cast<uint32_t>(offsetof(Vertex, position)) });
-		attributeDescriptions.push_back({ 1, 0, vk::Format::eR32G32B32Sfloat, static_cast<uint32_t>(offsetof(Vertex, color)) });
-		attributeDescriptions.push_back({ 2, 0, vk::Format::eR32G32B32Sfloat, static_cast<uint32_t>(offsetof(Vertex, normal)) });
-		attributeDescriptions.push_back({ 3, 0, vk::Format::eR32G32Sfloat, static_cast<uint32_t>(offsetof(Vertex, uv)) });
+		attributeDescriptions.push_back({
+			0, 0, vk::Format::eR32G32B32Sfloat, static_cast<uint32_t>(offsetof(Vertex, position))
+		});
+		attributeDescriptions.push_back({
+			1, 0, vk::Format::eR32G32B32Sfloat, static_cast<uint32_t>(offsetof(Vertex, color))
+		});
+		attributeDescriptions.push_back({
+			2, 0, vk::Format::eR32G32B32Sfloat, static_cast<uint32_t>(offsetof(Vertex, normal))
+		});
+		attributeDescriptions.push_back({3, 0, vk::Format::eR32G32Sfloat, static_cast<uint32_t>(offsetof(Vertex, uv))});
 
 		return attributeDescriptions;
 	}
 
-	void LveModel::Builder::LoadModel(const std::string& _filepath) {
-		tinyobj::attrib_t attrib;
-		std::vector<tinyobj::shape_t> shapes;
+	void LveModel::Builder::LoadModel(const std::string& _filepath)
+	{
+		tinyobj::attrib_t                attrib;
+		std::vector<tinyobj::shape_t>    shapes;
 		std::vector<tinyobj::material_t> materials;
-		std::string warn, err;
+		std::string                      warn, err;
 
-		if (!tinyobj::LoadObj(&attrib, &shapes, &materials, &warn, &err, _filepath.c_str())) {
-			throw std::runtime_error(warn + err);
-		}
+		if (!LoadObj(&attrib, &shapes, &materials, &warn, &err, _filepath.c_str()))
+			throw
+				std::runtime_error(warn + err);
 
 		vertices.clear();
 		indices.clear();
 
 		std::unordered_map<Vertex, uint32_t> uniqueVertices{};
-		for (const auto& shape : shapes) {
-			for (const auto& index : shape.mesh.indices) {
+		for (const auto& shape : shapes)
+		{
+			for (const auto& index : shape.mesh.indices)
+			{
 				Vertex vertex{};
 
-				if (index.vertex_index >= 0) {
+				if (index.vertex_index >= 0)
+				{
 					vertex.position = {
 						attrib.vertices[3 * index.vertex_index + 0],
 						attrib.vertices[3 * index.vertex_index + 1],
@@ -233,22 +252,21 @@ namespace lve {
 					};
 				}
 
-				if (index.normal_index >= 0) {
+				if (index.normal_index >= 0)
 					vertex.normal = {
 						attrib.normals[3 * index.normal_index + 0],
 						attrib.normals[3 * index.normal_index + 1],
 						attrib.normals[3 * index.normal_index + 2],
 					};
-				}
 
-				if (index.texcoord_index >= 0) {
+				if (index.texcoord_index >= 0)
 					vertex.uv = {
 						attrib.texcoords[2 * index.texcoord_index + 0],
 						attrib.texcoords[2 * index.texcoord_index + 1],
 					};
-				}
 
-				if (uniqueVertices.count(vertex) == 0) {
+				if (!uniqueVertices.contains(vertex))
+				{
 					uniqueVertices[vertex] = static_cast<uint32_t>(vertices.size());
 					vertices.push_back(vertex);
 				}
@@ -256,6 +274,4 @@ namespace lve {
 			}
 		}
 	}
-
-
 } //namespace lve
