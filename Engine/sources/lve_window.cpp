@@ -39,7 +39,7 @@ namespace lve {
     }
 
     void LveWindow::FramebufferResizeCallBack(GLFWwindow* _window, int _width, int _height) {
-        auto lveWindow = reinterpret_cast<LveWindow*>(glfwGetWindowUserPointer(_window));
+	    const auto lveWindow = static_cast<LveWindow*>(glfwGetWindowUserPointer(_window));
         lveWindow->frameBufferResize = true;
         lveWindow->width = _width;
         lveWindow->height = _height;

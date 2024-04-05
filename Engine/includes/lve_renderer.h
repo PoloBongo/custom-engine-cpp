@@ -105,6 +105,7 @@ namespace lve {
          * ou si une redimensionnement de la fenêtre est nécessaire.
          */
         void EndFrame();
+        void EndFrame(const vk::CommandBuffer* _commandBuffer);
 
         /**
          * @brief Démarre la passe de rendu de la chaîne de swaps.

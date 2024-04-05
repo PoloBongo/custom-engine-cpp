@@ -3,7 +3,6 @@
 #include <iostream>
 #include <cmath>
 #include <glm.hpp>
-#include <glm.hpp>
 #include <gtc/matrix_transform.hpp>
 #include <gtc/type_ptr.hpp>
 

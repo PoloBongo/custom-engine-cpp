@@ -6,8 +6,10 @@
 #include <set>
 #include <unordered_set>
 
-namespace lve {
+#include "VulkanHooks.h"
 
+namespace lve
+{
 	// local callback functions
 	/**
 	 * @brief Fonction de rappel de débogage pour la gestion des messages de validation Vulkan.
@@ -22,11 +24,11 @@ namespace lve {
 	 * @return VK_FALSE indiquant que le traitement du message est terminé, et aucune action supplémentaire n'est nécessaire.
 	 */
 	static VKAPI_ATTR vk::Bool32 VKAPI_CALL debugCallback(
-		vk::DebugUtilsMessageSeverityFlagBitsEXT messageSeverity,
-		vk::DebugUtilsMessageTypeFlagsEXT messageType,
+		vk::DebugUtilsMessageSeverityFlagBitsEXT      messageSeverity,
+		vk::DebugUtilsMessageTypeFlagsEXT             messageType,
 		const vk::DebugUtilsMessengerCallbackDataEXT* pCallbackData,
-		void* pUserData) {
-
+		void*                                         pUserData)
+	{
 		// Affiche le message de débogage dans la console d'erreur standard
 		std::cerr << "validation layer: " << pCallbackData->pMessage << std::endl;
 
@@ -47,14 +49,17 @@ namespace lve {
 	 * @param pDebugMessenger Un pointeur vers l'objet de gestionnaire de messager de débogage à créer.
 	 * @return VK_SUCCESS si le gestionnaire de messager de débogage a été créé avec succès, VK_ERROR_EXTENSION_NOT_PRESENT si l'extension n'est pas prise en charge.
 	 */
-	vk::Result CreateDebugUtilsMessengerEXT(vk::Instance instance, const vk::DebugUtilsMessengerCreateInfoEXT* pCreateInfo, const vk::AllocationCallbacks* pAllocator, vk::DebugUtilsMessengerEXT* pDebugMessenger)
-    {
-        PFN_vkVoidFunction function = instance.getProcAddr("vkCreateDebugUtilsMessengerEXT");
-        PFN_vkGetInstanceProcAddr messenger_ext = reinterpret_cast<PFN_vkGetInstanceProcAddr>(function);
-        vk::DispatchLoaderDynamic dispatch(instance, messenger_ext);
-        vk::Result result = instance.createDebugUtilsMessengerEXT(pCreateInfo, pAllocator, pDebugMessenger, dispatch);
-        return result;
-    }
+	vk::Result CreateDebugUtilsMessengerEXT(vk::Instance                                instance,
+	                                        const vk::DebugUtilsMessengerCreateInfoEXT* pCreateInfo,
+	                                        const vk::AllocationCallbacks*              pAllocator,
+	                                        vk::DebugUtilsMessengerEXT*                 pDebugMessenger)
+	{
+		PFN_vkVoidFunction function = instance.getProcAddr("vkCreateDebugUtilsMessengerEXT");
+		auto messenger_ext = reinterpret_cast<PFN_vkGetInstanceProcAddr>(function);
+		vk::DispatchLoaderDynamic dispatch(instance, messenger_ext);
+		vk::Result result = instance.createDebugUtilsMessengerEXT(pCreateInfo, pAllocator, pDebugMessenger, dispatch);
+		return result;
+	}
 
 
 	/**
@@ -68,36 +73,38 @@ namespace lve {
 	 * @param pAllocator L'allocation de rappels, permettant la personnalisation de la gestion de la mémoire.
 	 */
 	void DestroyDebugUtilsMessengerEXT(
-		vk::Instance instance,
-		vk::DebugUtilsMessengerEXT debugMessenger,
-		const vk::AllocationCallbacks* pAllocator) {
-
+		vk::Instance                   instance,
+		vk::DebugUtilsMessengerEXT     debugMessenger,
+		const vk::AllocationCallbacks* pAllocator)
+	{
 		// Récupère le pointeur de fonction pour vkDestroyDebugUtilsMessengerEXT
 		auto func = reinterpret_cast<PFN_vkDestroyDebugUtilsMessengerEXT>(
 			instance.getProcAddr("vkDestroyDebugUtilsMessengerEXT"));
 
 		// Vérifie si la fonction est disponible
-		if (func != nullptr) {
+		if (func != nullptr)
 			// Appelle la fonction vkDestroyDebugUtilsMessengerEXT pour détruire le gestionnaire de messager de débogage
-			func(static_cast<vk::Instance > (instance), static_cast<VkDebugUtilsMessengerEXT>(debugMessenger), reinterpret_cast<const VkAllocationCallbacks*>(pAllocator));
-		}
+			func(instance, static_cast<VkDebugUtilsMessengerEXT>(debugMessenger),
+			     reinterpret_cast<const VkAllocationCallbacks*>(pAllocator));
 	}
 
 
 	// class member functions
 
 	// Constructeur de la classe LveDevice
-	LveDevice::LveDevice(LveWindow& window) : window{ window } {
-		createInstance(); // Crée une instance Vulkan
-		setupDebugMessenger(); // Configure le messager de débogage Vulkan
-		createSurface(); // Crée la surface de la fenêtre Vulkan
-		pickPhysicalDevice(); // Sélectionne le périphérique physique adapté
+	LveDevice::LveDevice(LveWindow& window) : window{window}
+	{
+		CreateInstance();      // Crée une instance Vulkan
+		SetupDebugMessenger(); // Configure le messager de débogage Vulkan
+		createSurface();       // Crée la surface de la fenêtre Vulkan
+		pickPhysicalDevice();  // Sélectionne le périphérique physique adapté
 		createLogicalDevice(); // Crée le périphérique logique Vulkan
-		createCommandPool(); // Crée le pool de commandes Vulkan
+		createCommandPool();   // Crée le pool de commandes Vulkan
 	}
 
 	// Destructeur de la classe LveDevice
-	LveDevice::~LveDevice() {
+	LveDevice::~LveDevice()
+	{
 		// Détruit le pool de commandes Vulkan
 		device_.destroyCommandPool(commandPool, nullptr);
 
@@ -105,9 +112,7 @@ namespace lve {
 		device_.destroy(nullptr);
 
 		// Si les couches de validation sont activées, détruit le messager de débogage Vulkan
-		if (enableValidationLayers) {
-			DestroyDebugUtilsMessengerEXT(instance, debugMessenger, nullptr);
-		}
+		if (enableValidationLayers) DestroyDebugUtilsMessengerEXT(instance, debugMessenger, nullptr);
 
 		// Détruit la surface Vulkan associée à la fenêtre
 		instance.destroySurfaceKHR(surface_, nullptr);
@@ -125,11 +130,11 @@ namespace lve {
 	 *
 	 * @throws std::runtime_error si la création de l'instance échoue ou si les couches de validation sont activées mais non disponibles.
 	 */
-	void LveDevice::createInstance() {
+	vk::Instance LveDevice::CreateInstance()
+	{
 		// Vérifie si les couches de validation sont activées et si elles sont supportées
-		if (enableValidationLayers && !checkValidationLayerSupport()) {
-			throw std::runtime_error("validation layers requested, but not available!");
-		}
+		if (enableValidationLayers && !checkValidationLayerSupport()) throw std::runtime_error(
+			"validation layers requested, but not available!");
 
 		// Configuration des informations d'application pour l'instance Vulkan
 		vk::ApplicationInfo appInfo(
@@ -153,23 +158,24 @@ namespace lve {
 
 		// Configuration du messager de débogage Vulkan si les couches de validation sont activées
 		vk::DebugUtilsMessengerCreateInfoEXT debugCreateInfo;
-		if (enableValidationLayers) {
-			createInfo.enabledLayerCount = static_cast<uint32_t>(validationLayers.size());
+		if (enableValidationLayers)
+		{
+			createInfo.enabledLayerCount   = static_cast<uint32_t>(validationLayers.size());
 			createInfo.ppEnabledLayerNames = validationLayers.data();
 
 			populateDebugMessengerCreateInfo(debugCreateInfo);
 			createInfo.pNext = &debugCreateInfo;
 		}
-		else {
+		else
+		{
 			createInfo.enabledLayerCount = 0;
-			createInfo.pNext = nullptr;
+			createInfo.pNext             = nullptr;
 		}
-
-		// Création de l'instance Vulkan
-		instance = vk::createInstance(createInfo);
-
+		instance = createInstance(createInfo);
 		// Vérification des extensions GLFW requises pour l'instance Vulkan
 		hasGflwRequiredInstanceExtensions();
+
+		return instance;
 	}
 
 	/**
@@ -181,36 +187,33 @@ namespace lve {
 	 *
 	 * @throws Une exception si aucun périphérique physique approprié n'est trouvé.
 	 */
-	void LveDevice::pickPhysicalDevice() {
+	void LveDevice::pickPhysicalDevice()
+	{
 		// Récupère la liste des périphériques physiques Vulkan disponibles sur le système
 		std::vector<vk::PhysicalDevice> devices = instance.enumeratePhysicalDevices();
 
 		// Vérifie si des périphériques Vulkan ont été trouvés
-		if (devices.empty()) {
-			throw std::runtime_error("failed to find GPUs with Vulkan support!");
-		}
+		if (devices.empty()) throw std::runtime_error("failed to find GPUs with Vulkan support!");
 
 		// Affiche le nombre de périphériques Vulkan trouvés
 		std::cout << "Device count: " << devices.size() << std::endl;
 
 		// Parcourt chaque périphérique pour trouver celui qui convient le mieux à l'application
-		for (const auto& device : devices) {
-			if (isDeviceSuitable(device)) {
+		for (const auto& device : devices)
+		{
+			if (isDeviceSuitable(device))
+			{
 				physicalDevice = device;
 				break;
 			}
 		}
 
 		// Vérifie si un périphérique adapté a été trouvé
-		if (!physicalDevice) {
-			throw std::runtime_error("failed to find a suitable GPU!");
-		}
-
+		if (!physicalDevice) throw std::runtime_error("failed to find a suitable GPU!");
 		// Récupère les propriétés du périphérique sélectionné et les affiche
 		vk::PhysicalDeviceProperties properties = physicalDevice.getProperties();
 		std::cout << "Physical device: " << properties.deviceName << std::endl;
 	}
-
 
 
 	/**
@@ -221,15 +224,17 @@ namespace lve {
 	*
 	* @throws Une exception si la création du périphérique logique échoue.
 	*/
-	void LveDevice::createLogicalDevice() {
+	void LveDevice::createLogicalDevice()
+	{
 		// Recherche des familles de files de commandes pour le périphérique physique sélectionné
 		QueueFamilyIndices indices = findQueueFamilies(physicalDevice);
 
 		// Configuration des files de commandes pour les opérations graphiques et de présentation
 		std::vector<vk::DeviceQueueCreateInfo> queueCreateInfos;
-		std::set<uint32_t> uniqueQueueFamilies = { indices.graphicsFamily, indices.presentFamily };
-		float queuePriority = 1.0f;
-		for (uint32_t queueFamily : uniqueQueueFamilies) {
+		std::set<uint32_t>                     uniqueQueueFamilies = {indices.graphicsFamily, indices.presentFamily};
+		float                                  queuePriority       = 1.0f;
+		for (uint32_t queueFamily : uniqueQueueFamilies)
+		{
 			vk::DeviceQueueCreateInfo queueCreateInfo(
 				{},
 				queueFamily,
@@ -245,15 +250,16 @@ namespace lve {
 
 		// Configuration de la création du périphérique logique
 		vk::DeviceCreateInfo createInfo;
-		createInfo.queueCreateInfoCount = static_cast<uint32_t>(queueCreateInfos.size());
-		createInfo.pQueueCreateInfos = queueCreateInfos.data();
-		createInfo.pEnabledFeatures = &deviceFeatures;
-		createInfo.enabledExtensionCount = static_cast<uint32_t>(deviceExtensions.size());
+		createInfo.queueCreateInfoCount    = static_cast<uint32_t>(queueCreateInfos.size());
+		createInfo.pQueueCreateInfos       = queueCreateInfos.data();
+		createInfo.pEnabledFeatures        = &deviceFeatures;
+		createInfo.enabledExtensionCount   = static_cast<uint32_t>(deviceExtensions.size());
 		createInfo.ppEnabledExtensionNames = deviceExtensions.data();
 
 		// Configuration des couches de validation si elles sont activées
-		if (enableValidationLayers) {
-			createInfo.enabledLayerCount = static_cast<uint32_t>(validationLayers.size());
+		if (enableValidationLayers)
+		{
+			createInfo.enabledLayerCount   = static_cast<uint32_t>(validationLayers.size());
 			createInfo.ppEnabledLayerNames = validationLayers.data();
 		}
 
@@ -262,7 +268,7 @@ namespace lve {
 
 		// Obtention des files de commandes graphiques et de présentation du périphérique logique
 		graphicsQueue_ = device_.getQueue(indices.graphicsFamily, 0);
-		presentQueue_ = device_.getQueue(indices.presentFamily, 0);
+		presentQueue_  = device_.getQueue(indices.presentFamily, 0);
 	}
 
 
@@ -277,21 +283,25 @@ namespace lve {
 	 *
 	 * @throw std::runtime_error si la création du pool de commandes échoue.
 	 */
-	void LveDevice::createCommandPool() {
+	void LveDevice::createCommandPool()
+	{
 		// Recherche les indices des familles de files de commandes supportées par le périphérique physique actuel.
 		QueueFamilyIndices queueFamilyIndices = findPhysicalQueueFamilies();
 
 		// Initialise la structure d'informations du pool de commandes Vulkan.
 		vk::CommandPoolCreateInfo poolInfo(
-			vk::CommandPoolCreateFlags(vk::CommandPoolCreateFlagBits::eTransient | vk::CommandPoolCreateFlagBits::eResetCommandBuffer),
+			vk::CommandPoolCreateFlags(
+				vk::CommandPoolCreateFlagBits::eTransient | vk::CommandPoolCreateFlagBits::eResetCommandBuffer),
 			queueFamilyIndices.graphicsFamily
 		);
 
 		// Crée le pool de commandes Vulkan en utilisant les informations fournies.
-		try {
+		try
+		{
 			commandPool = device_.createCommandPool(poolInfo);
 		}
-		catch (const vk::SystemError& e) {
+		catch (const vk::SystemError& e)
+		{
 			// Lance une exception si la création du pool de commandes échoue.
 			throw std::runtime_error("failed to create command pool!");
 		}
@@ -316,7 +326,8 @@ namespace lve {
 	 * @param device Le périphérique physique Vulkan à évaluer.
 	 * @return true si le périphérique convient, sinon false.
 	 */
-	bool LveDevice::isDeviceSuitable(vk::PhysicalDevice _device) {
+	bool LveDevice::isDeviceSuitable(vk::PhysicalDevice _device)
+	{
 		// Recherche des indices des familles de files de commandes supportées par le périphérique physique.
 		QueueFamilyIndices indices = findQueueFamilies(_device);
 
@@ -325,7 +336,8 @@ namespace lve {
 
 		// Vérification de l'adéquation de la chaîne d'échange.
 		bool swapChainAdequate = false;
-		if (extensionsSupported) {
+		if (extensionsSupported)
+		{
 			// Interrogation du périphérique pour obtenir les détails de support de la chaîne d'échange.
 			SwapChainSupportDetails swapChainSupport = querySwapChainSupport(_device);
 			swapChainAdequate = !swapChainSupport.formats.empty() && !swapChainSupport.presentModes.empty();
@@ -336,7 +348,7 @@ namespace lve {
 
 		// Vérification des fonctionnalités requises.
 		return indices.isComplete() && extensionsSupported && swapChainAdequate &&
-			supportedFeatures.samplerAnisotropy;
+		       supportedFeatures.samplerAnisotropy;
 	}
 
 	/**
@@ -347,7 +359,8 @@ namespace lve {
 	 * @param createInfo La structure de données à remplir pour la création du gestionnaire de débogage.
 	 */
 	void LveDevice::populateDebugMessengerCreateInfo(
-		vk::DebugUtilsMessengerCreateInfoEXT& _createInfo) {
+		vk::DebugUtilsMessengerCreateInfoEXT& _createInfo)
+	{
 		// Spécifie le type de la structure.
 		_createInfo.sType = vk::StructureType::eDebugUtilsMessengerCreateInfoEXT;
 
@@ -366,9 +379,8 @@ namespace lve {
 		_createInfo.setPfnUserCallback((PFN_vkDebugUtilsMessengerCallbackEXT)debugCallback);
 
 		// Spécifie des données utilisateur facultatives.
-		_createInfo.setPUserData(nullptr);  // Optionnel
+		_createInfo.setPUserData(nullptr); // Optionnel
 	}
-
 
 
 	/**
@@ -381,27 +393,20 @@ namespace lve {
 	 *
 	 * @throw std::runtime_error si la configuration du gestionnaire de débogage échoue.
 	 */
-	void LveDevice::setupDebugMessenger()
+	vk::DebugUtilsMessengerEXT LveDevice::SetupDebugMessenger()
 	{
 		// Vérifie si les couches de validation sont activées.
-		if (!enableValidationLayers)
-			return;
+		if (!enableValidationLayers) return VK_NULL_HANDLE;
 
 		// Initialise une structure pour la création du gestionnaire de débogage.
 		vk::DebugUtilsMessengerCreateInfoEXT createInfo;
 		populateDebugMessengerCreateInfo(createInfo);
 
-		// Crée le gestionnaire de débogage avec les informations fournies.
-		try
-		{
-			vk::DispatchLoaderDynamic dispatcher = vk::DispatchLoaderDynamic(instance, vkGetInstanceProcAddr);
-			if (vk::Result result = instance.createDebugUtilsMessengerEXT(&createInfo, nullptr, &debugMessenger, dispatcher); result != vk::Result::eSuccess)
-				throw std::runtime_error("failed to set up debug messenger!");
-		}
-		catch (const vk::SystemError& e)
-		{
-			throw std::runtime_error("failed to set up debug messenger: " + std::string(e.what()));
-		}
+		auto dispatcher = vk::DispatchLoaderDynamic(instance, vkGetInstanceProcAddr);
+		if (instance.createDebugUtilsMessengerEXT(&createInfo, nullptr, &debugMessenger, dispatcher) != vk::Result::eSuccess) 
+			throw std::runtime_error("failed to set up debug messenger!");
+
+		return debugMessenger;
 	}
 
 
@@ -413,26 +418,28 @@ namespace lve {
 	 *
 	 * @return true si toutes les couches de validation sont prises en charge, sinon false.
 	 */
-	bool LveDevice::checkValidationLayerSupport() {
+	bool LveDevice::checkValidationLayerSupport()
+	{
 		// Récupère les propriétés de toutes les couches de validation disponibles.
 		auto availableLayers = vk::enumerateInstanceLayerProperties();
 
 		// Parcourt toutes les couches de validation requises.
-		for (const char* layerName : validationLayers) {
+		for (const char* layerName : validationLayers)
+		{
 			bool layerFound = false;
 
 			// Vérifie si la couche de validation requise est présente parmi les couches disponibles.
-			for (const auto& layerProperties : availableLayers) {
-				if (strcmp(layerName, layerProperties.layerName) == 0) {
+			for (const auto& layerProperties : availableLayers)
+			{
+				if (strcmp(layerName, layerProperties.layerName) == 0)
+				{
 					layerFound = true;
 					break;
 				}
 			}
 
 			// Si la couche de validation requise n'est pas trouvée, retourne false.
-			if (!layerFound) {
-				return false;
-			}
+			if (!layerFound) return false;
 		}
 
 		// Si toutes les couches de validation requises sont trouvées, retourne true.
@@ -449,23 +456,21 @@ namespace lve {
 	 *
 	 * @return Un vecteur de pointeurs vers les noms des extensions Vulkan requises.
 	 */
-	std::vector<const char*> LveDevice::getRequiredExtensions() {
+	std::vector<const char*> LveDevice::getRequiredExtensions()
+	{
 		// Récupère le nombre d'extensions requises par GLFW.
-		uint32_t glfwExtensionCount = 0;
-		const char** glfwExtensions = glfwGetRequiredInstanceExtensions(&glfwExtensionCount);
+		uint32_t     glfwExtensionCount = 0;
+		const char** glfwExtensions     = glfwGetRequiredInstanceExtensions(&glfwExtensionCount);
 
 		// Convertit les noms des extensions GLFW en un vecteur de pointeurs vers les noms des extensions Vulkan.
 		std::vector<const char*> extensions(glfwExtensions, glfwExtensions + glfwExtensionCount);
 
 		// Ajoute l'extension de gestionnaire de débogage Vulkan si les couches de validation sont activées.
-		if (enableValidationLayers) {
-			extensions.push_back(VK_EXT_DEBUG_UTILS_EXTENSION_NAME);
-		}
+		if (enableValidationLayers) extensions.push_back(VK_EXT_DEBUG_UTILS_EXTENSION_NAME);
 
 		// Retourne le vecteur contenant les noms des extensions Vulkan requises.
 		return extensions;
 	}
-
 
 
 	/**
@@ -478,14 +483,16 @@ namespace lve {
 	  *
 	  * @throw std::runtime_error si une extension requise par GLFW est manquante.
 	  */
-	void LveDevice::hasGflwRequiredInstanceExtensions() {
+	void LveDevice::hasGflwRequiredInstanceExtensions()
+	{
 		// Récupère le nombre d'extensions Vulkan disponibles.
 		auto availableExtensions = vk::enumerateInstanceExtensionProperties();
 
 		// Affiche les extensions Vulkan disponibles et les stocke dans un ensemble pour une recherche rapide.
 		std::cout << "available extensions:" << std::endl;
 		std::unordered_set<std::string> available;
-		for (const auto& extension : availableExtensions) {
+		for (const auto& extension : availableExtensions)
+		{
 			std::cout << "\t" << extension.extensionName << std::endl;
 			available.insert(extension.extensionName);
 		}
@@ -493,12 +500,12 @@ namespace lve {
 		// Affiche les extensions Vulkan requises par GLFW et vérifie leur disponibilité.
 		std::cout << "required extensions:" << std::endl;
 		auto requiredExtensions = getRequiredExtensions();
-		for (const auto& required : requiredExtensions) {
+		for (const auto& required : requiredExtensions)
+		{
 			std::cout << "\t" << required << std::endl;
-			if (available.find(required) == available.end()) {
+			if (!available.contains(required))
 				// Lance une exception si une extension requise est manquante.
 				throw std::runtime_error("Missing required glfw extension");
-			}
 		}
 	}
 
@@ -512,7 +519,8 @@ namespace lve {
 	 * @param device Le périphérique physique Vulkan à vérifier.
 	 * @return true si toutes les extensions de périphérique requises sont prises en charge, sinon false.
 	 */
-	bool LveDevice::checkDeviceExtensionSupport(vk::PhysicalDevice _device) {
+	bool LveDevice::checkDeviceExtensionSupport(vk::PhysicalDevice _device)
+	{
 		// Récupère les propriétés de toutes les extensions de périphérique Vulkan disponibles pour le périphérique spécifié.
 		auto availableExtensions = _device.enumerateDeviceExtensionProperties(nullptr);
 
@@ -520,7 +528,8 @@ namespace lve {
 		std::set<std::string> requiredExtensions(deviceExtensions.begin(), deviceExtensions.end());
 
 		// Parcourt toutes les extensions de périphérique disponibles.
-		for (const auto& extension : availableExtensions) {
+		for (const auto& extension : availableExtensions)
+		{
 			// Supprime les extensions disponibles de l'ensemble des extensions requises.
 			requiredExtensions.erase(extension.extensionName);
 		}
@@ -539,7 +548,8 @@ namespace lve {
 	 * @param device Le périphérique physique Vulkan pour lequel les files d'attente doivent être recherchées.
 	 * @return Une structure QueueFamilyIndices contenant les indices des files d'attente pour les opérations de rendu graphique et de présentation.
 	 */
-	QueueFamilyIndices LveDevice::findQueueFamilies(vk::PhysicalDevice device) {
+	QueueFamilyIndices LveDevice::findQueueFamilies(vk::PhysicalDevice device)
+	{
 		// Initialise la structure QueueFamilyIndices pour stocker les indices des files d'attente.
 		QueueFamilyIndices indices;
 
@@ -548,22 +558,23 @@ namespace lve {
 
 		// Parcourt toutes les familles de files d'attente pour trouver celles qui prennent en charge les opérations de rendu graphique et de présentation.
 		int i = 0;
-		for (const auto& queueFamily : queueFamilies) {
+		for (const auto& queueFamily : queueFamilies)
+		{
 			// Vérifie si la famille de files d'attente prend en charge les opérations de rendu graphique.
-			if (queueFamily.queueCount > 0 && queueFamily.queueFlags & vk::QueueFlagBits::eGraphics) {
-				indices.graphicsFamily = i;
+			if (queueFamily.queueCount > 0 && queueFamily.queueFlags & vk::QueueFlagBits::eGraphics)
+			{
+				indices.graphicsFamily         = i;
 				indices.graphicsFamilyHasValue = true;
 			}
 			// Vérifie si la famille de files d'attente prend en charge la présentation sur la surface associée.
 			bool presentSupport = device.getSurfaceSupportKHR(i, surface_);
-			if (queueFamily.queueCount > 0 && presentSupport) {
-				indices.presentFamily = i;
+			if (queueFamily.queueCount > 0 && presentSupport)
+			{
+				indices.presentFamily         = i;
 				indices.presentFamilyHasValue = true;
 			}
 			// Si les indices requis ont été trouvés, arrête la recherche.
-			if (indices.isComplete()) {
-				break;
-			}
+			if (indices.isComplete()) break;
 
 			i++;
 		}
@@ -571,7 +582,6 @@ namespace lve {
 		// Retourne les indices des files d'attente trouvées.
 		return indices;
 	}
-
 
 
 	/**
@@ -583,7 +593,8 @@ namespace lve {
 	 * @param device Le périphérique physique Vulkan pour lequel les détails de prise en charge de la chaîne d'échange de swap doivent être interrogés.
 	 * @return Une structure SwapChainSupportDetails contenant les détails de prise en charge de la chaîne d'échange de swap.
 	 */
-	SwapChainSupportDetails LveDevice::querySwapChainSupport(vk::PhysicalDevice device) {
+	SwapChainSupportDetails LveDevice::querySwapChainSupport(vk::PhysicalDevice device)
+	{
 		// Initialise la structure SwapChainSupportDetails pour stocker les détails de prise en charge de la chaîne d'échange de swap.
 		SwapChainSupportDetails details;
 
@@ -601,7 +612,6 @@ namespace lve {
 	}
 
 
-
 	/**
 	 * @brief Recherche un format d'image supporté parmi une liste de formats candidats.
 	 *
@@ -615,27 +625,26 @@ namespace lve {
 	 * @throws std::runtime_error si aucun format d'image supporté n'est trouvé.
 	 */
 	vk::Format LveDevice::findSupportedFormat(
-		const std::vector<vk::Format>& candidates, vk::ImageTiling tiling, vk::FormatFeatureFlags features) {
+		const std::vector<vk::Format>& candidates, vk::ImageTiling tiling, vk::FormatFeatureFlags features)
+	{
 		// Parcourt chaque format d'image candidat
-		for (vk::Format format : candidates) {
+		for (vk::Format format : candidates)
+		{
 			vk::FormatProperties props;
 			// Obtient les propriétés du format
 			props = physicalDevice.getFormatProperties(format);
 
 			// Vérifie si le format est adapté au mode de tiling spécifié (linéaire ou optimal)
-			if (tiling == vk::ImageTiling::eLinear && (props.linearTilingFeatures & features) == features) {
+			if (tiling == vk::ImageTiling::eLinear && (props.linearTilingFeatures & features) == features)
 				// Si le format est adapté au mode linéaire et prend en charge toutes les fonctionnalités requises, le retourne
 				return format;
-			}
-			else if (tiling == vk::ImageTiling::eOptimal && (props.optimalTilingFeatures & features) == features) {
+			if (tiling == vk::ImageTiling::eOptimal && (props.optimalTilingFeatures & features) == features)
 				// Si le format est adapté au mode optimal et prend en charge toutes les fonctionnalités requises, le retourne
 				return format;
-			}
 		}
 		// Si aucun format d'image trouvé ne répond aux critères spécifiés, lance une exception
 		throw std::runtime_error("failed to find supported format!");
 	}
-
 
 
 	/**
@@ -649,23 +658,23 @@ namespace lve {
 	 * @return L'index du type de mémoire adapté trouvé.
 	 * @throws std::runtime_error si aucun type de mémoire adapté n'est trouvé.
 	 */
-	uint32_t LveDevice::findMemoryType(uint32_t typeFilter, vk::MemoryPropertyFlags properties) {
+	uint32_t LveDevice::findMemoryType(uint32_t typeFilter, vk::MemoryPropertyFlags properties)
+	{
 		vk::PhysicalDeviceMemoryProperties memProperties;
 		memProperties = physicalDevice.getMemoryProperties();
 
 		// Parcourt chaque type de mémoire
-		for (uint32_t i = 0; i < memProperties.memoryTypeCount; i++) {
+		for (uint32_t i = 0; i < memProperties.memoryTypeCount; i++)
+		{
 			// Vérifie si le type de mémoire est compatible avec le filtre spécifié et possède toutes les propriétés requises
 			if ((typeFilter & (1 << i)) &&
-				(memProperties.memoryTypes[i].propertyFlags & properties) == properties) {
+			    (memProperties.memoryTypes[i].propertyFlags & properties) == properties)
 				// Si le type de mémoire convient, retourne son index
 				return i;
-			}
 		}
 		// Si aucun type de mémoire adapté n'est trouvé, lance une exception
 		throw std::runtime_error("failed to find suitable memory type!");
 	}
-
 
 
 	/**
@@ -682,12 +691,12 @@ namespace lve {
 	 * @throws std::runtime_error en cas d'échec de la création ou de l'allocation de mémoire pour le tampon.
 	 */
 	void LveDevice::createBuffer(
-		vk::DeviceSize size,
-		vk::BufferUsageFlags usage,
+		vk::DeviceSize          size,
+		vk::BufferUsageFlags    usage,
 		vk::MemoryPropertyFlags properties,
-		vk::Buffer& buffer,
-		vk::DeviceMemory& bufferMemory) {
-
+		vk::Buffer&             buffer,
+		vk::DeviceMemory&       bufferMemory)
+	{
 		// Définit les informations du tampon
 		vk::BufferCreateInfo bufferInfo(
 			{},
@@ -716,7 +725,6 @@ namespace lve {
 	}
 
 
-
 	/**
 	 * @brief Démarre une série de commandes Vulkan pour une utilisation unique.
 	 *
@@ -727,7 +735,8 @@ namespace lve {
 	 * @return Le tampon de commandes Vulkan alloué et démarré.
 	 * @throws std::runtime_error en cas d'échec de l'allocation du tampon de commandes.
 	 */
-	vk::CommandBuffer LveDevice::beginSingleTimeCommands() {
+	vk::CommandBuffer LveDevice::beginSingleTimeCommands()
+	{
 		// Alloue un tampon de commandes
 		vk::CommandBufferAllocateInfo allocInfo(
 			commandPool,
@@ -748,7 +757,6 @@ namespace lve {
 	}
 
 
-
 	/**
 	 * @brief Termine une série de commandes Vulkan pour une utilisation unique.
 	 *
@@ -759,14 +767,15 @@ namespace lve {
 	 * @param commandBuffer Le tampon de commandes Vulkan à terminer et à soumettre.
 	 * @throws std::runtime_error en cas d'échec de soumission des commandes ou d'attente de la fin de l'exécution.
 	 */
-	void LveDevice::endSingleTimeCommands(vk::CommandBuffer commandBuffer) {
+	void LveDevice::endSingleTimeCommands(vk::CommandBuffer commandBuffer)
+	{
 		// Termine l'enregistrement des commandes dans le tampon de commandes
 		commandBuffer.end();
 
 		// Soumet les commandes à la file de commandes graphiques pour exécution
 		vk::SubmitInfo submitInfo;
 		submitInfo.commandBufferCount = 1;
-		submitInfo.pCommandBuffers = &commandBuffer;
+		submitInfo.pCommandBuffers    = &commandBuffer;
 
 		graphicsQueue_.submit(submitInfo, nullptr);
 
@@ -776,7 +785,6 @@ namespace lve {
 		// Libère le tampon de commandes
 		device_.freeCommandBuffers(commandPool, 1, &commandBuffer);
 	}
-
 
 
 	/**
@@ -793,15 +801,16 @@ namespace lve {
 	 * @param size La taille des données à copier, en octets.
 	 * @throws std::runtime_error en cas d'échec de l'allocation ou de l'enregistrement des commandes.
 	 */
-	void LveDevice::copyBuffer(vk::Buffer srcBuffer, vk::Buffer dstBuffer, vk::DeviceSize size) {
+	void LveDevice::copyBuffer(vk::Buffer srcBuffer, vk::Buffer dstBuffer, vk::DeviceSize size)
+	{
 		// Démarre l'enregistrement des commandes dans un tampon de commandes temporaire
 		vk::CommandBuffer commandBuffer = beginSingleTimeCommands();
 
 		// Définit la région de copie
 		vk::BufferCopy copyRegion{};
-		copyRegion.srcOffset = 0;  // Facultatif
-		copyRegion.dstOffset = 0;  // Facultatif
-		copyRegion.size = size;
+		copyRegion.srcOffset = 0; // Facultatif
+		copyRegion.dstOffset = 0; // Facultatif
+		copyRegion.size      = size;
 
 		// Effectue la copie des données entre les tampons
 		commandBuffer.copyBuffer(srcBuffer, dstBuffer, 1, &copyRegion);
@@ -809,7 +818,6 @@ namespace lve {
 		// Termine l'enregistrement des commandes et soumet le tampon de commandes à la file de commandes graphiques
 		endSingleTimeCommands(commandBuffer);
 	}
-
 
 
 	/**
@@ -828,23 +836,24 @@ namespace lve {
 	 * @throws std::runtime_error en cas d'échec de l'allocation ou de l'enregistrement des commandes.
 	 */
 	void LveDevice::copyBufferToImage(
-		vk::Buffer buffer, vk::Image image, uint32_t width, uint32_t height, uint32_t layerCount) {
+		vk::Buffer buffer, vk::Image image, uint32_t width, uint32_t height, uint32_t layerCount)
+	{
 		// Démarre l'enregistrement des commandes dans un tampon de commandes temporaire
 		vk::CommandBuffer commandBuffer = beginSingleTimeCommands();
 
 		// Configure la région de copie
 		vk::BufferImageCopy region{};
-		region.bufferOffset = 0;
-		region.bufferRowLength = 0;
+		region.bufferOffset      = 0;
+		region.bufferRowLength   = 0;
 		region.bufferImageHeight = 0;
 
-		region.imageSubresource.aspectMask = vk::ImageAspectFlagBits::eColor;
-		region.imageSubresource.mipLevel = 0;
+		region.imageSubresource.aspectMask     = vk::ImageAspectFlagBits::eColor;
+		region.imageSubresource.mipLevel       = 0;
 		region.imageSubresource.baseArrayLayer = 0;
-		region.imageSubresource.layerCount = layerCount;
+		region.imageSubresource.layerCount     = layerCount;
 
-		region.imageOffset = vk::Offset3D{ 0, 0, 0 };
-		region.imageExtent = vk::Extent3D{ width, height, 1 };
+		region.imageOffset = vk::Offset3D{0, 0, 0};
+		region.imageExtent = vk::Extent3D{width, height, 1};
 
 		// Copie les données du tampon vers l'image Vulkan
 		commandBuffer.copyBufferToImage(
@@ -857,7 +866,6 @@ namespace lve {
 		// Termine l'enregistrement des commandes et soumet le tampon de commandes à la file de commandes graphiques
 		endSingleTimeCommands(commandBuffer);
 	}
-
 
 
 	/**
@@ -875,14 +883,17 @@ namespace lve {
 	 */
 	void LveDevice::createImageWithInfo(
 		const vk::ImageCreateInfo& imageInfo,
-		vk::MemoryPropertyFlags properties,
-		vk::Image& image,
-		vk::DeviceMemory& imageMemory) {
+		vk::MemoryPropertyFlags    properties,
+		vk::Image&                 image,
+		vk::DeviceMemory&          imageMemory)
+	{
 		// Crée l'image Vulkan
-		try {
+		try
+		{
 			image = device_.createImage(imageInfo);
 		}
-		catch (const vk::SystemError& e) {
+		catch (const vk::SystemError& e)
+		{
 			throw std::runtime_error("failed to create image!");
 		}
 
@@ -895,27 +906,28 @@ namespace lve {
 		allocInfo.setAllocationSize(memRequirements.size);
 		allocInfo.setMemoryTypeIndex(findMemoryType(memRequirements.memoryTypeBits, properties));
 
-		try {
+		try
+		{
 			imageMemory = device_.allocateMemory(allocInfo);
 		}
-		catch (const vk::SystemError& e) {
+		catch (const vk::SystemError& e)
+		{
 			// Libère l'image si l'allocation de mémoire échoue
 			device_.destroyImage(image);
 			throw std::runtime_error("failed to allocate image memory!");
 		}
 
 		// Associe la mémoire allouée à l'image
-		try {
+		try
+		{
 			device_.bindImageMemory(image, imageMemory, 0);
 		}
-		catch (const vk::SystemError& e) {
+		catch (const vk::SystemError& e)
+		{
 			// Libère l'image et la mémoire si la liaison échoue
 			device_.destroyImage(image);
 			device_.freeMemory(imageMemory);
 			throw std::runtime_error("failed to bind image memory!");
 		}
 	}
-
-
-
-}  // namespace lve
+} // namespace lve

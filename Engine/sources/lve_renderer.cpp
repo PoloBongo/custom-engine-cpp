@@ -112,6 +112,25 @@ namespace lve {
         currentFrameIndex = (currentFrameIndex + 1) % LveSwapChain::MAX_FRAMES_IN_FLIGHT;
     }
 
+    void LveRenderer::EndFrame(const vk::CommandBuffer* _commandBuffer) {
+        assert(isFrameStarted && "Can't call endFrame while frame is not in progress");
+
+        _commandBuffer->end();
+
+        auto result = lveSwapChain->submitCommandBuffers(_commandBuffer, &currentImageIndex);
+        if (result == vk::Result::eErrorOutOfDateKHR || result == vk::Result::eSuboptimalKHR ||
+            lveWindow.WasWindowResized()) {
+            lveWindow.ResetWindowResizedFlag();
+            RecreateSwapChain();
+        }
+        else if (result != vk::Result::eSuccess) {
+            throw std::runtime_error("Failed to present swap chain image!");
+        }
+
+        isFrameStarted = false;
+        currentFrameIndex = (currentFrameIndex + 1) % LveSwapChain::MAX_FRAMES_IN_FLIGHT;
+    }
+
 
     void LveRenderer::BeginSwapChainRenderPass(vk::CommandBuffer commandBuffer) {
         assert(isFrameStarted && "Can't call beginSwapChainRenderPass if frame is not in progress");
