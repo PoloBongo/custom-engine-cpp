@@ -145,7 +145,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(SolutionDir)Librairies\glfw-3.4.bin.WIN64\lib-vc2022;$(SolutionDir)Librairies\FMOD\lib;$(SolutionDir)Librairies\VulkanSDK\Lib;$(SolutionDir)Librairies\bullet3_x64-windows\lib</AdditionalLibraryDirectories>
-      <AdditionalDependencies>fmod_vc.lib;vulkan-1.lib;glfw3.lib;BulletCollision.lib;Bullet3Common.lib;BulletInverseDynamics.lib;BulletSoftBody.lib;LinearMath.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>fmod_vc.lib;vulkan-1.lib;glfw3.lib;BulletCollision.lib;BulletDynamics.lib;LinearMath.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <CustomBuildStep>
       <Command>
