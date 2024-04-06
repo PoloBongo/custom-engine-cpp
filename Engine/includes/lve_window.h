@@ -68,7 +68,7 @@ namespace lve
 			 * @param _name Le nom de la fenêtre.
 			 * @return Rien.
 			 */
-			LveWindow(int _width, int _height, std::string _name);
+			LveWindow(int _width, int _height, const std::string& _name);
 
 			/**
 			 * @brief Destructeur de la classe LveWindow.
@@ -139,7 +139,7 @@ namespace lve
 			 * @param _surface Un pointeur vers l'objet de surface Vulkan à créer. Ce pointeur sera mis à jour pour contenir la surface créée.
 			 * @throws Une exception en cas d'échec lors de la création de la surface.
 			 */
-			void CreateWindowSurface(vk::Instance _instance, vk::SurfaceKHR* _surface);
+			void CreateWindowSurface(vk::Instance _instance, vk::SurfaceKHR* _surface) const;
 
 			/**
 			 * @brief Obtient un pointeur vers la fenêtre GLFW.
@@ -165,7 +165,7 @@ namespace lve
 			 * @param _color
 			 * @param color La couleur du cube. La valeur par défaut est 255.
 			 */
-			void CubeCursorWindow(int _color = 255);
+			void CubeCursorWindow(int _color = 255) const;
 
 			/**
 			 * @brief Définit le curseur standard de la fenêtre.
@@ -185,7 +185,7 @@ namespace lve
 			 * @param _mode
 			 * @param mode Le mode de curseur d'entrée à définir.
 			 */
-			void SetInputCursorMode(const GlfwCursorMode _mode) const;
+			void SetInputCursorMode(GlfwCursorMode _mode) const;
 
 		private:
 			/**

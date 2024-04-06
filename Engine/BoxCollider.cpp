@@ -1,9 +1,9 @@
 #include "BoxCollider.h"
 
-BoxCollider::BoxCollider(btDiscreteDynamicsWorld* _dynamicsWorld, glm::vec3 _center, glm::vec3 _position,
-                         btCollisionWorld*        _collisionWorld)
+BoxCollider::BoxCollider(btDiscreteDynamicsWorld* _dynamicsWorld, const glm::vec3 _center, const glm::vec3 _position,
+                         btCollisionWorld*        _collisionWorld): rigidBody(nullptr)
 {
-	collisionShape = new btBoxShape(Convertisseur::glmVec3ToBtVector3(_position));
+	collisionShape = new btBoxShape(Convertisseur::GlmVec3ToBtVector3(_position));
 
 	ghostObject = new btGhostObject();
 	ghostObject->setCollisionShape(collisionShape);
@@ -11,24 +11,24 @@ BoxCollider::BoxCollider(btDiscreteDynamicsWorld* _dynamicsWorld, glm::vec3 _cen
 
 	btTransform transform;
 	transform.setIdentity();
-	transform.setOrigin(Convertisseur::glmVec3ToBtVector3(_center));
+	transform.setOrigin(Convertisseur::GlmVec3ToBtVector3(_center));
 	ghostObject->setWorldTransform(transform);
 
 	_collisionWorld->addCollisionObject(ghostObject);
 	_dynamicsWorld->addRigidBody(rigidBody);
 }
 
-void BoxCollider::SetSize(glm::vec3 _size)
+void BoxCollider::SetSize(const glm::vec3 _size)
 {
 	delete collisionShape;
-	collisionShape = new btBoxShape((Convertisseur::glmVec3ToBtVector3(_size)));
+	collisionShape = new btBoxShape((Convertisseur::GlmVec3ToBtVector3(_size)));
 	ghostObject->setCollisionShape(collisionShape);
 }
 
-void BoxCollider::SetCenter(glm::vec3 _center)
+void BoxCollider::SetCenter(const glm::vec3 _center) const
 {
 	btTransform transform = ghostObject->getWorldTransform();
-	transform.setOrigin(Convertisseur::glmVec3ToBtVector3(_center));
+	transform.setOrigin(Convertisseur::GlmVec3ToBtVector3(_center));
 	ghostObject->setWorldTransform(transform);
 }
 

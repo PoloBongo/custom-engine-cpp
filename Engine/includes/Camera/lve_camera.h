@@ -25,8 +25,8 @@ namespace lve
 			* @param _near La distance au plan de vue proche.
 			* @param _far La distance au plan de vue éloignée.
 			*/
-			void SetOrthographicProjection(const float _left, const float _right, const float _top, const float _bottom, const float _near,
-				const float _far);
+			void SetOrthographicProjection(float _left, float _right, float _top, float _bottom, float _near,
+			                               float _far);
 
 			/**
 			 * @brief Définit une projection en perspective.
@@ -42,7 +42,7 @@ namespace lve
 			 * @note Cette fonction exige que `_aspect` soit différent de zéro.
 			 * @note L'angle de champ vertical `_fovY` est spécifié en degrés.
 			 */
-			void SetPerspectiveProjection(const float _fovY, const float _aspect, const float _near, const float _far);
+			void SetPerspectiveProjection(float _fovY, float _aspect, float _near, float _far);
 
 			/**
 			 * @brief Définit la direction de vue de la caméra.
@@ -56,7 +56,7 @@ namespace lve
 			 *
 			 * @note Les vecteurs _direction et _up doivent être normalisés pour garantir des résultats corrects.
 			 */
-			void SetViewDirection(const glm::vec3 _position, const glm::vec3 _direction, const glm::vec3 _up = glm::vec3{0.f, -1.f, 0.f});
+			void SetViewDirection(glm::vec3 _position, glm::vec3 _direction, glm::vec3 _up = glm::vec3{0.f, -1.f, 0.f});
 
 			/**
 			 * @brief Définit la cible de vue de la caméra.
@@ -70,7 +70,7 @@ namespace lve
 			 *
 			 * @note La différence entre _target et _position est utilisée pour calculer la direction de vue de la caméra.
 			 */
-			void SetViewTarget(const glm::vec3 _position, const glm::vec3 _target, const glm::vec3 _up = glm::vec3{0.f, -1.f, 0.f});
+			void SetViewTarget(glm::vec3 _position, glm::vec3 _target, glm::vec3 _up = glm::vec3{0.f, -1.f, 0.f});
 
 			/**
 			 * @brief Définit la vue de la caméra en utilisant les rotations YXZ.
@@ -83,7 +83,7 @@ namespace lve
 			 *
 			 * @note Les rotations sont appliquées dans l'ordre suivant : d'abord autour de l'axe Y, puis autour de l'axe X et enfin autour de l'axe Z.
 			 */
-			void SetViewYXZ(const glm::vec3 _position, const glm::vec3 _rotation);
+			void SetViewYXZ(glm::vec3 _position, glm::vec3 _rotation);
 
 			/**
 			 * @brief Renvoie la matrice de projection.

@@ -30,24 +30,24 @@ class GameObject
 		~GameObject();
 
 		[[nodiscard]] std::string GetName() const { return name; }
-		void        SetName(const std::string& _newName) { name = _newName; }
+		void                      SetName(const std::string& _newName) { name = _newName; }
 
 		[[nodiscard]] Transform* GetTransform() const;
 
 		[[nodiscard]] glm::vec3 GetPosition() const;
-		void      SetPosition(glm::vec3 _newPosition) const;
+		void                    SetPosition(glm::vec3 _newPosition) const;
 
 		[[nodiscard]] glm::vec3 GetScale() const;
-		void      SetScale(glm::vec3 _newScale) const;
+		void                    SetScale(glm::vec3 _newScale) const;
 
-		[[nodiscard]]  float GetRotation() const;
-		void  SetRotation(float _newRotation) const;
+		[[nodiscard]] float GetRotation() const;
+		void                SetRotation(float _newRotation) const;
 
-		void SetActive(const bool& _state) { isActive = _state; }
-		[[nodiscard]]  bool GetActive() const { return isActive; }
+		void               SetActive(const bool& _state) { isActive = _state; }
+		[[nodiscard]] bool GetActive() const { return isActive; }
 
-		[[nodiscard]]  bool GetVisible() const { return isVisible; }
-		void SetVisible(const bool& _state) { isVisible = _state; }
+		[[nodiscard]] bool GetVisible() const { return isVisible; }
+		void               SetVisible(const bool& _state) { isVisible = _state; }
 
 		void SetActiveAndVisible(const bool& _state)
 		{
@@ -56,7 +56,7 @@ class GameObject
 		}
 
 		[[nodiscard]] LayerType GetLayer() const { return layerType; }
-		void      SetLayer(const LayerType& _layerType) { layerType = _layerType; }
+		void                    SetLayer(const LayerType& _layerType) { layerType = _layerType; }
 
 		std::vector<GameObject*> FindChildrenByName(const std::string& _name) const;
 		std::vector<GameObject*> children;
@@ -93,7 +93,8 @@ class GameObject
 			for (size_t i = 0; i < components.size(); i++)
 			{
 				// Vérifie si le composant est un Component
-				if (T* component_result = dynamic_cast<T*>(components[i])) return component_result; // Renvoie le Component trouvé
+				if (T* component_result = dynamic_cast<T*>(components[i])) return component_result;
+				// Renvoie le Component trouvé
 			}
 			return nullptr; // Renvoie nullptr si aucun Component n'est trouvé
 		}
@@ -105,7 +106,8 @@ class GameObject
 			for (size_t i = 0; i < components.size(); i++)
 			{
 				// Vérifie si le composant est un Component
-				if (T* component_result = dynamic_cast<T*>(components[i])) components_by_type.push_back(component_result); // Ajout le Component trouvé
+				if (T* component_result = dynamic_cast<T*>(components[i])) components_by_type.
+					push_back(component_result); // Ajout le Component trouvé
 			}
 			return components_by_type;
 		}

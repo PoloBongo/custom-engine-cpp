@@ -24,7 +24,7 @@ class HUDModule : public Module
 		HUDModule(VkDevice _device, VkRenderPass _renderPass, VkQueue _graphicsQueue, VkCommandPool _commandPool);
 		~HUDModule();
 
-		auto        AddComponent(float _x, float _y, float _width, float _height, const std::string& _texturePath) -> void;
+		void        AddComponent(float _x, float _y, float _width, float _height, const std::string& _texturePath);
 		static void RemoveComponent();
 		void        CleanupComponents();
 		void        Render(VkCommandBuffer _commandBuffer);
@@ -92,16 +92,17 @@ class HUDModule : public Module
 		std::vector<char> ReadFile(const std::string& _filename);
 		// Méthodes pour créer et gérer les ressources Vulkan
 		/*VkImage createTextureImage(const std::string& texturePath);*/
-		VkImageView CreateTextureImageView(const VkImage _image);
-		[[nodiscard]] VkSampler   CreateTextureSampler() const;
-		void        TransitionImageLayout(VkImage _image, VkFormat _format, VkImageLayout _oldLayout, VkImageLayout _newLayout);
+		VkImageView             CreateTextureImageView(VkImage _image);
+		[[nodiscard]] VkSampler CreateTextureSampler() const;
+		void                    TransitionImageLayout(VkImage       _image, VkFormat _format, VkImageLayout _oldLayout,
+		                                              VkImageLayout _newLayout);
 
 		void CreateBuffer(VkDeviceSize _size, VkBufferUsageFlags _usage, VkMemoryPropertyFlags _properties,
-		                  VkBuffer& _buffer, VkDeviceMemory& _bufferMemory);
+		                  VkBuffer& _buffer, VkDeviceMemory& _bufferMemory) const;
 		void CreateImage(VkDeviceSize          _size, VkFormat _format, VkImageTiling _tiling, VkImageUsageFlags _usage,
-		                 VkMemoryPropertyFlags _properties, VkImage& _image, VkDeviceMemory& _imageMemory);
+		                 VkMemoryPropertyFlags _properties, VkImage& _image, VkDeviceMemory& _imageMemory) const;
 
-		void CopyBufferToImage(VkBuffer _buffer, VkImage _image, uint32_t _width, uint32_t _height);
+		void CopyBufferToImage(VkBuffer _buffer, VkImage _image, uint32_t _width, uint32_t _height) const;
 
 		VkImageView CreateImageView(VkImage _image, VkFormat _format, VkImageAspectFlags _aspectFlags);
 };

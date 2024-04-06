@@ -8,8 +8,8 @@
 
 int main()
 {
-	EngineTestCode engineTestCode;
-	engineTestCode.TestCode();
+	EngineTestCode engine_test_code;
+	engine_test_code.TestCode();
 
 	//SoundSystemModule sound;
 	//SoundClass soundSample;

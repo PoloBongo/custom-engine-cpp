@@ -5,7 +5,8 @@
 namespace lve
 {
 	// Constructeur  de la classe LveWindow
-	LveWindow::LveWindow(int _width, int _height, std::string _name) : width{_width}, height{_height}, windowName{_name}
+	LveWindow::LveWindow(const int _width, const int _height, const std::string& _name) : width{_width},
+		height{_height}, windowName{_name}
 	{
 		// Initialise la fenêtre GLFW
 		InitWindow();
@@ -26,7 +27,7 @@ namespace lve
 		glfwSetFramebufferSizeCallback(window, FrameBufferResizeCallBack);
 	}
 
-	void LveWindow::CreateWindowSurface(vk::Instance _instance, vk::SurfaceKHR* _surface)
+	void LveWindow::CreateWindowSurface(const vk::Instance _instance, vk::SurfaceKHR* _surface) const
 	{
 		if (glfwCreateWindowSurface(_instance, window, nullptr, reinterpret_cast<VkSurfaceKHR*>(_surface)) !=
 		    VK_SUCCESS)
@@ -42,15 +43,15 @@ namespace lve
 		glfwTerminate();
 	}
 
-	void LveWindow::FrameBufferResizeCallBack(GLFWwindow* _window, int _width, int _height)
+	void LveWindow::FrameBufferResizeCallBack(GLFWwindow* _window, const int _width, const int _height)
 	{
-		const auto lveWindow         = static_cast<LveWindow*>(glfwGetWindowUserPointer(_window));
-		lveWindow->frameBufferResize = true;
-		lveWindow->width             = _width;
-		lveWindow->height            = _height;
+		const auto lve_window         = static_cast<LveWindow*>(glfwGetWindowUserPointer(_window));
+		lve_window->frameBufferResize = true;
+		lve_window->width             = _width;
+		lve_window->height            = _height;
 	}
 
-	void LveWindow::CubeCursorWindow(int _color)
+	void LveWindow::CubeCursorWindow(const int _color) const
 	{
 		unsigned char pixels[16 * 16 * 4];
 		memset(pixels, _color, sizeof(pixels));
@@ -66,7 +67,7 @@ namespace lve
 
 	void LveWindow::StandardCursorWindow(const GlfwCursorType _cursorType) const
 	{
-		GLFWcursor* GLFWcursor = glfwCreateStandardCursor(GLFW_ARROW_CURSOR);
+		GLFWcursor* GLFW_cursor = glfwCreateStandardCursor(GLFW_ARROW_CURSOR);
 
 		switch (_cursorType)
 		{
@@ -101,7 +102,7 @@ namespace lve
 				glfwCreateStandardCursor(GLFW_NOT_ALLOWED_CURSOR);
 				break;
 		}
-		glfwSetCursor(window, GLFWcursor);
+		glfwSetCursor(window, GLFW_cursor);
 	}
 
 	void LveWindow::SetInputCursorMode(const GlfwCursorMode _mode) const

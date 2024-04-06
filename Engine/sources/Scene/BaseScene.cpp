@@ -4,28 +4,6 @@
 #include <string>
 #include "GameObject/GameObject.h"
 
-/**
- * @brief Destructeur de la scène.
- * Réinitialise les indicateurs de chargement et d'initialisation, et détruit tous les objets racine de la scène.
- */
-void BaseScene::Destroy()
-{
-	bLoaded      = false;
-	bInitialized = false;
-
-	for (GameObject* rootObject : rootObjects)
-	{
-		if (rootObject != nullptr)
-		{
-			for (Component* component : rootObject->GetComponents())
-			{
-				rootObject->RemoveComponent(component);
-			}
-			delete rootObject;
-		}
-	}
-	rootObjects.clear();
-}
 
 /**
  * @brief Ajoute un objet de jeu en tant qu'objet racine à la scène.
@@ -178,13 +156,13 @@ void BaseScene::DeleteSaveFiles()
 
 /**
  * @brief Vérifie si un élément est contenu dans un vecteur.
- * @param container Vecteur dans lequel chercher.
- * @param value Valeur à chercher.
+ * @param _container Vecteur dans lequel chercher.
+ * @param _value Valeur à chercher.
  * @return true si la valeur est trouvée dans le vecteur, sinon false.
  */
-bool Contains(const std::vector<GameObject::id_t>& container, const GameObject::id_t& value)
+bool BaseScene::Contains(const std::vector<GameObject::id_t>& _container, const GameObject::id_t& _value)
 {
-	return std::find(container.begin(), container.end(), value) != container.end();
+	return std::find(_container.begin(), _container.end(), _value) != _container.end();
 }
 
 /**
@@ -209,7 +187,7 @@ void BaseScene::RemoveObject(const GameObject::id_t& _gameObjectId, bool _bDestr
  * @param _gameObject Pointeur vers l'objet de jeu à supprimer.
  * @param _bDestroy Indique s'il faut détruire l'objet de jeu.
  */
-void BaseScene::RemoveObject(GameObject* _gameObject, bool _bDestroy)
+void BaseScene::RemoveObject(const GameObject* _gameObject, const bool _bDestroy)
 {
 	RemoveObject(_gameObject->GetId(), _bDestroy);
 }
@@ -220,7 +198,7 @@ void BaseScene::RemoveObject(GameObject* _gameObject, bool _bDestroy)
  * @param _gameObjects Vecteur contenant les identifiants des objets de jeu à supprimer.
  * @param _bDestroy Indique s'il faut détruire les objets de jeu.
  */
-void BaseScene::RemoveObjects(const std::vector<GameObject::id_t>& _gameObjects, bool _bDestroy)
+void BaseScene::RemoveObjects(const std::vector<GameObject::id_t>& _gameObjects, const bool _bDestroy)
 {
 	if (_bDestroy) pendingDestroyObjects.insert(pendingDestroyObjects.end(), _gameObjects.begin(), _gameObjects.end());
 	else pendingRemoveObjects.insert(pendingRemoveObjects.end(), _gameObjects.begin(), _gameObjects.end());
@@ -236,21 +214,21 @@ void BaseScene::RemoveObjects(const std::vector<GameObject*>& _gameObjects, bool
 	if (_bDestroy)
 	{
 		pendingDestroyObjects.reserve(pendingDestroyObjects.size() + _gameObjects.size());
-		for (GameObject* gameObject : _gameObjects)
+		for (const GameObject* game_object : _gameObjects)
 		{
-			if (!Contains(pendingDestroyObjects, gameObject->GetId()))
+			if (!Contains(pendingDestroyObjects, game_object->GetId()))
 				pendingDestroyObjects.push_back(
-					gameObject->GetId());
+					game_object->GetId());
 		}
 	}
 	else
 	{
 		pendingRemoveObjects.reserve(pendingRemoveObjects.size() + _gameObjects.size());
-		for (GameObject* gameObject : _gameObjects)
+		for (const GameObject* game_object : _gameObjects)
 		{
-			if (!Contains(pendingRemoveObjects, gameObject->GetId()))
+			if (!Contains(pendingRemoveObjects, game_object->GetId()))
 				pendingRemoveObjects.push_back(
-					gameObject->GetId());
+					game_object->GetId());
 		}
 	}
 }
@@ -262,9 +240,9 @@ void BaseScene::RemoveObjects(const std::vector<GameObject*>& _gameObjects, bool
  */
 GameObject* BaseScene::CreateGameObject()
 {
-	auto gameObject = new GameObject();
-	pendingAddObjects.push_back(gameObject);
-	return gameObject;
+	const auto game_object = new GameObject();
+	pendingAddObjects.push_back(game_object);
+	return game_object;
 }
 
 /**
@@ -272,7 +250,7 @@ GameObject* BaseScene::CreateGameObject()
  * @param _gameObject Pointeur vers l'objet de jeu à détruire.
  */
 
-void BaseScene::DestroyGameObject(GameObject* _gameObject)
+void BaseScene::DestroyGameObject(const GameObject* _gameObject)
 {
 	if (_gameObject != nullptr) RemoveObject(_gameObject, true);
 }
@@ -282,11 +260,11 @@ void BaseScene::DestroyGameObject(GameObject* _gameObject)
  * @param _gameObjectId Identifiant de l'objet de jeu à récupérer.
  * @return Pointeur vers l'objet de jeu correspondant à l'identifiant.
  */
-GameObject* BaseScene::GetGameObjectById(const GameObject::id_t& _gameObjectId)
+GameObject* BaseScene::GetGameObjectById(const GameObject::id_t& _gameObjectId) const
 {
-	for (GameObject* rootObject : rootObjects)
+	for (GameObject* root_object : rootObjects)
 	{
-		if (rootObject->GetId() == _gameObjectId) return rootObject;
+		if (root_object->GetId() == _gameObjectId) return root_object;
 	}
 	return nullptr;
 }
@@ -296,12 +274,12 @@ GameObject* BaseScene::GetGameObjectById(const GameObject::id_t& _gameObjectId)
  * @param _name Nom des objets de jeu à rechercher.
  * @return Vecteur contenant les pointeurs vers les objets de jeu trouvés.
  */
-std::vector<GameObject*> BaseScene::FindGameObjectsByName(const std::string& _name)
+std::vector<GameObject*> BaseScene::FindGameObjectsByName(const std::string& _name) const
 {
 	std::vector<GameObject*> result;
-	for (GameObject* rootObject : rootObjects)
+	for (const GameObject* root_object : rootObjects)
 	{
-		std::vector<GameObject*> found = rootObject->FindChildrenByName(_name);
+		std::vector<GameObject*> found = root_object->FindChildrenByName(_name);
 		result.insert(result.end(), found.begin(), found.end());
 	}
 	return result;
@@ -310,17 +288,14 @@ std::vector<GameObject*> BaseScene::FindGameObjectsByName(const std::string& _na
 
 void BaseScene::Init()
 {
-	
 }
 
 void BaseScene::Start()
 {
-	
 }
 
 void BaseScene::FixedUpdate(const float& _deltaTime)
 {
-
 }
 
 /**
@@ -338,7 +313,6 @@ void BaseScene::Update(const float& _deltaTime)
 
 void BaseScene::PreRender()
 {
-
 }
 
 /**
@@ -356,21 +330,35 @@ void BaseScene::Render(lve::LveWindow* _lveWindow)
 
 void BaseScene::RenderGui()
 {
-	
 }
 
 void BaseScene::PostRender()
 {
-	
 }
 
 void BaseScene::Release()
 {
-	
 }
 
+/**
+ * @brief Destructeur de la scène.
+ * Réinitialise les indicateurs de chargement et d'initialisation, et détruit tous les objets racine de la scène.
+ */
 void BaseScene::Finalize()
 {
+	bLoaded      = false;
+	bInitialized = false;
 
+	for (GameObject* root_object : rootObjects)
+	{
+		if (root_object != nullptr)
+		{
+			for (Component* component : root_object->GetComponents())
+			{
+				root_object->RemoveComponent(component);
+			}
+			delete root_object;
+		}
+	}
+	rootObjects.clear();
 }
-

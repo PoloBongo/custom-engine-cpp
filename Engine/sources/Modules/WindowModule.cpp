@@ -50,8 +50,9 @@ void WindowModule::Start()
 	}
 
 	const auto global_set_layout = lve::LveDescriptorSetLayout::Builder(lveDevice)
-	                             .AddBinding(0, vk::DescriptorType::eUniformBuffer, vk::ShaderStageFlagBits::eAllGraphics)
-	                             .Build();
+	                               .AddBinding(0, vk::DescriptorType::eUniformBuffer,
+	                                           vk::ShaderStageFlagBits::eAllGraphics)
+	                               .Build();
 
 	globalDescriptorSets.resize(lve::LveSwapChain::MAX_FRAMES_IN_FLIGHT);
 
@@ -89,9 +90,10 @@ void WindowModule::Update()
 	{
 		glfwPollEvents();
 
-		const auto  new_time  = std::chrono::high_resolution_clock::now(); // Bien mettre après la gestion d'event
-		const float frame_time = std::chrono::duration<float, std::chrono::seconds::period>(new_time - currentTime).count();
-		currentTime           = new_time;
+		const auto  new_time   = std::chrono::high_resolution_clock::now(); // Bien mettre après la gestion d'event
+		const float frame_time = std::chrono::duration<float, std::chrono::seconds::period>(new_time - currentTime).
+			count();
+		currentTime = new_time;
 
 		cameraController.MoveInPlaneXZ(lveWindow.GetGlfwWindow(), frame_time, *viewerObject);
 		camera->SetViewYXZ(viewerObject->transform.translation, viewerObject->transform.rotation);
@@ -126,8 +128,8 @@ void WindowModule::Update()
 
 			// render
 			lveRenderer.BeginSwapChainRenderPass(*p_commandBuffer); //begin offscreen shadow pass
-			simpleRenderSystem->RenderGameObjects(frame_info);       //render shadow casting objects
-			pointLightSystem->Render(frame_info);                    //render shadow casting objects
+			simpleRenderSystem->RenderGameObjects(frame_info);      //render shadow casting objects
+			pointLightSystem->Render(frame_info);                   //render shadow casting objects
 		}
 	}
 	else
@@ -181,7 +183,7 @@ void WindowModule::LoadGameObjects()
 	flatVaseGO.transform.scale       = {3.f, 1.5f, 3.f};
 	gameObjects->emplace(flatVaseGO.GetId(), std::move(flatVaseGO));
 
-	lve_model                           = lve::LveModel::CreateModelFromFile(lveDevice, "Models\\smooth_vase.obj");
+	lve_model                            = lve::LveModel::CreateModelFromFile(lveDevice, "Models\\smooth_vase.obj");
 	auto smooth_vase_go                  = lve::LveGameObject::CreateGameObject();
 	smooth_vase_go.model                 = lve_model;
 	smooth_vase_go.transform.translation = {.5f, .5f, 0.f};
@@ -191,7 +193,7 @@ void WindowModule::LoadGameObjects()
 	auto quad_go = lve::PlaneGameObject::Create(lveDevice, {.0f, .5f, 0.f}, {3.f, 1.f, 3.f});
 	gameObjects->emplace(quad_go.GetId(), std::move(quad_go));
 
-	lve_model                     = lve::LveModel::CreateModelFromFile(lveDevice, "Models\\viking_room.obj");
+	lve_model                    = lve::LveModel::CreateModelFromFile(lveDevice, "Models\\viking_room.obj");
 	auto viking                  = lve::LveGameObject::CreateGameObject();
 	viking.model                 = lve_model;
 	viking.transform.translation = {0.f, 0.f, 5.f};

@@ -2,9 +2,9 @@
 #include "Camera/BaseCamera.h"
 
 
-Component::Component(GameObject* owner)
+Component::Component(GameObject* _owner)
 {
-	this->owner = owner;
+	this->owner = _owner;
 }
 
 void Component::Start()
@@ -25,7 +25,7 @@ void Component::Render(lve::LveWindow* _window)
 	//_window->setView(lve::BaseCamera::GetView());
 }
 
-void Component::RenderGUI(lve::LveWindow* _window)
+void Component::RenderGui(lve::LveWindow* _window)
 {
 	//_window->setView(HUDModule::GetHud());
 }

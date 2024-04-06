@@ -201,12 +201,12 @@ namespace lve
 			 *
 			 * @param _descriptors Vecteur contenant les ensembles de descripteurs à libérer.
 			 */
-			void FreeDescriptors(std::vector<vk::DescriptorSet>& _descriptors) const;
+			void FreeDescriptors(const std::vector<vk::DescriptorSet>& _descriptors) const;
 
 			/**
 			 * @brief Réinitialise le pool de descripteurs.
 			 */
-			void ResetPool();
+			void ResetPool() const;
 
 		private:
 			LveDevice&         lveDevice;      /**< Référence vers l'appareil logique associé. */
@@ -231,7 +231,7 @@ namespace lve
 			 * @param _bufferInfo Pointeur vers les informations du tampon.
 			 * @return Une référence vers l'objet LveDescriptorWriter.
 			 */
-			LveDescriptorWriter& WriteBuffer(uint32_t _binding, vk::DescriptorBufferInfo* _bufferInfo);
+			LveDescriptorWriter& WriteBuffer(uint32_t _binding, const vk::DescriptorBufferInfo* _bufferInfo);
 
 			/**
 			 * @brief Écriture d'informations d'image dans le descripteur.
@@ -239,7 +239,7 @@ namespace lve
 			 * @param _imageInfo Pointeur vers les informations de l'image.
 			 * @return Une référence vers l'objet LveDescriptorWriter.
 			 */
-			LveDescriptorWriter& WriteImage(uint32_t _binding, vk::DescriptorImageInfo* _imageInfo);
+			LveDescriptorWriter& WriteImage(uint32_t _binding, const vk::DescriptorImageInfo* _imageInfo);
 
 
 			/**
@@ -253,7 +253,7 @@ namespace lve
 			 * @brief Écrit à nouveau les informations de descripteur dans un ensemble de descripteurs existant.
 			 * @param _set Référence vers l'ensemble de descripteurs à modifier.
 			 */
-			void Overwrite(vk::DescriptorSet& _set);
+			void Overwrite(const vk::DescriptorSet& _set);
 
 		private:
 			/**

@@ -34,7 +34,7 @@ namespace lve
 			/**
 				* @brief Initialise le module.
 				*/
-			virtual void Init() ;
+			virtual void Init();
 
 			/**
 			 * @brief Démarre le module.
@@ -49,7 +49,7 @@ namespace lve
 			/**
 			 * @brief Met à jour le module.
 			 */
-			virtual void Update(const float& _deltaTime) ;
+			virtual void Update(const float& _deltaTime);
 
 			/**
 			 * @brief Fonction pré-rendu du module.
@@ -87,7 +87,7 @@ namespace lve
 			virtual void OnPossess();
 			virtual void OnDepossess();
 
-			[[nodiscard]] glm::mat4               GetViewProjection() const { return viewProjection; }
+			[[nodiscard]] glm::mat4 GetViewProjection() const { return viewProjection; }
 			[[nodiscard]] glm::mat4 GetView() const { return view; }
 			[[nodiscard]] glm::mat4 GetProjection() const { return projection; }
 

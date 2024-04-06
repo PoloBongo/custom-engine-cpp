@@ -140,7 +140,7 @@ namespace lve
 			 * @param _properties Les propriétés de la mémoire.
 			 * @return Le type de mémoire approprié.
 			 */
-			uint32_t FindMemoryType(uint32_t _typeFilter, vk::MemoryPropertyFlags _properties);
+			uint32_t FindMemoryType(uint32_t _typeFilter, vk::MemoryPropertyFlags _properties) const;
 
 			/**
 			 * @brief Trouve les familles de files de commandes physiques disponibles sur le périphérique.
@@ -158,7 +158,8 @@ namespace lve
 			 * @return Le format d'image supporté par le périphérique.
 			 */
 			vk::Format FindSupportedFormat(
-				const std::vector<vk::Format>& _candidates, vk::ImageTiling _tiling, vk::FormatFeatureFlags _features);
+				const std::vector<vk::Format>& _candidates, vk::ImageTiling _tiling,
+				vk::FormatFeatureFlags         _features) const;
 
 
 			// Buffer Helper Functions
@@ -176,7 +177,7 @@ namespace lve
 				vk::BufferUsageFlags    _usage,
 				vk::MemoryPropertyFlags _properties,
 				vk::Buffer&             _buffer,
-				vk::DeviceMemory&       _bufferMemory);
+				vk::DeviceMemory&       _bufferMemory) const;
 
 			/**
 			 * @brief Démarre une séquence de commandes Vulkan temporaires.
@@ -185,7 +186,7 @@ namespace lve
 			 *
 			 * @return Le tampon de commandes Vulkan alloué.
 			 */
-			vk::CommandBuffer BeginSingleTimeCommands();
+			vk::CommandBuffer BeginSingleTimeCommands() const;
 
 			/**
 			 * @brief Termine une séquence de commandes Vulkan temporaires.
@@ -194,7 +195,7 @@ namespace lve
 			 *
 			 * @param _commandBuffer Le tampon de commandes Vulkan à terminer.
 			 */
-			void EndSingleTimeCommands(vk::CommandBuffer _commandBuffer);
+			void EndSingleTimeCommands(vk::CommandBuffer _commandBuffer) const;
 
 			/**
 			 * @brief Copie les données d'un tampon source vers un tampon de destination.
@@ -203,7 +204,7 @@ namespace lve
 			 * @param _dstBuffer Le tampon de destination où copier les données.
 			 * @param _size La taille des données à copier.
 			 */
-			auto copyBuffer(vk::Buffer _srcBuffer, vk::Buffer _dstBuffer, vk::DeviceSize _size) -> void;
+			void CopyBuffer(vk::Buffer _srcBuffer, vk::Buffer _dstBuffer, vk::DeviceSize _size) const;
 
 			/**
 			 * @brief Copie les données d'un tampon vers une image Vulkan.
@@ -217,7 +218,7 @@ namespace lve
 			 * @param _layerCount Le nombre de couches de l'image.
 			 */
 			void CopyBufferToImage(
-				vk::Buffer _buffer, vk::Image _image, uint32_t _width, uint32_t _height, uint32_t _layerCount);
+				vk::Buffer _buffer, vk::Image _image, uint32_t _width, uint32_t _height, uint32_t _layerCount) const;
 
 			/**
 			 * @brief Crée une image Vulkan avec les informations fournies.
@@ -233,7 +234,7 @@ namespace lve
 				const vk::ImageCreateInfo& _imageInfo,
 				vk::MemoryPropertyFlags    _properties,
 				vk::Image&                 _image,
-				vk::DeviceMemory&          _imageMemory);
+				vk::DeviceMemory&          _imageMemory) const;
 
 			/**
 			 * @brief Propriétés du périphérique physique Vulkan associé.
@@ -304,7 +305,7 @@ namespace lve
 			 *
 			 * @return Un vecteur de pointeurs de chaînes C représentant les noms des extensions requises.
 			 */
-			std::vector<const char*> GetRequiredExtensions();
+			std::vector<const char*> GetRequiredExtensions() const;
 
 			/**
 			 * @brief Vérifie la prise en charge des couches de validation Vulkan.
@@ -313,7 +314,7 @@ namespace lve
 			 *
 			 * @return true si les couches de validation sont prises en charge, sinon false.
 			 */
-			bool CheckValidationLayerSupport();
+			bool CheckValidationLayerSupport() const;
 
 			/**
 			 * @brief Recherche les familles de files de commandes supportées par le périphérique physique Vulkan spécifié.
@@ -323,7 +324,7 @@ namespace lve
 			 * @param _device Le périphérique physique Vulkan à évaluer.
 			 * @return Une structure contenant les indices des familles de files de commandes supportées.
 			 */
-			QueueFamilyIndices FindQueueFamilies(vk::PhysicalDevice _device);
+			QueueFamilyIndices FindQueueFamilies(vk::PhysicalDevice _device) const;
 
 			/**
 			 * @brief Remplit une structure de données pour la création d'un gestionnaire de débogage Vulkan.
@@ -339,7 +340,7 @@ namespace lve
 			 *
 			 * Cette fonction vérifie si l'instance Vulkan possède les extensions requises par GLFW pour créer une surface Vulkan.
 			 */
-			void HasGlfwRequiredInstanceExtensions();
+			void HasGlfwRequiredInstanceExtensions() const;
 
 			/**
 			 * @brief Vérifie si le périphérique physique Vulkan spécifié prend en charge les extensions de périphérique nécessaires.
@@ -349,7 +350,7 @@ namespace lve
 			 * @param _device Le périphérique physique Vulkan à évaluer.
 			 * @return true si les extensions de périphérique sont prises en charge, sinon false.
 			 */
-			bool CheckDeviceExtensionSupport(vk::PhysicalDevice _device);
+			bool CheckDeviceExtensionSupport(vk::PhysicalDevice _device) const;
 
 			/**
 			 * @brief Interroge le périphérique physique Vulkan spécifié pour obtenir les détails de support de la chaîne d'échange.
@@ -359,7 +360,7 @@ namespace lve
 			 * @param _device Le périphérique physique Vulkan à interroger.
 			 * @return Une structure contenant les détails de support de la chaîne d'échange.
 			 */
-			SwapChainSupportDetails QuerySwapChainSupport(vk::PhysicalDevice _device);
+			SwapChainSupportDetails QuerySwapChainSupport(vk::PhysicalDevice _device) const;
 
 
 			vk::Instance instance; /**< L'instance Vulkan utilisée par l'application. */

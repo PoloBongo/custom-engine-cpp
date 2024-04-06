@@ -10,10 +10,10 @@ namespace lve
 	// *************** Descriptor Set Layout Builder *********************
 
 	LveDescriptorSetLayout::Builder& LveDescriptorSetLayout::Builder::AddBinding(
-		uint32_t             _binding,
-		vk::DescriptorType   _descriptorType,
-		vk::ShaderStageFlags _stageFlags,
-		uint32_t             _count)
+		const uint32_t             _binding,
+		const vk::DescriptorType   _descriptorType,
+		const vk::ShaderStageFlags _stageFlags,
+		const uint32_t             _count)
 	{
 		// Vérifie que le binding n'est pas déjà utilisé
 		assert(bindings.count(_binding) == 0 && "Binding already in use");
@@ -46,26 +46,27 @@ namespace lve
 		bindings{_bindings}
 	{
 		// Tri des bindings par indice de binding
-		std::map<uint32_t, vk::DescriptorSetLayoutBinding> sortedBindings(
+		const std::map<uint32_t, vk::DescriptorSetLayoutBinding> sorted_bindings(
 			_bindings.begin(), _bindings.end());
 
 		// Création d'un vecteur contenant les bindings de l'ensemble de descripteurs
-		std::vector<vk::DescriptorSetLayoutBinding> setLayoutBindings{};
-		for (const auto& kv : sortedBindings)
+		std::vector<vk::DescriptorSetLayoutBinding> set_layout_bindings{};
+		set_layout_bindings.reserve(sorted_bindings.size());
+		for (const auto& kv : sorted_bindings)
 		{
-			setLayoutBindings.push_back(kv.second);
+			set_layout_bindings.push_back(kv.second);
 		}
 
 		// Configuration des informations de création de l'ensemble de descripteurs
-		vk::DescriptorSetLayoutCreateInfo descriptorSetLayoutInfo{};
-		descriptorSetLayoutInfo.sType        = vk::StructureType::eDescriptorSetLayoutCreateInfo;
-		descriptorSetLayoutInfo.bindingCount = static_cast<uint32_t>(setLayoutBindings.size());
-		descriptorSetLayoutInfo.pBindings    = setLayoutBindings.data();
+		vk::DescriptorSetLayoutCreateInfo descriptor_set_layout_info{};
+		descriptor_set_layout_info.sType        = vk::StructureType::eDescriptorSetLayoutCreateInfo;
+		descriptor_set_layout_info.bindingCount = static_cast<uint32_t>(set_layout_bindings.size());
+		descriptor_set_layout_info.pBindings    = set_layout_bindings.data();
 
 		// Création de l'ensemble de descripteurs
 		try
 		{
-			descriptorSetLayout = lveDevice.Device().createDescriptorSetLayout(descriptorSetLayoutInfo, nullptr);
+			descriptorSetLayout = lveDevice.Device().createDescriptorSetLayout(descriptor_set_layout_info, nullptr);
 		}
 		catch (const vk::SystemError& e)
 		{
@@ -89,13 +90,13 @@ namespace lve
 	}
 
 	LveDescriptorPool::Builder& LveDescriptorPool::Builder::SetPoolFlags(
-		vk::DescriptorPoolCreateFlags _flags)
+		const vk::DescriptorPoolCreateFlags _flags)
 	{
 		poolFlags = _flags;
 		return *this;
 	}
 
-	LveDescriptorPool::Builder& LveDescriptorPool::Builder::SetMaxSets(uint32_t _count)
+	LveDescriptorPool::Builder& LveDescriptorPool::Builder::SetMaxSets(const uint32_t _count)
 	{
 		maxSets = _count;
 		return *this;
@@ -109,19 +110,19 @@ namespace lve
 	// *************** Descriptor Pool *********************
 
 	LveDescriptorPool::LveDescriptorPool(
-		LveDevice&                                 lveDevice,
-		uint32_t                                   maxSets,
-		vk::DescriptorPoolCreateFlags              poolFlags,
-		const std::vector<vk::DescriptorPoolSize>& poolSizes) : lveDevice{lveDevice}
+		LveDevice&                                 _lveDevice,
+		const uint32_t                             _maxSets,
+		const vk::DescriptorPoolCreateFlags        _poolFlags,
+		const std::vector<vk::DescriptorPoolSize>& _poolSizes) : lveDevice{_lveDevice}
 	{
-		vk::DescriptorPoolCreateInfo descriptorPoolInfo{};
-		descriptorPoolInfo.setPoolSizes(poolSizes);
-		descriptorPoolInfo.setMaxSets(maxSets);
-		descriptorPoolInfo.setFlags(poolFlags);
+		vk::DescriptorPoolCreateInfo descriptor_pool_info{};
+		descriptor_pool_info.setPoolSizes(_poolSizes);
+		descriptor_pool_info.setMaxSets(_maxSets);
+		descriptor_pool_info.setFlags(_poolFlags);
 
 		try
 		{
-			descriptorPool = lveDevice.Device().createDescriptorPool(descriptorPoolInfo);
+			descriptorPool = _lveDevice.Device().createDescriptorPool(descriptor_pool_info);
 		}
 		catch (const vk::SystemError& e)
 		{
@@ -136,16 +137,16 @@ namespace lve
 	}
 
 	bool LveDescriptorPool::AllocateDescriptor(
-		const vk::DescriptorSetLayout descriptorSetLayout, vk::DescriptorSet& descriptor) const
+		const vk::DescriptorSetLayout _descriptorSetLayout, vk::DescriptorSet& _descriptor) const
 	{
-		vk::DescriptorSetAllocateInfo allocInfo{};
-		allocInfo.setDescriptorPool(descriptorPool);
-		allocInfo.setPSetLayouts(&descriptorSetLayout);
-		allocInfo.setDescriptorSetCount(1);
+		vk::DescriptorSetAllocateInfo alloc_info{};
+		alloc_info.setDescriptorPool(descriptorPool);
+		alloc_info.setPSetLayouts(&_descriptorSetLayout);
+		alloc_info.setDescriptorSetCount(1);
 
 		try
 		{
-			descriptor = lveDevice.Device().allocateDescriptorSets(allocInfo)[0];
+			_descriptor = lveDevice.Device().allocateDescriptorSets(alloc_info)[0];
 			return true;
 		}
 		catch (const vk::SystemError& e)
@@ -156,7 +157,7 @@ namespace lve
 	}
 
 
-	void LveDescriptorPool::FreeDescriptors(std::vector<vk::DescriptorSet>& _descriptors) const
+	void LveDescriptorPool::FreeDescriptors(const std::vector<vk::DescriptorSet>& _descriptors) const
 	{
 		lveDevice.Device().freeDescriptorSets(
 			descriptorPool,
@@ -164,7 +165,7 @@ namespace lve
 			_descriptors.data());
 	}
 
-	void LveDescriptorPool::ResetPool()
+	void LveDescriptorPool::ResetPool() const
 	{
 		vkResetDescriptorPool(lveDevice.Device(), descriptorPool, 0);
 	}
@@ -172,25 +173,25 @@ namespace lve
 	// *************** Descriptor Writer *********************
 
 	LveDescriptorWriter::LveDescriptorWriter(LveDescriptorSetLayout& _setLayout, LveDescriptorPool& _pool) : setLayout{
-			_setLayout
-		}, pool{_pool}
+		_setLayout
+	}, pool{_pool}
 	{
 	}
 
 	LveDescriptorWriter& LveDescriptorWriter::WriteBuffer(
-		uint32_t _binding, vk::DescriptorBufferInfo* _bufferInfo)
+		const uint32_t _binding, const vk::DescriptorBufferInfo* _bufferInfo)
 	{
 		assert(setLayout.bindings.count(_binding) == 1 && "Layout does not contain specified binding");
 
-		auto& bindingDescription = setLayout.bindings[_binding];
+		const auto& binding_description = setLayout.bindings[_binding];
 
 		assert(
-			bindingDescription.descriptorCount == 1 &&
+			binding_description.descriptorCount == 1 &&
 			"Binding single descriptor info, but binding expects multiple");
 
 		vk::WriteDescriptorSet write{};
 		write.sType           = vk::StructureType::eWriteDescriptorSet;
-		write.descriptorType  = bindingDescription.descriptorType;
+		write.descriptorType  = binding_description.descriptorType;
 		write.dstBinding      = _binding;
 		write.pBufferInfo     = _bufferInfo;
 		write.descriptorCount = 1;
@@ -200,19 +201,19 @@ namespace lve
 	}
 
 	LveDescriptorWriter& LveDescriptorWriter::WriteImage(
-		uint32_t _binding, vk::DescriptorImageInfo* _imageInfo)
+		const uint32_t _binding, const vk::DescriptorImageInfo* _imageInfo)
 	{
 		assert(setLayout.bindings.count(_binding) == 1 && "Layout does not contain specified binding");
 
-		auto& bindingDescription = setLayout.bindings[_binding];
+		const auto& binding_description = setLayout.bindings[_binding];
 
 		assert(
-			bindingDescription.descriptorCount == 1 &&
+			binding_description.descriptorCount == 1 &&
 			"Binding single descriptor info, but binding expects multiple");
 
 		vk::WriteDescriptorSet write{};
 		write.sType           = vk::StructureType::eWriteDescriptorSet;
-		write.descriptorType  = bindingDescription.descriptorType;
+		write.descriptorType  = binding_description.descriptorType;
 		write.dstBinding      = _binding;
 		write.pImageInfo      = _imageInfo;
 		write.descriptorCount = 1;
@@ -223,13 +224,13 @@ namespace lve
 
 	bool LveDescriptorWriter::Build(vk::DescriptorSet& _set)
 	{
-		bool success = pool.AllocateDescriptor(setLayout.GetDescriptorSetLayout(), _set);
-		if (!success) return false;
+		if (const bool success = pool.AllocateDescriptor(setLayout.GetDescriptorSetLayout(), _set); !success) return
+			false;
 		Overwrite(_set);
 		return true;
 	}
 
-	void LveDescriptorWriter::Overwrite(vk::DescriptorSet& _set)
+	void LveDescriptorWriter::Overwrite(const vk::DescriptorSet& _set)
 	{
 		for (auto& write : writes)
 		{

@@ -67,7 +67,8 @@ namespace lve
 	{
 		/*CHECK_NE(camera, nullptr);*/
 
-		if (const uint32_t camera_index = GetCameraIndex(_camera); camera_index == -1) // Only add camera if it hasn't been added before
+		if (const uint32_t camera_index = GetCameraIndex(_camera); camera_index == -1)
+		// Only add camera if it hasn't been added before
 		{
 			cameras.push_back(_camera);
 

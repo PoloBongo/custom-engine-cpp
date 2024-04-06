@@ -62,7 +62,7 @@ namespace lve
 			                 vk::ImageUsageFlags     _usage,
 			                 vk::MemoryPropertyFlags _properties,
 			                 vk::Image&              _image,
-			                 vk::DeviceMemory&       _imageMemory);
+			                 vk::DeviceMemory&       _imageMemory) const;
 
 			/** Référence vers l'objet LveDevice associé. */
 			LveDevice& lveDevice;

@@ -74,11 +74,11 @@ class InputModule final : public Module
 		std::unordered_map<int, bool> mouseButtons;
 		double                        mouseX, mouseY;
 
-		static void KeyCallback(GLFWwindow* _window, const int _key, const int _scancode, const int _action, const int _mods);
-		static void MouseButtonCallback(GLFWwindow* _window, const int _button, const int _action, const int _mods);
-		static void CursorPositionCallback(GLFWwindow* _window, const double _xPos, const double _yPos);
-		static void JoystickCallback(const int _jid, const int _event);
-		static void GamepadInput(const int _jid, const GLFWgamepadstate* _state);
+		static void KeyCallback(GLFWwindow* _window, int _key, int _scancode, int _action, int _mods);
+		static void MouseButtonCallback(GLFWwindow* _window, int _button, int _action, int _mods);
+		static void CursorPositionCallback(GLFWwindow* _window, double _xPos, double _yPos);
+		static void JoystickCallback(int _jid, int _event);
+		static void GamepadInput(int _jid, const GLFWgamepadstate* _state);
 };
 
 #endif // INPUT_MANAGER_H

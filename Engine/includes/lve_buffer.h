@@ -44,7 +44,8 @@ namespace lve
 			 * @param _size La taille des données à écrire dans le tampon. Par défaut, toute la taille des données est écrite.
 			 * @param _offset Le décalage à partir du début du tampon où écrire les données. Par défaut, les données sont écrites à partir du début du tampon.
 			 */
-			void WriteToBuffer(void* _data, vk::DeviceSize _size = VK_WHOLE_SIZE, vk::DeviceSize _offset = 0);
+			void WriteToBuffer(const void*    _data, vk::DeviceSize _size = VK_WHOLE_SIZE,
+			                   vk::DeviceSize _offset                     = 0) const;
 
 			/**
 			 * @brief Flushes the memory-mapped buffer range.
@@ -54,7 +55,7 @@ namespace lve
 			 *
 			 * @return vk::Result indiquant le succès ou l'échec de l'opération de flush.
 			 */
-			vk::Result Flush(vk::DeviceSize _size = VK_WHOLE_SIZE, vk::DeviceSize _offset = 0);
+			vk::Result Flush(vk::DeviceSize _size = VK_WHOLE_SIZE, vk::DeviceSize _offset = 0) const;
 
 			/**
 			 * @brief Récupère les informations de tampon de descripteur.
@@ -64,7 +65,8 @@ namespace lve
 			 *
 			 * @return vk::DescriptorBufferInfo contenant les informations de tampon de descripteur.
 			 */
-			vk::DescriptorBufferInfo DescriptorInfo(vk::DeviceSize _size = VK_WHOLE_SIZE, vk::DeviceSize _offset = 0);
+			vk::DescriptorBufferInfo DescriptorInfo(vk::DeviceSize _size   = VK_WHOLE_SIZE,
+			                                        vk::DeviceSize _offset = 0) const;
 
 			/**
 			 * @brief Invalidate the memory-mapped buffer range.
@@ -74,7 +76,7 @@ namespace lve
 			 *
 			 * @return vk::Result indiquant le succès ou l'échec de l'opération d'invalidation.
 			 */
-			vk::Result Invalidate(vk::DeviceSize _size = VK_WHOLE_SIZE, vk::DeviceSize _offset = 0);
+			vk::Result Invalidate(vk::DeviceSize _size = VK_WHOLE_SIZE, vk::DeviceSize _offset = 0) const;
 
 			/**
 			 * @brief Écrit les données dans l'index spécifié du tampon.

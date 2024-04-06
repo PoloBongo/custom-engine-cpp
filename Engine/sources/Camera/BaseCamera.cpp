@@ -128,7 +128,7 @@ namespace lve
 		_speed = Saturate(_speed);
 
 		const glm::vec3 targetForward = normalize(_point - position);
-		forward                 = normalize(Lerp(forward, targetForward, _speed));
+		forward                       = normalize(Lerp(forward, targetForward, _speed));
 
 		#if THOROUGH_CHECKS
 		if (IsNanOrInf(forward))
@@ -292,7 +292,7 @@ namespace lve
 	void BaseCamera::ClampPitch()
 	{
 		constexpr float pitch_limit = glm::radians(89.5f);
-		pitch            = glm::clamp(pitch, -pitch_limit, pitch_limit);
+		pitch                       = glm::clamp(pitch, -pitch_limit, pitch_limit);
 	}
 
 	float BaseCamera::CalculateEv100(const float _aperture, const float _shutterSpeed, const float _sensitivity)
@@ -309,6 +309,6 @@ namespace lve
 	void BaseCamera::CalculateExposure()
 	{
 		const float ev100 = CalculateEv100(aperture, shutterSpeed, lightSensitivity);
-		exposure    = ComputeExposureNormFactor(ev100);
+		exposure          = ComputeExposureNormFactor(ev100);
 	}
 } // namespace lve

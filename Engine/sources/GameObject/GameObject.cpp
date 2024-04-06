@@ -2,7 +2,7 @@
 #include "Transform.h"
 
 
-GameObject::GameObject()
+GameObject::GameObject(): id(0)
 {
 	this->isActive  = true;
 	this->transform = new Transform();
@@ -42,7 +42,6 @@ void GameObject::RemoveComponent(Component* _component)
 
 void GameObject::Init()
 {
-
 }
 
 void GameObject::Start()
@@ -73,7 +72,6 @@ void GameObject::Update(const float& _deltaTime) const
 
 void GameObject::PreRender()
 {
-	
 }
 
 void GameObject::Render(lve::LveWindow* _window) const
@@ -84,7 +82,7 @@ void GameObject::Render(lve::LveWindow* _window) const
 			if (component->GetVisible())
 			{
 				if (layerType == LayerType::Normal) component->Render(_window);
-				else if (layerType == LayerType::HUD) component->RenderGUI(_window);
+				else if (layerType == LayerType::HUD) component->RenderGui(_window);
 				else if (layerType == LayerType::Background) component->RenderBackground(_window);
 			}
 		}
@@ -92,22 +90,18 @@ void GameObject::Render(lve::LveWindow* _window) const
 
 void GameObject::RenderGui()
 {
-	
 }
 
 void GameObject::PostRender()
 {
-
 }
 
 void GameObject::Release()
 {
-	
 }
 
 void GameObject::Finalize()
 {
-	
 }
 
 

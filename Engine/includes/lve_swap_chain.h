@@ -33,7 +33,7 @@ namespace lve
 			 * @param _extent Étendue de la chaîne d'échanges.
 			 * @param _previous Pointeur partagé vers une précédente chaîne d'échanges.
 			 */
-			LveSwapChain(LveDevice& _deviceRef, vk::Extent2D _extent, std::shared_ptr<LveSwapChain> _previous);
+			LveSwapChain(LveDevice& _deviceRef, vk::Extent2D _extent, const std::shared_ptr<LveSwapChain>& _previous);
 
 			/**
 			 * @brief Destructeur.
@@ -148,7 +148,7 @@ namespace lve
 			 *
 			 * @return vk::Format Le format de profondeur adapté.
 			 */
-			vk::Format FindDepthFormat();
+			vk::Format FindDepthFormat() const;
 
 			/**
 			 * @brief Acquiert l'index de l'image suivante dans la chaîne de swaps.
@@ -158,7 +158,7 @@ namespace lve
 			 * @param _imageIndex Pointeur vers la variable où stocker l'index de l'image acquise.
 			 * @return VkResult Le résultat de l'opération.
 			 */
-			vk::Result AcquireNextImage(uint32_t* _imageIndex);
+			vk::Result AcquireNextImage(uint32_t* _imageIndex) const;
 
 			/**
 			 * @brief Soumet les command buffers pour exécution et présente le résultat.
@@ -257,7 +257,8 @@ namespace lve
 			 * @param _availableFormats Les formats de surface disponibles.
 			 * @return Le format de surface choisi.
 			 */
-			vk::SurfaceFormatKHR ChooseSwapSurfaceFormat(const std::vector<vk::SurfaceFormatKHR>& _availableFormats);
+			static vk::SurfaceFormatKHR ChooseSwapSurfaceFormat(
+				const std::vector<vk::SurfaceFormatKHR>& _availableFormats);
 
 			/**
 			 * @brief Choisissez le mode de présentation de la chaîne de swaps.
@@ -268,7 +269,8 @@ namespace lve
 			 * @param _availablePresentModes Les modes de présentation disponibles.
 			 * @return Le mode de présentation choisi.
 			 */
-			vk::PresentModeKHR ChooseSwapPresentMode(const std::vector<vk::PresentModeKHR>& _availablePresentModes);
+			static vk::PresentModeKHR ChooseSwapPresentMode(
+				const std::vector<vk::PresentModeKHR>& _availablePresentModes);
 
 			/**
 			 * @brief Choisissez l'étendue de la chaîne de swaps.
@@ -280,7 +282,7 @@ namespace lve
 			 * @param _capabilities Les capacités de la surface de rendu.
 			 * @return L'étendue de la chaîne de swaps choisie.
 			 */
-			vk::Extent2D ChooseSwapExtent(const vk::SurfaceCapabilitiesKHR& _capabilities);
+			vk::Extent2D ChooseSwapExtent(const vk::SurfaceCapabilitiesKHR& _capabilities) const;
 
 			vk::Format   swapChainImageFormat; /**< Format des images de la chaîne d'échanges. */
 			vk::Format   swapChainDepthFormat; /**< Format de profondeur de la chaîne d'échanges. */

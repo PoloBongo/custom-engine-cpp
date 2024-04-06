@@ -15,11 +15,6 @@ void SubSystem::Set(T* _instance)
 template <class T>
 T* SubSystem::Get()
 {
-	auto it = instances.find(typeid(T));
-	if (it != instances.end()) return static_cast<T*>(it->second);
+	if (const auto it = instances.find(typeid(T)); it != instances.end()) return static_cast<T*>(it->second);
 	return nullptr;
-}
-
-void startUp()
-{
 }

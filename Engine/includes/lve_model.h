@@ -131,7 +131,7 @@ namespace lve
 			 *
 			 * @param _commandBuffer Le tampon de commande auquel lier les tampons de vertex et d'index.
 			 */
-			void Bind(vk::CommandBuffer _commandBuffer);
+			void Bind(vk::CommandBuffer _commandBuffer) const;
 
 			/**
 			 * @brief Dessine les primitives géométriques à l'aide du tampon de commande spécifié.
@@ -141,7 +141,7 @@ namespace lve
 			 *
 			 * @param _commandBuffer Le tampon de commande utilisé pour dessiner les primitives géométriques.
 			 */
-			void Draw(vk::CommandBuffer _commandBuffer);
+			void Draw(vk::CommandBuffer _commandBuffer) const;
 
 		private:
 			/**

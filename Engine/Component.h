@@ -8,7 +8,7 @@ class Component
 {
 	public:
 		Component() = default;
-		explicit Component(GameObject* owner);
+		explicit Component(GameObject* _owner);
 		virtual  ~Component() = default;
 
 		virtual void Start();
@@ -17,7 +17,7 @@ class Component
 
 		//Render Methods
 		virtual void Render(lve::LveWindow* _window);
-		virtual void RenderGUI(lve::LveWindow* _window);
+		virtual void RenderGui(lve::LveWindow* _window);
 		virtual void RenderBackground(lve::LveWindow* _window);
 
 		GameObject* GetOwner() const { return owner; }
@@ -27,10 +27,10 @@ class Component
 		void        SetName(const char* _name) { name = _name; }
 
 		void SetActive(const bool& _state) { isActive = _state; }
-		bool GetActive() { return isActive; }
+		bool GetActive() const { return isActive; }
 
 		void SetVisible(const bool& _state) { isVisible = _state; }
-		bool GetVisible() { return isVisible; }
+		bool GetVisible() const { return isVisible; }
 
 		void SetActiveAndVisible(const bool& _state)
 		{

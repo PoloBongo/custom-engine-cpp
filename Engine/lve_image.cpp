@@ -16,73 +16,75 @@ namespace lve
 
 	void LveImage::CreateTextureImage()
 	{
-		int          texWidth, texHeight, texChannels;
-		stbi_uc*     pixels = stbi_load("textures/textures.jpg", &texWidth, &texHeight, &texChannels, STBI_rgb_alpha);
-		VkDeviceSize imageSize = texWidth * texHeight * 4;
+		int tex_width, tex_height, tex_channels;
+		stbi_uc* pixels = stbi_load("textures/textures.jpg", &tex_width, &tex_height, &tex_channels, STBI_rgb_alpha);
+		const VkDeviceSize image_size = tex_width * tex_height * 4;
 
 		if (!pixels) throw std::runtime_error("failed to load texture image");
 
-		vk::Buffer       stagingBuffer;
-		vk::DeviceMemory stagingBufferMemory;
+		vk::Buffer       staging_buffer;
+		vk::DeviceMemory staging_buffer_memory;
 
-		lveDevice.CreateBuffer(imageSize, vk::BufferUsageFlagBits::eTransferSrc,
+		lveDevice.CreateBuffer(image_size, vk::BufferUsageFlagBits::eTransferSrc,
 		                       vk::MemoryPropertyFlagBits::eHostVisible | vk::MemoryPropertyFlagBits::eHostCoherent,
-		                       stagingBuffer, stagingBufferMemory);
+		                       staging_buffer, staging_buffer_memory);
 
 		void* data;
-		if (lveDevice.Device().mapMemory(stagingBufferMemory, 0, imageSize, vk::MemoryMapFlags(), &data) !=
+		if (lveDevice.Device().mapMemory(staging_buffer_memory, 0, image_size, vk::MemoryMapFlags(), &data) !=
 		    vk::Result::eSuccess)
 			throw std::runtime_error("failed");
-		memcpy(data, pixels, imageSize);
-		lveDevice.Device().unmapMemory(stagingBufferMemory);
+		memcpy(data, pixels, image_size);
+		lveDevice.Device().unmapMemory(staging_buffer_memory);
 		stbi_image_free(pixels);
 
-		CreateImage(texWidth, texHeight, vk::Format::eR8G8B8A8Srgb, vk::ImageTiling::eOptimal,
+		CreateImage(tex_width, tex_height, vk::Format::eR8G8B8A8Srgb, vk::ImageTiling::eOptimal,
 		            vk::ImageUsageFlagBits::eTransferDst | vk::ImageUsageFlagBits::eSampled
 		            , vk::MemoryPropertyFlagBits::eDeviceLocal, textureImage, textureImageMemory);
 
-		lveDevice.CopyBufferToImage(stagingBuffer, textureImage, static_cast<uint32_t>(texWidth),
-		                            static_cast<uint32_t>(texHeight), 1);
+		lveDevice.CopyBufferToImage(staging_buffer, textureImage, static_cast<uint32_t>(tex_width),
+		                            static_cast<uint32_t>(tex_height), 1);
 
-		lveDevice.Device().destroyBuffer(stagingBuffer);
-		lveDevice.Device().freeMemory(stagingBufferMemory, nullptr);
+		lveDevice.Device().destroyBuffer(staging_buffer);
+		lveDevice.Device().freeMemory(staging_buffer_memory, nullptr);
 	}
 
-	void LveImage::CreateImage(uint32_t _width, uint32_t _height, vk::Format _format, vk::ImageTiling _tiling,
-	                           vk::ImageUsageFlags _usage,
-	                           vk::MemoryPropertyFlags _properties, vk::Image& _image, vk::DeviceMemory& _imageMemory)
+	void LveImage::CreateImage(const uint32_t                _width, const uint32_t _height, vk::Format _format,
+	                           vk::ImageTiling               _tiling,
+	                           vk::ImageUsageFlags           _usage,
+	                           const vk::MemoryPropertyFlags _properties, vk::Image& _image,
+	                           vk::DeviceMemory&             _imageMemory) const
 	{
-		vk::ImageCreateInfo imageInfo{};
-		imageInfo.sType         = vk::StructureType::eImageCreateInfo;
-		imageInfo.imageType     = vk::ImageType::e2D;
-		imageInfo.extent.width  = _width;
-		imageInfo.extent.height = _height;
-		imageInfo.extent.depth  = 1;
-		imageInfo.mipLevels     = 1;
-		imageInfo.arrayLayers   = 1;
-		imageInfo.format        = vk::Format::eR8G8B8A8Srgb;
+		vk::ImageCreateInfo image_info{};
+		image_info.sType         = vk::StructureType::eImageCreateInfo;
+		image_info.imageType     = vk::ImageType::e2D;
+		image_info.extent.width  = _width;
+		image_info.extent.height = _height;
+		image_info.extent.depth  = 1;
+		image_info.mipLevels     = 1;
+		image_info.arrayLayers   = 1;
+		image_info.format        = vk::Format::eR8G8B8A8Srgb;
 		//VK_IMAGE_TILING_LINEAR: Texels are laid out in row-major order like our pixels array
 		//VK_IMAGE_TILING_OPTIMAL: Texels are laid out in an implementation defined order for optimal access
-		imageInfo.tiling        = vk::ImageTiling::eOptimal;
-		imageInfo.initialLayout = vk::ImageLayout::eUndefined;
-		imageInfo.usage         = vk::ImageUsageFlagBits::eTransferDst | vk::ImageUsageFlagBits::eSampled;
-		imageInfo.sharingMode   = vk::SharingMode::eExclusive;
-		imageInfo.samples       = vk::SampleCountFlagBits::e1;
+		image_info.tiling        = vk::ImageTiling::eOptimal;
+		image_info.initialLayout = vk::ImageLayout::eUndefined;
+		image_info.usage         = vk::ImageUsageFlagBits::eTransferDst | vk::ImageUsageFlagBits::eSampled;
+		image_info.sharingMode   = vk::SharingMode::eExclusive;
+		image_info.samples       = vk::SampleCountFlagBits::e1;
 		//imageInfo.flags = 0; // Optional
 
-		if (lveDevice.Device().createImage(&imageInfo, nullptr, &_image) != vk::Result::eSuccess)
+		if (lveDevice.Device().createImage(&image_info, nullptr, &_image) != vk::Result::eSuccess)
 			throw
 				std::runtime_error("failed to create image!");
 
-		vk::MemoryRequirements memRequirements;
-		lveDevice.Device().getImageMemoryRequirements(_image, &memRequirements);
+		vk::MemoryRequirements mem_requirements;
+		lveDevice.Device().getImageMemoryRequirements(_image, &mem_requirements);
 
-		vk::MemoryAllocateInfo allocInfo{};
-		allocInfo.sType           = vk::StructureType::eMemoryAllocateInfo;
-		allocInfo.allocationSize  = memRequirements.size;
-		allocInfo.memoryTypeIndex = lveDevice.FindMemoryType(memRequirements.memoryTypeBits, _properties);
+		vk::MemoryAllocateInfo alloc_info{};
+		alloc_info.sType           = vk::StructureType::eMemoryAllocateInfo;
+		alloc_info.allocationSize  = mem_requirements.size;
+		alloc_info.memoryTypeIndex = lveDevice.FindMemoryType(mem_requirements.memoryTypeBits, _properties);
 
-		if (lveDevice.Device().allocateMemory(&allocInfo, nullptr, &_imageMemory) != vk::Result::eSuccess)
+		if (lveDevice.Device().allocateMemory(&alloc_info, nullptr, &_imageMemory) != vk::Result::eSuccess)
 			throw
 				std::runtime_error("failed to allocate image memory!");
 

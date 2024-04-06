@@ -37,7 +37,7 @@ namespace lve
 		 *
 		 * @return La matrice de transformation normale.
 		 */
-		glm::mat3 NormalMatrix();
+		glm::mat3 NormalMatrix() const;
 	};
 
 

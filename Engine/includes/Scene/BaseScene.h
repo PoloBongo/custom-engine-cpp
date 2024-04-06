@@ -65,9 +65,9 @@ class BaseScene
 
 
 		GameObject*              CreateGameObject();
-		void                     DestroyGameObject(GameObject* _gameObject);
-		GameObject*              GetGameObjectById(const GameObject::id_t& _gameObjectId);
-		std::vector<GameObject*> FindGameObjectsByName(const std::string& _name);
+		void                     DestroyGameObject(const GameObject* _gameObject);
+		GameObject*              GetGameObjectById(const GameObject::id_t& _gameObjectId) const;
+		std::vector<GameObject*> FindGameObjectsByName(const std::string& _name) const;
 
 
 		bool IsInitialized() const;
@@ -75,12 +75,12 @@ class BaseScene
 		void        SetName(const std::string& _name);
 		std::string GetName() const;
 		std::string GetDefaultRelativeFilePath() const;
-		auto        SetFileName(const std::string& _fileName, bool _bDeletePreviousFiles) const -> bool;
-		bool FileExists(const std::string& _filePath);
-		bool IsUsingSaveFile() const;
+		bool        SetFileName(const std::string& _fileName, bool _bDeletePreviousFiles) const;
+		bool        FileExists(const std::string& _filePath);
+		bool        IsUsingSaveFile() const;
 
-		void DeleteSaveFiles();
-
+		void        DeleteSaveFiles();
+		bool        Contains(const std::vector<GameObject::id_t>& _container, const GameObject::id_t& _value);
 		std::string GetFileName() const;
 
 
@@ -99,7 +99,7 @@ class BaseScene
 		void RemoveAllObjectsImmediate(); // Removes and destroys all objects in scene
 		void RemoveAllEditorObjectsImmediate();
 		void RemoveObject(const GameObject::id_t& _gameObjectId, bool _bDestroy);
-		void RemoveObject(GameObject* _gameObject, bool _bDestroy);
+		void RemoveObject(const GameObject* _gameObject, bool _bDestroy);
 		//void RemoveObjectImmediate(const GameObject::id_t& _gameObjectID, bool _bDestroy);
 		//void RemoveObjectImmediate(GameObject* _gameObject, bool _bDestroy);
 		void RemoveObjects(const std::vector<GameObject::id_t>& _gameObjects, bool _bDestroy);

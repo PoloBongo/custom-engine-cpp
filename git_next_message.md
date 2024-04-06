@@ -1,5 +1,3 @@
-NEW: Cleaning
+END: Fin cleaning
 
-- Nettoyage du reste des .h dans le dossier includes pour respecter la nomenclature et syntaxe
-- Début de nettoyage des .cpp dans le source
-- TODO : poursuivre le nettoyage
+- Nettoyage de la plus grande partie du code cpp et h

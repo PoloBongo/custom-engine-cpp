@@ -34,17 +34,20 @@ void SoundSystemModule::CreateSound(SoundClass* p_Sound, const char* p_pathAudio
 // Permet la création d'un groupe de son. //
 void SoundSystemModule::CreateSoundGroup(SoundGroup* p_pSoundGroup, const char* p_pathAudio) const
 {
-	if (const FMOD_RESULT result = system->createSoundGroup(p_pathAudio, p_pSoundGroup); result != FMOD_OK) std::cout << "le groupe n'a pas charge : " << FMOD_ErrorString(result) << std::endl;
+	if (const FMOD_RESULT result = system->createSoundGroup(p_pathAudio, p_pSoundGroup);
+		result != FMOD_OK) std::cout << "le groupe n'a pas charge : " << FMOD_ErrorString(result) << std::endl;
 }
 
 // Permet la récupération d'un groupe de son. //
 void SoundSystemModule::GetMasterSoundGroup(SoundGroup* p_pSound) const
 {
-	if (const FMOD_RESULT result = system->getMasterSoundGroup(p_pSound); result != FMOD_OK) std::cout << "le groupe n'a pas charge : " << FMOD_ErrorString(result) << std::endl;
+	if (const FMOD_RESULT result = system->getMasterSoundGroup(p_pSound);
+		result != FMOD_OK) std::cout << "le groupe n'a pas charge : " << FMOD_ErrorString(result) << std::endl;
 }
 
 // Permet de joué un son spécifique avec ces propres paramètres. //
-void SoundSystemModule::PlaySound(const SoundClass _pSound, const bool _isPlay, const int _loopCount, const float _volume, Channel* p_channelPtr) const
+void SoundSystemModule::PlaySound(const SoundClass _pSound, const bool _isPlay, const int _loopCount,
+                                  const float      _volume, Channel*   p_channelPtr) const
 {
 	FMOD::Channel* channel = nullptr;
 
@@ -91,8 +94,9 @@ void SoundSystemModule::AddSoundToGroup(const SoundClass _pSound, FMOD::ChannelG
 }
 
 // Implémentation des fonctions pour le routing vers les ports et la gestion de la réverbération //
-FMOD_RESULT SoundSystemModule::AttachChannelGroupToPort(const FMOD_PORT_TYPE _portType, const FMOD_PORT_INDEX _portIndex,
-                                                        FMOD::ChannelGroup*  p_channelGroup, const bool              _passThru) const
+FMOD_RESULT SoundSystemModule::AttachChannelGroupToPort(const FMOD_PORT_TYPE _portType,
+                                                        const FMOD_PORT_INDEX _portIndex,
+                                                        FMOD::ChannelGroup* p_channelGroup, const bool _passThru) const
 {
 	return system->attachChannelGroupToPort(_portType, _portIndex, p_channelGroup, _passThru);
 }

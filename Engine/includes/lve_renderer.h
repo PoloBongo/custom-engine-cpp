@@ -121,7 +121,7 @@ namespace lve
 			 *
 			 * @throws std::runtime_error si la commande de début de la passe de rendu échoue.
 			 */
-			void BeginSwapChainRenderPass(vk::CommandBuffer _commandBuffer);
+			void BeginSwapChainRenderPass(vk::CommandBuffer _commandBuffer) const;
 
 			/**
 			 * @brief Termine la passe de rendu de la chaîne de swaps.
@@ -132,7 +132,7 @@ namespace lve
 			 * @param _commandBuffer
 			 * @param commandBuffer Le tampon de commandes sur lequel terminer la passe de rendu.
 			 */
-			void EndSwapChainRenderPass(vk::CommandBuffer _commandBuffer);
+			void EndSwapChainRenderPass(vk::CommandBuffer _commandBuffer) const;
 
 		private:
 			/**

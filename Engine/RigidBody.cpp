@@ -9,41 +9,45 @@ RigidBody::RigidBody(btDiscreteDynamicsWorld* _dynamicsWorld, btCollisionShape* 
 
 	btTransform transform;
 	transform.setIdentity();
-	transform.setOrigin(Convertisseur::glmVec3ToBtVector3(_position));
+	transform.setOrigin(Convertisseur::GlmVec3ToBtVector3(_position));
 
-	auto                                     motionState = new btDefaultMotionState(transform);
-	btRigidBody::btRigidBodyConstructionInfo rbInfo(_mass, motionState, _shape, localInertia);
-	rigidBody = new btRigidBody(rbInfo);
+	auto                                     motion_state = new btDefaultMotionState(transform);
+	btRigidBody::btRigidBodyConstructionInfo rb_info(_mass, motion_state, _shape, localInertia);
+	rigidBody = new btRigidBody(rb_info);
 
 	dynamicsWorld->addRigidBody(rigidBody);
 }
 
-void RigidBody::Update(const float& _delta_time)
+void RigidBody::Update(const float& _deltaTime)
 {
 	dynamicsWorld->stepSimulation(1 / 60.f);
 }
 
-void RigidBody::AddForce(glm::vec3& _force)
+void RigidBody::AddForce(const glm::vec3& _force) const
 {
-	rigidBody->applyCentralForce(Convertisseur::glmVec3ToBtVector3(_force));
+	rigidBody->applyCentralForce(Convertisseur::GlmVec3ToBtVector3(_force));
 }
 
-void RigidBody::SetVelocity(glm::vec3& _velocity)
+/**
+ * \brief 
+ * \param _velocity 
+ */
+void RigidBody::SetVelocity(const glm::vec3& _velocity) const
 {
-	rigidBody->setLinearVelocity(Convertisseur::glmVec3ToBtVector3(_velocity));
+	rigidBody->setLinearVelocity(Convertisseur::GlmVec3ToBtVector3(_velocity));
 }
 
-btVector3 RigidBody::GetVelocity()
+btVector3 RigidBody::GetVelocity() const
 {
 	return rigidBody->getLinearVelocity();
 }
 
-void RigidBody::SetGravity(glm::vec3& _gravity)
+void RigidBody::SetGravity(const glm::vec3& _gravity) const
 {
-	rigidBody->setGravity(Convertisseur::glmVec3ToBtVector3(_gravity));
+	rigidBody->setGravity(Convertisseur::GlmVec3ToBtVector3(_gravity));
 }
 
-void RigidBody::SetKinematic(bool _isKinematic)
+void RigidBody::SetKinematic(const bool _isKinematic) const
 {
 	if (_isKinematic)
 	{
@@ -56,28 +60,28 @@ void RigidBody::SetKinematic(bool _isKinematic)
 	}
 }
 
-void RigidBody::SetRotationLocked(bool _lockRotationX, bool _lockRotationY, bool _lockRotationZ)
+void RigidBody::SetRotationLocked(const bool _lockRotationX, const bool _lockRotationY, const bool _lockRotationZ) const
 {
 	rigidBody->setAngularFactor(btVector3(_lockRotationX ? 0 : 1, _lockRotationY ? 0 : 1, _lockRotationZ ? 0 : 1));
 }
 
-void RigidBody::SetPosition(glm::vec3& _position, bool lockX, bool lockY, bool lockZ)
+void RigidBody::SetPosition(const glm::vec3& _position, const bool _lockX, const bool _lockY, const bool _lockZ) const
 {
 	btTransform transform;
 	transform.setIdentity();
-	transform.setOrigin(Convertisseur::glmVec3ToBtVector3(_position));
+	transform.setOrigin(Convertisseur::GlmVec3ToBtVector3(_position));
 
-	if (lockX)
+	if (_lockX)
 		transform.getBasis().setValue
 		(0, 0, 0,
 		 0, 1, 0,
 		 0, 0, 1);
-	if (lockY)
+	if (_lockY)
 		transform.getBasis().setValue
 		(1, 0, 0,
 		 0, 0, 0,
 		 0, 0, 1);
-	if (lockZ)
+	if (_lockZ)
 		transform.getBasis().setValue
 		(1, 0, 0,
 		 0, 1, 0,

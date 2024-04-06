@@ -12,7 +12,7 @@ std::vector<char> HUDModule::ReadFile(const std::string& _filename)
 	std::ifstream file(_filename, std::ios::ate | std::ios::binary);
 	if (!file.is_open()) throw std::runtime_error("Failed to open file: " + _filename);
 
-	const size_t            file_size = file.tellg();
+	const size_t      file_size = file.tellg();
 	std::vector<char> buffer(file_size);
 
 	file.seekg(0);
@@ -93,16 +93,18 @@ VkSampler HUDModule::CreateTextureSampler() const
 	return sampler;
 }
 
-HUDModule::HUDModule(const VkDevice _device, const VkRenderPass _renderPass, const VkQueue _graphicsQueue, const VkCommandPool _commandPool): device(
-	                                                                                                                                             _device), renderPass(
-	                                                                                                                                             _renderPass), graphicsQueue(
-	                                                                                                                                             _graphicsQueue), commandPool(
-	                                                                                                                                             _commandPool)
+HUDModule::HUDModule(const VkDevice      _device, const VkRenderPass _renderPass, const VkQueue _graphicsQueue,
+                     const VkCommandPool _commandPool): device(
+	                                                        _device), renderPass(
+	                                                        _renderPass), graphicsQueue(
+	                                                        _graphicsQueue), commandPool(
+	                                                        _commandPool)
 {
 }
 
 // Méthode pour ajouter un composant HUD
-void HUDModule::AddComponent(float _x, float _y, float _width, float _height, const std::string& _texturePath)
+void HUDModule::AddComponent(const float        _x, const float _y, const float _width, const float _height,
+                             const std::string& _texturePath)
 {
 	HUDComponent component{};
 	component.x      = _x;
@@ -118,13 +120,14 @@ void HUDModule::AddComponent(float _x, float _y, float _width, float _height, co
 
 void HUDModule::RemoveComponent()
 {
-
 }
+
+// TODO : demander à Adrien c'est quoi le mieux entre rester sur component ou passer sur la struct
 
 // Méthode pour nettoyer les composants HUD
 void HUDModule::CleanupComponents()
 {
-	for (auto& component : components)
+	for (const auto& component : components)
 	{
 		vkDestroySampler(device, component.sampler, nullptr);
 		vkDestroyImageView(device, component.imageView, nullptr);
@@ -140,78 +143,82 @@ void HUDModule::Render(VkCommandBuffer _commandBuffer)
 	// Utiliser les commandes Vulkan pour dessiner les textures des composants sur l'écran
 }
 
-void HUDModule::TransitionImageLayout(VkImage _image, VkFormat _format, VkImageLayout _oldLayout, VkImageLayout _newLayout)
+void HUDModule::TransitionImageLayout(VkImage       _image, VkFormat _format, VkImageLayout _oldLayout,
+                                      VkImageLayout _newLayout)
 {
 }
 
-void HUDModule::CreateBuffer(VkDeviceSize _size, VkBufferUsageFlags _usage, VkMemoryPropertyFlags _properties,
-                             VkBuffer&    _buffer, VkDeviceMemory&  _bufferMemory)
+void HUDModule::CreateBuffer(const VkDeviceSize    _size, const VkBufferUsageFlags _usage,
+                             VkMemoryPropertyFlags _properties,
+                             VkBuffer&             _buffer, VkDeviceMemory& _bufferMemory) const
 {
-	VkBufferCreateInfo bufferInfo{};
-	bufferInfo.sType       = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
-	bufferInfo.size        = _size;
-	bufferInfo.usage       = _usage;
-	bufferInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
+	VkBufferCreateInfo buffer_info{};
+	buffer_info.sType       = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
+	buffer_info.size        = _size;
+	buffer_info.usage       = _usage;
+	buffer_info.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
 
-	if (vkCreateBuffer(device, &bufferInfo, nullptr, &_buffer) != VK_SUCCESS)
+	if (vkCreateBuffer(device, &buffer_info, nullptr, &_buffer) != VK_SUCCESS)
 		throw std::runtime_error(
 			"Failed to create buffer");
 
 	VkMemoryRequirements memRequirements;
 	vkGetBufferMemoryRequirements(device, _buffer, &memRequirements);
 
-	VkMemoryAllocateInfo allocInfo{};
-	allocInfo.sType          = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
-	allocInfo.allocationSize = memRequirements.size;
+	VkMemoryAllocateInfo alloc_info{};
+	alloc_info.sType          = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
+	alloc_info.allocationSize = memRequirements.size;
 	//allocInfo.memoryTypeIndex = findMemoryType(memRequirements.memoryTypeBits, properties);
 
-	if (vkAllocateMemory(device, &allocInfo, nullptr, &_bufferMemory) != VK_SUCCESS)
+	if (vkAllocateMemory(device, &alloc_info, nullptr, &_bufferMemory) != VK_SUCCESS)
 		throw std::runtime_error(
 			"Failed to allocate buffer memory");
 
 	vkBindBufferMemory(device, _buffer, _bufferMemory, 0);
 }
 
-void HUDModule::CreateImage(VkDeviceSize          _size, VkFormat _format, VkImageTiling _tiling, VkImageUsageFlags _usage,
-                            VkMemoryPropertyFlags _properties, VkImage& _image, VkDeviceMemory& _imageMemory)
+void HUDModule::CreateImage(VkDeviceSize            _size, const VkFormat _format, const VkImageTiling _tiling,
+                            const VkImageUsageFlags _usage,
+                            VkMemoryPropertyFlags   _properties, VkImage& _image, VkDeviceMemory& _imageMemory) const
 {
-	VkImageCreateInfo imageInfo{};
-	imageInfo.sType         = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
-	imageInfo.imageType     = VK_IMAGE_TYPE_2D;
-	imageInfo.extent.width  = WIDTH;
-	imageInfo.extent.height = HEIGHT;
-	imageInfo.extent.depth  = 1;
-	imageInfo.mipLevels     = 1;
-	imageInfo.arrayLayers   = 1;
-	imageInfo.format        = _format;
-	imageInfo.tiling        = _tiling;
-	imageInfo.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
-	imageInfo.usage         = _usage;
-	imageInfo.samples       = VK_SAMPLE_COUNT_1_BIT;
-	imageInfo.sharingMode   = VK_SHARING_MODE_EXCLUSIVE;
+	VkImageCreateInfo image_info{};
+	image_info.sType         = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
+	image_info.imageType     = VK_IMAGE_TYPE_2D;
+	image_info.extent.width  = WIDTH;
+	image_info.extent.height = HEIGHT;
+	image_info.extent.depth  = 1;
+	image_info.mipLevels     = 1;
+	image_info.arrayLayers   = 1;
+	image_info.format        = _format;
+	image_info.tiling        = _tiling;
+	image_info.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+	image_info.usage         = _usage;
+	image_info.samples       = VK_SAMPLE_COUNT_1_BIT;
+	image_info.sharingMode   = VK_SHARING_MODE_EXCLUSIVE;
 
-	if (vkCreateImage(device, &imageInfo, nullptr, &_image) != VK_SUCCESS)
+	if (vkCreateImage(device, &image_info, nullptr, &_image) != VK_SUCCESS)
 		throw std::runtime_error(
 			"Failed to create image");
 
-	VkMemoryRequirements memRequirements;
-	vkGetImageMemoryRequirements(device, _image, &memRequirements);
+	VkMemoryRequirements mem_requirements;
+	vkGetImageMemoryRequirements(device, _image, &mem_requirements);
 
-	VkMemoryAllocateInfo allocInfo{};
-	allocInfo.sType          = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
-	allocInfo.allocationSize = memRequirements.size;
+	VkMemoryAllocateInfo alloc_info{};
+	alloc_info.sType          = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
+	alloc_info.allocationSize = mem_requirements.size;
 	//allocInfo.memoryTypeIndex = findMemoryType(memRequirements.memoryTypeBits, properties);
 
-	if (vkAllocateMemory(device, &allocInfo, nullptr, &_imageMemory) != VK_SUCCESS)
+	if (vkAllocateMemory(device, &alloc_info, nullptr, &_imageMemory) != VK_SUCCESS)
 		throw std::runtime_error(
 			"Failed to allocate image memory");
 
 	vkBindImageMemory(device, _image, _imageMemory, 0);
 }
 
-void HUDModule::CopyBufferToImage(VkBuffer _buffer, VkImage _image, uint32_t _width, uint32_t _height)
+void HUDModule::CopyBufferToImage(const VkBuffer _buffer, const VkImage _image, const uint32_t _width,
+                                  const uint32_t _height) const
 {
-	VkCommandBuffer commandBuffer;
+	VkCommandBuffer command_buffer;
 
 	// Allouer un tampon de commande
 	VkCommandBufferAllocateInfo allocInfo{};
@@ -219,13 +226,13 @@ void HUDModule::CopyBufferToImage(VkBuffer _buffer, VkImage _image, uint32_t _wi
 	allocInfo.level              = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
 	allocInfo.commandPool        = commandPool;
 	allocInfo.commandBufferCount = 1;
-	vkAllocateCommandBuffers(device, &allocInfo, &commandBuffer);
+	vkAllocateCommandBuffers(device, &allocInfo, &command_buffer);
 
 	// Commencer l'enregistrement des commandes
 	VkCommandBufferBeginInfo beginInfo{};
 	beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
 	beginInfo.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
-	vkBeginCommandBuffer(commandBuffer, &beginInfo);
+	vkBeginCommandBuffer(command_buffer, &beginInfo);
 
 	// Copier le tampon vers l'image
 	VkBufferImageCopy region{};
@@ -238,21 +245,21 @@ void HUDModule::CopyBufferToImage(VkBuffer _buffer, VkImage _image, uint32_t _wi
 	region.imageSubresource.layerCount     = 1;
 	region.imageOffset                     = {0, 0, 0};
 	region.imageExtent                     = {_width, _height, 1};
-	vkCmdCopyBufferToImage(commandBuffer, _buffer, _image, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1, &region);
+	vkCmdCopyBufferToImage(command_buffer, _buffer, _image, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1, &region);
 
 	// Terminer l'enregistrement des commandes
-	vkEndCommandBuffer(commandBuffer);
+	vkEndCommandBuffer(command_buffer);
 
 	// Soumettre le tampon de commande pour exécution
-	VkSubmitInfo submitInfo{};
-	submitInfo.sType              = VK_STRUCTURE_TYPE_SUBMIT_INFO;
-	submitInfo.commandBufferCount = 1;
-	submitInfo.pCommandBuffers    = &commandBuffer;
-	vkQueueSubmit(graphicsQueue, 1, &submitInfo, VK_NULL_HANDLE);
+	VkSubmitInfo submit_info{};
+	submit_info.sType              = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+	submit_info.commandBufferCount = 1;
+	submit_info.pCommandBuffers    = &command_buffer;
+	vkQueueSubmit(graphicsQueue, 1, &submit_info, VK_NULL_HANDLE);
 	vkQueueWaitIdle(graphicsQueue);
 
 	// Libérer le tampon de commande
-	vkFreeCommandBuffers(device, commandPool, 1, &commandBuffer);
+	vkFreeCommandBuffers(device, commandPool, 1, &command_buffer);
 }
 
 VkImageView HUDModule::CreateImageView(VkImage _image, VkFormat _format, VkImageAspectFlags _aspectFlags)

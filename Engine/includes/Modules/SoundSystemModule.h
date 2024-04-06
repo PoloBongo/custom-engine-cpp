@@ -88,7 +88,11 @@ class SoundSystemModule final : public Module
 		 * @param _max Distance maximum du son
 		 * @return La distance minimum et maximum définie
 		 */
-		float Set3DMinMaxDistance(const float _min, const float _max) { min = _min; max = _max; }
+		float Set3DMinMaxDistance(const float _min, const float _max)
+		{
+			min = _min;
+			max = _max;
+		}
 
 		/**
 		 * @brief Obtient la distance minimum et maximum pour un son 3D
@@ -113,7 +117,7 @@ class SoundSystemModule final : public Module
 		 * @return Résultat de l'opération d'attache du groupe de canaux au port
 		 */
 		FMOD_RESULT AttachChannelGroupToPort(FMOD_PORT_TYPE      _portType, FMOD_PORT_INDEX _portIndex,
-		                                     FMOD::ChannelGroup* p_channelGroup, bool        _passThru = false) const;
+		                                     FMOD::ChannelGroup* p_channelGroup, bool       _passThru = false) const;
 
 		/**
 		 * @brief Détache un groupe de canaux d'un port auquel il était précédemment attaché

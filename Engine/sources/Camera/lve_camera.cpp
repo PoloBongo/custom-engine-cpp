@@ -7,7 +7,8 @@
 namespace lve
 {
 	void LveCamera::SetOrthographicProjection(
-		float _left, float _right, float _top, float _bottom, float _near, float _far)
+		const float _left, const float _right, const float _top, const float _bottom, const float _near,
+		const float _far)
 	{
 		projectionMatrix       = glm::mat4{1.0f};
 		projectionMatrix[0][0] = 2.f / (_right - _left);
@@ -18,16 +19,17 @@ namespace lve
 		projectionMatrix[3][2] = -_near / (_far - _near);
 	}
 
-	void LveCamera::SetPerspectiveProjection(const float _fovY, const float _aspect, const float _near, const float _far)
+	void LveCamera::SetPerspectiveProjection(const float _fovY, const float _aspect, const float _near,
+	                                         const float _far)
 	{
 		assert(glm::abs(_aspect - std::numeric_limits<float>::epsilon()) > 0.0f);
-		const float tan_half_fovy = tan(_fovY / 2.f);
-		projectionMatrix        = glm::mat4{0.0f};
-		projectionMatrix[0][0]  = 1.f / (_aspect * tan_half_fovy);
-		projectionMatrix[1][1]  = 1.f / (tan_half_fovy);
-		projectionMatrix[2][2]  = _far / (_far - _near);
-		projectionMatrix[2][3]  = 1.f;
-		projectionMatrix[3][2]  = -(_far * _near) / (_far - _near);
+		const float tan_half_fov_y = tan(_fovY / 2.f);
+		projectionMatrix           = glm::mat4{0.0f};
+		projectionMatrix[0][0]     = 1.f / (_aspect * tan_half_fov_y);
+		projectionMatrix[1][1]     = 1.f / (tan_half_fov_y);
+		projectionMatrix[2][2]     = _far / (_far - _near);
+		projectionMatrix[2][3]     = 1.f;
+		projectionMatrix[3][2]     = -(_far * _near) / (_far - _near);
 	}
 
 	void LveCamera::SetViewDirection(const glm::vec3 _position, const glm::vec3 _direction, const glm::vec3 _up)

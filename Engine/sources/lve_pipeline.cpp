@@ -32,12 +32,12 @@ namespace lve
 
 	std::vector<char> LvePipeline::ReadFile(const std::string& _filepath)
 	{
-		const std::string   engine_path = ENGINE_DIR + _filepath;
-		std::ifstream file{engine_path, std::ios::ate | std::ios::binary};
+		const std::string engine_path = ENGINE_DIR + _filepath;
+		std::ifstream     file{engine_path, std::ios::ate | std::ios::binary};
 
 		if (!file.is_open()) throw std::runtime_error("failed to open file: " + _filepath);
 
-		const size_t            file_size = file.tellg();
+		const size_t      file_size = file.tellg();
 		std::vector<char> buffer(file_size);
 
 		file.seekg(0);

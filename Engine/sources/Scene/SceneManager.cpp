@@ -30,7 +30,7 @@ void SceneManager::CreateScene(std::string _name, bool _isActive)
  * @brief Récupère le nombre de scènes.
  * @return Le nombre de scènes.
  */
-int SceneManager::SceneCount()
+int SceneManager::SceneCount() const
 {
 	int count = 0;
 	if (!listScenes.empty()) count = listScenes.size();
@@ -41,15 +41,12 @@ int SceneManager::SceneCount()
  * @brief Récupère le nom de la scène active.
  * @return Le nom de la scène active, ou "None" si aucune scène n'est active.
  */
-std::string SceneManager::GetActiveScene()
+std::string SceneManager::GetActiveScene() const
 {
-	std::string _name;
-	bool        isActive;
 	for (const auto scene : listScenes)
 	{
-		_name    = scene.first;
-		isActive = scene.second;
-		if (isActive) return _name;
+		std::string name = scene.first;
+		if (bool is_active = scene.second) return name;
 	}
 	return "None";
 }
@@ -58,13 +55,12 @@ std::string SceneManager::GetActiveScene()
  * @brief Récupère le nom de la première scène dans la liste des scènes.
  * @return Le nom de la première scène, ou "None" si la liste des scènes est vide.
  */
-std::string SceneManager::GetListScenes()
+std::string SceneManager::GetListScenes() const
 {
-	std::string _name;
 	for (const auto scene : listScenes)
 	{
-		_name = scene.first;
-		return _name;
+		std::string name = scene.first;
+		return name;
 	}
 	return "None";
 }
@@ -74,13 +70,13 @@ std::string SceneManager::GetListScenes()
  * @param _index Index de la scène à récupérer.
  * @return Une paire contenant le nom de la scène et son état d'activité, ou une paire "None" si l'index est invalide.
  */
-std::pair<std::string, bool> SceneManager::GetSceneAt(int _index)
+std::pair<std::string, bool> SceneManager::GetSceneAt(const int _index)
 {
 	if (!listScenes.empty())
 	{
-		auto findName = listScenes.begin();
-		std::advance(findName, _index);
-		return *findName;
+		auto find_name = listScenes.begin();
+		std::advance(find_name, _index);
+		return *find_name;
 	}
 	return {"None", false};
 }
@@ -92,7 +88,7 @@ std::pair<std::string, bool> SceneManager::GetSceneAt(int _index)
  */
 void SceneManager::DestroyScene(const std::string& _sceneName)
 {
-	auto it = listScenes.find(_sceneName);
+	const auto it = listScenes.find(_sceneName);
 	if (it != listScenes.end()) listScenes.erase(it);
 }
 
@@ -100,7 +96,7 @@ void SceneManager::DestroyScene(const std::string& _sceneName)
  * @brief Définit la scène courante par son index dans la liste des scènes.
  * @param _sceneIndex Index de la scène à définir comme scène courante.
  */
-void SceneManager::SetCurrentScene(int _sceneIndex)
+void SceneManager::SetCurrentScene(const int _sceneIndex)
 {
 	if (_sceneIndex >= 0 && _sceneIndex < static_cast<int>(scenes.size())) currentSceneIndex = _sceneIndex;
 }
@@ -143,7 +139,7 @@ void SceneManager::Destroy()
 {
 	if (currentSceneIndex >= 0 && currentSceneIndex < static_cast<int>(scenes.size()))
 		scenes[currentSceneIndex]->
-			Destroy();
+			Finalize();
 
 	scenes.clear();
 	currentSceneIndex = -1;
@@ -166,11 +162,11 @@ bool SceneManager::SceneFileExists(const std::string& fileName) const
 
 
 //--------------------------A MODIFIER TRES SIMPLIFIE------------------------------------
-GameObject* CreateGameObjectFromSceneData(const std::string& sceneObjectName)
+GameObject* SceneManager::CreateGameObjectFromSceneData()
 {
-	auto gameObject = new GameObject();
+	const auto game_object = new GameObject();
 
-	return gameObject;
+	return game_object;
 }
 
 /**
@@ -198,21 +194,20 @@ bool SceneManager::LoadSceneFromFile(const std::string& _fileName)
 	// Lire le contenu du fichier de scène
 	std::stringstream buffer;
 	buffer << file.rdbuf();
-	std::string sceneData = buffer.str();
+	std::string scene_data = buffer.str();
 
 	// Fermer le fichier
 	file.close();
 
 	// Analyser les données de la scène
-	std::istringstream sceneStream(sceneData);
-	std::string        sceneObjectName;
-	while (sceneStream >> sceneObjectName)
+	std::istringstream scene_stream(scene_data);
+	std::string        scene_object_name;
+	while (scene_stream >> scene_object_name)
 	{
-		GameObject* gameObject = CreateGameObjectFromSceneData(sceneObjectName);
-		if (gameObject)
+		if (GameObject* game_object = CreateGameObjectFromSceneData())
 			// Ajouter l'objet de scène à la scène courante
-			GetCurrentScene()->AddRootObject(gameObject);
-		else std::cerr << "Erreur : Impossible de créer l'objet de scène '" << sceneObjectName << "'." << std::endl;
+			GetCurrentScene()->AddRootObject(game_object);
+		else std::cerr << "Erreur : Impossible de créer l'objet de scène '" << scene_object_name << "'." << std::endl;
 	}
 
 	std::cout << "Chargement de la scène depuis le fichier '" << _fileName << "' terminé." << std::endl;
@@ -225,8 +220,8 @@ bool SceneManager::LoadSceneFromFile(const std::string& _fileName)
  */
 void SceneManager::SetMainScene(const std::string& _sceneName)
 {
-	auto it = listScenes.find(_sceneName);
-	if (it != listScenes.end()) currentSceneIndex = std::distance(listScenes.begin(), it);
+	if (const auto it = listScenes.find(_sceneName);
+		it != listScenes.end()) currentSceneIndex = std::distance(listScenes.begin(), it);
 }
 
 
@@ -237,8 +232,8 @@ void SceneManager::SetMainScene(const std::string& _sceneName)
  */
 BaseScene* SceneManager::GetScene(const std::string& _sceneName)
 {
-	auto it = listScenes.find(_sceneName);
-	if (it != listScenes.end()) return scenes[std::distance(listScenes.begin(), it)].get();
+	if (const auto it = listScenes.find(_sceneName); it != listScenes.end()) return scenes[std::distance(
+		listScenes.begin(), it)].get();
 	return nullptr;
 }
 
@@ -249,8 +244,7 @@ BaseScene* SceneManager::GetScene(const std::string& _sceneName)
  */
 void SceneManager::RenameScene(const std::string& _oldName, const std::string& _newName)
 {
-	auto it = listScenes.find(_oldName);
-	if (it != listScenes.end())
+	if (const auto it = listScenes.find(_oldName); it != listScenes.end())
 	{
 		listScenes[_newName] = it->second;
 		listScenes.erase(it);
@@ -261,17 +255,17 @@ void SceneManager::RenameScene(const std::string& _oldName, const std::string& _
  * @brief Met à jour la scène principale.
  * Appelle la méthode Update de la scène principale avec un delta time fixe.
  */
-void SceneManager::UpdateMainScene()
+void SceneManager::UpdateMainScene() const
 {
-	float deltaTime = 0.016f;
-	mainScene->Update(deltaTime); // Appel de la méthode Update de BaseScene
+	constexpr float delta_time = 0.016f;
+	mainScene->Update(delta_time); // Appel de la méthode Update de BaseScene
 }
 
 /**
  * @brief Effectue le rendu de la scène principale.
  * Appelle la méthode Render de la scène principale en passant le pointeur de la fenêtre.
  */
-void SceneManager::RenderMainScene()
+void SceneManager::RenderMainScene() const
 {
 	mainScene->Render(windowModule->GetWindow()); // Passer le pointeur de la fenêtre à la fonction Render
 }

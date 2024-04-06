@@ -9,7 +9,7 @@
 
 void ImGuiModule::ImmediateSubmit(std::function<void(vk::CommandBuffer _cmd)>&& _function) const
 {
-	const vk::Device device        = windowModule->GetDevice()->Device();
+	const vk::Device device         = windowModule->GetDevice()->Device();
 	const vk::Queue  graphics_queue = windowModule->GetDevice()->GraphicsQueue();
 
 	device.resetFences(immFence);
@@ -50,20 +50,20 @@ void ImGuiModule::Init()
 
 	windowModule = moduleModule->GetModule<WindowModule>();
 
-	device                                           = windowModule->GetDevice()->Device();
-	graphicsQueue                                    = windowModule->GetDevice()->GraphicsQueue();
+	device                                             = windowModule->GetDevice()->Device();
+	graphicsQueue                                      = windowModule->GetDevice()->GraphicsQueue();
 	const lve::QueueFamilyIndices queue_family_indices = windowModule->GetDevice()->FindPhysicalQueueFamilies();
 
 	// Création du pool de commandes
 	const vk::CommandPoolCreateInfo command_pool_info(
-		vk::CommandPoolCreateFlags(),     // Flags de création
+		vk::CommandPoolCreateFlags(),       // Flags de création
 		queue_family_indices.graphicsFamily // Indice de la famille de file d'attente de commandes
 	);
 	immCommandPool = device.createCommandPool(command_pool_info);
 
 	// Allocation du tampon de commande pour les soumissions immédiates
 	const vk::CommandBufferAllocateInfo cmd_alloc_info(
-		immCommandPool,                  // Pool de commandes
+		immCommandPool,                   // Pool de commandes
 		vk::CommandBufferLevel::ePrimary, // Niveau du tampon de commande
 		1                                 // Nombre de tampons à allouer
 	);
@@ -103,8 +103,8 @@ void ImGuiModule::Start()
 	pool_info.poolSizeCount                = static_cast<uint32_t>(std::size(pool_sizes));
 	pool_info.pPoolSizes                   = pool_sizes;
 
-	vk::DescriptorPool imgui_pool;
-	if (windowModule->GetDevice()->Device().createDescriptorPool(&pool_info, nullptr, &imgui_pool) !=
+	vk::DescriptorPool im_gui_pool;
+	if (windowModule->GetDevice()->Device().createDescriptorPool(&pool_info, nullptr, &im_gui_pool) !=
 	    vk::Result::eSuccess)
 		throw std::runtime_error("Impossible de creer la pool de imgui!");
 
@@ -123,7 +123,7 @@ void ImGuiModule::Start()
 	init_info.PhysicalDevice            = windowModule->GetDevice()->GetPhysicalDevice();
 	init_info.Device                    = device;
 	init_info.Queue                     = graphicsQueue;
-	init_info.DescriptorPool            = imgui_pool;
+	init_info.DescriptorPool            = im_gui_pool;
 	init_info.MinImageCount             = 3;
 	init_info.ImageCount                = 3;
 	init_info.RenderPass                = windowModule->GetRenderer()->GetSwapChainRenderPass();
