@@ -1,5 +1,7 @@
 #include "EngineTestCode.h"
 
+#include "Modules/DebugModule.h"
+
 void EngineTestCode::TestCode()
 {
 	//sceneModule.CreateScene("Bongo", false);

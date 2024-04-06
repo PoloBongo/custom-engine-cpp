@@ -1,7 +1,7 @@
 #include "SphereCollider.h"
 
-SphereCollider::SphereCollider(btDiscreteDynamicsWorld* _dynamicsWorld, glm::vec3 _center, glm::vec3 _position,
-                               btCollisionWorld*        _collisionWorld)
+SphereCollider::SphereCollider(btDiscreteDynamicsWorld* _dynamicsWorld, const glm::vec3 _center, glm::vec3 _position,
+                               btCollisionWorld*        _collisionWorld): rigidBody(nullptr)
 {
 	// Créer la forme de collision
 	collisionShape = new btSphereShape(1.0f); // Par exemple, rayon de la sphère de 1 unité
@@ -12,24 +12,24 @@ SphereCollider::SphereCollider(btDiscreteDynamicsWorld* _dynamicsWorld, glm::vec
 
 	btTransform transform;
 	transform.setIdentity();
-	transform.setOrigin(Convertisseur::glmVec3ToBtVector3(_center));
+	transform.setOrigin(Convertisseur::GlmVec3ToBtVector3(_center));
 	ghostObject->setWorldTransform(transform);
 
 	_collisionWorld->addCollisionObject(ghostObject);
 	_dynamicsWorld->addRigidBody(rigidBody);
 }
 
-void SphereCollider::SetRadius(float _radius)
+void SphereCollider::SetRadius(const float _radius)
 {
 	delete collisionShape;
 	collisionShape = new btSphereShape(_radius);
 	ghostObject->setCollisionShape(collisionShape);
 }
 
-void SphereCollider::SetCenter(glm::vec3 _center)
+void SphereCollider::SetCenter(const glm::vec3 _center) const
 {
 	btTransform transform = ghostObject->getWorldTransform();
-	transform.setOrigin(Convertisseur::glmVec3ToBtVector3(_center));
+	transform.setOrigin(Convertisseur::GlmVec3ToBtVector3(_center));
 	ghostObject->setWorldTransform(transform);
 }
 

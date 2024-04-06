@@ -40,7 +40,7 @@ namespace lve
 			 *
 			 * @return vk::RenderPass L'objet de rendu associé à la chaîne de swap.
 			 */
-			vk::RenderPass GetSwapChainRenderPass() const { return lveSwapChain->getRenderPass(); }
+			[[nodiscard]] vk::RenderPass GetSwapChainRenderPass() const { return lveSwapChain->GetRenderPass(); }
 
 			/**
 			 * @brief Obtient le ratio de l'aspect de la fenêtre associée à la chaîne de swap.
@@ -49,7 +49,7 @@ namespace lve
 			 *
 			 * @return float Le ratio de l'aspect de la fenêtre.
 			 */
-			float GetAspectRatio() const { return lveSwapChain->extentAspectRatio(); }
+			[[nodiscard]] float GetAspectRatio() const { return lveSwapChain->ExtentAspectRatio(); }
 
 			/**
 			 * @brief Vérifie si un cadre est en cours.
@@ -58,7 +58,7 @@ namespace lve
 			 *
 			 * @return bool Vrai si un cadre est en cours, sinon faux.
 			 */
-			bool IsFrameInProgress() const { return isFrameStarted; }
+			[[nodiscard]] bool IsFrameInProgress() const { return isFrameStarted; }
 
 			/**
 			 * @brief Obtient le tampon de commandes actuel.
@@ -68,7 +68,7 @@ namespace lve
 			 * @return VkCommandBuffer Le tampon de commandes actuel.
 			 * @throws std::runtime_error si aucun cadre n'est en cours.
 			 */
-			vk::CommandBuffer GetCurrentCommandBuffer() const
+			[[nodiscard]] vk::CommandBuffer GetCurrentCommandBuffer() const
 			{
 				assert(isFrameStarted && "Cannot get command buffer when frame not in progress");
 				return commandBuffers[currentFrameIndex];
@@ -82,7 +82,7 @@ namespace lve
 			 * @return int L'index du cadre en cours.
 			 * @throws std::runtime_error si aucun cadre n'est en cours.
 			 */
-			int GetFrameIndex() const
+			[[nodiscard]] int GetFrameIndex() const
 			{
 				assert(isFrameStarted && "Cannot get frame index when frame not in progress");
 				return currentFrameIndex;
@@ -116,11 +116,12 @@ namespace lve
 			 * Cette fonction démarre la passe de rendu de la chaîne de swaps en commençant par initialiser
 			 * les informations sur le rendu, en définissant la zone de rendu et en définissant les valeurs de nettoyage.
 			 *
+			 * @param _commandBuffer
 			 * @param commandBuffer Le tampon de commandes sur lequel commencer la passe de rendu.
 			 *
 			 * @throws std::runtime_error si la commande de début de la passe de rendu échoue.
 			 */
-			void BeginSwapChainRenderPass(vk::CommandBuffer _commandBuffer);
+			void BeginSwapChainRenderPass(vk::CommandBuffer _commandBuffer) const;
 
 			/**
 			 * @brief Termine la passe de rendu de la chaîne de swaps.
@@ -128,9 +129,10 @@ namespace lve
 			 * Cette fonction termine la passe de rendu de la chaîne de swaps en appelant la commande de fin
 			 * de la passe de rendu sur le tampon de commandes spécifié.
 			 *
+			 * @param _commandBuffer
 			 * @param commandBuffer Le tampon de commandes sur lequel terminer la passe de rendu.
 			 */
-			void EndSwapChainRenderPass(vk::CommandBuffer _commandBuffer);
+			void EndSwapChainRenderPass(vk::CommandBuffer _commandBuffer) const;
 
 		private:
 			/**

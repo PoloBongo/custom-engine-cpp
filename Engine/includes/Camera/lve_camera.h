@@ -34,15 +34,15 @@ namespace lve
 			 * Cette fonction configure la matrice de projection pour une projection en perspective.
 			 * Une projection en perspective est une méthode de projection en infographie qui crée une illusion de profondeur en donnant aux objets plus éloignés l'air d'être plus petits qu'ils ne le sont réellement.
 			 *
-			 * @param _fovy L'angle de champ vertical de la vue en degrés.
+			 * @param _fovY L'angle de champ vertical de la vue en degrés.
 			 * @param _aspect Le rapport d'aspect de la vue, défini comme la largeur de la fenêtre divisée par sa hauteur.
 			 * @param _near La distance au plan de vue proche.
 			 * @param _far La distance au plan de vue éloignée.
 			 *
 			 * @note Cette fonction exige que `_aspect` soit différent de zéro.
-			 * @note L'angle de champ vertical `_fovy` est spécifié en degrés.
+			 * @note L'angle de champ vertical `_fovY` est spécifié en degrés.
 			 */
-			void SetPerspectiveProjection(float _fovy, float _aspect, float _near, float _far);
+			void SetPerspectiveProjection(float _fovY, float _aspect, float _near, float _far);
 
 			/**
 			 * @brief Définit la direction de vue de la caméra.
@@ -93,7 +93,7 @@ namespace lve
 			 *
 			 * @return const glm::mat4& La matrice de projection.
 			 */
-			const glm::mat4& GetProjection() const { return projectionMatrix; }
+			[[nodiscard]] const glm::mat4& GetProjection() const { return projectionMatrix; }
 
 			/**
 			* @brief Renvoie la matrice de vue.
@@ -103,7 +103,7 @@ namespace lve
 			*
 			* @return const glm::mat4& La matrice de vue.
 			*/
-			const glm::mat4& GetView() const { return viewMatrix; }
+			[[nodiscard]] const glm::mat4& GetView() const { return viewMatrix; }
 
 
 			/**
@@ -111,14 +111,14 @@ namespace lve
 			 *
 			 * @return La référence constante vers la matrice de vue inverse.
 			 */
-			const glm::mat4& GetInverseView() const { return inverseViewMatrix; }
+			[[nodiscard]] const glm::mat4& GetInverseView() const { return inverseViewMatrix; }
 
 			/**
 			 * @brief Obtient la position de la caméra.
 			 *
 			 * @return La position de la caméra en tant que vecteur glm::vec3.
 			 */
-			const glm::vec3 GetPosition() const { return glm::vec3(inverseViewMatrix[3]); }
+			glm::vec3 GetPosition() const { return glm::vec3(inverseViewMatrix[3]); }
 
 		private:
 			glm::mat4 projectionMatrix{1.f};  /**< Matrice de projection. */

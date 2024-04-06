@@ -1,3 +1,3 @@
-FIX: IMGUI
+END: Fin cleaning
 
-- Réparation de IMGUI
+- Nettoyage de la plus grande partie du code cpp et h

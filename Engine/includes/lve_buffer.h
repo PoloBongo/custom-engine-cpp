@@ -30,12 +30,12 @@ namespace lve
 			 *
 			 * @return vk::Result indiquant le succès ou l'échec de l'opération de mappage.
 			 */
-			vk::Result map(vk::DeviceSize _size = VK_WHOLE_SIZE, vk::DeviceSize _offset = 0);
+			vk::Result Map(vk::DeviceSize _size = VK_WHOLE_SIZE, vk::DeviceSize _offset = 0);
 
 			/**
 			 * @brief Désalloue le tampon mappé en mémoire.
 			 */
-			void unmap();
+			void Unmap();
 
 			/**
 			 * @brief Écrit les données dans le tampon.
@@ -44,7 +44,8 @@ namespace lve
 			 * @param _size La taille des données à écrire dans le tampon. Par défaut, toute la taille des données est écrite.
 			 * @param _offset Le décalage à partir du début du tampon où écrire les données. Par défaut, les données sont écrites à partir du début du tampon.
 			 */
-			void writeToBuffer(void* _data, vk::DeviceSize _size = VK_WHOLE_SIZE, vk::DeviceSize _offset = 0);
+			void WriteToBuffer(const void*    _data, vk::DeviceSize _size = VK_WHOLE_SIZE,
+			                   vk::DeviceSize _offset                     = 0) const;
 
 			/**
 			 * @brief Flushes the memory-mapped buffer range.
@@ -54,7 +55,7 @@ namespace lve
 			 *
 			 * @return vk::Result indiquant le succès ou l'échec de l'opération de flush.
 			 */
-			vk::Result flush(vk::DeviceSize _size = VK_WHOLE_SIZE, vk::DeviceSize _offset = 0);
+			vk::Result Flush(vk::DeviceSize _size = VK_WHOLE_SIZE, vk::DeviceSize _offset = 0) const;
 
 			/**
 			 * @brief Récupère les informations de tampon de descripteur.
@@ -64,7 +65,8 @@ namespace lve
 			 *
 			 * @return vk::DescriptorBufferInfo contenant les informations de tampon de descripteur.
 			 */
-			vk::DescriptorBufferInfo descriptorInfo(vk::DeviceSize _size = VK_WHOLE_SIZE, vk::DeviceSize _offset = 0);
+			vk::DescriptorBufferInfo DescriptorInfo(vk::DeviceSize _size   = VK_WHOLE_SIZE,
+			                                        vk::DeviceSize _offset = 0) const;
 
 			/**
 			 * @brief Invalidate the memory-mapped buffer range.
@@ -74,7 +76,7 @@ namespace lve
 			 *
 			 * @return vk::Result indiquant le succès ou l'échec de l'opération d'invalidation.
 			 */
-			vk::Result invalidate(vk::DeviceSize _size = VK_WHOLE_SIZE, vk::DeviceSize _offset = 0);
+			vk::Result Invalidate(vk::DeviceSize _size = VK_WHOLE_SIZE, vk::DeviceSize _offset = 0) const;
 
 			/**
 			 * @brief Écrit les données dans l'index spécifié du tampon.
@@ -82,7 +84,7 @@ namespace lve
 			 * @param _data Pointeur vers les données à écrire dans le tampon.
 			 * @param _index L'index dans le tampon où écrire les données.
 			 */
-			void writeToIndex(void* _data, int _index);
+			void WriteToIndex(void* _data, int _index);
 
 			/**
 			 * @brief Flushes the memory-mapped buffer range for the specified index.
@@ -91,7 +93,7 @@ namespace lve
 			 *
 			 * @return vk::Result indiquant le succès ou l'échec de l'opération de flush.
 			 */
-			vk::Result flushIndex(int _index);
+			vk::Result FlushIndex(int _index);
 
 			/**
 			 * @brief Récupère les informations de tampon de descripteur pour l'index spécifié.
@@ -100,7 +102,7 @@ namespace lve
 			 *
 			 * @return vk::DescriptorBufferInfo contenant les informations de tampon de descripteur pour l'index spécifié.
 			 */
-			vk::DescriptorBufferInfo descriptorInfoForIndex(int _index);
+			vk::DescriptorBufferInfo DescriptorInfoForIndex(int _index);
 
 			/**
 			 * @brief Invalide la plage du tampon pour l'index spécifié.
@@ -109,63 +111,63 @@ namespace lve
 			 *
 			 * @return vk::Result indiquant le succès ou l'échec de l'opération d'invalidation.
 			 */
-			vk::Result invalidateIndex(int _index);
+			vk::Result InvalidateIndex(int _index);
 
 			/**
 			 * @brief Récupère le tampon Vulkan associé à l'objet LveBuffer.
 			 *
 			 * @return vk::Buffer contenant le tampon Vulkan.
 			 */
-			vk::Buffer getBuffer() const { return buffer; }
+			vk::Buffer GetBuffer() const { return buffer; }
 
 			/**
 			 * @brief Récupère le pointeur vers la mémoire mappée du tampon.
 			 *
 			 * @return Pointeur vers la mémoire mappée du tampon.
 			 */
-			void* getMappedMemory() const { return mapped; }
+			void* GetMappedMemory() const { return mapped; }
 
 			/**
 			 * @brief Récupère le nombre d'instances dans le tampon.
 			 *
 			 * @return Le nombre d'instances dans le tampon.
 			 */
-			uint32_t getInstanceCount() const { return instanceCount; }
+			uint32_t GetInstanceCount() const { return instanceCount; }
 
 			/**
 			 * @brief Récupère la taille de chaque instance dans le tampon.
 			 *
 			 * @return La taille de chaque instance dans le tampon.
 			 */
-			vk::DeviceSize getInstanceSize() const { return instanceSize; }
+			vk::DeviceSize GetInstanceSize() const { return instanceSize; }
 
 			/**
 			 * @brief Récupère la taille d'alignement du tampon.
 			 *
 			 * @return La taille d'alignement du tampon.
 			 */
-			vk::DeviceSize getAlignmentSize() const { return instanceSize; }
+			vk::DeviceSize GetAlignmentSize() const { return instanceSize; }
 
 			/**
 			 * @brief Récupère les indicateurs d'utilisation du tampon.
 			 *
 			 * @return vk::BufferUsageFlags contenant les indicateurs d'utilisation du tampon.
 			 */
-			vk::BufferUsageFlags getUsageFlags() const { return usageFlags; }
+			vk::BufferUsageFlags GetUsageFlags() const { return usageFlags; }
 
 			/**
 			 * @brief Récupère les propriétés de la mémoire du tampon.
 			 *
 			 * @return vk::MemoryPropertyFlags contenant les propriétés de la mémoire du tampon.
 			 */
-			vk::MemoryPropertyFlags getMemoryPropertyFlags() const { return memoryPropertyFlags; }
+			vk::MemoryPropertyFlags GetMemoryPropertyFlags() const { return memoryPropertyFlags; }
 
 			/**
 			 * @brief Récupère la taille totale du tampon.
 			 *
 			 * @return La taille totale du tampon.
 			 */
-			vk::DeviceSize getBufferSize() const { return bufferSize; }
+			vk::DeviceSize GetBufferSize() const { return bufferSize; }
 
 		private:
 			/**
@@ -175,7 +177,7 @@ namespace lve
 			 * @param _minOffsetAlignment La taille d'alignement minimale.
 			 * @return La taille d'alignement requise.
 			 */
-			static vk::DeviceSize getAlignment(vk::DeviceSize _instanceSize, vk::DeviceSize _minOffsetAlignment);
+			static vk::DeviceSize GetAlignment(vk::DeviceSize _instanceSize, vk::DeviceSize _minOffsetAlignment);
 
 			/** @brief Référence vers l'objet LveDevice associé à ce tampon. */
 			LveDevice& lveDevice;

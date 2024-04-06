@@ -59,15 +59,15 @@ class ImGuiModule final : public Module
 	 */
 	void Finalize() override;
 
-	void GetGUI();
+	void GetGui();
 
 	//TimeModule* timeModule = nullptr;
 
-	vk::Fence         _immFence;
-	vk::CommandBuffer _immCommandBuffer;
-	vk::CommandPool   _immCommandPool;
+	vk::Fence         immFence;
+	vk::CommandBuffer immCommandBuffer;
+	vk::CommandPool   immCommandPool;
 
-	void immediate_submit(std::function<void(vk::CommandBuffer cmd)>&& function);
+	void ImmediateSubmit(std::function<void(vk::CommandBuffer _cmd)>&& _function) const;
 
 	protected:
 		vk::Device device;

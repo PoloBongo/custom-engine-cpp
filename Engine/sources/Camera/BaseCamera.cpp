@@ -1,9 +1,11 @@
 #include "Camera/BaseCamera.h"
 
+#include <stdexcept>
+
 namespace lve
 {
-	BaseCamera::BaseCamera(const std::string& _cameraName, const CameraType _type, const bool   _bIsGameplayCam,
-	                       const float        _fov, const float             _zNear, const float _zFar) : FOV(_fov),
+	BaseCamera::BaseCamera(std::string _cameraName, const CameraType _type, const bool   _bIsGameplayCam,
+	                       const float _fov, const float             _zNear, const float _zFar) : fov(_fov),
 		zNear(_zNear),
 		zFar(_zFar),
 		moveSpeed(18.0f),
@@ -29,10 +31,10 @@ namespace lve
 		right(VEC3_RIGHT),
 		bIsGameplayCam(_bIsGameplayCam),
 		type(_type),
-		m_Name(_cameraName),
-		m_View(MAT4_ZERO),
-		m_Proj(MAT4_ZERO),
-		m_ViewProjection(MAT4_ZERO)
+		name(std::move(_cameraName)),
+		view(MAT4_ZERO),
+		projection(MAT4_ZERO),
+		viewProjection(MAT4_ZERO)
 	{
 		ResetOrientation();
 		CalculateAxisVectorsFromPitchAndYaw();
@@ -45,16 +47,22 @@ namespace lve
 	{
 	}
 
-	void BaseCamera::Initialize()
+	void BaseCamera::Init()
 	{
-		m_bInitialized = true;
+		mBInitialized = true;
 	}
 
-	void BaseCamera::FixedUpdate()
+	void BaseCamera::Start()
 	{
+		throw std::logic_error("Not implemented");
 	}
 
-	void BaseCamera::Update(float _deltaTime)
+	void BaseCamera::FixedUpdate(const float& _deltaTime)
+	{
+		velocity = (position - prevPosition) / _deltaTime;
+	}
+
+	void BaseCamera::Update(const float& _deltaTime)
 	{
 		prevPosition = position;
 
@@ -65,15 +73,31 @@ namespace lve
 		AudioModule::SetListenerVel(velocity);*/
 	}
 
-	void BaseCamera::LateUpdate(float _deltaTime)
+	void BaseCamera::PreRender()
 	{
-		velocity = (position - prevPosition) / _deltaTime;
 	}
 
-	void BaseCamera::Destroy()
+	void BaseCamera::Render()
 	{
-		if (m_bInitialized) m_bInitialized = false;
 	}
+
+	void BaseCamera::RenderGui()
+	{
+	}
+
+	void BaseCamera::PostRender()
+	{
+	}
+
+	void BaseCamera::Release()
+	{
+	}
+
+	void BaseCamera::Finalize()
+	{
+		if (mBInitialized) mBInitialized = false;
+	}
+
 
 	void BaseCamera::OnPostSceneChange()
 	{
@@ -103,8 +127,8 @@ namespace lve
 	{
 		_speed = Saturate(_speed);
 
-		glm::vec3 targetForward = normalize(_point - position);
-		forward                 = normalize(Lerp(forward, targetForward, _speed));
+		const glm::vec3 targetForward = normalize(_point - position);
+		forward                       = normalize(Lerp(forward, targetForward, _speed));
 
 		#if THOROUGH_CHECKS
 		if (IsNanOrInf(forward))
@@ -149,10 +173,10 @@ namespace lve
 		forward.z = cos(pitch) * sin(yaw);
 		forward   = normalize(forward);
 
-		glm::vec3 worldUp(0.0f, 1.0f, 0.0f);
-		worldUp += right * roll;
+		glm::vec3 world_up(0.0f, 1.0f, 0.0f);
+		world_up += right * roll;
 
-		right = normalize(cross(forward, worldUp));
+		right = normalize(cross(forward, world_up));
 		up    = cross(right, forward);
 	}
 
@@ -185,16 +209,16 @@ namespace lve
 			return;
 		}
 
-		m_View = glm::lookAt(position, position + forward, up);
+		view = glm::lookAt(position, position + forward, up);
 
 		float aspectRatio = (float)windowSize.x / (float)windowSize.y;
-		m_Proj = glm::perspective(FOV, aspectRatio, zFar, zNear);
+		projection = glm::perspective(FOV, aspectRatio, zFar, zNear);
 
-		m_ViewProjection = m_Proj * m_View;
+		viewProjection = projection * view;
 
 		if (g_Renderer->IsTAAEnabled())
 		{
-			JitterMatrix(m_ViewProjection);
+			JitterMatrix(viewProjection);
 		}*/
 	}
 
@@ -267,24 +291,24 @@ namespace lve
 
 	void BaseCamera::ClampPitch()
 	{
-		float pitchLimit = glm::radians(89.5f);
-		pitch            = glm::clamp(pitch, -pitchLimit, pitchLimit);
+		constexpr float pitch_limit = glm::radians(89.5f);
+		pitch                       = glm::clamp(pitch, -pitch_limit, pitch_limit);
 	}
 
-	float BaseCamera::CalculateEV100(const float _aperture, const float _shutterSpeed, const float _sensitivity)
+	float BaseCamera::CalculateEv100(const float _aperture, const float _shutterSpeed, const float _sensitivity)
 	{
 		return log2((_aperture * _aperture) / _shutterSpeed * 100.0f / _sensitivity);
 	}
 
-	float BaseCamera::ComputeExposureNormFactor(const float _EV100)
+	float BaseCamera::ComputeExposureNormFactor(const float _ev100)
 	{
-		return pow(2.0f, _EV100) * 1.2f;
+		return pow(2.0f, _ev100) * 1.2f;
 	}
 
 
 	void BaseCamera::CalculateExposure()
 	{
-		float EV100 = CalculateEV100(aperture, shutterSpeed, lightSensitivity);
-		exposure    = ComputeExposureNormFactor(EV100);
+		const float ev100 = CalculateEv100(aperture, shutterSpeed, lightSensitivity);
+		exposure          = ComputeExposureNormFactor(ev100);
 	}
 } // namespace lve

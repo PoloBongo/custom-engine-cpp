@@ -5,8 +5,8 @@
 class Convertisseur
 {
 	public:
-		static btVector3 glmVec3ToBtVector3(const glm::vec3& glmVec)
+		static btVector3 GlmVec3ToBtVector3(const glm::vec3& _glmVec)
 		{
-			return btVector3(glmVec.x, glmVec.y, glmVec.z);
+			return btVector3(_glmVec.x, _glmVec.y, _glmVec.z);
 		}
 };

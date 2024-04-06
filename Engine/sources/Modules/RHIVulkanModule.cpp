@@ -1,6 +1,6 @@
 #include "Modules/RHIVulkanModule.h"
 
-RHIVulkanModule::RHIVulkanModule() : m_Instance(VK_NULL_HANDLE), m_DebugMessenger(VK_NULL_HANDLE)
+RHIVulkanModule::RHIVulkanModule() : instance(VK_NULL_HANDLE), debugMessenger(VK_NULL_HANDLE)
 {
 }
 
@@ -11,8 +11,8 @@ RHIVulkanModule::~RHIVulkanModule()
 
 bool RHIVulkanModule::CreateVulkanInstance()
 {
-	m_Instance = new vk::Instance(p_lveDevice->CreateInstance());
-	if (m_Instance != VK_NULL_HANDLE)
+	instance = new vk::Instance(p_lveDevice->CreateInstance());
+	if (instance != VK_NULL_HANDLE)
 		// Gestion des erreurs
 		return false;
 
@@ -21,8 +21,8 @@ bool RHIVulkanModule::CreateVulkanInstance()
 
 bool RHIVulkanModule::SetupDebugMessenger()
 {
-	m_DebugMessenger = new vk::DebugUtilsMessengerEXT(p_lveDevice->SetupDebugMessenger());
-	if (m_DebugMessenger != VK_NULL_HANDLE)
+	debugMessenger = new vk::DebugUtilsMessengerEXT(p_lveDevice->SetupDebugMessenger());
+	if (debugMessenger != VK_NULL_HANDLE)
 		// Gestion des erreurs
 		return false;
 
@@ -55,8 +55,8 @@ void RHIVulkanModule::Update()
 
 void RHIVulkanModule::PreRender()
 {
-	m_CurrentCommandBuffer.reset(new vk::CommandBuffer(p_lveRenderer->BeginFrame()));
-	p_lveRenderer->BeginSwapChainRenderPass(*m_CurrentCommandBuffer);
+	currentCommandBuffer.reset(new vk::CommandBuffer(p_lveRenderer->BeginFrame()));
+	p_lveRenderer->BeginSwapChainRenderPass(*currentCommandBuffer);
 }
 
 void RHIVulkanModule::Render()
@@ -69,21 +69,21 @@ void RHIVulkanModule::RenderGui()
 
 void RHIVulkanModule::PostRender()
 {
-	p_lveRenderer->EndSwapChainRenderPass(*m_CurrentCommandBuffer);
-	p_lveRenderer->EndFrame(m_CurrentCommandBuffer.get());
+	p_lveRenderer->EndSwapChainRenderPass(*currentCommandBuffer);
+	p_lveRenderer->EndFrame(currentCommandBuffer.get());
 }
 
 void RHIVulkanModule::Release()
 {
-	if (m_Instance != VK_NULL_HANDLE)
+	if (instance != VK_NULL_HANDLE)
 	{
-		m_Instance->destroy();
-		delete m_Instance;
+		instance->destroy();
+		delete instance;
 	}
-	if (m_Instance != VK_NULL_HANDLE)
+	if (instance != VK_NULL_HANDLE)
 	{
-		m_Instance->destroy();
-		delete m_Instance;
+		instance->destroy();
+		delete instance;
 	}
 }
 

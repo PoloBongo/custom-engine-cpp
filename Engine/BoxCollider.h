@@ -29,13 +29,13 @@ class BoxCollider : public Component
 		 *
 		 * @param _size La taille à définir pour le box collider.
 		 */
-		void SetSize(glm::vec3 _position);
+		void SetSize(glm::vec3 _size);
 		/**
 		* @brief Définit la position centrale du box collider.
 		*
 		* @param _center La position centrale à définir pour le box collider.
 		*/
-		void SetCenter(glm::vec3 _center);
+		void SetCenter(glm::vec3 _center) const;
 		/**
 		* @brief Vérifie si le box collider est en collision avec un autre objet.
 		*

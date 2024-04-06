@@ -24,7 +24,7 @@ namespace lve
 			glfwWaitEvents();
 		}
 
-		lveDevice.device().waitIdle(); // Utilisation de vk::Device::waitIdle()
+		lveDevice.Device().waitIdle(); // Utilisation de vk::Device::waitIdle()
 
 		if (lveSwapChain == nullptr)
 		{
@@ -49,10 +49,10 @@ namespace lve
 		vk::CommandBufferAllocateInfo allocInfo{};
 		allocInfo.sType              = vk::StructureType::eCommandBufferAllocateInfo;
 		allocInfo.level              = vk::CommandBufferLevel::ePrimary;
-		allocInfo.commandPool        = lveDevice.getCommandPool();
+		allocInfo.commandPool        = lveDevice.GetCommandPool();
 		allocInfo.commandBufferCount = static_cast<uint32_t>(commandBuffers.size());
 
-		if (lveDevice.device().allocateCommandBuffers(&allocInfo, commandBuffers.data()) !=
+		if (lveDevice.Device().allocateCommandBuffers(&allocInfo, commandBuffers.data()) !=
 		    vk::Result::eSuccess)
 			throw std::runtime_error("failed to allocate command buffers!");
 	}
@@ -60,8 +60,8 @@ namespace lve
 
 	void LveRenderer::FreeCommandBuffers()
 	{
-		lveDevice.device().freeCommandBuffers(
-			lveDevice.getCommandPool(),
+		lveDevice.Device().freeCommandBuffers(
+			lveDevice.GetCommandPool(),
 			static_cast<uint32_t>(commandBuffers.size()),
 			commandBuffers.data());
 		commandBuffers.clear();
@@ -72,7 +72,7 @@ namespace lve
 	{
 		assert(!isFrameStarted && "Can't call beginFrame while already in progress");
 
-		auto result = lveSwapChain->acquireNextImage(&currentImageIndex);
+		const auto result = lveSwapChain->AcquireNextImage(&currentImageIndex);
 		if (result == vk::Result::eErrorOutOfDateKHR || result == vk::Result::eSuboptimalKHR)
 		{
 			RecreateSwapChain();
@@ -82,15 +82,15 @@ namespace lve
 
 		isFrameStarted = true;
 
-		auto                       commandBuffer = GetCurrentCommandBuffer();
-		vk::CommandBufferBeginInfo beginInfo{};
-		beginInfo.sType = vk::StructureType::eCommandBufferBeginInfo;
+		const auto                 command_buffer = GetCurrentCommandBuffer();
+		vk::CommandBufferBeginInfo begin_info{};
+		begin_info.sType = vk::StructureType::eCommandBufferBeginInfo;
 
-		if (commandBuffer.begin(&beginInfo) != vk::Result::eSuccess)
+		if (command_buffer.begin(&begin_info) != vk::Result::eSuccess)
 			throw std::runtime_error(
 				"failed to begin recording command buffer!");
 		//return commandBuffer;
-		return commandBuffer;
+		return command_buffer;
 	}
 
 
@@ -98,12 +98,12 @@ namespace lve
 	{
 		assert(isFrameStarted && "Can't call endFrame while frame is not in progress");
 
-		auto commandBuffer = GetCurrentCommandBuffer();
-		commandBuffer.end();
+		const auto command_buffer = GetCurrentCommandBuffer();
+		command_buffer.end();
 
-		auto result = lveSwapChain->submitCommandBuffers(&commandBuffer, &currentImageIndex);
-		if (result == vk::Result::eErrorOutOfDateKHR || result == vk::Result::eSuboptimalKHR ||
-		    lveWindow.WasWindowResized())
+		if (const auto result = lveSwapChain->SubmitCommandBuffers(&command_buffer, &currentImageIndex);
+			result == vk::Result::eErrorOutOfDateKHR || result == vk::Result::eSuboptimalKHR ||
+			lveWindow.WasWindowResized())
 		{
 			lveWindow.ResetWindowResizedFlag();
 			RecreateSwapChain();
@@ -123,9 +123,9 @@ namespace lve
 
 		_commandBuffer->end();
 
-		auto result = lveSwapChain->submitCommandBuffers(_commandBuffer, &currentImageIndex);
-		if (result == vk::Result::eErrorOutOfDateKHR || result == vk::Result::eSuboptimalKHR ||
-		    lveWindow.WasWindowResized())
+		if (const auto result = lveSwapChain->SubmitCommandBuffers(_commandBuffer, &currentImageIndex);
+			result == vk::Result::eErrorOutOfDateKHR || result == vk::Result::eSuboptimalKHR ||
+			lveWindow.WasWindowResized())
 		{
 			lveWindow.ResetWindowResizedFlag();
 			RecreateSwapChain();
@@ -140,47 +140,47 @@ namespace lve
 	}
 
 
-	void LveRenderer::BeginSwapChainRenderPass(vk::CommandBuffer commandBuffer)
+	void LveRenderer::BeginSwapChainRenderPass(const vk::CommandBuffer _commandBuffer) const
 	{
 		assert(isFrameStarted && "Can't call beginSwapChainRenderPass if frame is not in progress");
 		assert(
-			commandBuffer == GetCurrentCommandBuffer() &&
+			_commandBuffer == GetCurrentCommandBuffer() &&
 			"Can't begin render pass on command buffer from a different frame");
 
-		vk::RenderPassBeginInfo renderPassInfo{};
-		renderPassInfo.sType       = vk::StructureType::eRenderPassBeginInfo;
-		renderPassInfo.renderPass  = lveSwapChain->getRenderPass();
-		renderPassInfo.framebuffer = lveSwapChain->getFrameBuffer(currentImageIndex);
+		vk::RenderPassBeginInfo render_pass_info{};
+		render_pass_info.sType       = vk::StructureType::eRenderPassBeginInfo;
+		render_pass_info.renderPass  = lveSwapChain->GetRenderPass();
+		render_pass_info.framebuffer = lveSwapChain->GetFrameBuffer(currentImageIndex);
 
-		renderPassInfo.renderArea.offset = vk::Offset2D{0, 0};
-		renderPassInfo.renderArea.extent = lveSwapChain->getSwapChainExtent();
+		render_pass_info.renderArea.offset = vk::Offset2D{0, 0};
+		render_pass_info.renderArea.extent = lveSwapChain->GetSwapChainExtent();
 
-		std::array<vk::ClearValue, 2> clearValues{};
-		clearValues[0].color           = vk::ClearColorValue(std::array<float, 4>{0.01f, 0.01f, 0.01f, 1.0f});
-		clearValues[1].depthStencil    = vk::ClearDepthStencilValue{1.0f, 0};
-		renderPassInfo.clearValueCount = static_cast<uint32_t>(clearValues.size());
-		renderPassInfo.pClearValues    = clearValues.data();
+		std::array<vk::ClearValue, 2> clear_values{};
+		clear_values[0].color            = vk::ClearColorValue(std::array<float, 4>{0.01f, 0.01f, 0.01f, 1.0f});
+		clear_values[1].depthStencil     = vk::ClearDepthStencilValue{1.0f, 0};
+		render_pass_info.clearValueCount = static_cast<uint32_t>(clear_values.size());
+		render_pass_info.pClearValues    = clear_values.data();
 
-		commandBuffer.beginRenderPass(&renderPassInfo, vk::SubpassContents::eInline);
+		_commandBuffer.beginRenderPass(&render_pass_info, vk::SubpassContents::eInline);
 
 		vk::Viewport viewport{};
 		viewport.x        = 0.0f;
 		viewport.y        = 0.0f;
-		viewport.width    = static_cast<float>(lveSwapChain->getSwapChainExtent().width);
-		viewport.height   = static_cast<float>(lveSwapChain->getSwapChainExtent().height);
+		viewport.width    = static_cast<float>(lveSwapChain->GetSwapChainExtent().width);
+		viewport.height   = static_cast<float>(lveSwapChain->GetSwapChainExtent().height);
 		viewport.minDepth = 0.0f;
 		viewport.maxDepth = 1.0f;
-		vk::Rect2D scissor{{0, 0}, lveSwapChain->getSwapChainExtent()};
-		commandBuffer.setViewport(0, 1, &viewport);
-		commandBuffer.setScissor(0, 1, &scissor);
+		const vk::Rect2D scissor{{0, 0}, lveSwapChain->GetSwapChainExtent()};
+		_commandBuffer.setViewport(0, 1, &viewport);
+		_commandBuffer.setScissor(0, 1, &scissor);
 	}
 
 
-	void LveRenderer::EndSwapChainRenderPass(vk::CommandBuffer commandBuffer)
+	void LveRenderer::EndSwapChainRenderPass(const vk::CommandBuffer _commandBuffer) const
 	{
 		assert(isFrameStarted && "Can't call endSwapChainRenderPass if frame is not in progress");
-		assert(commandBuffer == GetCurrentCommandBuffer() &&
+		assert(_commandBuffer == GetCurrentCommandBuffer() &&
 			"Can't end render pass on command buffer from a different frame");
-		commandBuffer.endRenderPass();
+		_commandBuffer.endRenderPass();
 	}
 } // namespace lve

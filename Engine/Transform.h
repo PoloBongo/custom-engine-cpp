@@ -18,7 +18,7 @@ class Transform final : public Component
 
 		// Méthode pour récupérer et définir la rotation en utilisant un angle
 		float GetRotation() const { return rotation; }
-		void  SetRotation(float angle) { rotation = angle; }
+		void  SetRotation(const float _angle) { rotation = _angle; }
 
 		// Méthode pour récupérer et définir l'échelle
 		glm::vec3 GetScale() const { return scale; }
@@ -33,17 +33,17 @@ class Transform final : public Component
 		glm::vec3 TransformPoint() const
 		{
 			// Création de la matrice de transformation
-			auto rotationMatrix = glm::mat4(1.0f);
-			rotationMatrix      = translate(rotationMatrix, position);
-			rotationMatrix      = rotate(rotationMatrix, rotation, glm::vec3(1.0f, 0.0f, 0.0f));
-			rotationMatrix      = rotate(rotationMatrix, rotation, glm::vec3(0.0f, 1.0f, 0.0f));
-			rotationMatrix      = rotate(rotationMatrix, rotation, glm::vec3(0.0f, 0.0f, 1.0f));
-			rotationMatrix      = glm::scale(rotationMatrix, scale);
+			auto rotation_matrix = glm::mat4(1.0f);
+			rotation_matrix      = translate(rotation_matrix, position);
+			rotation_matrix      = rotate(rotation_matrix, rotation, glm::vec3(1.0f, 0.0f, 0.0f));
+			rotation_matrix      = rotate(rotation_matrix, rotation, glm::vec3(0.0f, 1.0f, 0.0f));
+			rotation_matrix      = rotate(rotation_matrix, rotation, glm::vec3(0.0f, 0.0f, 1.0f));
+			rotation_matrix      = glm::scale(rotation_matrix, scale);
 			// Transformation du point
-			glm::vec4 transformedPoint = rotationMatrix * glm::vec4(position, 1.0f);
+			const glm::vec4 transformed_point = rotation_matrix * glm::vec4(position, 1.0f);
 
 			// Récupération des coordonnées transformées
-			return glm::vec3(transformedPoint.x, transformedPoint.y, transformedPoint.z);
+			return glm::vec3(transformed_point.x, transformed_point.y, transformed_point.z);
 		}
 
 		// Méthode pour afficher les propriétés du Transform

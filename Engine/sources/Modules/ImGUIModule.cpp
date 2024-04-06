@@ -7,41 +7,41 @@
 #include <imgui_impl_glfw.h>
 #include <imgui_impl_vulkan.h>
 
-void ImGuiModule::immediate_submit(std::function<void(vk::CommandBuffer cmd)>&& function)
+void ImGuiModule::ImmediateSubmit(std::function<void(vk::CommandBuffer _cmd)>&& _function) const
 {
-	vk::Device device        = windowModule->GetDevice()->device();
-	vk::Queue  graphicsQueue = windowModule->GetDevice()->graphicsQueue();
+	const vk::Device device         = windowModule->GetDevice()->Device();
+	const vk::Queue  graphics_queue = windowModule->GetDevice()->GraphicsQueue();
 
-	device.resetFences(_immFence);
-	_immCommandBuffer.reset(vk::CommandBufferResetFlagBits::eReleaseResources);
+	device.resetFences(immFence);
+	immCommandBuffer.reset(vk::CommandBufferResetFlagBits::eReleaseResources);
 
-	vk::CommandBuffer cmd = _immCommandBuffer;
+	const vk::CommandBuffer cmd = immCommandBuffer;
 
-	vk::CommandBufferBeginInfo cmdBeginInfo{};
-	cmdBeginInfo.sType = vk::StructureType::eCommandBufferBeginInfo;
-	cmdBeginInfo.flags = vk::CommandBufferUsageFlagBits::eOneTimeSubmit;
+	vk::CommandBufferBeginInfo cmd_begin_info{};
+	cmd_begin_info.sType = vk::StructureType::eCommandBufferBeginInfo;
+	cmd_begin_info.flags = vk::CommandBufferUsageFlagBits::eOneTimeSubmit;
 
-	cmd.begin(cmdBeginInfo);
+	cmd.begin(cmd_begin_info);
 
-	function(cmd);
+	_function(cmd);
 
 	cmd.end();
 
-	vk::CommandBufferSubmitInfo cmdinfo{};
-	cmdinfo.sType         = vk::StructureType::eCommandBufferSubmitInfo;
-	cmdinfo.pNext         = nullptr;
-	cmdinfo.commandBuffer = cmd;
-	cmdinfo.deviceMask    = 0;
+	vk::CommandBufferSubmitInfo cmd_info;
+	cmd_info.sType         = vk::StructureType::eCommandBufferSubmitInfo;
+	cmd_info.pNext         = nullptr;
+	cmd_info.commandBuffer = cmd;
+	cmd_info.deviceMask    = 0;
 
 	vk::SubmitInfo2 submitInfo{};
 	submitInfo.commandBufferInfoCount = 1;
-	submitInfo.pCommandBufferInfos    = &cmdinfo;
-	auto dispatcher                   = vk::DispatchLoaderDynamic();
+	submitInfo.pCommandBufferInfos    = &cmd_info;
+	constexpr auto dispatcher         = vk::DispatchLoaderDynamic();
 	// submit command buffer to the queue and execute it.
 	//  _renderFence will now block until the graphic commands finish execution
-	graphicsQueue.submit2KHR(submitInfo, _immFence, dispatcher);
+	graphics_queue.submit2KHR(submitInfo, immFence, dispatcher);
 
-	device.waitForFences(_immFence, VK_TRUE, 9999999999);
+	device.waitForFences(immFence, VK_TRUE, 9999999999);
 }
 
 void ImGuiModule::Init()
@@ -50,24 +50,24 @@ void ImGuiModule::Init()
 
 	windowModule = moduleModule->GetModule<WindowModule>();
 
-	device                                     = windowModule->GetDevice()->device();
-	graphicsQueue                              = windowModule->GetDevice()->graphicsQueue();
-	lve::QueueFamilyIndices queueFamilyIndices = windowModule->GetDevice()->findPhysicalQueueFamilies();
+	device                                             = windowModule->GetDevice()->Device();
+	graphicsQueue                                      = windowModule->GetDevice()->GraphicsQueue();
+	const lve::QueueFamilyIndices queue_family_indices = windowModule->GetDevice()->FindPhysicalQueueFamilies();
 
 	// Création du pool de commandes
-	vk::CommandPoolCreateInfo commandPoolInfo(
-		vk::CommandPoolCreateFlags(),     // Flags de création
-		queueFamilyIndices.graphicsFamily // Indice de la famille de file d'attente de commandes
+	const vk::CommandPoolCreateInfo command_pool_info(
+		vk::CommandPoolCreateFlags(),       // Flags de création
+		queue_family_indices.graphicsFamily // Indice de la famille de file d'attente de commandes
 	);
-	_immCommandPool = device.createCommandPool(commandPoolInfo);
+	immCommandPool = device.createCommandPool(command_pool_info);
 
 	// Allocation du tampon de commande pour les soumissions immédiates
-	vk::CommandBufferAllocateInfo cmdAllocInfo(
-		_immCommandPool,                  // Pool de commandes
+	const vk::CommandBufferAllocateInfo cmd_alloc_info(
+		immCommandPool,                   // Pool de commandes
 		vk::CommandBufferLevel::ePrimary, // Niveau du tampon de commande
 		1                                 // Nombre de tampons à allouer
 	);
-	_immCommandBuffer = device.allocateCommandBuffers(cmdAllocInfo)[0];
+	immCommandBuffer = device.allocateCommandBuffers(cmd_alloc_info)[0];
 
 	// Ajout de la fonction de suppression du pool de commandes à la file de suppression principale
 	//_mainDeletionQueue.push_back([=]() {
@@ -82,7 +82,7 @@ void ImGuiModule::Start()
 
 	//ImGui::CreateContext();
 
-	vk::DescriptorPoolSize pool_sizes[] = {
+	const vk::DescriptorPoolSize pool_sizes[] = {
 		{vk::DescriptorType::eSampler, 1000},
 		{vk::DescriptorType::eCombinedImageSampler, 1000},
 		{vk::DescriptorType::eSampledImage, 1000},
@@ -103,8 +103,8 @@ void ImGuiModule::Start()
 	pool_info.poolSizeCount                = static_cast<uint32_t>(std::size(pool_sizes));
 	pool_info.pPoolSizes                   = pool_sizes;
 
-	vk::DescriptorPool imguiPool;
-	if (windowModule->GetDevice()->device().createDescriptorPool(&pool_info, nullptr, &imguiPool) !=
+	vk::DescriptorPool im_gui_pool;
+	if (windowModule->GetDevice()->Device().createDescriptorPool(&pool_info, nullptr, &im_gui_pool) !=
 	    vk::Result::eSuccess)
 		throw std::runtime_error("Impossible de creer la pool de imgui!");
 
@@ -115,7 +115,7 @@ void ImGuiModule::Start()
 	ImGui::CreateContext();
 
 	// this initializes imgui for SDL
-	ImGui_ImplGlfw_InitForVulkan(windowModule->GetWindow()->GetGLFWwindow(), true);
+	ImGui_ImplGlfw_InitForVulkan(windowModule->GetWindow()->GetGlfwWindow(), true);
 
 	// this initializes imgui for Vulkan
 	ImGui_ImplVulkan_InitInfo init_info = {};
@@ -123,7 +123,7 @@ void ImGuiModule::Start()
 	init_info.PhysicalDevice            = windowModule->GetDevice()->GetPhysicalDevice();
 	init_info.Device                    = device;
 	init_info.Queue                     = graphicsQueue;
-	init_info.DescriptorPool            = imguiPool;
+	init_info.DescriptorPool            = im_gui_pool;
 	init_info.MinImageCount             = 3;
 	init_info.ImageCount                = 3;
 	init_info.RenderPass                = windowModule->GetRenderer()->GetSwapChainRenderPass();
@@ -201,7 +201,7 @@ void ImGuiModule::Finalize()
 }
 
 
-void ImGuiModule::GetGUI()
+void ImGuiModule::GetGui()
 {
 	ImGui::Begin("Scene");
 

@@ -41,6 +41,7 @@ namespace lve
 			 * Enfin, elle utilise une commande de dessin pour rendre les lumières ponctuelles.
 			 *
 			 * @param _frameInfo Informations sur le frame actuel, contenant notamment le tampon de commandes.
+			 * @param _ubo
 			 */
 			void Update(FrameInfo& _frameInfo, GlobalUbo& _ubo);
 			void Render(FrameInfo& _frameInfo);

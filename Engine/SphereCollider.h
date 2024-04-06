@@ -26,6 +26,7 @@ class SphereCollider
 	/**
 	* @brief Définit la taille du box collider.
 	*
+	* @param _radius
 	* @param _size La taille à définir pour le box collider.
 	*/
 	void SetRadius(float _radius);
@@ -34,7 +35,7 @@ class SphereCollider
 	*
 	* @param _center Le centre à définir pour le box collider.
 	*/
-	void SetCenter(glm::vec3 _center);
+	void SetCenter(glm::vec3 _center) const;
 
 	bool OnTrigger() const
 	{

@@ -7,7 +7,8 @@
 namespace lve
 {
 	void LveCamera::SetOrthographicProjection(
-		float _left, float _right, float _top, float _bottom, float _near, float _far)
+		const float _left, const float _right, const float _top, const float _bottom, const float _near,
+		const float _far)
 	{
 		projectionMatrix       = glm::mat4{1.0f};
 		projectionMatrix[0][0] = 2.f / (_right - _left);
@@ -18,19 +19,20 @@ namespace lve
 		projectionMatrix[3][2] = -_near / (_far - _near);
 	}
 
-	void LveCamera::SetPerspectiveProjection(float _fovy, float _aspect, float _near, float _far)
+	void LveCamera::SetPerspectiveProjection(const float _fovY, const float _aspect, const float _near,
+	                                         const float _far)
 	{
 		assert(glm::abs(_aspect - std::numeric_limits<float>::epsilon()) > 0.0f);
-		const float tanHalfFovy = tan(_fovy / 2.f);
-		projectionMatrix        = glm::mat4{0.0f};
-		projectionMatrix[0][0]  = 1.f / (_aspect * tanHalfFovy);
-		projectionMatrix[1][1]  = 1.f / (tanHalfFovy);
-		projectionMatrix[2][2]  = _far / (_far - _near);
-		projectionMatrix[2][3]  = 1.f;
-		projectionMatrix[3][2]  = -(_far * _near) / (_far - _near);
+		const float tan_half_fov_y = tan(_fovY / 2.f);
+		projectionMatrix           = glm::mat4{0.0f};
+		projectionMatrix[0][0]     = 1.f / (_aspect * tan_half_fov_y);
+		projectionMatrix[1][1]     = 1.f / (tan_half_fov_y);
+		projectionMatrix[2][2]     = _far / (_far - _near);
+		projectionMatrix[2][3]     = 1.f;
+		projectionMatrix[3][2]     = -(_far * _near) / (_far - _near);
 	}
 
-	void LveCamera::SetViewDirection(glm::vec3 _position, glm::vec3 _direction, glm::vec3 _up)
+	void LveCamera::SetViewDirection(const glm::vec3 _position, const glm::vec3 _direction, const glm::vec3 _up)
 	{
 		const glm::vec3 w{normalize(_direction)};
 		const glm::vec3 u{normalize(cross(w, _up))};
@@ -65,12 +67,12 @@ namespace lve
 		inverseViewMatrix[3][2] = _position.z;
 	}
 
-	void LveCamera::SetViewTarget(glm::vec3 _position, glm::vec3 _target, glm::vec3 _up)
+	void LveCamera::SetViewTarget(const glm::vec3 _position, const glm::vec3 _target, const glm::vec3 _up)
 	{
 		SetViewDirection(_position, _target - _position, _up);
 	}
 
-	void LveCamera::SetViewYXZ(glm::vec3 _position, glm::vec3 _rotation)
+	void LveCamera::SetViewYXZ(const glm::vec3 _position, const glm::vec3 _rotation)
 	{
 		const float     c3 = glm::cos(_rotation.z);
 		const float     s3 = glm::sin(_rotation.z);

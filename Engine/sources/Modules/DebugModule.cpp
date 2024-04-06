@@ -1,6 +1,10 @@
 #include "Modules/DebugModule.h"
 
 
+DebugModule::~DebugModule()
+{
+}
+
 void DebugModule::Init()
 {
 	Module::Init();

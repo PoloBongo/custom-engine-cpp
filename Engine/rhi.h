@@ -6,8 +6,7 @@ class RHIModule : public Module
 {
 	public:
 		virtual ~RHIModule()
-		{
-		}
+		= default;
 
 		/**
 		 * @brief Initialise le module.

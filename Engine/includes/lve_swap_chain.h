@@ -33,7 +33,7 @@ namespace lve
 			 * @param _extent Étendue de la chaîne d'échanges.
 			 * @param _previous Pointeur partagé vers une précédente chaîne d'échanges.
 			 */
-			LveSwapChain(LveDevice& _deviceRef, vk::Extent2D _extent, std::shared_ptr<LveSwapChain> _previous);
+			LveSwapChain(LveDevice& _deviceRef, vk::Extent2D _extent, const std::shared_ptr<LveSwapChain>& _previous);
 
 			/**
 			 * @brief Destructeur.
@@ -63,7 +63,7 @@ namespace lve
 			 * @param _index L'indice du framebuffer à récupérer.
 			 * @return vk::Framebuffer Le framebuffer correspondant à l'indice spécifié.
 			 */
-			vk::Framebuffer getFrameBuffer(int _index) { return swapChainFramebuffers[_index]; }
+			vk::Framebuffer GetFrameBuffer(const int _index) const { return swapChainFramebuffers[_index]; }
 
 			/**
 			 * @brief Obtient le passe de rendu.
@@ -72,7 +72,7 @@ namespace lve
 			 *
 			 * @return vk::RenderPass Le passe de rendu associé à la swap chain.
 			 */
-			vk::RenderPass getRenderPass() { return renderPass; }
+			vk::RenderPass GetRenderPass() const { return renderPass; }
 
 			/**
 			 * @brief Obtient la vue d'image correspondant à l'indice spécifié.
@@ -82,7 +82,7 @@ namespace lve
 			 * @param _index L'indice de la vue d'image à récupérer.
 			 * @return vk::ImageView La vue d'image correspondant à l'indice spécifié.
 			 */
-			vk::ImageView getImageView(int _index) { return swapChainImageViews[_index]; }
+			vk::ImageView GetImageView(const int _index) const { return swapChainImageViews[_index]; }
 
 			/**
 			 * @brief Obtient le nombre d'images dans la swap chain.
@@ -91,7 +91,7 @@ namespace lve
 			 *
 			 * @return size_t Le nombre d'images dans la swap chain.
 			 */
-			size_t imageCount() { return swapChainImages.size(); }
+			size_t ImageCount() const { return swapChainImages.size(); }
 
 			/**
 			 * @brief Obtient le format d'image de la swap chain.
@@ -100,7 +100,7 @@ namespace lve
 			 *
 			 * @return vk::Format Le format d'image de la swap chain.
 			 */
-			vk::Format getSwapChainImageFormat() { return swapChainImageFormat; }
+			vk::Format GetSwapChainImageFormat() const { return swapChainImageFormat; }
 
 			/**
 			 * @brief Obtient l'étendue de la swap chain.
@@ -109,7 +109,7 @@ namespace lve
 			 *
 			 * @return vk::Extent2D L'étendue de la swap chain.
 			 */
-			vk::Extent2D getSwapChainExtent() { return swapChainExtent; }
+			vk::Extent2D GetSwapChainExtent() const { return swapChainExtent; }
 
 			/**
 			 * @brief Obtient la largeur de la swap chain.
@@ -118,7 +118,7 @@ namespace lve
 			 *
 			 * @return uint32_t La largeur de la swap chain.
 			 */
-			uint32_t width() { return swapChainExtent.width; }
+			uint32_t Width() const { return swapChainExtent.width; }
 
 			/**
 			 * @brief Obtient la hauteur de la swap chain.
@@ -127,7 +127,7 @@ namespace lve
 			 *
 			 * @return uint32_t La hauteur de la swap chain.
 			 */
-			uint32_t height() { return swapChainExtent.height; }
+			uint32_t Height() const { return swapChainExtent.height; }
 
 			/**
 			 * @brief Calcule le rapport d'aspect de l'étendue de la swap chain.
@@ -136,7 +136,7 @@ namespace lve
 			 *
 			 * @return float Le rapport d'aspect de l'étendue de la swap chain.
 			 */
-			float extentAspectRatio()
+			float ExtentAspectRatio() const
 			{
 				return static_cast<float>(swapChainExtent.width) / static_cast<float>(swapChainExtent.height);
 			}
@@ -148,7 +148,7 @@ namespace lve
 			 *
 			 * @return vk::Format Le format de profondeur adapté.
 			 */
-			vk::Format findDepthFormat();
+			vk::Format FindDepthFormat() const;
 
 			/**
 			 * @brief Acquiert l'index de l'image suivante dans la chaîne de swaps.
@@ -158,7 +158,7 @@ namespace lve
 			 * @param _imageIndex Pointeur vers la variable où stocker l'index de l'image acquise.
 			 * @return VkResult Le résultat de l'opération.
 			 */
-			vk::Result acquireNextImage(uint32_t* _imageIndex);
+			vk::Result AcquireNextImage(uint32_t* _imageIndex) const;
 
 			/**
 			 * @brief Soumet les command buffers pour exécution et présente le résultat.
@@ -169,7 +169,7 @@ namespace lve
 			 * @param _imageIndex Pointeur vers l'index de l'image à présenter.
 			 * @return VkResult Le résultat de l'opération.
 			 */
-			vk::Result submitCommandBuffers(const vk::CommandBuffer* _buffers, uint32_t* _imageIndex);
+			vk::Result SubmitCommandBuffers(const vk::CommandBuffer* _buffers, uint32_t* _imageIndex);
 
 			/**
 			 * @brief Compare les formats de profondeur et d'image avec une autre LveSwapChain.
@@ -194,7 +194,7 @@ namespace lve
 			 *
 			 * @throws std::runtime_error si la création de la chaîne de swaps échoue.
 			 */
-			void createSwapChain();
+			void CreateSwapChain();
 
 			/**
 			 * @brief Crée les vues d'image de la chaîne de swaps.
@@ -204,7 +204,7 @@ namespace lve
 			 *
 			 * @throws std::runtime_error si la création d'une vue d'image échoue.
 			 */
-			void createImageViews();
+			void CreateImageViews();
 
 			/**
 			* @brief Crée les ressources de profondeur pour la chaîne de swaps.
@@ -214,7 +214,7 @@ namespace lve
 			*
 			* @throws std::runtime_error si la création d'une ressource de profondeur échoue.
 			*/
-			void createDepthResources();
+			void CreateDepthResources();
 
 			/**
 			 * @brief Crée la passe de rendu.
@@ -224,7 +224,7 @@ namespace lve
 			 *
 			 * @throws std::runtime_error si la création de la passe de rendu échoue.
 			 */
-			void createRenderPass();
+			void CreateRenderPass();
 
 			/**
 			 * @brief Crée les tampons de trame.
@@ -234,7 +234,7 @@ namespace lve
 			 *
 			 * @throws std::runtime_error si la création d'un tampon de trame échoue.
 			 */
-			void createFramebuffers();
+			void CreateFrameBuffers();
 
 			/**
 			 * @brief Crée les objets de synchronisation.
@@ -244,7 +244,7 @@ namespace lve
 			 *
 			 * @throws std::runtime_error si la création d'un objet de synchronisation échoue.
 			 */
-			void createSyncObjects();
+			void CreateSyncObjects();
 
 			// Helper functions
 
@@ -257,7 +257,8 @@ namespace lve
 			 * @param _availableFormats Les formats de surface disponibles.
 			 * @return Le format de surface choisi.
 			 */
-			vk::SurfaceFormatKHR chooseSwapSurfaceFormat(const std::vector<vk::SurfaceFormatKHR>& _availableFormats);
+			static vk::SurfaceFormatKHR ChooseSwapSurfaceFormat(
+				const std::vector<vk::SurfaceFormatKHR>& _availableFormats);
 
 			/**
 			 * @brief Choisissez le mode de présentation de la chaîne de swaps.
@@ -268,7 +269,8 @@ namespace lve
 			 * @param _availablePresentModes Les modes de présentation disponibles.
 			 * @return Le mode de présentation choisi.
 			 */
-			vk::PresentModeKHR chooseSwapPresentMode(const std::vector<vk::PresentModeKHR>& _availablePresentModes);
+			static vk::PresentModeKHR ChooseSwapPresentMode(
+				const std::vector<vk::PresentModeKHR>& _availablePresentModes);
 
 			/**
 			 * @brief Choisissez l'étendue de la chaîne de swaps.
@@ -280,7 +282,7 @@ namespace lve
 			 * @param _capabilities Les capacités de la surface de rendu.
 			 * @return L'étendue de la chaîne de swaps choisie.
 			 */
-			vk::Extent2D chooseSwapExtent(const vk::SurfaceCapabilitiesKHR& _capabilities);
+			vk::Extent2D ChooseSwapExtent(const vk::SurfaceCapabilitiesKHR& _capabilities) const;
 
 			vk::Format   swapChainImageFormat; /**< Format des images de la chaîne d'échanges. */
 			vk::Format   swapChainDepthFormat; /**< Format de profondeur de la chaîne d'échanges. */

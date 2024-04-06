@@ -9,14 +9,14 @@
 class InputModule final : public Module
 {
 	public:
-		InputModule(GLFWwindow* window);
+		explicit InputModule(GLFWwindow* _window);
 		~InputModule();
 
-		void processInput();
+		void ProcessInput();
 
-		bool isKeyPressed(int key);
-		bool isMouseButtonPressed(int button);
-		void getMousePosition(double& xPos, double& yPos);
+		bool IsKeyPressed(int _key);
+		bool IsMouseButtonPressed(int _button);
+		void GetMousePosition(double& _xPos, double& _yPos) const;
 
 		/**
 			* @brief Initialise le module.
@@ -69,16 +69,16 @@ class InputModule final : public Module
 		void Finalize() override;
 
 	private:
-		GLFWwindow*                   m_window;
-		std::unordered_map<int, bool> m_keys;
-		std::unordered_map<int, bool> m_mouseButtons;
-		double                        m_mouseX, m_mouseY;
+		GLFWwindow*                   window;
+		std::unordered_map<int, bool> keys;
+		std::unordered_map<int, bool> mouseButtons;
+		double                        mouseX, mouseY;
 
-		static void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
-		static void mouseButtonCallback(GLFWwindow* window, int button, int action, int mods);
-		static void cursorPositionCallback(GLFWwindow* window, double xPos, double yPos);
-		static void joystickCallback(int jid, int event);
-		static void gamepadInput(int jid, const GLFWgamepadstate* state);
+		static void KeyCallback(GLFWwindow* _window, int _key, int _scancode, int _action, int _mods);
+		static void MouseButtonCallback(GLFWwindow* _window, int _button, int _action, int _mods);
+		static void CursorPositionCallback(GLFWwindow* _window, double _xPos, double _yPos);
+		static void JoystickCallback(int _jid, int _event);
+		static void GamepadInput(int _jid, const GLFWgamepadstate* _state);
 };
 
 #endif // INPUT_MANAGER_H

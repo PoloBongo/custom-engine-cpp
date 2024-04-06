@@ -7,76 +7,119 @@
 class BaseScene
 {
 	public:
-		explicit BaseScene(const std::string& fileName);
+		explicit BaseScene(const std::string& _fileName);
 		~BaseScene() = default;
 
 		BaseScene(const BaseScene&)            = delete;
 		BaseScene& operator=(const BaseScene&) = delete;
 
-		void Initialize();
-		void PostInitialize();
-		void Destroy();
-		void FixedUpdate();
-		void Update(float deltaTime);
-		void LateUpdate();
-		void Render(lve::LveWindow* _window);
+		/**
+				* @brief Initialise le module.
+				*/
+		virtual void Init();
+
+		/**
+		 * @brief Démarre le module.
+		 */
+		virtual void Start();
+
+		/**
+		 * @brief Effectue une mise à jour fixe du module.
+		 */
+		virtual void FixedUpdate(const float& _deltaTime);
+
+		/**
+		 * @brief Met à jour le module.
+		 */
+		virtual void Update(const float& _deltaTime);
+
+		/**
+		 * @brief Fonction pré-rendu du module.
+		 */
+		virtual void PreRender();
+
+		/**
+		 * @brief Rendu du module.
+		 */
+		virtual void Render(lve::LveWindow* _lveWindow);
+
+		/**
+		 * @brief Rendu de l'interface graphique du module.
+		 */
+		virtual void RenderGui();
+
+		/**
+		 * @brief Fonction post-rendu du module.
+		 */
+		virtual void PostRender();
+
+		/**
+		 * @brief Libère les ressources utilisées par le module.
+		 */
+		virtual void Release();
+
+		/**
+		 * @brief Finalise le module.
+		 */
+		virtual void Finalize();
+
 
 		GameObject*              CreateGameObject();
-		void                     DestroyGameObject(GameObject* gameObject);
-		GameObject*              GetGameObjectById(const GameObject::id_t& gameObjectID);
-		std::vector<GameObject*> FindGameObjectsByName(const std::string& name);
+		void                     DestroyGameObject(const GameObject* _gameObject);
+		GameObject*              GetGameObjectById(const GameObject::id_t& _gameObjectId) const;
+		std::vector<GameObject*> FindGameObjectsByName(const std::string& _name) const;
 
 
 		bool IsInitialized() const;
 
-		void        SetName(const std::string& name);
+		void        SetName(const std::string& _name);
 		std::string GetName() const;
 		std::string GetDefaultRelativeFilePath() const;
-		bool        SetFileName(const std::string& fileName, bool bDeletePreviousFiles);
+		bool        SetFileName(const std::string& _fileName, bool _bDeletePreviousFiles) const;
+		bool        FileExists(const std::string& _filePath);
+		bool        IsUsingSaveFile() const;
 
-		bool IsUsingSaveFile() const;
-
-		void DeleteSaveFiles();
-
+		void        DeleteSaveFiles();
+		bool        Contains(const std::vector<GameObject::id_t>& _container, const GameObject::id_t& _value);
 		std::string GetFileName() const;
 
 
 		std::vector<GameObject*>& GetRootObjects();
 
-		GameObject* AddRootObject(GameObject* gameObject);
-		GameObject* AddRootObjectImmediate(GameObject* gameObject);
-		GameObject* AddChildObject(GameObject* parent, GameObject* child);
-		GameObject* AddChildObjectImmediate(GameObject* parent, GameObject* child);
-		GameObject* AddSiblingObjectImmediate(GameObject* gameObject, GameObject* newSibling);
+		GameObject* AddRootObject(GameObject* _gameObject);
+		GameObject* AddRootObjectImmediate(GameObject* _gameObject);
+		GameObject* AddChildObject(GameObject* _parent, GameObject* _child);
+		GameObject* AddChildObjectImmediate(GameObject* _parent, GameObject* _child);
+		GameObject* AddSiblingObjectImmediate(GameObject* _gameObject, GameObject* _newSibling);
 
-		void SetRootObjectIndex(GameObject* rootObject, uint32_t newIndex);
+		void SetRootObjectIndex(GameObject* _rootObject, uint32_t _newIndex);
 
 
 		void RemoveAllObjects();          // Removes and destroys all objects in scene at end of frame
 		void RemoveAllObjectsImmediate(); // Removes and destroys all objects in scene
 		void RemoveAllEditorObjectsImmediate();
-		void RemoveObject(const GameObject::id_t& gameObjectID, bool bDestroy);
-		void RemoveObject(GameObject* gameObject, bool bDestroy);
-		//void RemoveObjectImmediate(const GameObject::id_t& gameObjectID, bool bDestroy);
-		//void RemoveObjectImmediate(GameObject* gameObject, bool bDestroy);
-		void RemoveObjects(const std::vector<GameObject::id_t>& gameObjects, bool bDestroy);
-		void RemoveObjects(const std::vector<GameObject*>& gameObjects, bool bDestroy);
-		void RemoveObjectsImmediate(const std::vector<GameObject::id_t>& gameObjects, bool bDestroy);
-		void RemoveObjectsImmediate(const std::vector<GameObject*>& gameObjects, bool bDestroy);
+		void RemoveObject(const GameObject::id_t& _gameObjectId, bool _bDestroy);
+		void RemoveObject(const GameObject* _gameObject, bool _bDestroy);
+		//void RemoveObjectImmediate(const GameObject::id_t& _gameObjectID, bool _bDestroy);
+		//void RemoveObjectImmediate(GameObject* _gameObject, bool _bDestroy);
+		void RemoveObjects(const std::vector<GameObject::id_t>& _gameObjects, bool _bDestroy);
+		void RemoveObjects(const std::vector<GameObject*>& _gameObjects, bool _bDestroy);
+		void RemoveObjectsImmediate(const std::vector<GameObject::id_t>& _gameObjects, bool _bDestroy);
+		void RemoveObjectsImmediate(const std::vector<GameObject*>& _gameObjects, bool _bDestroy);
 
-		GameObject::id_t FirstObjectWithTag(const std::string& tag);
+		GameObject::id_t FirstObjectWithTag(const std::string& _tag);
 
-		std::string m_Name;
-		std::string m_FileName;
+		std::string name;
+		std::string fileName;
 
-		std::vector<GameObject::id_t> m_PendingDestroyObjects; // Objects to destroy at LateUpdate this frame
-		std::vector<GameObject*>      m_PendingAddObjects;     // Objects to add as root objects at LateUpdate
-		std::vector<GameObject*>      m_RootObjects;
-		std::vector<GameObject::id_t> m_PendingRemoveObjects;
+		std::vector<GameObject::id_t> pendingDestroyObjects; // Objects to destroy at LateUpdate this frame
+		std::vector<GameObject*>      pendingAddObjects;     // Objects to add as root objects at LateUpdate
+		std::vector<GameObject*>      rootObjects;
+		std::vector<GameObject::id_t> pendingRemoveObjects;
 
-		const GameObject::id_t InvalidGameObjectID = {};
+		const GameObject::id_t invalidGameObjectId = {};
 
 
-		bool m_bInitialized = false;
-		bool m_bLoaded      = false;
+		bool bInitialized = false;
+		bool bLoaded      = false;
 };

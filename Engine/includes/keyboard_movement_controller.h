@@ -34,7 +34,7 @@ namespace lve
 			 * @note Les touches du clavier utilisées pour contrôler le mouvement et la rotation sont configurées dans l'attribut "keys" de cet objet.
 			 * @note L'objet est déplacé vers l'avant et vers l'arrière le long de l'axe Z, et vers la gauche et vers la droite le long de l'axe X. Il peut également monter et descendre le long de l'axe Y.
 			 */
-			void MoveInPlaneXZ(GLFWwindow* _window, float _deltaTime, LveGameObject& _gameObject);
+			void MoveInPlaneXZ(GLFWwindow* _window, float _deltaTime, LveGameObject& _gameObject) const;
 
 			KeyMappings keys{};
 			float       moveSpeed{3.f};
