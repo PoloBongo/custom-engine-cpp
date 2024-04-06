@@ -15,33 +15,33 @@
 namespace lve
 {
 	LvePipeline::LvePipeline(
-		LveDevice&                device,
-		const std::string&        vertFilepath,
-		const std::string&        fragFilepath,
-		const PipelineConfigInfo& configInfo) : lveDevice{device}
+		LveDevice&                _device,
+		const std::string&        _vertFilepath,
+		const std::string&        _fragFilepath,
+		const PipelineConfigInfo& _configInfo) : lveDevice{_device}
 	{
-		CreateGraphicsPipeline(vertFilepath, fragFilepath, configInfo);
+		CreateGraphicsPipeline(_vertFilepath, _fragFilepath, _configInfo);
 	}
 
 	LvePipeline::~LvePipeline()
 	{
-		lveDevice.device().destroyShaderModule(vertShaderModule);
-		lveDevice.device().destroyShaderModule(fragShaderModule);
-		lveDevice.device().destroyPipeline(graphicsPipeline);
+		lveDevice.Device().destroyShaderModule(vertShaderModule);
+		lveDevice.Device().destroyShaderModule(fragShaderModule);
+		lveDevice.Device().destroyPipeline(graphicsPipeline);
 	}
 
 	std::vector<char> LvePipeline::ReadFile(const std::string& _filepath)
 	{
-		std::string   enginePath = ENGINE_DIR + _filepath;
-		std::ifstream file{enginePath, std::ios::ate | std::ios::binary};
+		const std::string   engine_path = ENGINE_DIR + _filepath;
+		std::ifstream file{engine_path, std::ios::ate | std::ios::binary};
 
 		if (!file.is_open()) throw std::runtime_error("failed to open file: " + _filepath);
 
-		size_t            fileSize = file.tellg();
-		std::vector<char> buffer(fileSize);
+		const size_t            file_size = file.tellg();
+		std::vector<char> buffer(file_size);
 
 		file.seekg(0);
-		file.read(buffer.data(), fileSize);
+		file.read(buffer.data(), file_size);
 
 		file.close();
 		return buffer;
@@ -59,11 +59,11 @@ namespace lve
 			_configInfo.renderPass != nullptr &&
 			"Cannot create graphics pipeline: no renderPass provided in configInfo");
 
-		auto vertCode = ReadFile(_vertFilepath);
-		auto fragCode = ReadFile(_fragFilepath);
+		const auto vert_code = ReadFile(_vertFilepath);
+		const auto frag_code = ReadFile(_fragFilepath);
 
-		CreateShaderModule(vertCode, &vertShaderModule);
-		CreateShaderModule(fragCode, &fragShaderModule);
+		CreateShaderModule(vert_code, &vertShaderModule);
+		CreateShaderModule(frag_code, &fragShaderModule);
 
 
 		/***********************/
@@ -119,7 +119,7 @@ namespace lve
 
 		try
 		{
-			auto result = lveDevice.device().createGraphicsPipeline(nullptr, pipelineInfo, nullptr);
+			const auto result = lveDevice.Device().createGraphicsPipeline(nullptr, pipelineInfo, nullptr);
 			if (result.result != vk::Result::eSuccess) throw std::runtime_error("failed to create graphics pipeline!");
 			graphicsPipeline = result.value;
 		}
@@ -129,16 +129,16 @@ namespace lve
 		}
 	}
 
-	void LvePipeline::CreateShaderModule(const std::vector<char>& _code, vk::ShaderModule* _shaderModule)
+	void LvePipeline::CreateShaderModule(const std::vector<char>& _code, vk::ShaderModule* _shaderModule) const
 	{
-		vk::ShaderModuleCreateInfo createInfo{};
-		createInfo.sType = vk::StructureType::eShaderModuleCreateInfo;
-		createInfo.setCodeSize(_code.size());
-		createInfo.setPCode(reinterpret_cast<const uint32_t*>(_code.data()));
+		vk::ShaderModuleCreateInfo create_info{};
+		create_info.sType = vk::StructureType::eShaderModuleCreateInfo;
+		create_info.setCodeSize(_code.size());
+		create_info.setPCode(reinterpret_cast<const uint32_t*>(_code.data()));
 
 		try
 		{
-			*_shaderModule = lveDevice.device().createShaderModule(createInfo);
+			*_shaderModule = lveDevice.Device().createShaderModule(create_info);
 		}
 		catch (const vk::SystemError& e)
 		{
@@ -147,7 +147,7 @@ namespace lve
 	}
 
 
-	void LvePipeline::Bind(vk::CommandBuffer _commandBuffer)
+	void LvePipeline::Bind(const vk::CommandBuffer _commandBuffer) const
 	{
 		_commandBuffer.bindPipeline(vk::PipelineBindPoint::eGraphics, graphicsPipeline);
 	}

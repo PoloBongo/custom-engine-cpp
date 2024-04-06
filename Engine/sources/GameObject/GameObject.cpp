@@ -124,8 +124,8 @@ std::vector<GameObject*> GameObject::FindChildrenByName(const std::string& _name
 			found_objects.push_back(child);
 
 		// Récursivement chercher les enfants du GameObject actuel
-		std::vector<GameObject*> nestedFound = child->FindChildrenByName(_name);
-		found_objects.insert(found_objects.end(), nestedFound.begin(), nestedFound.end());
+		std::vector<GameObject*> nested_found = child->FindChildrenByName(_name);
+		found_objects.insert(found_objects.end(), nested_found.begin(), nested_found.end());
 	}
 
 	return found_objects;

@@ -24,96 +24,92 @@ SoundSystemModule::SoundSystemModule()
 }
 
 // Permet la création du son avec son chemin d'accès //
-void SoundSystemModule::CreateSound(SoundClass* pSound, const char* pathAudio)
+void SoundSystemModule::CreateSound(SoundClass* p_Sound, const char* p_pathAudio) const
 {
-	FMOD_RESULT result = system->createSound(pathAudio, FMOD_LOOP_OFF, nullptr, pSound);
+	const FMOD_RESULT result = system->createSound(p_pathAudio, FMOD_LOOP_OFF, nullptr, p_Sound);
 
 	if (result != FMOD_OK) std::cout << "le son n'a pas charge : " << FMOD_ErrorString(result) << std::endl;
 }
 
 // Permet la création d'un groupe de son. //
-void SoundSystemModule::CreateSoundGroup(SoundGroup* pSoundGroup, const char* groupName)
+void SoundSystemModule::CreateSoundGroup(SoundGroup* p_pSoundGroup, const char* p_pathAudio) const
 {
-	FMOD_RESULT result = system->createSoundGroup(groupName, pSoundGroup);
-
-	if (result != FMOD_OK) std::cout << "le groupe n'a pas charge : " << FMOD_ErrorString(result) << std::endl;
+	if (const FMOD_RESULT result = system->createSoundGroup(p_pathAudio, p_pSoundGroup); result != FMOD_OK) std::cout << "le groupe n'a pas charge : " << FMOD_ErrorString(result) << std::endl;
 }
 
 // Permet la récupération d'un groupe de son. //
-void SoundSystemModule::GetMasterSoundGroup(SoundGroup* pSoundGroup)
+void SoundSystemModule::GetMasterSoundGroup(SoundGroup* p_pSound) const
 {
-	FMOD_RESULT result = system->getMasterSoundGroup(pSoundGroup);
-
-	if (result != FMOD_OK) std::cout << "le groupe n'a pas charge : " << FMOD_ErrorString(result) << std::endl;
+	if (const FMOD_RESULT result = system->getMasterSoundGroup(p_pSound); result != FMOD_OK) std::cout << "le groupe n'a pas charge : " << FMOD_ErrorString(result) << std::endl;
 }
 
 // Permet de joué un son spécifique avec ces propres paramètres. //
-void SoundSystemModule::PlaySound(SoundClass pSound, bool isPlay, int loopCount, float volume, Channel* channelPtr)
+void SoundSystemModule::PlaySound(const SoundClass _pSound, const bool _isPlay, const int _loopCount, const float _volume, Channel* p_channelPtr) const
 {
 	FMOD::Channel* channel = nullptr;
 
-	if (!isPlay)
+	if (!_isPlay)
 	{
-		pSound->setMode(FMOD_LOOP_OFF);
+		_pSound->setMode(FMOD_LOOP_OFF);
 	}
 	else
 	{
-		pSound->setMode(FMOD_LOOP_NORMAL);
-		pSound->setLoopCount(loopCount);
+		_pSound->setMode(FMOD_LOOP_NORMAL);
+		_pSound->setLoopCount(_loopCount);
 	}
 
-	system->playSound(pSound, channelGroup, false, &channel);
+	system->playSound(_pSound, channelGroup, false, &channel);
 
-	channel->setVolume(volume);
+	channel->setVolume(_volume);
 
 	// Affecter le canal créé au pointeur de pointeur passé en paramètre
-	*channelPtr = channel;
+	*p_channelPtr = channel;
 }
 
 // Permet de libérer la mémoire et de couper le son. //
-void SoundSystemModule::ReleaseSound(SoundClass pSound)
+void SoundSystemModule::ReleaseSound(const SoundClass _pSound)
 {
-	pSound->release();
+	_pSound->release();
 }
 
 // Permet d'obtenir le nombre total de tour sur le son //
-int SoundSystemModule::GetLoopCount(SoundClass pSound, int* loopcount)
+int SoundSystemModule::GetLoopCount(const SoundClass _pSound, int* p_loopCount)
 {
-	return pSound->getLoopCount(loopcount);
+	return _pSound->getLoopCount(p_loopCount);
 }
 
 // Permet la création d'un channel de groupe. //
-void SoundSystemModule::createChannelGroup(FMOD::ChannelGroup** channelGroup)
+void SoundSystemModule::CreateChannelGroup(FMOD::ChannelGroup** channelGroup) const
 {
 	system->createChannelGroup(nullptr, channelGroup);
 }
 
 // Permet d'ajouter un son à un channel de groupe pour pouvoir modifier les paramètres du son du tout les sons du channel. //
-void SoundSystemModule::AddSoundToGroup(SoundClass pSound, FMOD::ChannelGroup* channelGroup)
+void SoundSystemModule::AddSoundToGroup(const SoundClass _pSound, FMOD::ChannelGroup* p_channelGroup) const
 {
-	system->playSound(pSound, channelGroup, false, nullptr);
+	system->playSound(_pSound, p_channelGroup, false, nullptr);
 }
 
 // Implémentation des fonctions pour le routing vers les ports et la gestion de la réverbération //
-FMOD_RESULT SoundSystemModule::AttachChannelGroupToPort(FMOD_PORT_TYPE      portType, FMOD_PORT_INDEX portIndex,
-                                                        FMOD::ChannelGroup* channelGroup, bool        passThru)
+FMOD_RESULT SoundSystemModule::AttachChannelGroupToPort(const FMOD_PORT_TYPE _portType, const FMOD_PORT_INDEX _portIndex,
+                                                        FMOD::ChannelGroup*  p_channelGroup, const bool              _passThru) const
 {
-	return system->attachChannelGroupToPort(portType, portIndex, channelGroup, passThru);
+	return system->attachChannelGroupToPort(_portType, _portIndex, p_channelGroup, _passThru);
 }
 
-FMOD_RESULT SoundSystemModule::DetachChannelGroupFromPort(FMOD::ChannelGroup* channelGroup)
+FMOD_RESULT SoundSystemModule::DetachChannelGroupFromPort(FMOD::ChannelGroup* p_channelGroup) const
 {
-	return system->detachChannelGroupFromPort(channelGroup);
+	return system->detachChannelGroupFromPort(p_channelGroup);
 }
 
-FMOD_RESULT SoundSystemModule::SetReverbProperties(int instance, const FMOD_REVERB_PROPERTIES* prop)
+FMOD_RESULT SoundSystemModule::SetReverbProperties(const int _instance, const FMOD_REVERB_PROPERTIES* p_prop) const
 {
-	return system->setReverbProperties(instance, prop);
+	return system->setReverbProperties(_instance, p_prop);
 }
 
-FMOD_RESULT SoundSystemModule::GetReverbProperties(int instance, FMOD_REVERB_PROPERTIES* prop)
+FMOD_RESULT SoundSystemModule::GetReverbProperties(const int _instance, FMOD_REVERB_PROPERTIES* p_prop) const
 {
-	return system->getReverbProperties(instance, prop);
+	return system->getReverbProperties(_instance, p_prop);
 }
 
 void SoundSystemModule::Init()

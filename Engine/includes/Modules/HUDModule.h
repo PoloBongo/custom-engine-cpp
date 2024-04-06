@@ -92,7 +92,7 @@ class HUDModule : public Module
 		std::vector<char> ReadFile(const std::string& _filename);
 		// Méthodes pour créer et gérer les ressources Vulkan
 		/*VkImage createTextureImage(const std::string& texturePath);*/
-		VkImageView CreateTextureImageView(VkImage _image);
+		VkImageView CreateTextureImageView(const VkImage _image);
 		[[nodiscard]] VkSampler   CreateTextureSampler() const;
 		void        TransitionImageLayout(VkImage _image, VkFormat _format, VkImageLayout _oldLayout, VkImageLayout _newLayout);
 

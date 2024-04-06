@@ -67,7 +67,7 @@ bool BaseScene::IsInitialized() const
  */
 void BaseScene::SetName(const std::string& _name)
 {
-	_name = _name;
+	name = _name;
 }
 
 /**
@@ -113,11 +113,12 @@ std::string BaseScene::GetFileName() const
  * @param _bDeletePreviousFiles Indique s'il faut supprimer les fichiers précédents.
  * @return true si le nom du fichier est défini avec succès, sinon false.
  */
-bool BaseScene::SetFileName(const std::string& _fileName, bool _bDeletePreviousFiles)
+bool BaseScene::SetFileName(const std::string& _fileName, bool _bDeletePreviousFiles) const
 {
 	bool success = false;
 
-	if (_fileName == _fileName) return true;
+	if (fileName == _fileName) success = true;
+	return success;
 }
 
 /**
@@ -133,13 +134,13 @@ std::string BaseScene::GetDefaultRelativeFilePath() const
 
 /**
  * @brief Vérifie si un fichier existe.
- * @param filePath Chemin du fichier à vérifier.
+ * @param _filePath Chemin du fichier à vérifier.
  * @return true si le fichier existe, sinon false.
  */
 
-bool FileExists(const std::string& filePath)
+bool BaseScene::FileExists(const std::string& _filePath)
 {
-	std::ifstream file(filePath);
+	const std::ifstream file(_filePath);
 	return file.good();
 }
 
@@ -148,29 +149,28 @@ bool FileExists(const std::string& filePath)
  */
 void BaseScene::DeleteSaveFiles()
 {
-	const std::string defaultSaveFilePath = "assets/scenes/" + fileName;
-	const std::string savedSaveFilePath   = "saved/scenes/" + fileName;
+	const std::string default_save_file_path = "assets/scenes/" + fileName;
+	const std::string saved_save_file_path   = "saved/scenes/" + fileName;
 
-	bool bDefaultFileExists = FileExists(defaultSaveFilePath);
-	bool bSavedFileExists   = FileExists(savedSaveFilePath);
+	const bool b_default_file_exists = FileExists(default_save_file_path);
 
-	if (bSavedFileExists || bDefaultFileExists)
+	if (const bool b_saved_file_exists = FileExists(saved_save_file_path); b_saved_file_exists || b_default_file_exists)
 	{
 		std::cout << "Deleting scene's save files from " << fileName << std::endl;
 
-		if (bDefaultFileExists)
+		if (b_default_file_exists)
 		{
-			if (remove(defaultSaveFilePath.c_str()) !=
+			if (remove(default_save_file_path.c_str()) !=
 			    0)
-				std::cerr << "Error deleting default save file: " << defaultSaveFilePath << std::endl;
+				std::cerr << "Error deleting default save file: " << default_save_file_path << std::endl;
 			else std::cout << "Default save file deleted successfully." << std::endl;
 		}
 
-		if (bSavedFileExists)
+		if (b_saved_file_exists)
 		{
-			if (remove(savedSaveFilePath.c_str()) !=
+			if (remove(saved_save_file_path.c_str()) !=
 			    0)
-				std::cerr << "Error deleting saved save file: " << savedSaveFilePath << std::endl;
+				std::cerr << "Error deleting saved save file: " << saved_save_file_path << std::endl;
 			else std::cout << "Saved save file deleted successfully." << std::endl;
 		}
 	}

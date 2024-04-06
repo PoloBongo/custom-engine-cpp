@@ -18,7 +18,7 @@ namespace lve
 			 * Cette énumération représente les différents types de curseurs GLFW disponibles.
 			 * Ces types peuvent être utilisés pour spécifier le style du curseur à afficher.
 			 */
-			enum GLFW_CURSOR_TYPE
+			enum GlfwCursorType
 			{
 				ARROW,
 				/**< Curseur flèche. */
@@ -47,7 +47,7 @@ namespace lve
 			 * Cette énumération représente les différents modes de curseurs GLFW.
 			 * Ces modes définissent le comportement du curseur sur l'écran.
 			 */
-			enum GLFW_CURSOR_MODE
+			enum GlfwCursorMode
 			{
 				DISABLED,
 				/**< Curseur désactivé. */
@@ -102,7 +102,7 @@ namespace lve
 			 *
 			 * @return true si la fenêtre doit être fermée, false sinon.
 			 */
-			bool ShouldClose() { return glfwWindowShouldClose(window); }
+			bool ShouldClose() const { return glfwWindowShouldClose(window); }
 
 			/**
 			 * @brief Obtient les dimensions de la fenêtre.
@@ -111,7 +111,7 @@ namespace lve
 			 *
 			 * @return Les dimensions de la fenêtre sous forme d'une structure vk::Extent2D.
 			 */
-			vk::Extent2D GetExtent() { return {static_cast<uint32_t>(width), static_cast<uint32_t>(height)}; }
+			vk::Extent2D GetExtent() const { return {static_cast<uint32_t>(width), static_cast<uint32_t>(height)}; }
 
 			/**
 			 * @brief Vérifie si la fenêtre a été redimensionnée.
@@ -121,7 +121,7 @@ namespace lve
 			 * @return true si la fenêtre a été redimensionnée, sinon false.
 			 */
 
-			bool WasWindowResized() { return frameBufferResize; }
+			bool WasWindowResized() const { return frameBufferResize; }
 
 			/**
 			 * @brief Réinitialise le drapeau de redimensionnement de la fenêtre.
@@ -148,20 +148,21 @@ namespace lve
 			 *
 			 * @return Un pointeur vers la fenêtre GLFW.
 			 */
-			GLFWwindow* GetGLFWwindow() const { return window; }
+			[[nodiscard]] GLFWwindow* GetGlfwWindow() const { return window; }
 
 			/**
 			 * @brief Réinitialise le curseur de la fenêtre.
 			 *
 			 * Cette fonction réinitialise le curseur de la fenêtre à sa forme par défaut.
 			 */
-			void ResetCursorWindow() { glfwSetCursor(window, nullptr); }
+			void ResetCursorWindow() const { glfwSetCursor(window, nullptr); }
 
 			/**
 			 * @brief Change la forme du curseur de la fenêtre en un cube coloré.
 			 *
 			 * Cette fonction change la forme du curseur de la fenêtre en un cube coloré, avec la possibilité de spécifier la couleur du cube.
 			 *
+			 * @param _color
 			 * @param color La couleur du cube. La valeur par défaut est 255.
 			 */
 			void CubeCursorWindow(int _color = 255);
@@ -171,18 +172,20 @@ namespace lve
 			 *
 			 * Cette fonction définit le curseur standard de la fenêtre à un type spécifié.
 			 *
+			 * @param _cursorType
 			 * @param CursorType Le type de curseur à définir.
 			 */
-			void StandarCursorWindow(GLFW_CURSOR_TYPE _CursorType);
+			void StandardCursorWindow(GlfwCursorType _cursorType) const;
 
 			/**
 			 * @brief Définit le mode de curseur d'entrée pour la fenêtre.
 			 *
 			 * Cette fonction définit le mode de curseur d'entrée pour la fenêtre à un mode spécifié.
 			 *
+			 * @param _mode
 			 * @param mode Le mode de curseur d'entrée à définir.
 			 */
-			void SetInputCursorMode(GLFW_CURSOR_MODE _mode);
+			void SetInputCursorMode(const GlfwCursorMode _mode) const;
 
 		private:
 			/**
@@ -194,7 +197,7 @@ namespace lve
 			 * @param _width The new width of the framebuffer.
 			 * @param _height The new height of the framebuffer.
 			 */
-			static void FramebufferResizeCallBack(GLFWwindow* _window, int _width, int _height);
+			static void FrameBufferResizeCallBack(GLFWwindow* _window, int _width, int _height);
 
 			/**
 			 * @brief Initialise la fenêtre GLFW.

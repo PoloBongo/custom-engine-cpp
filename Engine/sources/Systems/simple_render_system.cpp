@@ -18,7 +18,7 @@ namespace lve
 		CreatePipeline(_renderPass);
 	}
 
-	SimpleRenderSystem::~SimpleRenderSystem() { lveDevice.device().destroyPipelineLayout(pipelineLayout, nullptr); }
+	SimpleRenderSystem::~SimpleRenderSystem() { lveDevice.Device().destroyPipelineLayout(pipelineLayout, nullptr); }
 
 	void SimpleRenderSystem::CreatePipelineLayout(vk::DescriptorSetLayout _globalSetLayout)
 	{
@@ -35,7 +35,7 @@ namespace lve
 		pipelineLayoutInfo.pSetLayouts            = descriptorSetLayouts.data();
 		pipelineLayoutInfo.pushConstantRangeCount = 1;
 		pipelineLayoutInfo.pPushConstantRanges    = &pushConstantRange;
-		if (lveDevice.device().createPipelineLayout(&pipelineLayoutInfo, nullptr, &pipelineLayout) !=
+		if (lveDevice.Device().createPipelineLayout(&pipelineLayoutInfo, nullptr, &pipelineLayout) !=
 		    vk::Result::eSuccess)
 			throw std::runtime_error("failed to create pipeline layout!");
 	}
@@ -74,8 +74,8 @@ namespace lve
 			auto& obj = kv.second;
 			if (obj.model == nullptr) continue;
 			SimplePushConstantData push{};
-			push.modelMatrix  = obj.transform.mat4();
-			push.normalMatrix = obj.transform.normalMatrix();
+			push.modelMatrix  = obj.transform.Mat4();
+			push.normalMatrix = obj.transform.NormalMatrix();
 
 			// Mise à jour des push constants
 			_frameInfo.commandBuffer.pushConstants<SimplePushConstantData>(

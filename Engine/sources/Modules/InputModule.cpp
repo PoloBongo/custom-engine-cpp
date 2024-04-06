@@ -24,8 +24,7 @@ void InputModule::ProcessInput()
 	{
 		if (glfwJoystickPresent(jid))
 		{
-			const float* axes = glfwGetJoystickAxes(jid, nullptr);
-			if (axes)
+			if (const float* axes = glfwGetJoystickAxes(jid, nullptr))
 				// Process joystick axes
 				for (int i = 0; i < 6; ++i)
 				{
@@ -35,8 +34,7 @@ void InputModule::ProcessInput()
 					}
 				}
 
-			const unsigned char* buttons = glfwGetJoystickButtons(jid, nullptr);
-			if (buttons)
+			if (const unsigned char* buttons = glfwGetJoystickButtons(jid, nullptr))
 				// Process joystick buttons
 				for (int i = 0; i < 16; ++i)
 				{
@@ -46,8 +44,7 @@ void InputModule::ProcessInput()
 					}
 				}
 
-			const unsigned char* hats = glfwGetJoystickHats(jid, nullptr);
-			if (hats)
+			if (const unsigned char* hats = glfwGetJoystickHats(jid, nullptr))
 				// Process joystick hats
 				for (int i = 0; i < 4; ++i)
 				{
@@ -63,47 +60,47 @@ void InputModule::ProcessInput()
 }
 
 
-bool InputModule::IsKeyPressed(int _key)
+bool InputModule::IsKeyPressed(const int _key)
 {
 	return keys[_key];
 }
 
-bool InputModule::IsMouseButtonPressed(int _button)
+bool InputModule::IsMouseButtonPressed(const int _button)
 {
 	return mouseButtons[_button];
 }
 
-void InputModule::GetMousePosition(double& _xPos, double& _yPos)
+void InputModule::GetMousePosition(double& _xPos, double& _yPos) const
 {
 	_xPos = mouseX;
 	_yPos = mouseY;
 }
 
-void InputModule::KeyCallback(GLFWwindow* _window, int _key, int _scancode, int _action, int _mods)
+void InputModule::KeyCallback(GLFWwindow* _window, const int _key, int _scancode, const int _action, int _mods)
 {
-	auto inputModule = static_cast<InputModule*>(glfwGetWindowUserPointer(_window));
+	const auto input_module = static_cast<InputModule*>(glfwGetWindowUserPointer(_window));
 
-	if (_action == GLFW_PRESS) inputModule->keys[_key] = true;
-	else if (_action == GLFW_RELEASE) inputModule->keys[_key] = false;
+	if (_action == GLFW_PRESS) input_module->keys[_key] = true;
+	else if (_action == GLFW_RELEASE) input_module->keys[_key] = false;
 }
 
-void InputModule::MouseButtonCallback(GLFWwindow* _window, int _button, int _action, int _mods)
+void InputModule::MouseButtonCallback(GLFWwindow* _window, const int _button, const int _action, int _mods)
 {
-	auto inputModule = static_cast<InputModule*>(glfwGetWindowUserPointer(_window));
+	const auto input_module = static_cast<InputModule*>(glfwGetWindowUserPointer(_window));
 
-	if (_action == GLFW_PRESS) inputModule->mouseButtons[_button] = true;
-	else if (_action == GLFW_RELEASE) inputModule->mouseButtons[_button] = false;
+	if (_action == GLFW_PRESS) input_module->mouseButtons[_button] = true;
+	else if (_action == GLFW_RELEASE) input_module->mouseButtons[_button] = false;
 }
 
-void InputModule::CursorPositionCallback(GLFWwindow* _window, double _xPos, double _yPos)
+void InputModule::CursorPositionCallback(GLFWwindow* _window, const double _xPos, const double _yPos)
 {
-	auto inputModule = static_cast<InputModule*>(glfwGetWindowUserPointer(_window));
+	const auto input_module = static_cast<InputModule*>(glfwGetWindowUserPointer(_window));
 
-	inputModule->mouseX = _xPos;
-	inputModule->mouseY = _yPos;
+	input_module->mouseX = _xPos;
+	input_module->mouseY = _yPos;
 }
 
-void InputModule::JoystickCallback(int _jid, int _event)
+void InputModule::JoystickCallback(const int _jid, const int _event)
 {
 	if (_event == GLFW_CONNECTED) std::cout << "Joystick connected: " << _jid << std::endl;
 	else if (_event == GLFW_DISCONNECTED) std::cout << "Joystick disconnected: " << _jid << std::endl;
@@ -118,8 +115,8 @@ void InputModule::GamepadInput(int _jid, const GLFWgamepadstate* _state)
 	}
 
 	// Example: Use gamepad axes
-	float leftStickX = _state->axes[GLFW_GAMEPAD_AXIS_LEFT_X];
-	float leftStickY = _state->axes[GLFW_GAMEPAD_AXIS_LEFT_Y];
+	float left_stick_x = _state->axes[GLFW_GAMEPAD_AXIS_LEFT_X];
+	float left_stick_y = _state->axes[GLFW_GAMEPAD_AXIS_LEFT_Y];
 }
 
 void InputModule::Init()

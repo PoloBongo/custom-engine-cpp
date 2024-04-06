@@ -37,20 +37,20 @@ class SoundSystemModule final : public Module
 		 * @param p_Sound Pointeur vers l'objet Sound créé
 		 * @param _pathAudio Chemin du fichier audio à charger
 		 */
-		void CreateSound(SoundClass* p_Sound, const char* p_pathAudio);
+		void CreateSound(SoundClass* p_Sound, const char* p_pathAudio) const;
 
 		/**
 		 * @brief Crée un objet SoundGroup à partir d'un fichier audio spécifié
 		 * @param _pSoundGroup Pointeur vers l'objet SoundGroup créé
 		 * @param _pathAudio Chemin du fichier audio à charger
 		 */
-		void CreateSoundGroup(SoundGroup* p_pSoundGroup, const char* p_pathAudio);
+		void CreateSoundGroup(SoundGroup* p_pSoundGroup, const char* p_pathAudio) const;
 
 		/**
 		 * @brief Obtient le groupe de sons principal
 		 * @param _pSound Pointeur vers le groupe de sons principal
 		 */
-		void GetMasterSoundGroup(SoundGroup* p_pSound);
+		void GetMasterSoundGroup(SoundGroup* p_pSound) const;
 
 		/**
 		 * @brief Joue un son spécifié
@@ -60,7 +60,7 @@ class SoundSystemModule final : public Module
 		 * @param _volume Volume du son à jouer
 		 * @param p_channelPtr Pointeur vers le canal sur lequel le son est joué
 		 */
-		void PlaySound(SoundClass _pSound, bool _isPlay, int _loopCount, float _volume, Channel* p_channelPtr);
+		void PlaySound(SoundClass _pSound, bool _isPlay, int _loopCount, float _volume, Channel* p_channelPtr) const;
 
 		/**
 		 * @brief Libère les ressources utilisées par un son spécifié
@@ -73,14 +73,14 @@ class SoundSystemModule final : public Module
 		 * @param pp_channelGroup Pointeur vers le groupe de canaux créé
 		 */
 		// ReSharper disable once CppInconsistentNaming
-		void createChannelGroup(FMOD::ChannelGroup** pp_channelGroup);
+		void CreateChannelGroup(FMOD::ChannelGroup** pp_channelGroup) const;
 
 		/**
 		 * @brief Ajoute un son à un groupe de canaux spécifié
 		 * @param _pSound Pointeur vers l'objet Sound à ajouter au groupe de canaux
 		 * @param _channelGroup Pointeur vers le groupe de canaux auquel ajouter le son
 		 */
-		void AddSoundToGroup(SoundClass _pSound, FMOD::ChannelGroup* p_channelGroup);
+		void AddSoundToGroup(SoundClass _pSound, FMOD::ChannelGroup* p_channelGroup) const;
 
 		/**
 		 * @brief Définit la distance minimum et maximum pour un son 3D
@@ -102,7 +102,7 @@ class SoundSystemModule final : public Module
 		 * @param p_loopCount Pointeur vers la variable pour stocker le nombre de boucles
 		 * @return Le nombre de boucles du son spécifié
 		 */
-		int GetLoopCount(SoundClass _pSound, int* p_loopCount);
+		static int GetLoopCount(SoundClass _pSound, int* p_loopCount);
 
 		/**
 		 * @brief Attache un groupe de canaux à un port spécifié pour le rendu audio
@@ -113,14 +113,14 @@ class SoundSystemModule final : public Module
 		 * @return Résultat de l'opération d'attache du groupe de canaux au port
 		 */
 		FMOD_RESULT AttachChannelGroupToPort(FMOD_PORT_TYPE      _portType, FMOD_PORT_INDEX _portIndex,
-		                                     FMOD::ChannelGroup* p_channelGroup, bool        _passThru = false);
+		                                     FMOD::ChannelGroup* p_channelGroup, bool        _passThru = false) const;
 
 		/**
 		 * @brief Détache un groupe de canaux d'un port auquel il était précédemment attaché
 		 * @param p_channelGroup Pointeur vers le groupe de canaux à détacher du port
 		 * @return Résultat de l'opération de détachement du groupe de canaux du port
 		 */
-		FMOD_RESULT DetachChannelGroupFromPort(FMOD::ChannelGroup* p_channelGroup);
+		FMOD_RESULT DetachChannelGroupFromPort(FMOD::ChannelGroup* p_channelGroup) const;
 
 		/**
 		 * @brief Définit les propriétés de réverbération pour une instance de réverbération spécifiée
@@ -128,7 +128,7 @@ class SoundSystemModule final : public Module
 		 * @param p_prop Pointeur vers les propriétés de réverbération à définir
 		 * @return Résultat de l'opération de définition des propriétés de réverbération
 		 */
-		FMOD_RESULT SetReverbProperties(int _instance, const FMOD_REVERB_PROPERTIES* p_prop);
+		FMOD_RESULT SetReverbProperties(int _instance, const FMOD_REVERB_PROPERTIES* p_prop) const;
 
 		/**
 		 * @brief Obtient les propriétés de réverbération pour une instance de réverbération spécifiée
@@ -136,7 +136,7 @@ class SoundSystemModule final : public Module
 		 * @param p_prop Pointeur vers les propriétés de réverbération à remplir avec les valeurs obtenues
 		 * @return Résultat de l'opération de récupération des propriétés de réverbération
 		 */
-		FMOD_RESULT GetReverbProperties(int _instance, FMOD_REVERB_PROPERTIES* p_prop);
+		FMOD_RESULT GetReverbProperties(int _instance, FMOD_REVERB_PROPERTIES* p_prop) const;
 
 
 		/**

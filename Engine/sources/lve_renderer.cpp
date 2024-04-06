@@ -24,7 +24,7 @@ namespace lve
 			glfwWaitEvents();
 		}
 
-		lveDevice.device().waitIdle(); // Utilisation de vk::Device::waitIdle()
+		lveDevice.Device().waitIdle(); // Utilisation de vk::Device::waitIdle()
 
 		if (lveSwapChain == nullptr)
 		{
@@ -49,10 +49,10 @@ namespace lve
 		vk::CommandBufferAllocateInfo allocInfo{};
 		allocInfo.sType              = vk::StructureType::eCommandBufferAllocateInfo;
 		allocInfo.level              = vk::CommandBufferLevel::ePrimary;
-		allocInfo.commandPool        = lveDevice.getCommandPool();
+		allocInfo.commandPool        = lveDevice.GetCommandPool();
 		allocInfo.commandBufferCount = static_cast<uint32_t>(commandBuffers.size());
 
-		if (lveDevice.device().allocateCommandBuffers(&allocInfo, commandBuffers.data()) !=
+		if (lveDevice.Device().allocateCommandBuffers(&allocInfo, commandBuffers.data()) !=
 		    vk::Result::eSuccess)
 			throw std::runtime_error("failed to allocate command buffers!");
 	}
@@ -60,8 +60,8 @@ namespace lve
 
 	void LveRenderer::FreeCommandBuffers()
 	{
-		lveDevice.device().freeCommandBuffers(
-			lveDevice.getCommandPool(),
+		lveDevice.Device().freeCommandBuffers(
+			lveDevice.GetCommandPool(),
 			static_cast<uint32_t>(commandBuffers.size()),
 			commandBuffers.data());
 		commandBuffers.clear();
@@ -72,7 +72,7 @@ namespace lve
 	{
 		assert(!isFrameStarted && "Can't call beginFrame while already in progress");
 
-		auto result = lveSwapChain->acquireNextImage(&currentImageIndex);
+		auto result = lveSwapChain->AcquireNextImage(&currentImageIndex);
 		if (result == vk::Result::eErrorOutOfDateKHR || result == vk::Result::eSuboptimalKHR)
 		{
 			RecreateSwapChain();
@@ -101,7 +101,7 @@ namespace lve
 		auto commandBuffer = GetCurrentCommandBuffer();
 		commandBuffer.end();
 
-		auto result = lveSwapChain->submitCommandBuffers(&commandBuffer, &currentImageIndex);
+		auto result = lveSwapChain->SubmitCommandBuffers(&commandBuffer, &currentImageIndex);
 		if (result == vk::Result::eErrorOutOfDateKHR || result == vk::Result::eSuboptimalKHR ||
 		    lveWindow.WasWindowResized())
 		{
@@ -123,7 +123,7 @@ namespace lve
 
 		_commandBuffer->end();
 
-		auto result = lveSwapChain->submitCommandBuffers(_commandBuffer, &currentImageIndex);
+		auto result = lveSwapChain->SubmitCommandBuffers(_commandBuffer, &currentImageIndex);
 		if (result == vk::Result::eErrorOutOfDateKHR || result == vk::Result::eSuboptimalKHR ||
 		    lveWindow.WasWindowResized())
 		{
@@ -149,11 +149,11 @@ namespace lve
 
 		vk::RenderPassBeginInfo renderPassInfo{};
 		renderPassInfo.sType       = vk::StructureType::eRenderPassBeginInfo;
-		renderPassInfo.renderPass  = lveSwapChain->getRenderPass();
-		renderPassInfo.framebuffer = lveSwapChain->getFrameBuffer(currentImageIndex);
+		renderPassInfo.renderPass  = lveSwapChain->GetRenderPass();
+		renderPassInfo.framebuffer = lveSwapChain->GetFrameBuffer(currentImageIndex);
 
 		renderPassInfo.renderArea.offset = vk::Offset2D{0, 0};
-		renderPassInfo.renderArea.extent = lveSwapChain->getSwapChainExtent();
+		renderPassInfo.renderArea.extent = lveSwapChain->GetSwapChainExtent();
 
 		std::array<vk::ClearValue, 2> clearValues{};
 		clearValues[0].color           = vk::ClearColorValue(std::array<float, 4>{0.01f, 0.01f, 0.01f, 1.0f});
@@ -166,11 +166,11 @@ namespace lve
 		vk::Viewport viewport{};
 		viewport.x        = 0.0f;
 		viewport.y        = 0.0f;
-		viewport.width    = static_cast<float>(lveSwapChain->getSwapChainExtent().width);
-		viewport.height   = static_cast<float>(lveSwapChain->getSwapChainExtent().height);
+		viewport.width    = static_cast<float>(lveSwapChain->GetSwapChainExtent().width);
+		viewport.height   = static_cast<float>(lveSwapChain->GetSwapChainExtent().height);
 		viewport.minDepth = 0.0f;
 		viewport.maxDepth = 1.0f;
-		vk::Rect2D scissor{{0, 0}, lveSwapChain->getSwapChainExtent()};
+		vk::Rect2D scissor{{0, 0}, lveSwapChain->GetSwapChainExtent()};
 		commandBuffer.setViewport(0, 1, &viewport);
 		commandBuffer.setScissor(0, 1, &scissor);
 	}

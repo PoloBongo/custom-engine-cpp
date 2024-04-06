@@ -65,11 +65,11 @@ namespace lve
 
 	void LveModel::Bind(vk::CommandBuffer _commandBuffer)
 	{
-		vk::Buffer     buffers[] = {vertexBuffer->getBuffer()};
+		vk::Buffer     buffers[] = {vertexBuffer->GetBuffer()};
 		vk::DeviceSize offsets[] = {0};
 		_commandBuffer.bindVertexBuffers(0, 1, buffers, offsets);
 
-		if (hasIndexBuffer) _commandBuffer.bindIndexBuffer(indexBuffer->getBuffer(), 0, vk::IndexType::eUint32);
+		if (hasIndexBuffer) _commandBuffer.bindIndexBuffer(indexBuffer->GetBuffer(), 0, vk::IndexType::eUint32);
 	}
 
 
@@ -103,8 +103,8 @@ namespace lve
 			vk::MemoryPropertyFlagBits::eHostVisible | vk::MemoryPropertyFlagBits::eHostCoherent
 		};
 
-		stagingBuffer.map();
-		stagingBuffer.writeToBuffer((void*)(_vertices.data()));
+		stagingBuffer.Map();
+		stagingBuffer.WriteToBuffer((void*)(_vertices.data()));
 
 		// Allocation dynamique d'un objet de type unique_ptr pointant vers un LveBuffer et initialisation avec make_unique
 		vertexBuffer = std::make_unique<LveBuffer>(
@@ -125,7 +125,7 @@ namespace lve
 			vk::MemoryPropertyFlagBits::eDeviceLocal
 		);
 
-		lveDevice.copyBuffer(stagingBuffer.getBuffer(), vertexBuffer->getBuffer(), bufferSize);
+		lveDevice.copyBuffer(stagingBuffer.GetBuffer(), vertexBuffer->GetBuffer(), bufferSize);
 	}
 
 
@@ -161,8 +161,8 @@ namespace lve
 		};
 
 		// Mappage du tampon de transfert et écriture des données
-		stagingBuffer.map();
-		stagingBuffer.writeToBuffer((void*)(_indices.data()));
+		stagingBuffer.Map();
+		stagingBuffer.WriteToBuffer((void*)(_indices.data()));
 
 		// Allocation dynamique d'un objet unique_ptr pointant vers un LveBuffer et initialisation avec make_unique
 		// Création du tampon d'indices sur le GPU
@@ -185,7 +185,7 @@ namespace lve
 		);
 
 		// Copie des données de l'indice du tampon de transfert vers le tampon d'indices du GPU
-		lveDevice.copyBuffer(stagingBuffer.getBuffer(), indexBuffer->getBuffer(), bufferSize);
+		lveDevice.copyBuffer(stagingBuffer.GetBuffer(), indexBuffer->GetBuffer(), bufferSize);
 	}
 
 

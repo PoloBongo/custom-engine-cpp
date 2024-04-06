@@ -7,9 +7,9 @@
 std::unordered_map<std::type_index, void*> SubSystem::instances;
 
 template <class T>
-void SubSystem::Set(T* instance)
+void SubSystem::Set(T* _instance)
 {
-	instances[typeid(T)] = instance;
+	instances[typeid(T)] = _instance;
 }
 
 template <class T>

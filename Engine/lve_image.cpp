@@ -7,14 +7,14 @@ namespace lve
 {
 	LveImage::LveImage(LveDevice& _lveDevice) : lveDevice(_lveDevice)
 	{
-		createTextureImage();
+		CreateTextureImage();
 	}
 
 	LveImage::~LveImage()
 	{
 	}
 
-	void LveImage::createTextureImage()
+	void LveImage::CreateTextureImage()
 	{
 		int          texWidth, texHeight, texChannels;
 		stbi_uc*     pixels = stbi_load("textures/textures.jpg", &texWidth, &texHeight, &texChannels, STBI_rgb_alpha);
@@ -25,30 +25,30 @@ namespace lve
 		vk::Buffer       stagingBuffer;
 		vk::DeviceMemory stagingBufferMemory;
 
-		lveDevice.createBuffer(imageSize, vk::BufferUsageFlagBits::eTransferSrc,
+		lveDevice.CreateBuffer(imageSize, vk::BufferUsageFlagBits::eTransferSrc,
 		                       vk::MemoryPropertyFlagBits::eHostVisible | vk::MemoryPropertyFlagBits::eHostCoherent,
 		                       stagingBuffer, stagingBufferMemory);
 
 		void* data;
-		if (lveDevice.device().mapMemory(stagingBufferMemory, 0, imageSize, vk::MemoryMapFlags(), &data) !=
+		if (lveDevice.Device().mapMemory(stagingBufferMemory, 0, imageSize, vk::MemoryMapFlags(), &data) !=
 		    vk::Result::eSuccess)
 			throw std::runtime_error("failed");
 		memcpy(data, pixels, imageSize);
-		lveDevice.device().unmapMemory(stagingBufferMemory);
+		lveDevice.Device().unmapMemory(stagingBufferMemory);
 		stbi_image_free(pixels);
 
-		createImage(texWidth, texHeight, vk::Format::eR8G8B8A8Srgb, vk::ImageTiling::eOptimal,
+		CreateImage(texWidth, texHeight, vk::Format::eR8G8B8A8Srgb, vk::ImageTiling::eOptimal,
 		            vk::ImageUsageFlagBits::eTransferDst | vk::ImageUsageFlagBits::eSampled
 		            , vk::MemoryPropertyFlagBits::eDeviceLocal, textureImage, textureImageMemory);
 
-		lveDevice.copyBufferToImage(stagingBuffer, textureImage, static_cast<uint32_t>(texWidth),
+		lveDevice.CopyBufferToImage(stagingBuffer, textureImage, static_cast<uint32_t>(texWidth),
 		                            static_cast<uint32_t>(texHeight), 1);
 
-		lveDevice.device().destroyBuffer(stagingBuffer);
-		lveDevice.device().freeMemory(stagingBufferMemory, nullptr);
+		lveDevice.Device().destroyBuffer(stagingBuffer);
+		lveDevice.Device().freeMemory(stagingBufferMemory, nullptr);
 	}
 
-	void LveImage::createImage(uint32_t _width, uint32_t _height, vk::Format _format, vk::ImageTiling _tiling,
+	void LveImage::CreateImage(uint32_t _width, uint32_t _height, vk::Format _format, vk::ImageTiling _tiling,
 	                           vk::ImageUsageFlags _usage,
 	                           vk::MemoryPropertyFlags _properties, vk::Image& _image, vk::DeviceMemory& _imageMemory)
 	{
@@ -70,22 +70,22 @@ namespace lve
 		imageInfo.samples       = vk::SampleCountFlagBits::e1;
 		//imageInfo.flags = 0; // Optional
 
-		if (lveDevice.device().createImage(&imageInfo, nullptr, &_image) != vk::Result::eSuccess)
+		if (lveDevice.Device().createImage(&imageInfo, nullptr, &_image) != vk::Result::eSuccess)
 			throw
 				std::runtime_error("failed to create image!");
 
 		vk::MemoryRequirements memRequirements;
-		lveDevice.device().getImageMemoryRequirements(_image, &memRequirements);
+		lveDevice.Device().getImageMemoryRequirements(_image, &memRequirements);
 
 		vk::MemoryAllocateInfo allocInfo{};
 		allocInfo.sType           = vk::StructureType::eMemoryAllocateInfo;
 		allocInfo.allocationSize  = memRequirements.size;
-		allocInfo.memoryTypeIndex = lveDevice.findMemoryType(memRequirements.memoryTypeBits, _properties);
+		allocInfo.memoryTypeIndex = lveDevice.FindMemoryType(memRequirements.memoryTypeBits, _properties);
 
-		if (lveDevice.device().allocateMemory(&allocInfo, nullptr, &_imageMemory) != vk::Result::eSuccess)
+		if (lveDevice.Device().allocateMemory(&allocInfo, nullptr, &_imageMemory) != vk::Result::eSuccess)
 			throw
 				std::runtime_error("failed to allocate image memory!");
 
-		lveDevice.device().bindImageMemory(_image, _imageMemory, 0);
+		lveDevice.Device().bindImageMemory(_image, _imageMemory, 0);
 	}
 }

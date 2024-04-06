@@ -52,8 +52,7 @@ T* ModuleManager::GetModule()
 {
 	for (Module*& module : modules)
 	{
-		T* module_cast = dynamic_cast<T*>(module);
-		if (module_cast)
+		if (T* module_cast = dynamic_cast<T*>(module))
 		{
 			return module_cast;
 		}

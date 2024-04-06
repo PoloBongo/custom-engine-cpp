@@ -20,18 +20,18 @@ class SceneManager final : public Module
 
 		void Start() override;
 
-		void       SetMainScene(const std::string& sceneName);
-		BaseScene* GetScene(const std::string& sceneName);
-		void       RenameScene(const std::string& oldName, const std::string& newName);
+		void       SetMainScene(const std::string& _sceneName);
+		BaseScene* GetScene(const std::string& _sceneName);
+		void       RenameScene(const std::string& _oldName, const std::string& _newName);
 		void       UpdateMainScene();
 		void       RenderMainScene();
 
 		void Destroy();
 
 		void CreateScene(std::string _name, bool _isActive);
-		void DestroyScene(const std::string& sceneName);
+		void DestroyScene(const std::string& _sceneName);
 
-		bool LoadSceneFromFile(const std::string& fileName);
+		bool LoadSceneFromFile(const std::string& _fileName);
 
 		std::string GetActiveScene();
 
@@ -43,7 +43,7 @@ class SceneManager final : public Module
 
 		BaseScene* GetCurrentScene() const;
 
-		void SetCurrentScene(int sceneIndex);
+		void SetCurrentScene(int _sceneIndex);
 		void SetNextSceneActive();
 		void SetPreviousSceneActive();
 
@@ -53,7 +53,7 @@ class SceneManager final : public Module
 		int                                     sceneCount;
 		bool                                    sceneActive;
 		BaseScene*                              mainScene = nullptr;
-		bool                                    SceneFileExists(const std::string& filePath) const;
+		bool                                    SceneFileExists(const std::string& _filePath) const;
 		std::vector<std::unique_ptr<BaseScene>> scenes;
 		int                                     currentSceneIndex = -1;
 };

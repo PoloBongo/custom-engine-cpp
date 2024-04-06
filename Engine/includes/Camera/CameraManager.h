@@ -22,7 +22,7 @@ namespace lve
 			void Initialize();
 			void Destroy();
 			void Update();
-			void OnPostSceneChange();
+			void OnPostSceneChange() const;
 
 			[[nodiscard]] BaseCamera* CurrentCamera() const;
 

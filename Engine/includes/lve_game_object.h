@@ -25,7 +25,7 @@ namespace lve
 		 *
 		 * @return La matrice de transformation.
 		 */
-		glm::mat4 mat4();
+		glm::mat4 Mat4();
 
 		/**
 		 * @brief Retourne la matrice de transformation normale.
@@ -37,7 +37,7 @@ namespace lve
 		 *
 		 * @return La matrice de transformation normale.
 		 */
-		glm::mat3 normalMatrix();
+		glm::mat3 NormalMatrix();
 	};
 
 
@@ -63,8 +63,8 @@ namespace lve
 			 */
 			static LveGameObject CreateGameObject()
 			{
-				static id_t currentId = 0; /**< Identifiant actuel pour les objets créés. */
-				return LveGameObject{currentId++};
+				static id_t current_id = 0; /**< Identifiant actuel pour les objets créés. */
+				return LveGameObject{current_id++};
 				/**< Retourne un nouvel objet de jeu avec l'identifiant incrémenté. */
 			}
 
@@ -78,7 +78,7 @@ namespace lve
 			 *
 			 * @return L'identifiant de l'objet.
 			 */
-			id_t GetId() { return id; }
+			id_t GetId() const { return id; }
 
 
 			/**
@@ -91,8 +91,8 @@ namespace lve
 			 * @param _color La couleur de la lumière.
 			 * @return L'objet de jeu représentant la lumière ponctuelle.
 			 */
-			static LveGameObject MakePointLight(float     intensity = 10.f, float radius = 0.1f,
-			                                    glm::vec3 color     = glm::vec3(1.f));
+			static LveGameObject MakePointLight(float     _intensity = 10.f, float _radius = 0.1f,
+			                                    glm::vec3 _color     = glm::vec3(1.f));
 
 			glm::vec3          color{};     /**< Couleur de l'objet. */
 			TransformComponent transform{}; /**< Composant de transformation de l'objet. */
@@ -110,7 +110,7 @@ namespace lve
 			 *
 			 * @param _objId Identifiant de l'objet.
 			 */
-			LveGameObject(id_t _objId) : id(_objId)
+			explicit LveGameObject(const id_t _objId) : id(_objId)
 			{
 			}
 	};

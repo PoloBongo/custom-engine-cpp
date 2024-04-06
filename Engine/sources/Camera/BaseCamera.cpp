@@ -173,10 +173,10 @@ namespace lve
 		forward.z = cos(pitch) * sin(yaw);
 		forward   = normalize(forward);
 
-		glm::vec3 worldUp(0.0f, 1.0f, 0.0f);
-		worldUp += right * roll;
+		glm::vec3 world_up(0.0f, 1.0f, 0.0f);
+		world_up += right * roll;
 
-		right = normalize(cross(forward, worldUp));
+		right = normalize(cross(forward, world_up));
 		up    = cross(right, forward);
 	}
 
@@ -291,8 +291,8 @@ namespace lve
 
 	void BaseCamera::ClampPitch()
 	{
-		const float pitchLimit = glm::radians(89.5f);
-		pitch            = glm::clamp(pitch, -pitchLimit, pitchLimit);
+		constexpr float pitch_limit = glm::radians(89.5f);
+		pitch            = glm::clamp(pitch, -pitch_limit, pitch_limit);
 	}
 
 	float BaseCamera::CalculateEv100(const float _aperture, const float _shutterSpeed, const float _sensitivity)
@@ -308,7 +308,7 @@ namespace lve
 
 	void BaseCamera::CalculateExposure()
 	{
-		const float EV100 = CalculateEV100(aperture, shutterSpeed, lightSensitivity);
-		exposure    = ComputeExposureNormFactor(EV100);
+		const float ev100 = CalculateEv100(aperture, shutterSpeed, lightSensitivity);
+		exposure    = ComputeExposureNormFactor(ev100);
 	}
 } // namespace lve

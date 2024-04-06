@@ -75,8 +75,8 @@ class BaseScene
 		void        SetName(const std::string& _name);
 		std::string GetName() const;
 		std::string GetDefaultRelativeFilePath() const;
-		auto        SetFileName(const std::string& _fileName, bool _bDeletePreviousFiles) -> bool;
-
+		auto        SetFileName(const std::string& _fileName, bool _bDeletePreviousFiles) const -> bool;
+		bool FileExists(const std::string& _filePath);
 		bool IsUsingSaveFile() const;
 
 		void DeleteSaveFiles();

@@ -50,7 +50,7 @@ namespace lve
 				vk::BufferUsageFlagBits::eUniformBuffer,
 				vk::MemoryPropertyFlagBits::eHostVisible);
 
-			uboBuffers[i]->map();
+			uboBuffers[i]->Map();
 		}
 
 		auto globalSetLayout = LveDescriptorSetLayout::Builder(lveDevice)
@@ -60,7 +60,7 @@ namespace lve
 		std::vector<vk::DescriptorSet> globalDescriptorSets(LveSwapChain::MAX_FRAMES_IN_FLIGHT);
 		for (int i = 0; i < globalDescriptorSets.size(); i++)
 		{
-			auto bufferInfo = uboBuffers[i]->descriptorInfo();
+			auto bufferInfo = uboBuffers[i]->DescriptorInfo();
 			LveDescriptorWriter(*globalSetLayout, *globalPool)
 				.WriteBuffer(0, &bufferInfo)
 				.Build(globalDescriptorSets[i]);
@@ -89,7 +89,7 @@ namespace lve
 			float frameTime = std::chrono::duration<float, std::chrono::seconds::period>(newTime - currentTime).count();
 			currentTime     = newTime;
 
-			cameraController.MoveInPlaneXZ(lveWindow.GetGLFWwindow(), frameTime, viewerObject);
+			cameraController.MoveInPlaneXZ(lveWindow.GetGlfwWindow(), frameTime, viewerObject);
 			camera.SetViewYXZ(viewerObject.transform.translation, viewerObject.transform.rotation);
 
 			float aspect = lveRenderer.GetAspectRatio();
@@ -115,8 +115,8 @@ namespace lve
 				ubo.inverseView = camera.GetInverseView();
 				pointLightSystem.Update(frameInfo, ubo);
 
-				uboBuffers[frameIndex]->writeToBuffer(&ubo);
-				uboBuffers[frameIndex]->flush();
+				uboBuffers[frameIndex]->WriteToBuffer(&ubo);
+				uboBuffers[frameIndex]->Flush();
 
 				// render
 				lveRenderer.BeginSwapChainRenderPass(commandBuffer); //begin offscreen shadow pass
@@ -131,7 +131,7 @@ namespace lve
 			}
 		}
 
-		lveDevice.device().waitIdle();
+		lveDevice.Device().waitIdle();
 	}
 
 

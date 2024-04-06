@@ -23,7 +23,7 @@ namespace lve
 		// Crée la fenêtre GLFW avec la taille et le nom spécifiés
 		window = glfwCreateWindow(width, height, windowName.c_str(), nullptr, nullptr);
 		glfwSetWindowUserPointer(window, this);
-		glfwSetFramebufferSizeCallback(window, FramebufferResizeCallBack);
+		glfwSetFramebufferSizeCallback(window, FrameBufferResizeCallBack);
 	}
 
 	void LveWindow::CreateWindowSurface(vk::Instance _instance, vk::SurfaceKHR* _surface)
@@ -42,7 +42,7 @@ namespace lve
 		glfwTerminate();
 	}
 
-	void LveWindow::FramebufferResizeCallBack(GLFWwindow* _window, int _width, int _height)
+	void LveWindow::FrameBufferResizeCallBack(GLFWwindow* _window, int _width, int _height)
 	{
 		const auto lveWindow         = static_cast<LveWindow*>(glfwGetWindowUserPointer(_window));
 		lveWindow->frameBufferResize = true;
@@ -50,10 +50,10 @@ namespace lve
 		lveWindow->height            = _height;
 	}
 
-	void LveWindow::CubeCursorWindow(int color)
+	void LveWindow::CubeCursorWindow(int _color)
 	{
 		unsigned char pixels[16 * 16 * 4];
-		memset(pixels, color, sizeof(pixels));
+		memset(pixels, _color, sizeof(pixels));
 
 		GLFWimage image;
 		image.width  = 16;
@@ -64,11 +64,11 @@ namespace lve
 		glfwSetCursor(window, cursor);
 	}
 
-	void LveWindow::StandarCursorWindow(GLFW_CURSOR_TYPE CursorType)
+	void LveWindow::StandardCursorWindow(const GlfwCursorType _cursorType) const
 	{
 		GLFWcursor* GLFWcursor = glfwCreateStandardCursor(GLFW_ARROW_CURSOR);
 
-		switch (CursorType)
+		switch (_cursorType)
 		{
 			case ARROW:
 				glfwCreateStandardCursor(GLFW_ARROW_CURSOR);
@@ -104,9 +104,9 @@ namespace lve
 		glfwSetCursor(window, GLFWcursor);
 	}
 
-	void LveWindow::SetInputCursorMode(GLFW_CURSOR_MODE mode)
+	void LveWindow::SetInputCursorMode(const GlfwCursorMode _mode) const
 	{
-		switch (mode)
+		switch (_mode)
 		{
 			case CAPTURED:
 				glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_CAPTURED);

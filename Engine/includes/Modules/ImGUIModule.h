@@ -67,7 +67,7 @@ class ImGuiModule final : public Module
 	vk::CommandBuffer immCommandBuffer;
 	vk::CommandPool   immCommandPool;
 
-	void ImmediateSubmit(std::function<void(vk::CommandBuffer _cmd)>&& _function);
+	void ImmediateSubmit(std::function<void(vk::CommandBuffer _cmd)>&& _function) const;
 
 	protected:
 		vk::Device device;

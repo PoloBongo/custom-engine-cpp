@@ -35,7 +35,7 @@ namespace lve
 
 		for (BaseCamera* camera : cameras)
 		{
-			camera->Destroy();
+			camera->Finalize();
 			delete camera;
 		}
 		cameras.clear();
@@ -50,7 +50,7 @@ namespace lve
 	{
 	}
 
-	void CameraManager::OnPostSceneChange()
+	void CameraManager::OnPostSceneChange() const
 	{
 		for (BaseCamera* cam : cameras)
 		{
@@ -67,8 +67,7 @@ namespace lve
 	{
 		/*CHECK_NE(camera, nullptr);*/
 
-		uint32_t cameraIndex = GetCameraIndex(_camera);
-		if (cameraIndex == -1) // Only add camera if it hasn't been added before
+		if (const uint32_t camera_index = GetCameraIndex(_camera); camera_index == -1) // Only add camera if it hasn't been added before
 		{
 			cameras.push_back(_camera);
 
@@ -78,9 +77,9 @@ namespace lve
 
 	BaseCamera* CameraManager::SetCamera(BaseCamera* _camera, const bool _bAlignWithPrevious)
 	{
-		if (!cameraStack.empty()) BaseCamera* activeCamera = CurrentCamera();
-		/*activeCamera->OnDepossess();
-		activeCamera->Destroy();*/
+		if (!cameraStack.empty()) BaseCamera* active_camera = CurrentCamera();
+		/*active_camera->OnDepossess();
+		active_camera->Destroy();*/
 
 		while (!cameraStack.empty())
 		{
@@ -94,21 +93,21 @@ namespace lve
 	{
 		/*CHECK_EQ(glm::abs(deltaIndex), 1);*/
 
-		const uint32_t numCameras = static_cast<uint32_t>(cameras.size());
+		const uint32_t num_cameras = static_cast<uint32_t>(cameras.size());
 
-		const uint32_t desiredIndex = GetCameraIndex(cameraStack.top()) + _deltaIndex;
-		uint32_t       newIndex;
+		const uint32_t desired_index = GetCameraIndex(cameraStack.top()) + _deltaIndex;
+		uint32_t       new_index;
 		uint32_t       offset = 0;
 		do
 		{
-			newIndex = desiredIndex + offset;
+			new_index = desired_index + offset;
 			offset += _deltaIndex;
-			if (newIndex < 0) newIndex += numCameras;
-			if (newIndex >= numCameras) newIndex -= numCameras;
+			if (new_index < 0) new_index += num_cameras;
+			if (new_index >= num_cameras) new_index -= num_cameras;
 		}
-		while (!cameras[newIndex]->bDebugCyclable);
+		while (!cameras[new_index]->bDebugCyclable);
 
-		return SetCamera(cameras[newIndex], _bAlignWithPrevious);
+		return SetCamera(cameras[new_index], _bAlignWithPrevious);
 	}
 
 	BaseCamera* CameraManager::SetCameraByName(const std::string& _name, const bool _bAlignWithPrevious)
@@ -116,8 +115,8 @@ namespace lve
 		BaseCamera* cam = GetCameraByName(_name);
 		if (cam == nullptr)
 		{
-			std::string errorStr = "Attempted to set camera with invalid name: " + _name + "\n";
-			std::cout << errorStr.c_str() << std::endl;
+			const std::string error_str = "Attempted to set camera with invalid name: " + _name + "\n";
+			std::cout << error_str.c_str() << std::endl;
 			return nullptr;
 		}
 		return SetCamera(cam, _bAlignWithPrevious);
@@ -139,7 +138,7 @@ namespace lve
 			pActiveCam = cameraStack.top();
 
 			pActiveCam->OnDepossess();
-			pActiveCam->Destroy();
+			pActiveCam->Finalize();
 		}
 
 		cameraStack.push(_camera);
@@ -161,8 +160,8 @@ namespace lve
 		BaseCamera* cam = GetCameraByName(_name);
 		if (cam == nullptr)
 		{
-			std::string errorStr = "Attempted to push camera with invalid name: " + _name + "\n";
-			std::cout << errorStr.c_str() << std::endl;
+			const std::string error_str = "Attempted to push camera with invalid name: " + _name + "\n";
+			std::cout << error_str.c_str() << std::endl;
 			return nullptr;
 		}
 		return PushCamera(cam, _bAlignWithPrevious, _bInitialize);
@@ -180,16 +179,16 @@ namespace lve
 
 		BaseCamera* currentCamera = CurrentCamera();
 		currentCamera->OnDepossess();
-		currentCamera->Destroy();
-		BaseCamera* prevCamera = currentCamera;
+		currentCamera->Finalize();
+		const BaseCamera* prev_camera = currentCamera;
 
 		cameraStack.pop();
 
 		currentCamera = CurrentCamera();
 		currentCamera->OnPossess();
-		currentCamera->Initialize();
+		currentCamera->Init();
 
-		if (_bAlignWithCurrent) AlignCameras(prevCamera, currentCamera);
+		if (_bAlignWithCurrent) AlignCameras(prev_camera, currentCamera);
 	}
 
 	BaseCamera* CameraManager::GetCameraByName(const std::string& _name) const

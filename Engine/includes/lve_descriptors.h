@@ -22,7 +22,7 @@ namespace lve
 					 *
 					 * @param _lveDevice Une référence vers l'objet LveDevice utilisé pour la création de la mise en page de l'ensemble de descripteurs.
 					 */
-					Builder(LveDevice& _lveDevice) : lveDevice{_lveDevice}
+					explicit Builder(LveDevice& _lveDevice) : lveDevice{_lveDevice}
 					{
 					}
 
@@ -107,7 +107,7 @@ namespace lve
 		 *
 		 * @param _lveDevice Référence à l'objet LveDevice associé à ce builder.
 		 */
-					Builder(LveDevice& _lveDevice) : lveDevice{_lveDevice}
+					explicit Builder(LveDevice& _lveDevice) : lveDevice{_lveDevice}
 					{
 					}
 
@@ -152,7 +152,7 @@ namespace lve
 					 *
 					 * @return Un unique_ptr pointant vers l'objet LveDescriptorPool nouvellement créé.
 					 */
-					std::unique_ptr<LveDescriptorPool> Build() const;
+					[[nodiscard]] std::unique_ptr<LveDescriptorPool> Build() const;
 
 				private:
 					LveDevice& lveDevice; /**< Référence à l'objet LveDevice associé à ce pool de descripteurs. */

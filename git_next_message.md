@@ -1,5 +1,5 @@
 NEW: Cleaning
 
-- Nettoyage d'une bonne partie des fichiers pour respecter la nomenclature et syntaxe
-- Ajout des fonctions de base pour GameObject et Component
+- Nettoyage du reste des .h dans le dossier includes pour respecter la nomenclature et syntaxe
+- Début de nettoyage des .cpp dans le source
 - TODO : poursuivre le nettoyage

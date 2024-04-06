@@ -2,7 +2,7 @@
 
 namespace lve
 {
-	glm::mat4 TransformComponent::mat4()
+	glm::mat4 TransformComponent::Mat4()
 	{
 		const float c3 = glm::cos(rotation.z);
 		const float s3 = glm::sin(rotation.z);
@@ -33,7 +33,7 @@ namespace lve
 		};
 	}
 
-	glm::mat3 TransformComponent::normalMatrix()
+	glm::mat3 TransformComponent::NormalMatrix()
 	{
 		const float     c3       = glm::cos(rotation.z);
 		const float     s3       = glm::sin(rotation.z);

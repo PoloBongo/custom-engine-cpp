@@ -80,7 +80,7 @@ namespace lve
 			 *
 			 * @param _commandBuffer Le tampon de commandes auquel le pipeline graphique doit être lié.
 			 */
-			void Bind(vk::CommandBuffer _commandBuffer);
+			void Bind(vk::CommandBuffer _commandBuffer) const;
 
 			/**
 			 * @brief Configure les paramètres par défaut du pipeline.
@@ -136,7 +136,7 @@ namespace lve
 			 *
 			 * @throw std::runtime_error si la création du module de shader échoue.
 			 */
-			void CreateShaderModule(const std::vector<char>& _code, vk::ShaderModule* _shaderModule);
+			void CreateShaderModule(const std::vector<char>& _code, vk::ShaderModule* _shaderModule) const;
 
 
 			/**

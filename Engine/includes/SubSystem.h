@@ -15,18 +15,18 @@ class SubSystem
 			// do nothing
 		}
 
-		void startUp()
+		static void StartUp()
 		{
 			// l'ordre dans lequel on va start les différents manager
 		}
 
-		void shutDown()
+		static void ShutDown()
 		{
 			// l'ordre dans lequel on va shutDown les différents manager
 		}
 
 		template <class T>
-		static void Set(T* instance);
+		static void Set(T* _instance);
 
 		template <class T>
 		static T* Get();

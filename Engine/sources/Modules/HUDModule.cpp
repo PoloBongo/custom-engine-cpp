@@ -59,7 +59,7 @@ std::vector<char> HUDModule::ReadFile(const std::string& _filename)
 //}
 
 // Méthode pour créer une vue d'image Vulkan à partir d'une image Vulkan
-VkImageView HUDModule::CreateTextureImageView(VkImage _image)
+VkImageView HUDModule::CreateTextureImageView(const VkImage _image)
 {
 	return CreateImageView(_image, VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_ASPECT_COLOR_BIT);
 }

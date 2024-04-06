@@ -65,7 +65,7 @@ namespace lve
 		// Création de l'ensemble de descripteurs
 		try
 		{
-			descriptorSetLayout = lveDevice.device().createDescriptorSetLayout(descriptorSetLayoutInfo, nullptr);
+			descriptorSetLayout = lveDevice.Device().createDescriptorSetLayout(descriptorSetLayoutInfo, nullptr);
 		}
 		catch (const vk::SystemError& e)
 		{
@@ -76,7 +76,7 @@ namespace lve
 
 	LveDescriptorSetLayout::~LveDescriptorSetLayout()
 	{
-		lveDevice.device().destroyDescriptorSetLayout(descriptorSetLayout, nullptr);
+		lveDevice.Device().destroyDescriptorSetLayout(descriptorSetLayout, nullptr);
 	}
 
 	// *************** Descriptor Pool Builder *********************
@@ -121,7 +121,7 @@ namespace lve
 
 		try
 		{
-			descriptorPool = lveDevice.device().createDescriptorPool(descriptorPoolInfo);
+			descriptorPool = lveDevice.Device().createDescriptorPool(descriptorPoolInfo);
 		}
 		catch (const vk::SystemError& e)
 		{
@@ -132,7 +132,7 @@ namespace lve
 
 	LveDescriptorPool::~LveDescriptorPool()
 	{
-		lveDevice.device().destroyDescriptorPool(descriptorPool, nullptr);
+		lveDevice.Device().destroyDescriptorPool(descriptorPool, nullptr);
 	}
 
 	bool LveDescriptorPool::AllocateDescriptor(
@@ -145,7 +145,7 @@ namespace lve
 
 		try
 		{
-			descriptor = lveDevice.device().allocateDescriptorSets(allocInfo)[0];
+			descriptor = lveDevice.Device().allocateDescriptorSets(allocInfo)[0];
 			return true;
 		}
 		catch (const vk::SystemError& e)
@@ -158,7 +158,7 @@ namespace lve
 
 	void LveDescriptorPool::FreeDescriptors(std::vector<vk::DescriptorSet>& _descriptors) const
 	{
-		lveDevice.device().freeDescriptorSets(
+		lveDevice.Device().freeDescriptorSets(
 			descriptorPool,
 			static_cast<uint32_t>(_descriptors.size()),
 			_descriptors.data());
@@ -166,7 +166,7 @@ namespace lve
 
 	void LveDescriptorPool::ResetPool()
 	{
-		vkResetDescriptorPool(lveDevice.device(), descriptorPool, 0);
+		vkResetDescriptorPool(lveDevice.Device(), descriptorPool, 0);
 	}
 
 	// *************** Descriptor Writer *********************
@@ -235,6 +235,6 @@ namespace lve
 		{
 			write.dstSet = _set;
 		}
-		pool.lveDevice.device().updateDescriptorSets(static_cast<uint32_t>(writes.size()), writes.data(), 0, nullptr);
+		pool.lveDevice.Device().updateDescriptorSets(static_cast<uint32_t>(writes.size()), writes.data(), 0, nullptr);
 	}
 } // namespace lve
