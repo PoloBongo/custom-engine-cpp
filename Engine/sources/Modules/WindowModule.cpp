@@ -34,7 +34,6 @@ void WindowModule::Init()
 
 	globalPool = builder->Build();
 
-	gameObjects = new lve::LveGameObject::Map;
 	camera      = new lve::LveCamera{};
 	LoadGameObjects();
 }
@@ -104,7 +103,7 @@ void WindowModule::Update()
 		ubo.projection = camera->GetProjection();
 		ubo.view = camera->GetView();
 
-		pointLightSystem->Update(*gameObjects, ubo);
+		pointLightSystem->Update(gameObjects, ubo);
 	}
 	else
 	{
@@ -131,8 +130,8 @@ void WindowModule::PreRender()
 void WindowModule::Render()
 {
 	Module::Render();
-	simpleRenderSystem->RenderGameObjects(*gameObjects, *camera, *p_commandBuffer, globalDescriptorSets[frameIndex]);      //render shadow casting objects
-	pointLightSystem->Render(*gameObjects, *camera, *p_commandBuffer, globalDescriptorSets[frameIndex]);                 //render shadow casting objects
+	simpleRenderSystem->RenderGameObjects(gameObjects, *camera, *p_commandBuffer, globalDescriptorSets[frameIndex]);      //render shadow casting objects
+	pointLightSystem->Render(gameObjects, *camera, *p_commandBuffer, globalDescriptorSets[frameIndex]);                 //render shadow casting objects
 	
 }
 
@@ -159,59 +158,59 @@ void WindowModule::LoadGameObjects()
 {
 	std::shared_ptr<lve::LveModel> lve_model = lve::LveModel::CreateModelFromFile(*lveDevice, "Models\\flat_vase.obj");
 
-	auto flatVaseGO                  = lve::LveGameObject::CreateGameObject();
+	auto flatVaseGO                  = GameObject::CreateGameObject();
 	flatVaseGO.model                 = lve_model;
-	flatVaseGO.transform.translation = {-.5f, .5f, 0.f};
-	flatVaseGO.transform.scale       = {3.f, 1.5f, 3.f};
-	gameObjects->emplace(flatVaseGO.GetId(), std::move(flatVaseGO));
+	flatVaseGO.GetTransform()->SetPosition(glm::vec3{-.5f, .5f, 0.f});
+	flatVaseGO.GetTransform()->SetScale(glm::vec3{3.f, 1.5f, 3.f});
+	gameObjects.push_back(flatVaseGO);
 
 	lve_model                            = lve::LveModel::CreateModelFromFile(*lveDevice, "Models\\smooth_vase.obj");
-	auto smooth_vase_go                  = lve::LveGameObject::CreateGameObject();
+	auto smooth_vase_go                  = GameObject::CreateGameObject();
 	smooth_vase_go.model                 = lve_model;
-	smooth_vase_go.transform.translation = {.5f, .5f, 0.f};
-	smooth_vase_go.transform.scale       = {3.f, 1.5f, 3.f};
-	gameObjects->emplace(smooth_vase_go.GetId(), std::move(smooth_vase_go));
+	smooth_vase_go.GetTransform()->SetPosition(glm::vec3{ .5f, .5f, 0.f});
+	smooth_vase_go.GetTransform()->SetScale(glm::vec3{3.f, 1.5f, 3.f});
+	gameObjects.push_back(smooth_vase_go);
 
-	auto quad_go = lve::PlaneGameObject::Create(*lveDevice, {.0f, .5f, 0.f}, {3.f, 1.f, 3.f});
-	gameObjects->emplace(quad_go.GetId(), std::move(quad_go));
+	auto quad_go = lve::PlaneGameObject::Creates(*lveDevice, glm::vec3{.0f, .5f, 0.f}, glm::vec3{3.f, 1.f, 3.f});
+	gameObjects.push_back(quad_go);
 
 	lve_model                    = lve::LveModel::CreateModelFromFile(*lveDevice, "Models\\viking_room.obj");
-	auto viking                  = lve::LveGameObject::CreateGameObject();
+	auto viking                  = GameObject::CreateGameObject();
 	viking.model                 = lve_model;
-	viking.transform.translation = {0.f, 0.f, 5.f};
-	viking.transform.scale       = {3.f, 3.f, 3.f};
-	viking.transform.rotation    = {glm::radians(90.0f), glm::radians(90.0f), 0.0f};
-	gameObjects->emplace(viking.GetId(), std::move(viking));
+	viking.GetTransform()->SetPosition(glm::vec3{0.f, 0.f, 5.f});
+	viking.GetTransform()->SetScale(glm::vec3{3.f, 3.f, 3.f});
+	viking.GetTransform()->SetRotation(glm::vec3{glm::radians(90.0f), glm::radians(90.0f), 0.0f});
+	gameObjects.push_back(viking);
 
-	auto cube = lve::CubeGameObject::Create(*lveDevice);
-	gameObjects->emplace(cube.GetId(), std::move(cube));
+	auto cube = lve::CubeGameObject::Creates(*lveDevice);
+	gameObjects.push_back(cube);
 
-	auto color_cube = lve::CubeGameObject::CreateColor(*lveDevice, glm::vec3{0.f, 0.f, 10.f});
-	gameObjects->emplace(color_cube.GetId(), std::move(color_cube));
+	auto color_cube = lve::CubeGameObject::CreateColors(*lveDevice, glm::vec3{0.f, 0.f, 10.f});
+	gameObjects.push_back(color_cube);
 
 	std::vector<glm::vec3> light_colors{
-		{1.f, .1f, .1f},
-		{.1f, .1f, 1.f},
-		{.1f, 1.f, .1f},
-		{1.f, 1.f, .1f},
-		{.1f, 1.f, 1.f},
-		{1.f, 1.f, 1.f} //
+		glm::vec3{1.f, .1f, .1f},
+		glm::vec3{.1f, .1f, 1.f},
+		glm::vec3{.1f, 1.f, .1f},
+		glm::vec3{1.f, 1.f, .1f},
+		glm::vec3{.1f, 1.f, 1.f},
+		glm::vec3{1.f, 1.f, 1.f} //
 	};
 
 	for (int i = 0; i < light_colors.size(); i++)
 	{
-		auto point_light  = lve::LightGameObject::Create(0.2f, 0.1f);
+		auto point_light  = lve::LightGameObject::Creates(0.2f, 0.1f);
 		point_light.color = light_colors[i];
 		auto rotate_light = rotate(
 			glm::mat4(1.f),
 			(i * glm::two_pi<float>()) / light_colors.size(),
 			{0.f, -1.f, 0.f});
-		point_light.transform.translation = glm::vec3(rotate_light * glm::vec4(-1.f, -1.f, -1.f, 1.f));
-		gameObjects->emplace(point_light.GetId(), std::move(point_light));
+		point_light.GetTransform()->SetPosition(glm::vec3(rotate_light * glm::vec4(-1.f, -1.f, -1.f, 1.f)));
+		gameObjects.push_back(point_light);
 	}
 
-	auto sun = lve::LightGameObject::Create(1000000.f, 2.0f, glm::vec3{0.f, -1000.f, 0.f});
-	gameObjects->emplace(sun.GetId(), std::move(sun));
+	auto sun = lve::LightGameObject::Creates(1000000.f, 2.0f, glm::vec3{0.f, -1000.f, 0.f});
+	gameObjects.push_back(sun);
 }
 
 //void WindowModule::PreRender()

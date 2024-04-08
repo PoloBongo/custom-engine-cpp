@@ -4,7 +4,14 @@
 #include <string>
 #include <vector>
 #include "Component.h"
+#include "lve_game_object.h"
 #include "lve_window.h"
+
+namespace lve
+{
+	struct PointLightComponent;
+	class LveModel;
+}
 
 enum class LayerType
 {
@@ -29,6 +36,8 @@ class GameObject
 
 		~GameObject();
 
+	
+
 		[[nodiscard]] std::string GetName() const { return name; }
 		void                      SetName(const std::string& _newName) { name = _newName; }
 
@@ -40,7 +49,7 @@ class GameObject
 		[[nodiscard]] glm::vec3 GetScale() const;
 		void                    SetScale(glm::vec3 _newScale) const;
 
-		[[nodiscard]] float GetRotation() const;
+		[[nodiscard]] glm::vec3 GetRotation() const;
 		void                SetRotation(float _newRotation) const;
 
 		void               SetActive(const bool& _state) { isActive = _state; }
@@ -179,6 +188,8 @@ class GameObject
 		 */
 		virtual void Finalize();
 
+		std::shared_ptr<lve::LveModel>            model{}; /**< Modèle de l'objet. */
+		glm::vec3          color{};     /**< Couleur de l'objet. */
 	protected:
 		std::string             name = "GameObject";
 		std::vector<Component*> components;

@@ -10,6 +10,8 @@
 #include <memory>
 #include <vector>
 
+class GameObject;
+
 namespace lve
 {
 	struct PointLightPushConstants
@@ -43,8 +45,8 @@ namespace lve
 			 * @param _gameObjects
 			 * @param _ubo
 			 */
-			void Update(LveGameObject::Map& _gameObjects, GlobalUbo& _ubo);
-			void Render(const LveGameObject::Map& _gameObjects, const LveCamera& _camera, const vk::CommandBuffer _commandBuffer,const vk::DescriptorSet _globalDescriptorSet) const;
+			void Update(std::vector<GameObject>& _gameObjects, GlobalUbo& _ubo);
+			void Render(std::vector<GameObject>& _gameObjects, const LveCamera& _camera, const vk::CommandBuffer _commandBuffer,const vk::DescriptorSet _globalDescriptorSet) const;
 
 		private:
 			/**

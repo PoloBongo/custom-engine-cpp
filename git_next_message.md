@@ -1,4 +1,3 @@
-ENH : WindowModule
+ENH: Correctif
 
-- Amélioration du WindowModule
-- Suppression du Frame_Info
+- Ajustement du code pour les gameObjects mais encore bugé

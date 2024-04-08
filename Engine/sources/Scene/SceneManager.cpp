@@ -6,17 +6,6 @@
 
 
 /**
- * @brief Démarre le gestionnaire de scènes.
- * Initialise le gestionnaire de fenêtres.
- */
-void SceneManager::Start()
-{
-	Module::Start();
-
-	windowModule = moduleManager->GetModule<WindowModule>();
-}
-
-/**
  * @brief Crée une nouvelle scène.
  * @param _name Nom de la nouvelle scène.
  * @param _isActive Indique si la nouvelle scène est active.
@@ -129,20 +118,6 @@ BaseScene* SceneManager::GetCurrentScene() const
 	return (currentSceneIndex >= 0 && currentSceneIndex < static_cast<int>(scenes.size()))
 		       ? scenes[currentSceneIndex].get()
 		       : nullptr;
-}
-
-/**
- * @brief Détruit toutes les scènes et vide la liste des scènes.
- * L'index de la scène courante est réinitialisé à -1.
- */
-void SceneManager::Destroy()
-{
-	if (currentSceneIndex >= 0 && currentSceneIndex < static_cast<int>(scenes.size()))
-		scenes[currentSceneIndex]->
-			Finalize();
-
-	scenes.clear();
-	currentSceneIndex = -1;
 }
 
 /**
@@ -268,4 +243,70 @@ void SceneManager::UpdateMainScene() const
 void SceneManager::RenderMainScene() const
 {
 	mainScene->Render(windowModule->GetWindow()); // Passer le pointeur de la fenêtre à la fonction Render
+}
+
+
+void SceneManager::Init()
+{
+	Module::Init();
+}
+
+/**
+ * @brief Démarre le gestionnaire de scènes.
+ * Initialise le gestionnaire de fenêtres.
+ */
+void SceneManager::Start()
+{
+	Module::Start();
+
+	windowModule = moduleManager->GetModule<WindowModule>();
+}
+
+void SceneManager::FixedUpdate()
+{
+	Module::FixedUpdate();
+}
+
+void SceneManager::Update()
+{
+	Module::Update();
+}
+
+void SceneManager::PreRender()
+{
+	Module::PreRender();
+}
+
+void SceneManager::Render()
+{
+	Module::Render();
+}
+
+void SceneManager::RenderGui()
+{
+	Module::RenderGui();
+}
+
+void SceneManager::PostRender()
+{
+	Module::PostRender();
+}
+
+/**
+ * @brief Détruit toutes les scènes et vide la liste des scènes.
+ * L'index de la scène courante est réinitialisé à -1.
+ */
+void SceneManager::Release()
+{
+	if (currentSceneIndex >= 0 && currentSceneIndex < static_cast<int>(scenes.size()))
+		scenes[currentSceneIndex]->
+		Finalize();
+
+	scenes.clear();
+	currentSceneIndex = -1;
+}
+
+void SceneManager::Finalize()
+{
+	Module::Finalize();
 }

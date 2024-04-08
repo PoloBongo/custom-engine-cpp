@@ -21,6 +21,8 @@
 #include <string>
 #include <vector>
 
+#include "GameObject/GameObject.h"
+
 
 /**
  * @brief Classe WindowModule.
@@ -73,7 +75,7 @@ class WindowModule final : public Module
 
 		// note : order of declarations matters
 		std::unique_ptr<lve::LveDescriptorPool> globalPool{};
-		lve::LveGameObject::Map*                gameObjects;
+		std::vector<GameObject>                gameObjects;
 
 		vk::CommandBuffer* p_commandBuffer;
 		lve::FrameInfo* p_frameInfo;

@@ -25,7 +25,7 @@ void      GameObject::SetPosition(const glm::vec3 _newPosition) const { transfor
 glm::vec3 GameObject::GetScale() const { return transform->GetScale(); }
 void      GameObject::SetScale(const glm::vec3 _newScale) const { transform->SetScale(_newScale); }
 
-float GameObject::GetRotation() const { return transform->GetRotation(); }
+glm::vec3 GameObject::GetRotation() const { return transform->GetRotation(); }
 void  GameObject::SetRotation(const float _newRotation) const { transform->SetRotation(_newRotation); }
 
 void GameObject::AddComponent(Component* _component)

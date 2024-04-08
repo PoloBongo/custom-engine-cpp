@@ -169,6 +169,7 @@
     <ClCompile Include="..\Librairies\imgui\imgui_widgets.cpp" />
     <ClCompile Include="BoxCollider.cpp" />
     <ClCompile Include="Convertisseur.cpp" />
+    <ClCompile Include="Light.cpp" />
     <ClCompile Include="rhi.cpp" />
     <ClCompile Include="sources\Modules\RHIVulkanModule.cpp" />
     <ClCompile Include="RigidBody.cpp" />
@@ -234,6 +235,7 @@
     <ClCompile Include="sources\Systems\point_light_system.cpp" />
     <ClCompile Include="sources\Systems\simple_render_system.cpp" />
     <ClInclude Include="includes\GameObject\PreGameObject\LightGameObject.h" />
+    <ClInclude Include="Light.h" />
     <ClInclude Include="lve_constants.h" />
     <ClInclude Include="lve_image.h" />
     <ClInclude Include="includes\GameObject\PreGameObject\PlaneGameObject.h" />
