@@ -169,6 +169,7 @@
     <ClCompile Include="..\Librairies\imgui\imgui_widgets.cpp" />
     <ClCompile Include="BoxCollider.cpp" />
     <ClCompile Include="Convertisseur.cpp" />
+    <ClCompile Include="lve_texture.cpp" />
     <ClCompile Include="rhi.cpp" />
     <ClCompile Include="sources\Modules\RHIVulkanModule.cpp" />
     <ClCompile Include="RigidBody.cpp" />
@@ -178,7 +179,6 @@
     <ClCompile Include="sources\Camera\CameraManager.cpp" />
     <ClCompile Include="functionHelpers.cpp" />
     <ClCompile Include="lve_constants.cpp" />
-    <ClCompile Include="lve_image.cpp" />
     <ClCompile Include="sources\Camera\BaseCamera.cpp" />
     <ClCompile Include="sources\CoreEngine.cpp" />
     <ClCompile Include="sources\Modules\HUDModule.cpp" />
@@ -234,8 +234,8 @@
     <ClCompile Include="sources\Systems\simple_render_system.cpp" />
     <ClInclude Include="includes\GameObject\PreGameObject\LightGameObject.h" />
     <ClInclude Include="lve_constants.h" />
-    <ClInclude Include="lve_image.h" />
     <ClInclude Include="includes\GameObject\PreGameObject\PlaneGameObject.h" />
+    <ClInclude Include="lve_texture.h" />
     <ClInclude Include="rhi.h" />
     <ClInclude Include="includes\Modules\RHIVulkanModule.h" />
     <ClInclude Include="RigidBody.h" />

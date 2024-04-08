@@ -1,6 +1,7 @@
 #pragma once
 
 #include "lve_model.h"
+#include "lve_texture.h"
 
 #include <vulkan/vulkan.hpp>
 
@@ -101,6 +102,7 @@ namespace lve
 			std::shared_ptr<LveModel>            model{}; /**< Modèle de l'objet. */
 			std::unique_ptr<PointLightComponent> pointLight = nullptr;
 			/**< Composant de lumière ponctuelle de l'objet, s'il y en a un. */
+			std::unique_ptr<lve::LveTexture> texture = nullptr;
 
 		private:
 			id_t id; /**< Identifiant de l'objet. */

@@ -62,17 +62,45 @@ namespace lve
 		lvePipeline->Bind(_frameInfo.commandBuffer);
 
 		// Liaison de l'ensemble de descripteurs global
-		_frameInfo.commandBuffer.bindDescriptorSets(
-			vk::PipelineBindPoint::eGraphics,
-			pipelineLayout,
-			0,
-			_frameInfo.globalDescriptorSet,
-			nullptr);
+		//_frameInfo.commandBuffer.bindDescriptorSets(
+		//	vk::PipelineBindPoint::eGraphics,
+		//	pipelineLayout,
+		//	0,
+		//	_frameInfo.globalDescriptorSet,
+		//	nullptr);
 
 		for (auto& kv : _frameInfo.gameObjects)
 		{
 			auto& obj = kv.second;
-			if (obj.model == nullptr) continue;
+			if (obj.model == nullptr || obj.texture == nullptr) continue;
+
+			vk::DescriptorImageInfo imageInfo{};
+			imageInfo.sampler = obj.texture->getSampler();
+			imageInfo.imageView = obj.texture->getImageView();
+			imageInfo.imageLayout = obj.texture->getImageLayout();
+
+
+			// Update the descriptor set with the image info for the current texture
+			vk::WriteDescriptorSet descriptorWrite{
+				_frameInfo.globalDescriptorSet, // Use the global descriptor set for the frame
+				1, // Assuming your texture descriptor set has binding 1
+				0, // Assuming your texture descriptor set has array element 0
+				1, // Number of descriptors to update
+				vk::DescriptorType::eCombinedImageSampler, // Type of descriptor
+				&imageInfo, // Pointer to array of image infos
+				nullptr, // Optional buffer info
+				nullptr // Optional texel buffer view info
+			};
+			// Update the descriptor set
+			lveDevice.Device().updateDescriptorSets(1, &descriptorWrite, 0, nullptr);
+
+			_frameInfo.commandBuffer.bindDescriptorSets(
+				vk::PipelineBindPoint::eGraphics,
+				pipelineLayout,
+				0,
+				_frameInfo.globalDescriptorSet,
+				nullptr);
+
 			SimplePushConstantData push{};
 			push.modelMatrix  = obj.transform.Mat4();
 			push.normalMatrix = obj.transform.NormalMatrix();
@@ -85,6 +113,7 @@ namespace lve
 				push);
 
 			// Liaison du modèle et dessin
+
 			obj.model->Bind(_frameInfo.commandBuffer);
 			obj.model->Draw(_frameInfo.commandBuffer);
 		}

@@ -6,6 +6,7 @@
 #include "lve_game_object.h"
 #include "lve_renderer.h"
 #include "lve_window.h"
+#include "lve_texture.h"
 
 #include "keyboard_movement_controller.h"
 #include "lve_buffer.h"
@@ -59,6 +60,10 @@ class WindowModule final : public Module
 		lve::LveDescriptorPool::Builder builder{lveDevice};
 
 		std::unique_ptr<lve::LveDescriptorSetLayout, std::default_delete<lve::LveDescriptorSetLayout>>* globalSetLayout;
+
+		std::vector<std::unique_ptr<lve::LveTexture>> textures;
+		std::unique_ptr<lve::LveTexture > texture1;
+		std::unique_ptr<lve::LveTexture > texture2;
 
 		lve::SimpleRenderSystem* simpleRenderSystem;
 		lve::PointLightSystem*   pointLightSystem;
