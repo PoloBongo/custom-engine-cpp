@@ -1,3 +1,5 @@
-END: Fin cleaning
+NEW: Changement Modules
 
-- Nettoyage de la plus grande partie du code cpp et h
+- Ajout d'un TimeModule pour le temps
+- Modification du WindowModule
+- TODO : Terminer les modifications du WindowModule

@@ -40,10 +40,10 @@ namespace lve
 			 * Elle lie également les ensembles de descripteurs globaux nécessaires pour le rendu.
 			 * Enfin, elle utilise une commande de dessin pour rendre les lumières ponctuelles.
 			 *
-			 * @param _frameInfo Informations sur le frame actuel, contenant notamment le tampon de commandes.
+			 * @param _gameObjects
 			 * @param _ubo
 			 */
-			void Update(FrameInfo& _frameInfo, GlobalUbo& _ubo);
+			void Update(LveGameObject::Map& _gameObjects, GlobalUbo& _ubo);
 			void Render(FrameInfo& _frameInfo);
 
 		private:

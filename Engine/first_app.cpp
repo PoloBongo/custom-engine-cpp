@@ -115,7 +115,6 @@ namespace lve
 				ubo.projection  = camera.GetProjection();
 				ubo.view        = camera.GetView();
 				ubo.inverseView = camera.GetInverseView();
-				point_light_system.Update(frame_info, ubo);
 
 				uboBuffers[frame_index]->WriteToBuffer(&ubo);
 				uboBuffers[frame_index]->Flush();

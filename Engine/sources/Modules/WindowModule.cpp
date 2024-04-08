@@ -17,15 +17,22 @@
 #include "GameObject/PreGameObject/CubeGameObject.h"
 #include "GameObject/PreGameObject/LightGameObject.h"
 #include "GameObject/PreGameObject/PlaneGameObject.h"
+#include "Modules/RHIVulkanModule.h"
+#include "Modules/TimeModule.h"
 
 void WindowModule::Init()
 {
 	Module::Init();
 
-	builder.SetMaxSets(lve::LveSwapChain::MAX_FRAMES_IN_FLIGHT)
-	       .AddPoolSize(vk::DescriptorType::eUniformBuffer, lve::LveSwapChain::MAX_FRAMES_IN_FLIGHT);
+	lveWindow = new lve::LveWindow{ WIDTH, HEIGHT, "Hello Vulkan!" }; /// Fenêtre de l'application.
+	lveDevice = new lve::LveDevice{ *lveWindow };
+	lveRenderer = new lve::LveRenderer{ *lveWindow, *lveDevice };
 
-	globalPool = builder.Build();
+	builder = new lve::LveDescriptorPool::Builder{ *lveDevice };
+	builder->SetMaxSets(lve::LveSwapChain::MAX_FRAMES_IN_FLIGHT)
+	.AddPoolSize(vk::DescriptorType::eUniformBuffer, lve::LveSwapChain::MAX_FRAMES_IN_FLIGHT);
+
+	globalPool = builder->Build();
 
 	gameObjects = new lve::LveGameObject::Map;
 	camera      = new lve::LveCamera{};
@@ -40,7 +47,7 @@ void WindowModule::Start()
 	for (int i = 0; i < uboBuffers.size(); i++)
 	{
 		uboBuffers[i] = std::make_unique<lve::LveBuffer>(
-			lveDevice,
+			*lveDevice,
 			sizeof(lve::GlobalUbo),
 			1,
 			vk::BufferUsageFlagBits::eUniformBuffer,
@@ -49,7 +56,7 @@ void WindowModule::Start()
 		uboBuffers[i]->Map();
 	}
 
-	const auto global_set_layout = lve::LveDescriptorSetLayout::Builder(lveDevice)
+	const auto global_set_layout = lve::LveDescriptorSetLayout::Builder(*lveDevice)
 	                               .AddBinding(0, vk::DescriptorType::eUniformBuffer,
 	                                           vk::ShaderStageFlagBits::eAllGraphics)
 	                               .Build();
@@ -65,16 +72,14 @@ void WindowModule::Start()
 	}
 
 	simpleRenderSystem = new lve::SimpleRenderSystem{
-		lveDevice, lveRenderer.GetSwapChainRenderPass(), global_set_layout->GetDescriptorSetLayout()
+		*lveDevice, lveRenderer->GetSwapChainRenderPass(), global_set_layout->GetDescriptorSetLayout()
 	};
 	pointLightSystem = new lve::PointLightSystem{
-		lveDevice, lveRenderer.GetSwapChainRenderPass(), global_set_layout->GetDescriptorSetLayout()
+		*lveDevice, lveRenderer->GetSwapChainRenderPass(), global_set_layout->GetDescriptorSetLayout()
 	};
 
 	viewerObject                          = new lve::LveGameObject(lve::LveGameObject::CreateGameObject());
 	viewerObject->transform.translation.z = -2.5f;
-
-	currentTime = std::chrono::high_resolution_clock::now();
 }
 
 void WindowModule::FixedUpdate()
@@ -86,55 +91,19 @@ void WindowModule::Update()
 {
 	Module::Update();
 
-	if (!lveWindow.ShouldClose())
+	if (!lveWindow->ShouldClose())
 	{
 		glfwPollEvents();
-
-		const auto  new_time   = std::chrono::high_resolution_clock::now(); // Bien mettre après la gestion d'event
-		const float frame_time = std::chrono::duration<float, std::chrono::seconds::period>(new_time - currentTime).
-			count();
-		currentTime = new_time;
-
-		cameraController.MoveInPlaneXZ(lveWindow.GetGlfwWindow(), frame_time, *viewerObject);
+		const float frame_time = TimeModule::GetDeltaTime();
+		cameraController.MoveInPlaneXZ(lveWindow->GetGlfwWindow(), frame_time, *viewerObject);
 		camera->SetViewYXZ(viewerObject->transform.translation, viewerObject->transform.rotation);
 
-		const float aspect = lveRenderer.GetAspectRatio();
+		const float aspect = lveRenderer->GetAspectRatio();
 		camera->SetPerspectiveProjection(glm::radians(50.f), aspect, 0.1f, 100.f);
-
-		p_commandBuffer = new vk::CommandBuffer(lveRenderer.BeginFrame());
-
-		if (p_commandBuffer)
-		{
-			const int frame_index = lveRenderer.GetFrameIndex();
-
-			lve::FrameInfo frame_info{
-				frame_index,
-				frame_time,
-				*p_commandBuffer,
-				*camera,
-				globalDescriptorSets[frame_index],
-				*gameObjects
-			};
-
-			// update
-			lve::GlobalUbo ubo{};
-			ubo.projection = camera->GetProjection();
-			ubo.view       = camera->GetView();
-
-			pointLightSystem->Update(frame_info, ubo);
-
-			uboBuffers[frame_index]->WriteToBuffer(&ubo);
-			uboBuffers[frame_index]->Flush();
-
-			// render
-			lveRenderer.BeginSwapChainRenderPass(*p_commandBuffer); //begin offscreen shadow pass
-			simpleRenderSystem->RenderGameObjects(frame_info);      //render shadow casting objects
-			pointLightSystem->Render(frame_info);                   //render shadow casting objects
-		}
 	}
 	else
 	{
-		lveDevice.Device().waitIdle();
+		lveDevice->Device().waitIdle();
 		Engine::GetInstance()->Quit();
 	}
 }
@@ -142,13 +111,39 @@ void WindowModule::Update()
 void WindowModule::PreRender()
 {
 	Module::PreRender();
+	p_commandBuffer = moduleManager->GetModule<RHIVulkanModule>()->GetCurrentCommandBuffer();
+	if (p_commandBuffer)
+	{
+		const int frame_index = lveRenderer->GetFrameIndex();
+		const float frame_time = TimeModule::GetDeltaTime();
+		p_frameInfo = new lve::FrameInfo{
+			frame_index,
+			frame_time,
+			*p_commandBuffer,
+			*camera,
+			globalDescriptorSets[frame_index],
+			*gameObjects
+		};
 
+		// update
+		
+
+		lve::GlobalUbo ubo{};
+		ubo.projection = camera->GetProjection();
+		ubo.view = camera->GetView();
+		pointLightSystem->Update(*gameObjects, ubo);
+		uboBuffers[frame_index]->WriteToBuffer(&ubo);
+		uboBuffers[frame_index]->Flush();
+	}
 	//window->clear(sf::Color::Black);
 }
 
 void WindowModule::Render()
 {
 	Module::Render();
+	simpleRenderSystem->RenderGameObjects(*p_frameInfo);      //render shadow casting objects
+	pointLightSystem->Render(*p_frameInfo);                   //render shadow casting objects
+	
 }
 
 void WindowModule::RenderGui()
@@ -159,9 +154,6 @@ void WindowModule::RenderGui()
 void WindowModule::PostRender()
 {
 	Module::PostRender();
-
-	lveRenderer.EndSwapChainRenderPass(*p_commandBuffer);
-	lveRenderer.EndFrame(); //end offscreen shadow pass
 
 	//window->display();
 }
@@ -175,7 +167,7 @@ void WindowModule::Release()
 
 void WindowModule::LoadGameObjects()
 {
-	std::shared_ptr<lve::LveModel> lve_model = lve::LveModel::CreateModelFromFile(lveDevice, "Models\\flat_vase.obj");
+	std::shared_ptr<lve::LveModel> lve_model = lve::LveModel::CreateModelFromFile(*lveDevice, "Models\\flat_vase.obj");
 
 	auto flatVaseGO                  = lve::LveGameObject::CreateGameObject();
 	flatVaseGO.model                 = lve_model;
@@ -183,17 +175,17 @@ void WindowModule::LoadGameObjects()
 	flatVaseGO.transform.scale       = {3.f, 1.5f, 3.f};
 	gameObjects->emplace(flatVaseGO.GetId(), std::move(flatVaseGO));
 
-	lve_model                            = lve::LveModel::CreateModelFromFile(lveDevice, "Models\\smooth_vase.obj");
+	lve_model                            = lve::LveModel::CreateModelFromFile(*lveDevice, "Models\\smooth_vase.obj");
 	auto smooth_vase_go                  = lve::LveGameObject::CreateGameObject();
 	smooth_vase_go.model                 = lve_model;
 	smooth_vase_go.transform.translation = {.5f, .5f, 0.f};
 	smooth_vase_go.transform.scale       = {3.f, 1.5f, 3.f};
 	gameObjects->emplace(smooth_vase_go.GetId(), std::move(smooth_vase_go));
 
-	auto quad_go = lve::PlaneGameObject::Create(lveDevice, {.0f, .5f, 0.f}, {3.f, 1.f, 3.f});
+	auto quad_go = lve::PlaneGameObject::Create(*lveDevice, {.0f, .5f, 0.f}, {3.f, 1.f, 3.f});
 	gameObjects->emplace(quad_go.GetId(), std::move(quad_go));
 
-	lve_model                    = lve::LveModel::CreateModelFromFile(lveDevice, "Models\\viking_room.obj");
+	lve_model                    = lve::LveModel::CreateModelFromFile(*lveDevice, "Models\\viking_room.obj");
 	auto viking                  = lve::LveGameObject::CreateGameObject();
 	viking.model                 = lve_model;
 	viking.transform.translation = {0.f, 0.f, 5.f};
@@ -201,10 +193,10 @@ void WindowModule::LoadGameObjects()
 	viking.transform.rotation    = {glm::radians(90.0f), glm::radians(90.0f), 0.0f};
 	gameObjects->emplace(viking.GetId(), std::move(viking));
 
-	auto cube = lve::CubeGameObject::Create(lveDevice);
+	auto cube = lve::CubeGameObject::Create(*lveDevice);
 	gameObjects->emplace(cube.GetId(), std::move(cube));
 
-	auto color_cube = lve::CubeGameObject::CreateColor(lveDevice, glm::vec3{0.f, 0.f, 10.f});
+	auto color_cube = lve::CubeGameObject::CreateColor(*lveDevice, glm::vec3{0.f, 0.f, 10.f});
 	gameObjects->emplace(color_cube.GetId(), std::move(color_cube));
 
 	std::vector<glm::vec3> light_colors{

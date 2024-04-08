@@ -191,6 +191,7 @@
     <ClCompile Include="EngineTestCode.cpp" />
     <ClCompile Include="sources\Modules\SoundSystemModule.cpp" />
     <ClCompile Include="SphereCollider.cpp" />
+    <ClCompile Include="sources\Modules\TimeModule.cpp" />
     <ClCompile Include="Transform.cpp" />
     <ClCompile Include="VulkanHooks.cpp" />
   </ItemGroup>
@@ -240,6 +241,7 @@
     <ClInclude Include="includes\Modules\RHIVulkanModule.h" />
     <ClInclude Include="RigidBody.h" />
     <ClInclude Include="SphereCollider.h" />
+    <ClInclude Include="includes\Modules\TimeModule.h" />
     <ClInclude Include="Transform.h" />
     <ClInclude Include="VulkanHooks.h" />
   </ItemGroup>

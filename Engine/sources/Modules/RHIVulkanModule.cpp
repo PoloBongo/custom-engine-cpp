@@ -1,5 +1,8 @@
 #include "Modules/RHIVulkanModule.h"
 
+#include "ModuleManager.h"
+#include "Modules/WindowModule.h"
+
 RHIVulkanModule::RHIVulkanModule() : instance(VK_NULL_HANDLE), debugMessenger(VK_NULL_HANDLE)
 {
 }
@@ -21,7 +24,7 @@ bool RHIVulkanModule::CreateVulkanInstance()
 
 bool RHIVulkanModule::SetupDebugMessenger()
 {
-	debugMessenger = new vk::DebugUtilsMessengerEXT(p_lveDevice->SetupDebugMessenger());
+	debugMessenger = new vk::DebugUtilsMessengerEXT(p_lveDevice->GetDebugMessenger());
 	if (debugMessenger != VK_NULL_HANDLE)
 		// Gestion des erreurs
 		return false;
@@ -31,18 +34,14 @@ bool RHIVulkanModule::SetupDebugMessenger()
 
 void RHIVulkanModule::Init()
 {
-	p_lveWindow = new lve::LveWindow{WIDTH, HEIGHT, "Hello Vulkan!"};
-	p_lveDevice = new lve::LveDevice{*p_lveWindow};
 
-	if (!CreateVulkanInstance()) throw std::runtime_error("Failed");
-
-	if (!SetupDebugMessenger()) throw std::runtime_error("Failed");
-
-	// Autres étapes d'initialisation de Vulkan
 }
 
 void RHIVulkanModule::Start()
 {
+	p_lveWindow = moduleManager->GetModule<WindowModule>()->GetWindow();
+	p_lveDevice = moduleManager->GetModule<WindowModule>()->GetDevice();
+	p_lveRenderer = moduleManager->GetModule<WindowModule>()->GetRenderer();
 }
 
 void RHIVulkanModule::FixedUpdate()

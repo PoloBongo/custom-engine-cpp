@@ -13,6 +13,8 @@
 #include <map>
 #include <stdexcept>
 
+#include "Modules/TimeModule.h"
+
 namespace lve
 {
 	PointLightSystem::PointLightSystem(LveDevice&              _device, vk::RenderPass _renderPass,
@@ -62,11 +64,11 @@ namespace lve
 			pipelineConfig);
 	}
 
-	void PointLightSystem::Update(FrameInfo& _frameInfo, GlobalUbo& _ubo)
+	void PointLightSystem::Update(LveGameObject::Map& _gameObjects, GlobalUbo& _ubo)
 	{
-		auto rotateLight = rotate(glm::mat4(1.f), 0.5f * _frameInfo.frameTime, {0.f, -1.f, 0.f});
+		auto rotateLight = rotate(glm::mat4(1.f), 0.5f * TimeModule::GetDeltaTime(), {0.f, -1.f, 0.f});
 		int  lightIndex  = 0;
-		for (auto& kv : _frameInfo.gameObjects)
+		for (auto& kv : _gameObjects)
 		{
 			auto& obj = kv.second;
 			if (obj.pointLight == nullptr) continue;

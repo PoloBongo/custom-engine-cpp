@@ -14,11 +14,11 @@
 class RHIVulkanModule final : public RHIModule
 {
 	public:
-		static constexpr int WIDTH  = 800; ///< Largeur de la fenêtre par défaut.
-		static constexpr int HEIGHT = 600; ///< Hauteur de la fenêtre par défaut.
 
 		RHIVulkanModule();
 		~RHIVulkanModule() override;
+
+		vk::CommandBuffer* GetCurrentCommandBuffer() const { return currentCommandBuffer.get(); }
 
 		/**
 		* @brief Initialise le module.

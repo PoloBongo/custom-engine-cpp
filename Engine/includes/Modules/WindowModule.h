@@ -45,18 +45,18 @@ class WindowModule final : public Module
 		void PostRender() override;
 		void Release() override;
 
-		lve::LveWindow*   GetWindow() { return &lveWindow; }
-		lve::LveDevice*   GetDevice() { return &lveDevice; }
-		lve::LveRenderer* GetRenderer() { return &lveRenderer; }
+		lve::LveWindow*   GetWindow() const { return lveWindow; }
+		lve::LveDevice*   GetDevice() const { return lveDevice; }
+		lve::LveRenderer* GetRenderer() const { return lveRenderer; }
 
 	private:
 		void LoadGameObjects();
 
-		lve::LveWindow   lveWindow{WIDTH, HEIGHT, "Hello Vulkan!"}; /// Fenêtre de l'application.
-		lve::LveDevice   lveDevice{lveWindow};
-		lve::LveRenderer lveRenderer{lveWindow, lveDevice};
+		lve::LveWindow*   lveWindow; /// Fenêtre de l'application.
+		lve::LveDevice*   lveDevice;
+		lve::LveRenderer* lveRenderer;
 
-		lve::LveDescriptorPool::Builder builder{lveDevice};
+		lve::LveDescriptorPool::Builder* builder;
 
 		std::unique_ptr<lve::LveDescriptorSetLayout, std::default_delete<lve::LveDescriptorSetLayout>>* globalSetLayout;
 
@@ -76,4 +76,5 @@ class WindowModule final : public Module
 		lve::LveGameObject::Map*                gameObjects;
 
 		vk::CommandBuffer* p_commandBuffer;
+		lve::FrameInfo* p_frameInfo;
 };

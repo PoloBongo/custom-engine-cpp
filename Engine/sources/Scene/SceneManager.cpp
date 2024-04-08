@@ -13,7 +13,7 @@ void SceneManager::Start()
 {
 	Module::Start();
 
-	windowModule = moduleModule->GetModule<WindowModule>();
+	windowModule = moduleManager->GetModule<WindowModule>();
 }
 
 /**

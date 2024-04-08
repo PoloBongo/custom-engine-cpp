@@ -42,7 +42,7 @@ template <class T>
 T* ModuleManager::CreateModule()
 {
 	T* module            = new T();
-	module->moduleModule = this;
+	module->moduleManager = this;
 	modules.push_back(module);
 	return module;
 }
