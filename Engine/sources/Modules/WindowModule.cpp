@@ -234,7 +234,7 @@ void WindowModule::LoadGameObjects()
 	viking.transform.translation = {0.f, 0.f, 5.f};
 	viking.transform.scale       = {3.f, 3.f, 3.f};
 	viking.transform.rotation    = {glm::radians(90.0f), glm::radians(90.0f), 0.0f};
-	viking.texture = std::make_unique<lve::LveTexture>(lveDevice, "../Textures/coconut.jpg");
+	viking.texture = std::make_unique<lve::LveTexture>(lveDevice, "../Textures/viking_room.png");
 	gameObjects->emplace(viking.GetId(), std::move(viking));
 
 	auto cube = lve::CubeGameObject::Create(lveDevice);

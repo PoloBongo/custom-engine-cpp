@@ -1,5 +1,7 @@
 #include "Systems/simple_render_system.h"
 
+#include "lve_descriptors.h"
+
 //libs
 #define GLM_FORCE_RADIANS
 #define GLM_FORCE_DEPTH_ZERO_TO_ONE
@@ -72,27 +74,29 @@ namespace lve
 		for (auto& kv : _frameInfo.gameObjects)
 		{
 			auto& obj = kv.second;
-			if (obj.model == nullptr || obj.texture == nullptr) continue;
+			if (obj.model == nullptr) continue;
+			if (obj.texture != nullptr) {
+				vk::DescriptorImageInfo imageInfo{};
+				imageInfo.sampler = obj.texture->getSampler();
+				imageInfo.imageView = obj.texture->getImageView();
+				imageInfo.imageLayout = obj.texture->getImageLayout();
 
-			vk::DescriptorImageInfo imageInfo{};
-			imageInfo.sampler = obj.texture->getSampler();
-			imageInfo.imageView = obj.texture->getImageView();
-			imageInfo.imageLayout = obj.texture->getImageLayout();
 
 
-			// Update the descriptor set with the image info for the current texture
-			vk::WriteDescriptorSet descriptorWrite{
-				_frameInfo.globalDescriptorSet, // Use the global descriptor set for the frame
-				1, // Assuming your texture descriptor set has binding 1
-				0, // Assuming your texture descriptor set has array element 0
-				1, // Number of descriptors to update
-				vk::DescriptorType::eCombinedImageSampler, // Type of descriptor
-				&imageInfo, // Pointer to array of image infos
-				nullptr, // Optional buffer info
-				nullptr // Optional texel buffer view info
-			};
-			// Update the descriptor set
-			lveDevice.Device().updateDescriptorSets(1, &descriptorWrite, 0, nullptr);
+				vk::WriteDescriptorSet descriptorWrite{
+					_frameInfo.globalDescriptorSet, // Use the global descriptor set for the frame
+					1, // Assuming your texture descriptor set has binding 1
+					0, // Assuming your texture descriptor set has array element 0
+					1, // Number of descriptors to update
+					vk::DescriptorType::eCombinedImageSampler, // Type of descriptor
+					&imageInfo, // Pointer to array of image infos
+					nullptr, // Optional buffer info
+					nullptr // Optional texel buffer view info
+				};
+
+				// Update the descriptor set
+				lveDevice.Device().updateDescriptorSets(1, &descriptorWrite, 0, nullptr);
+			}
 
 			_frameInfo.commandBuffer.bindDescriptorSets(
 				vk::PipelineBindPoint::eGraphics,

@@ -31,9 +31,6 @@ namespace lve {
 			// Gérer l'erreur de chargement de l'image
 		}
 
-		// Réorganiser les octets pour correspondre à l'ordre attendu par Vulkan
-
-		// Fait les pb de validation layer idk why // fait quand meme les erreurs mais pas quand je l'avais lancé avant ?
 		for (int i = 0; i < width * height * 4; i += 4) {
 			unsigned char temp = data[i];
 			data[i] = data[i + 2];
