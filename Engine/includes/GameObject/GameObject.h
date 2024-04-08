@@ -58,8 +58,14 @@ class GameObject
 		[[nodiscard]] LayerType GetLayer() const { return layerType; }
 		void                    SetLayer(const LayerType& _layerType) { layerType = _layerType; }
 
-		std::vector<GameObject*> FindChildrenByName(const std::string& _name) const;
+		GameObject* parent = nullptr;
+		void SetParent(GameObject* _parent);
+
 		std::vector<GameObject*> children;
+		std::vector<GameObject*> FindChildrenByName(const std::string& name);
+		void AddChildObject(GameObject* child);
+
+		Component* GetComponentRecursive(const std::string& componentName);
 
 		const std::vector<GameObject*>& GetChildren() const
 		{
@@ -130,8 +136,8 @@ class GameObject
 		void RemoveComponent(Component* _component);
 
 		/**
-					* @brief Initialise le module.
-					*/
+		* @brief Initialise le module.
+		*/
 		virtual void Init();
 
 		/**
