@@ -1,5 +1,4 @@
-NEW: Changement Modules
+ENH : WindowModule
 
-- Ajout d'un TimeModule pour le temps
-- Modification du WindowModule
-- TODO : Terminer les modifications du WindowModule
+- Amélioration du WindowModule
+- Suppression du Frame_Info

@@ -56,20 +56,20 @@ namespace lve
 			pipelineConfig);
 	}
 
-	void SimpleRenderSystem::RenderGameObjects(FrameInfo& _frameInfo)
+	void SimpleRenderSystem::RenderGameObjects(LveGameObject::Map& _gameObjects, const LveCamera& _camera, const vk::CommandBuffer _commandBuffer, const vk::DescriptorSet _globalDescriptorSet)
 	{
 		// Liaison du pipeline
-		lvePipeline->Bind(_frameInfo.commandBuffer);
+		lvePipeline->Bind(_commandBuffer);
 
 		// Liaison de l'ensemble de descripteurs global
-		_frameInfo.commandBuffer.bindDescriptorSets(
+		_commandBuffer.bindDescriptorSets(
 			vk::PipelineBindPoint::eGraphics,
 			pipelineLayout,
 			0,
-			_frameInfo.globalDescriptorSet,
+			_globalDescriptorSet,
 			nullptr);
 
-		for (auto& kv : _frameInfo.gameObjects)
+		for (auto& kv : _gameObjects)
 		{
 			auto& obj = kv.second;
 			if (obj.model == nullptr) continue;
@@ -78,15 +78,15 @@ namespace lve
 			push.normalMatrix = obj.transform.NormalMatrix();
 
 			// Mise à jour des push constants
-			_frameInfo.commandBuffer.pushConstants<SimplePushConstantData>(
+			_commandBuffer.pushConstants<SimplePushConstantData>(
 				pipelineLayout,
 				vk::ShaderStageFlagBits::eVertex | vk::ShaderStageFlagBits::eFragment,
 				0,
 				push);
 
 			// Liaison du modèle et dessin
-			obj.model->Bind(_frameInfo.commandBuffer);
-			obj.model->Draw(_frameInfo.commandBuffer);
+			obj.model->Bind(_commandBuffer);
+			obj.model->Draw(_commandBuffer);
 		}
 	}
 } // namespace lve

@@ -77,4 +77,7 @@ class WindowModule final : public Module
 
 		vk::CommandBuffer* p_commandBuffer;
 		lve::FrameInfo* p_frameInfo;
+
+		int frameIndex;
+		lve::GlobalUbo ubo{};
 };

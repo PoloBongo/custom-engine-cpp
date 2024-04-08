@@ -3,7 +3,7 @@
 #include "ModuleManager.h"
 #include "Modules/WindowModule.h"
 
-RHIVulkanModule::RHIVulkanModule() : instance(VK_NULL_HANDLE), debugMessenger(VK_NULL_HANDLE)
+RHIVulkanModule::RHIVulkanModule()
 {
 }
 
@@ -11,27 +11,6 @@ RHIVulkanModule::~RHIVulkanModule()
 {
 	Release();
 }
-
-bool RHIVulkanModule::CreateVulkanInstance()
-{
-	instance = new vk::Instance(p_lveDevice->CreateInstance());
-	if (instance != VK_NULL_HANDLE)
-		// Gestion des erreurs
-		return false;
-
-	return true;
-}
-
-bool RHIVulkanModule::SetupDebugMessenger()
-{
-	debugMessenger = new vk::DebugUtilsMessengerEXT(p_lveDevice->GetDebugMessenger());
-	if (debugMessenger != VK_NULL_HANDLE)
-		// Gestion des erreurs
-		return false;
-
-	return true;
-}
-
 void RHIVulkanModule::Init()
 {
 
@@ -74,16 +53,6 @@ void RHIVulkanModule::PostRender()
 
 void RHIVulkanModule::Release()
 {
-	if (instance != VK_NULL_HANDLE)
-	{
-		instance->destroy();
-		delete instance;
-	}
-	if (instance != VK_NULL_HANDLE)
-	{
-		instance->destroy();
-		delete instance;
-	}
 }
 
 void RHIVulkanModule::Finalize()

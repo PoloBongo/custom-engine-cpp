@@ -43,7 +43,7 @@ namespace lve
 			 *
 			 * @param _frameInfo Les informations de frame, y compris le tampon de commandes, le descripteur global, et les objets de jeu.
 			 */
-			void RenderGameObjects(FrameInfo& _frameInfo);
+			void RenderGameObjects(LveGameObject::Map& _gameObjects, const LveCamera& _camera, const vk::CommandBuffer _commandBuffer, const vk::DescriptorSet _globalDescriptorSet);
 
 		private:
 			/**

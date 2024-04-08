@@ -44,7 +44,7 @@ namespace lve
 			 * @param _ubo
 			 */
 			void Update(LveGameObject::Map& _gameObjects, GlobalUbo& _ubo);
-			void Render(FrameInfo& _frameInfo);
+			void Render(const LveGameObject::Map& _gameObjects, const LveCamera& _camera, const vk::CommandBuffer _commandBuffer,const vk::DescriptorSet _globalDescriptorSet) const;
 
 		private:
 			/**

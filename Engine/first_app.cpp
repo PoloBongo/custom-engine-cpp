@@ -123,8 +123,7 @@ namespace lve
 				lveRenderer.BeginSwapChainRenderPass(command_buffer); //begin offscreen shadow pass
 
 				// order here matters
-				simple_render_system.RenderGameObjects(frame_info); //render shadow casting objects
-				point_light_system.Render(frame_info);              //render shadow casting objects
+			             //render shadow casting objects
 
 
 				lveRenderer.EndSwapChainRenderPass(command_buffer);

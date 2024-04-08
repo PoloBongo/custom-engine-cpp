@@ -63,7 +63,7 @@ void WindowModule::Start()
 
 	globalDescriptorSets.resize(lve::LveSwapChain::MAX_FRAMES_IN_FLIGHT);
 
-	for (int i = 0; i < globalDescriptorSets.size(); i++)
+	for (size_t i = 0; i < globalDescriptorSets.size(); i++)
 	{
 		auto buffer_info = uboBuffers[i]->DescriptorInfo();
 		lve::LveDescriptorWriter(*global_set_layout, *globalPool)
@@ -94,12 +94,17 @@ void WindowModule::Update()
 	if (!lveWindow->ShouldClose())
 	{
 		glfwPollEvents();
-		const float frame_time = TimeModule::GetDeltaTime();
-		cameraController.MoveInPlaneXZ(lveWindow->GetGlfwWindow(), frame_time, *viewerObject);
+
+		cameraController.MoveInPlaneXZ(lveWindow->GetGlfwWindow(), TimeModule::GetDeltaTime(), *viewerObject);
 		camera->SetViewYXZ(viewerObject->transform.translation, viewerObject->transform.rotation);
 
 		const float aspect = lveRenderer->GetAspectRatio();
 		camera->SetPerspectiveProjection(glm::radians(50.f), aspect, 0.1f, 100.f);
+
+		ubo.projection = camera->GetProjection();
+		ubo.view = camera->GetView();
+
+		pointLightSystem->Update(*gameObjects, ubo);
 	}
 	else
 	{
@@ -114,35 +119,20 @@ void WindowModule::PreRender()
 	p_commandBuffer = moduleManager->GetModule<RHIVulkanModule>()->GetCurrentCommandBuffer();
 	if (p_commandBuffer)
 	{
-		const int frame_index = lveRenderer->GetFrameIndex();
+		frameIndex = lveRenderer->GetFrameIndex();
 		const float frame_time = TimeModule::GetDeltaTime();
-		p_frameInfo = new lve::FrameInfo{
-			frame_index,
-			frame_time,
-			*p_commandBuffer,
-			*camera,
-			globalDescriptorSets[frame_index],
-			*gameObjects
-		};
-
 		// update
-		
-
-		lve::GlobalUbo ubo{};
-		ubo.projection = camera->GetProjection();
-		ubo.view = camera->GetView();
-		pointLightSystem->Update(*gameObjects, ubo);
-		uboBuffers[frame_index]->WriteToBuffer(&ubo);
-		uboBuffers[frame_index]->Flush();
+	
+		uboBuffers[frameIndex]->WriteToBuffer(&ubo);
+		uboBuffers[frameIndex]->Flush();
 	}
-	//window->clear(sf::Color::Black);
 }
 
 void WindowModule::Render()
 {
 	Module::Render();
-	simpleRenderSystem->RenderGameObjects(*p_frameInfo);      //render shadow casting objects
-	pointLightSystem->Render(*p_frameInfo);                   //render shadow casting objects
+	simpleRenderSystem->RenderGameObjects(*gameObjects, *camera, *p_commandBuffer, globalDescriptorSets[frameIndex]);      //render shadow casting objects
+	pointLightSystem->Render(*gameObjects, *camera, *p_commandBuffer, globalDescriptorSets[frameIndex]);                 //render shadow casting objects
 	
 }
 
