@@ -1,29 +1,42 @@
 #include "Light.h"
-/*
-void Light::Start() override
+void Light::Init()
 {
-	
-}
-void Light::Physics(const float& _delta) override
-{
-	
-}
-void Light::Update(const float& _delta) override
-{
-	
 }
 
-//Render Methods
-void Light::Render(lve::LveWindow* _window) override
+void Light::Start()
 {
-	
 }
-void Light::RenderGui(lve::LveWindow* _window) override
+
+void Light::FixedUpdate() 
 {
-	
 }
-void Light::RenderBackground(lve::LveWindow* _window) override
+
+void Light::Update() 
 {
-	
+
 }
-*/
+
+void Light::PreRender()
+{
+}
+
+void Light::Render() 
+{
+
+}
+
+void Light::RenderGui()
+{
+}
+
+void Light::PostRender()
+{
+}
+
+void Light::Release()
+{
+}
+
+void Light::Finalize()
+{
+}

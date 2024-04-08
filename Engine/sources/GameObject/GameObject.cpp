@@ -7,6 +7,11 @@ GameObject::GameObject(): id(0)
 	this->isActive  = true;
 	this->transform = new Transform();
 }
+GameObject::GameObject(const id_t _id) : id(_id)
+{
+	this->isActive = true;
+	this->transform = new Transform();
+}
 
 GameObject::~GameObject()
 {
@@ -57,7 +62,7 @@ void GameObject::FixedUpdate(const float& _deltaTime) const
 	if (this->isActive)
 		for (size_t i = 0; i < components.size(); i++)
 		{
-			if (components[i]->GetActive()) components[i]->Physics(_deltaTime);
+			if (components[i]->GetActive()) components[i]->FixedUpdate();
 		}
 }
 
@@ -66,7 +71,7 @@ void GameObject::Update(const float& _deltaTime) const
 	if (this->isActive)
 		for (size_t i = 0; i < components.size(); i++)
 		{
-			if (components[i]->GetActive()) components[i]->Update(_deltaTime);
+			if (components[i]->GetActive()) components[i]->Update();
 		}
 }
 
@@ -76,7 +81,7 @@ void GameObject::PreRender()
 
 void GameObject::Render(lve::LveWindow* _window) const
 {
-	if (this->isVisible)
+	/*if (this->isVisible)
 		for (const auto component : components)
 		{
 			if (component->GetVisible())
@@ -85,7 +90,7 @@ void GameObject::Render(lve::LveWindow* _window) const
 				else if (layerType == LayerType::HUD) component->RenderGui(_window);
 				else if (layerType == LayerType::Background) component->RenderBackground(_window);
 			}
-		}
+		}*/
 }
 
 void GameObject::RenderGui()

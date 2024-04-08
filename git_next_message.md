@@ -1,3 +1,4 @@
-ENH: Correctif
+FIX: GameObject
 
-- Ajustement du code pour les gameObjects mais encore bugé
+- Fix des GameObjects
+- TODO: Fix les Lights

@@ -30,9 +30,7 @@ class GameObject
 		using id_t = unsigned int;
 		GameObject();
 
-		GameObject(const id_t _id) : id(_id)
-		{
-		}
+		GameObject(const id_t _id);
 
 		~GameObject();
 

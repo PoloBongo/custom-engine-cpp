@@ -1,3 +1,4 @@
+/*
 #include "first_app.h"
 
 
@@ -189,3 +190,4 @@ namespace lve
 		}
 	}
 } // namespace lve
+*/

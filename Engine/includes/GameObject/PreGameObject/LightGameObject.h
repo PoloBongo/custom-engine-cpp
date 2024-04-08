@@ -31,7 +31,8 @@ namespace lve
 				game_object.GetTransform()->SetPosition(_position);
 				game_object.GetTransform()->SetScale(_radius, game_object.GetTransform()->GetScale().y, game_object.GetTransform()->GetScale().z);
 				game_object.GetTransform()->SetRotation(_rotate);
-				game_object.CreateComponent<Light>()->lightIntensity = _intensity;
+				Light* light_component = game_object.CreateComponent<Light>();
+				light_component->lightIntensity = _intensity;
 				return game_object;
 			};
 	};

@@ -68,7 +68,7 @@ class WindowModule final : public Module
 
 		std::chrono::steady_clock::time_point currentTime;
 		lve::KeyboardMovementController       cameraController{};
-		lve::LveGameObject*                   viewerObject;
+		GameObject*                   viewerObject;
 
 		std::vector<vk::DescriptorSet>               globalDescriptorSets;
 		std::vector<std::unique_ptr<lve::LveBuffer>> uboBuffers;

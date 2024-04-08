@@ -77,8 +77,8 @@ void WindowModule::Start()
 		*lveDevice, lveRenderer->GetSwapChainRenderPass(), global_set_layout->GetDescriptorSetLayout()
 	};
 
-	viewerObject                          = new lve::LveGameObject(lve::LveGameObject::CreateGameObject());
-	viewerObject->transform.translation.z = -2.5f;
+	viewerObject                          = new GameObject(GameObject::CreateGameObject());
+	viewerObject->GetTransform()->SetPosition({ 0.f,0.f,-2.5f });
 }
 
 void WindowModule::FixedUpdate()
@@ -95,7 +95,7 @@ void WindowModule::Update()
 		glfwPollEvents();
 
 		cameraController.MoveInPlaneXZ(lveWindow->GetGlfwWindow(), TimeModule::GetDeltaTime(), *viewerObject);
-		camera->SetViewYXZ(viewerObject->transform.translation, viewerObject->transform.rotation);
+		camera->SetViewYXZ(viewerObject->GetPosition(), viewerObject->GetRotation());
 
 		const float aspect = lveRenderer->GetAspectRatio();
 		camera->SetPerspectiveProjection(glm::radians(50.f), aspect, 0.1f, 100.f);
@@ -188,16 +188,16 @@ void WindowModule::LoadGameObjects()
 	auto color_cube = lve::CubeGameObject::CreateColors(*lveDevice, glm::vec3{0.f, 0.f, 10.f});
 	gameObjects.push_back(color_cube);
 
-	std::vector<glm::vec3> light_colors{
-		glm::vec3{1.f, .1f, .1f},
-		glm::vec3{.1f, .1f, 1.f},
-		glm::vec3{.1f, 1.f, .1f},
-		glm::vec3{1.f, 1.f, .1f},
-		glm::vec3{.1f, 1.f, 1.f},
-		glm::vec3{1.f, 1.f, 1.f} //
+	/*std::vector<glm::vec3> light_colors{
+		{1.f, .1f, .1f},
+		{.1f, .1f, 1.f},
+		{.1f, 1.f, .1f},
+		{1.f, 1.f, .1f},
+		{.1f, 1.f, 1.f},
+		{1.f, 1.f, 1.f} //
 	};
 
-	for (int i = 0; i < light_colors.size(); i++)
+	for (int i = 0; i < 2; i++)
 	{
 		auto point_light  = lve::LightGameObject::Creates(0.2f, 0.1f);
 		point_light.color = light_colors[i];
@@ -210,7 +210,7 @@ void WindowModule::LoadGameObjects()
 	}
 
 	auto sun = lve::LightGameObject::Creates(1000000.f, 2.0f, glm::vec3{0.f, -1000.f, 0.f});
-	gameObjects.push_back(sun);
+	gameObjects.push_back(sun);*/
 }
 
 //void WindowModule::PreRender()

@@ -93,7 +93,6 @@ namespace lve
 	void PointLightSystem::Render(std::vector<GameObject>& _gameObjects, const LveCamera& _camera, const vk::CommandBuffer _commandBuffer, const vk::DescriptorSet _globalDescriptorSet) const
 	{
 		// Tri des lumières
-		std::map<float, LveGameObject::id_t> sorted;
 		for (auto& game_object : _gameObjects)
 		{
 			const auto light_component = game_object.GetComponent<Light>();
@@ -102,7 +101,6 @@ namespace lve
 			// Calcul de la distance 
 			auto  offset            = _camera.GetPosition() - game_object.GetTransform()->GetPosition();
 			float distance_squared   = dot(offset, offset);
-			sorted[distance_squared] = game_object.GetId();
 		}
 		lvePipeline->Bind(_commandBuffer);
 
@@ -117,6 +115,8 @@ namespace lve
 		// Itération à travers les lumières triées
 		for (auto& game_object : _gameObjects)
 		{
+			const auto light_component = game_object.GetComponent<Light>();
+			if (light_component == nullptr) continue;
 			PointLightPushConstants push{};
 			push.position = glm::vec4(game_object.GetTransform()->GetPosition(), 1.f);
 			push.color    = glm::vec4(game_object.color, game_object.GetComponent<Light>()->lightIntensity);
