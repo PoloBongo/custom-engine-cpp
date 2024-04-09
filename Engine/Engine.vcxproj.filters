@@ -59,6 +59,12 @@
     <ClCompile Include="Light.cpp" />
     <ClCompile Include="sources\Modules\DisplayModule.cpp" />
     <ClCompile Include="sources\GameObject\Components\Mesh.cpp" />
+    <ClCompile Include="sources\TCP\Errors.cpp" />
+    <ClCompile Include="sources\TCP\Sockets.cpp" />
+    <ClCompile Include="sources\TCP\Client\Client.cpp" />
+    <ClCompile Include="sources\TCP\Server\Server.cpp" />
+    <ClCompile Include="sources\TCP\Client\TCPClientStart.cpp" />
+    <ClCompile Include="sources\TCP\Server\TCPServerStart.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BoxCollider.h" />
@@ -112,6 +118,14 @@
     <ClInclude Include="Light.h" />
     <ClInclude Include="includes\Modules\DisplayModule.h" />
     <ClInclude Include="includes\GameObject\Components\Mesh.h" />
+    <ClInclude Include="includes\TCP\Errors.h" />
+    <ClInclude Include="includes\TCP\Sockets.h" />
+    <ClInclude Include="includes\TCP\Messages.h" />
+    <ClInclude Include="includes\TCP\Utils.h" />
+    <ClInclude Include="includes\TCP\Client\Client.h" />
+    <ClInclude Include="includes\TCP\Server\Server.h" />
+    <ClInclude Include="includes\TCP\Client\TCPClientStart.h" />
+    <ClInclude Include="includes\TCP\Server\TCPServerStart.h" />
   </ItemGroup>
   <ItemGroup>
     <CopyFileToFolders Include="..\Librairies\FMOD\lib\fmod.dll" />
