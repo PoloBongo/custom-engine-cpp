@@ -71,6 +71,13 @@ namespace lve
 		//	0,
 		//	_frameInfo.globalDescriptorSet,
 		//	nullptr);
+		vk::WriteDescriptorSet descriptorWrites[1];
+		descriptorWrites[0].sType = vk::StructureType::eWriteDescriptorSet;
+		descriptorWrites[0].dstSet = _frameInfo.globalDescriptorSet;
+		descriptorWrites[0].dstBinding = 1;
+		descriptorWrites[0].dstArrayElement = 0;
+		descriptorWrites[0].descriptorType = vk::DescriptorType::eCombinedImageSampler;
+		descriptorWrites[0].descriptorCount = 1;
 
 		for (auto& kv : _frameInfo.gameObjects)
 		{
@@ -97,39 +104,18 @@ namespace lve
 					std::cout << "Descriptor is null\n";
 				}
 
+				descriptorWrites[0].pImageInfo = &imageInfo;
 
-				//vk::WriteDescriptorSet descriptorWrites[1];
-				//descriptorWrites[0].sType = vk::StructureType::eWriteDescriptorSet;
-				//descriptorWrites[0].dstSet = _frameInfo.globalDescriptorSet;
-				//descriptorWrites[0].dstBinding = 1;
-				//descriptorWrites[0].dstArrayElement = 0;
-				//descriptorWrites[0].descriptorType = vk::DescriptorType::eCombinedImageSampler;
-				//descriptorWrites[0].descriptorCount = 1;
-				//descriptorWrites[0].pImageInfo = &imageInfo;
-
-				vk::WriteDescriptorSet descriptorWrite{
-					_frameInfo.globalDescriptorSet, // Use the global descriptor set for the frame
-					1, // Assuming your texture descriptor set has binding 1
-					0, // Assuming your texture descriptor set has array element 0
-					1, // Number of descriptors to update
-					vk::DescriptorType::eCombinedImageSampler, // Type of descriptor
-					&imageInfo, // Pointer to array of image infos
-					nullptr, // Optional buffer info
-					nullptr // Optional texel buffer view info
-				};
 				std::cout << "2\n";
-				// Update the descriptor set
 
-				if (_frameInfo.globalDescriptorSet == VK_NULL_HANDLE) {
-					throw
-						std::runtime_error("globaldescriptorset is vkNullHandle");
-				}
-				if (descriptorWrite.dstSet == VK_NULL_HANDLE) {
-					throw std::runtime_error("Descriptor set handle is VK_NULL_HANDLE");
-				}
+				// OUI le command buffer est bon
+				// OUI le descriptor set est bon
+				// OUI le globaldescriptor est toujours valide avant
+				// OUI TOTOUTOUTOUTOUTOPTUOPUZEAOPUTAOIZHRIUOAZB NOIHJKZAZ A BEIJABZ OUEBN ZOP
+				// JEDEVIENSFOUZOIEHJAOIEHNNOIAZNBEOIKLL
 
-				lveDevice.Device().updateDescriptorSets(1, &descriptorWrite, 0, nullptr);
-				std::cout << "3\n";
+				lveDevice.Device().updateDescriptorSets(1, descriptorWrites, 0, nullptr);
+
 
 				// Wait for the fence to be signaled
 				//lveDevice.Device().waitForFences(1, &fence, vk::True, UINT64_MAX);
