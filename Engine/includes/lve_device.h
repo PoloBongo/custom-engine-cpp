@@ -256,6 +256,7 @@ namespace lve
 			* Cette fonction configure un gestionnaire de débogage Vulkan pour recevoir les messages de validation et de débogage de l'API Vulkan.
 			*/
 			vk::DebugUtilsMessengerEXT SetupDebugMessenger();
+			vk::DebugUtilsMessengerEXT GetDebugMessenger() const { return debugMessenger; }
 
 		private:
 			/**

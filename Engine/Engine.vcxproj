@@ -304,6 +304,9 @@
     <ClCompile Include="BoxCollider.cpp" />
     <ClCompile Include="sources\TCP\Client\Client.cpp" />
     <ClCompile Include="Convertisseur.cpp" />
+    <ClCompile Include="sources\GameObject\Components\Mesh.cpp" />
+    <ClCompile Include="sources\Modules\DisplayModule.cpp" />
+    <ClCompile Include="Light.cpp" />
     <ClCompile Include="sources\TCP\Errors.cpp" />
     <ClCompile Include="rhi.cpp" />
     <ClCompile Include="sources\TCP\Server\Server.cpp" />
@@ -329,6 +332,7 @@
     <ClCompile Include="EngineTestCode.cpp" />
     <ClCompile Include="sources\Modules\SoundSystemModule.cpp" />
     <ClCompile Include="SphereCollider.cpp" />
+    <ClCompile Include="sources\Modules\TimeModule.cpp" />
     <ClCompile Include="sources\TCP\Client\TCPClientStart.cpp" />
     <ClCompile Include="sources\TCP\Server\TCPServerStart.cpp" />
     <ClCompile Include="Transform.cpp" />
@@ -338,6 +342,7 @@
     <ClInclude Include="BoxCollider.h" />
     <ClInclude Include="includes\TCP\Client\Client.h" />
     <ClInclude Include="Convertisseur.h" />
+    <ClInclude Include="includes\Modules\DisplayModule.h" />
     <ClInclude Include="includes\TCP\Errors.h" />
     <ClInclude Include="includes\GameObject\PreGameObject\CubeGameObject.h" />
     <ClInclude Include="includes\Camera\CameraManager.h" />
@@ -375,17 +380,20 @@
     <ClCompile Include="sources\Systems\point_light_system.cpp" />
     <ClCompile Include="sources\Systems\simple_render_system.cpp" />
     <ClInclude Include="includes\GameObject\PreGameObject\LightGameObject.h" />
+    <ClInclude Include="Light.h" />
     <ClInclude Include="includes\TCP\Messages.h" />
     <ClInclude Include="includes\TCP\Utils.h" />
     <ClInclude Include="lve_constants.h" />
     <ClInclude Include="lve_image.h" />
     <ClInclude Include="includes\GameObject\PreGameObject\PlaneGameObject.h" />
+    <ClInclude Include="includes\GameObject\Components\Mesh.h" />
     <ClInclude Include="rhi.h" />
     <ClInclude Include="includes\Modules\RHIVulkanModule.h" />
     <ClInclude Include="RigidBody.h" />
     <ClInclude Include="includes\TCP\Server\Server.h" />
     <ClInclude Include="includes\TCP\Sockets.h" />
     <ClInclude Include="SphereCollider.h" />
+    <ClInclude Include="includes\Modules\TimeModule.h" />
     <ClInclude Include="includes\TCP\Client\TCPClientStart.h" />
     <ClInclude Include="includes\TCP\Server\TCPServerStart.h" />
     <ClInclude Include="Transform.h" />

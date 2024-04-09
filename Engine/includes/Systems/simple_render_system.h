@@ -12,6 +12,8 @@
 #include <memory>
 #include <vector>
 
+class GameObject;
+
 namespace lve
 {
 	struct SimplePushConstantData
@@ -41,9 +43,12 @@ namespace lve
 			 * Cette méthode rend les objets de jeu avec le système de rendu simple en utilisant le pipeline graphique
 			 * et le layout du pipeline spécifiés dans le cadre d'une Frame.
 			 *
-			 * @param _frameInfo Les informations de frame, y compris le tampon de commandes, le descripteur global, et les objets de jeu.
+			 * @param _gameObjects
+			 * @param _camera
+			 * @param _commandBuffer
+			 * @param _globalDescriptorSet
 			 */
-			void RenderGameObjects(FrameInfo& _frameInfo);
+			void RenderGameObjects(const std::vector<GameObject*>& _gameObjects, const LveCamera& _camera, const vk::CommandBuffer _commandBuffer, const vk::DescriptorSet _globalDescriptorSet) const;
 
 		private:
 			/**

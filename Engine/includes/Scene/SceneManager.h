@@ -18,7 +18,6 @@ class SceneManager final : public Module
 		SceneManager& operator=(const SceneManager&&) = delete;
 		SceneManager& operator=(const SceneManager&)  = delete;
 
-		void Start() override;
 
 		void       SetMainScene(const std::string& _sceneName);
 		BaseScene* GetScene(const std::string& _sceneName);
@@ -26,7 +25,6 @@ class SceneManager final : public Module
 		void       UpdateMainScene() const;
 		void       RenderMainScene() const;
 
-		void Destroy();
 
 		void CreateScene(std::string _name, bool _isActive);
 		void DestroyScene(const std::string& _sceneName);
@@ -46,6 +44,57 @@ class SceneManager final : public Module
 		void SetCurrentScene(int _sceneIndex);
 		void SetNextSceneActive();
 		void SetPreviousSceneActive();
+
+
+		/**
+			* @brief Initialise le module.
+			*/
+		void Init() override;
+
+		/**
+		 * @brief Démarre le module.
+		 */
+		void Start() override;
+
+		/**
+		 * @brief Effectue une mise à jour fixe du module.
+		 */
+		void FixedUpdate() override;
+
+		/**
+		 * @brief Met à jour le module.
+		 */
+		void Update() override;
+
+		/**
+		 * @brief Fonction pré-rendu du module.
+		 */
+		void PreRender() override;
+
+		/**
+		 * @brief Rendu du module.
+		 */
+		void Render() override;
+
+		/**
+		 * @brief Rendu de l'interface graphique du module.
+		 */
+		void RenderGui() override;
+
+		/**
+		 * @brief Fonction post-rendu du module.
+		 */
+		void PostRender() override;
+
+		/**
+		 * @brief Libère les ressources utilisées par le module.
+		 */
+		void Release() override;
+
+		/**
+		 * @brief Finalise le module.
+		 */
+		void Finalize() override;
 
 	private:
 		bool        SceneFileExists(const std::string& _filePath) const;

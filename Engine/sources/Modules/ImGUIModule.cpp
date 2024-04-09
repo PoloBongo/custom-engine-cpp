@@ -48,7 +48,7 @@ void ImGuiModule::Init()
 {
 	Module::Init();
 
-	windowModule = moduleModule->GetModule<WindowModule>();
+	windowModule = moduleManager->GetModule<WindowModule>();
 
 	device                                             = windowModule->GetDevice()->Device();
 	graphicsQueue                                      = windowModule->GetDevice()->GraphicsQueue();
@@ -78,7 +78,7 @@ void ImGuiModule::Init()
 void ImGuiModule::Start()
 {
 	Module::Start();
-	//timeModule = moduleModule->GetModule<TimeModule>();
+	//timeModule = moduleManager->GetModule<TimeModule>();
 
 	//ImGui::CreateContext();
 

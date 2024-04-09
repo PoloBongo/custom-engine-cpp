@@ -13,6 +13,11 @@
 #include <map>
 #include <stdexcept>
 
+#include "Light.h"
+#include "Transform.h"
+#include "GameObject/GameObject.h"
+#include "Modules/TimeModule.h"
+
 namespace lve
 {
 	PointLightSystem::PointLightSystem(LveDevice&              _device, vk::RenderPass _renderPass,
@@ -62,73 +67,70 @@ namespace lve
 			pipelineConfig);
 	}
 
-	void PointLightSystem::Update(FrameInfo& _frameInfo, GlobalUbo& _ubo)
+	void PointLightSystem::Update(const std::vector<GameObject*>& _gameObjects, GlobalUbo& _ubo)
 	{
-		auto rotateLight = rotate(glm::mat4(1.f), 0.5f * _frameInfo.frameTime, {0.f, -1.f, 0.f});
-		int  lightIndex  = 0;
-		for (auto& kv : _frameInfo.gameObjects)
+		const auto rotate_light = rotate(glm::mat4(1.f), 0.5f * TimeModule::GetDeltaTime(), {0.f, -1.f, 0.f});
+		int  light_index  = 0;
+		for (auto& game_object : _gameObjects)
 		{
-			auto& obj = kv.second;
-			if (obj.pointLight == nullptr) continue;
+			const auto light_component = game_object->GetComponent<Light>();
+			if (light_component == nullptr) continue;
 
-			assert(lightIndex < MAX_LIGHTS && "Point lights exceed maximum specified");
+			assert(light_index < MAX_LIGHTS && "Point lights exceed maximum specified");
 
 			// update light position
-			obj.transform.translation = glm::vec3(rotateLight * glm::vec4(obj.transform.translation, 1.f));
+			game_object->GetTransform()->SetPosition(glm::vec3(rotate_light * glm::vec4(game_object->GetTransform()->GetPosition(), 1.f)));
 
 			// copy light to ubo
-			_ubo.pointLights[lightIndex].position = glm::vec4(obj.transform.translation, 1.f);
-			_ubo.pointLights[lightIndex].color    = glm::vec4(obj.color, obj.pointLight->lightIntensity);
+			_ubo.pointLights[light_index].position = glm::vec4(game_object->GetTransform()->GetPosition(), 1.f);
+			_ubo.pointLights[light_index].color    = glm::vec4(game_object->color, light_component->lightIntensity);
 
-			lightIndex += 1;
+			light_index ++;
 		}
-		_ubo.numLights = lightIndex;
+		_ubo.numLights = light_index;
 	}
 
-	void PointLightSystem::Render(FrameInfo& _frameInfo)
+	void PointLightSystem::Render(std::vector<GameObject*>& _gameObjects, const LveCamera& _camera, const vk::CommandBuffer _commandBuffer, const vk::DescriptorSet _globalDescriptorSet) const
 	{
 		// Tri des lumières
-		std::map<float, LveGameObject::id_t> sorted;
-		for (auto& kv : _frameInfo.gameObjects)
+		for (auto& game_object : _gameObjects)
 		{
-			auto& obj = kv.second;
-			if (obj.pointLight == nullptr) continue;
+			const auto light_component = game_object->GetComponent<Light>();
+			if (light_component == nullptr) continue;
 
 			// Calcul de la distance 
-			auto  offset            = _frameInfo.camera.GetPosition() - obj.transform.translation;
-			float distanceSquared   = dot(offset, offset);
-			sorted[distanceSquared] = obj.GetId();
+			auto  offset            = _camera.GetPosition() - game_object->GetTransform()->GetPosition();
+			float distance_squared   = dot(offset, offset);
 		}
-		lvePipeline->Bind(_frameInfo.commandBuffer);
+		lvePipeline->Bind(_commandBuffer);
 
 		// Liaison de l'ensemble de descripteurs global
-		_frameInfo.commandBuffer.bindDescriptorSets(
+		_commandBuffer.bindDescriptorSets(
 			vk::PipelineBindPoint::eGraphics,
 			pipelineLayout,
 			0,
-			_frameInfo.globalDescriptorSet,
+			_globalDescriptorSet,
 			nullptr);
 
 		// Itération à travers les lumières triées
-		for (auto it = sorted.rbegin(); it != sorted.rend(); ++it)
+		for (auto& game_object : _gameObjects)
 		{
-			// Utilisation de l'ID de l'objet pour trouver l'objet lumière
-			auto& obj = _frameInfo.gameObjects.at(it->second);
-
+			const auto light_component = game_object->GetComponent<Light>();
+			if (light_component == nullptr) continue;
 			PointLightPushConstants push{};
-			push.position = glm::vec4(obj.transform.translation, 1.f);
-			push.color    = glm::vec4(obj.color, obj.pointLight->lightIntensity);
-			push.radius   = obj.transform.scale.x;
+			push.position = glm::vec4(game_object->GetTransform()->GetPosition(), 1.f);
+			push.color    = glm::vec4(game_object->color, game_object->GetComponent<Light>()->lightIntensity);
+			push.radius   = game_object->GetTransform()->GetScale().x;
 
 			// Mise à jour des push constants
-			_frameInfo.commandBuffer.pushConstants<PointLightPushConstants>(
+			_commandBuffer.pushConstants<PointLightPushConstants>(
 				pipelineLayout,
 				vk::ShaderStageFlagBits::eVertex | vk::ShaderStageFlagBits::eFragment,
 				0,
 				push);
 
 			// Dessin d'une primitive pour représenter la lumière
-			_frameInfo.commandBuffer.draw(6, 1, 0, 0);
+			_commandBuffer.draw(6, 1, 0, 0);
 		}
 	}
 } // namespace lve

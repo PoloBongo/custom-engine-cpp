@@ -14,23 +14,23 @@ Engine* Engine::GetInstance()
 
 void Engine::Init() const
 {
-	moduleModule->CreateDefaultModules();
-	moduleModule->Init();
+	moduleManager->CreateDefaultModules();
+	moduleManager->Init();
 }
 
 void Engine::Run() const
 {
-	moduleModule->Start();
+	moduleManager->Start();
 
 	while (!shouldQuit)
 	{
-		moduleModule->Update();
-		moduleModule->PreRender();
-		moduleModule->Render();
-		moduleModule->RenderGui();
-		moduleModule->PostRender();
+		moduleManager->Update();
+		moduleManager->PreRender();
+		moduleManager->Render();
+		moduleManager->RenderGui();
+		moduleManager->PostRender();
 	}
 
-	moduleModule->Release();
-	moduleModule->Finalize();
+	moduleManager->Release();
+	moduleManager->Finalize();
 }

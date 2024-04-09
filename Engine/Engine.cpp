@@ -53,16 +53,16 @@ int main(int argc, char* argv[])
 	//SceneManager* scene_module = engine->GetModuleManager()->GetModule<SceneManager>();
 	//scene_module->SetScene<MenuScene>();
 
-	try
-	{
+	/*try
+	{*/
 		engine->Run();
 		//app.Run();
-	}
+	/*}
 	catch (const std::exception& e)
 	{
 		std::cerr << e.what() << std::endl;
 		return EXIT_FAILURE;
-	}
+	}*/
 
 	//sound.releaseSound(soundSample);
 

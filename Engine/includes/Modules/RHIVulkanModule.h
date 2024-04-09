@@ -14,11 +14,11 @@
 class RHIVulkanModule final : public RHIModule
 {
 	public:
-		static constexpr int WIDTH  = 800; ///< Largeur de la fenêtre par défaut.
-		static constexpr int HEIGHT = 600; ///< Hauteur de la fenêtre par défaut.
 
 		RHIVulkanModule();
 		~RHIVulkanModule() override;
+
+		vk::CommandBuffer* GetCurrentCommandBuffer() const { return currentCommandBuffer.get(); }
 
 		/**
 		* @brief Initialise le module.
@@ -71,13 +71,8 @@ class RHIVulkanModule final : public RHIModule
 		void Finalize() override;
 
 	private:
-		// Méthodes et membres privés spécifiques à Vulkan
-		bool CreateVulkanInstance();
-		bool SetupDebugMessenger();
 		// Autres méthodes pour la création de la surface, des périphériques logiques, etc.
 
-		vk::Instance*                      instance;
-		vk::DebugUtilsMessengerEXT*        debugMessenger;
 		std::unique_ptr<vk::CommandBuffer> currentCommandBuffer;
 
 
