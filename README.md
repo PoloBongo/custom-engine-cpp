@@ -31,7 +31,7 @@ Comment utiliser
 ### ⚒️ Compilation du projet (si vous utilisez le repository)
 
 1.  Clonez ce dépôt sur votre machine.
-2.  Lancez (les dépendences sont déjà faites normalement) Si vous avez vulkan installé autre part que sur le C (C:\VulkanSDK), vous devrez refaire une dépendence [Tuto Vulkan](https://vulkan-tutorial.com/Development_environment) pour vous aider sur comment faire.
+2.  Lancez (les dépendences sont déjà faites normalement) Si vous avez vulkan installé autre part que sur le C <span class="bg-info text-success">(C:\VulkanSDK)<span class="bg-info text-success">, vous devrez refaire une dépendence [Tuto Vulkan](https://vulkan-tutorial.com/Development_environment) pour vous aider sur comment faire.
 
 ### 🔧 Exécution du moteur
 
