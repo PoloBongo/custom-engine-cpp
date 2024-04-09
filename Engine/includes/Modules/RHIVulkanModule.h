@@ -10,6 +10,12 @@
 #include "lve_model.h"
 #include "lve_pipeline.h"
 #include "lve_renderer.h"
+#include "Systems/simple_render_system.h"
+
+namespace lve
+{
+	class PointLightSystem;
+}
 
 class RHIVulkanModule final : public RHIModule
 {
@@ -74,6 +80,26 @@ class RHIVulkanModule final : public RHIModule
 		// Autres méthodes pour la création de la surface, des périphériques logiques, etc.
 
 		std::unique_ptr<vk::CommandBuffer> currentCommandBuffer;
+
+		lve::SimpleRenderSystem* simpleRenderSystem;
+		lve::PointLightSystem* pointLightSystem;
+
+		lve::LveDevice* lveDevice;
+		lve::LveRenderer* lveRenderer;
+
+		lve::LveDescriptorPool::Builder* builder;
+
+		std::unique_ptr<lve::LveDescriptorSetLayout, std::default_delete<lve::LveDescriptorSetLayout>>* globalSetLayout;
+
+		lve::LveCamera* camera;
+
+		GameObject* viewerObject;
+
+		std::vector<vk::DescriptorSet>               globalDescriptorSets;
+		std::vector<std::unique_ptr<lve::LveBuffer>> uboBuffers;
+
+		// note : order of declarations matters
+		std::unique_ptr<lve::LveDescriptorPool> globalPool{};
 
 
 		lve::LveDevice*              p_lveDevice;

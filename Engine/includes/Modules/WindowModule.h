@@ -63,8 +63,6 @@ class WindowModule final : public Module
 
 		std::unique_ptr<lve::LveDescriptorSetLayout, std::default_delete<lve::LveDescriptorSetLayout>>* globalSetLayout;
 
-		lve::SimpleRenderSystem* simpleRenderSystem;
-		lve::PointLightSystem*   pointLightSystem;
 		lve::LveCamera*          camera;
 
 		std::chrono::steady_clock::time_point currentTime;
