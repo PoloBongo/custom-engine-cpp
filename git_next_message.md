@@ -1,4 +1,5 @@
-NEW : Render GameObject
+ENH: AllGameObjects
 
-- Modification du RHI
-- TODO : fix la création des gameObjects dans la scène
+- Création et lancement d'une scène
+- Création de gameObjects dans la scène
+- Récupération des gameObjects de la scène pour les afficher dans le RHIVulkan

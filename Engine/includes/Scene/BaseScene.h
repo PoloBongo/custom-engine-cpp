@@ -7,7 +7,10 @@
 class BaseScene
 {
 	public:
-		explicit BaseScene(const std::string& _fileName);
+		explicit BaseScene(const std::string& _fileName) : name(_fileName)
+		{
+			
+		}
 		~BaseScene() = default;
 
 		BaseScene(const BaseScene&)            = delete;
@@ -26,12 +29,12 @@ class BaseScene
 		/**
 		 * @brief Effectue une mise à jour fixe du module.
 		 */
-		virtual void FixedUpdate(const float& _deltaTime);
+		virtual void FixedUpdate();
 
 		/**
 		 * @brief Met à jour le module.
 		 */
-		virtual void Update(const float& _deltaTime);
+		virtual void Update();
 
 		/**
 		 * @brief Fonction pré-rendu du module.
@@ -41,7 +44,7 @@ class BaseScene
 		/**
 		 * @brief Rendu du module.
 		 */
-		virtual void Render(lve::LveWindow* _lveWindow);
+		virtual void Render();
 
 		/**
 		 * @brief Rendu de l'interface graphique du module.
@@ -111,6 +114,23 @@ class BaseScene
 
 		void TestLoadGameObjects();
 
+
+		std::vector<GameObject*> GetAllGameObject() {
+			std::vector<GameObject*> allGameObject;
+			for (const auto& gameObject : rootObjects) {
+				AddGameObjectInVector(allGameObject, gameObject);
+			}
+			return allGameObject;
+		}
+
+
+		void AddGameObjectInVector(std::vector<GameObject*>& _gameObjects, GameObject* _gameObject) {
+			_gameObjects.push_back(_gameObject);
+			for (auto& gameObject : _gameObject->GetChildren()) {
+				AddGameObjectInVector(_gameObjects, gameObject);
+			}
+		}
+
 		std::string name;
 		std::string fileName;
 
@@ -118,8 +138,6 @@ class BaseScene
 		std::vector<GameObject*>      pendingAddObjects;     // Objects to add as root objects at LateUpdate
 		std::vector<GameObject*>      rootObjects;
 		std::vector<GameObject::id_t> pendingRemoveObjects;
-
-		std::vector<GameObject*>      gameObjects;
 
 		const GameObject::id_t invalidGameObjectId = {};
 

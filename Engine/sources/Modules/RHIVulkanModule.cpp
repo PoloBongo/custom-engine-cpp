@@ -22,7 +22,6 @@ void RHIVulkanModule::Init()
 	p_lveWindow = moduleManager->GetModule<WindowModule>()->GetWindow();
 	p_lveDevice = new lve::LveDevice{ *p_lveWindow };
 	p_lveRenderer = new lve::LveRenderer{ *p_lveWindow, *p_lveDevice };
-	moduleManager->GetModule<SceneManager>()->GetCurrentScene()->TestLoadGameObjects(p_lveDevice);
 }
 
 void RHIVulkanModule::Start()
@@ -81,7 +80,7 @@ void RHIVulkanModule::FixedUpdate()
 
 void RHIVulkanModule::Update()
 {
-	gameObjects = moduleManager->GetModule<SceneManager>()->GetCurrentScene()->GetRootObjects();
+	gameObjects = moduleManager->GetModule<SceneManager>()->GetCurrentScene()->GetAllGameObject();
 
 	cameraController.MoveInPlaneXZ(p_lveWindow->GetGlfwWindow(), TimeModule::GetDeltaTime(), *viewerObject);
 	camera->SetViewYXZ(viewerObject->GetPosition(), viewerObject->GetRotation());

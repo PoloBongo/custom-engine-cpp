@@ -18,12 +18,11 @@ class SceneManager final : public Module
 		SceneManager& operator=(const SceneManager&&) = delete;
 		SceneManager& operator=(const SceneManager&)  = delete;
 
+		void RunScene(const std::string& _sceneName);
 
 		void       SetMainScene(const std::string& _sceneName);
 		BaseScene* GetScene(const std::string& _sceneName);
 		void       RenameScene(const std::string& _oldName, const std::string& _newName);
-		void       UpdateMainScene() const;
-		void       RenderMainScene() const;
 
 
 		void CreateScene(std::string _name, bool _isActive);
@@ -104,7 +103,7 @@ class SceneManager final : public Module
 		std::map<std::string, bool>             listScenes;
 		int                                     sceneCount;
 		bool                                    sceneActive;
-		BaseScene*                              mainScene = nullptr;
+		BaseScene*				                mainScene = nullptr;
 		std::vector<std::unique_ptr<BaseScene>> scenes;
 		int                                     currentSceneIndex = -1;
 };
