@@ -10,16 +10,16 @@ Ce projet est un moteur de jeu 3D développé en C++ utilisant Vulkan pour les g
 
 🔍 Librairies utilisées
 ----------------------
-<a href="https://www.vulkan.org/" target="_blank">Vulkan</a>
+
 *   **[Vulkan](https://www.vulkan.org/)**: API graphique pour le rendu 3D.
-*   **Bullet Physics**: Simulation de la physique en temps réel.
-*   **Dear ImGui**: Création d'interfaces utilisateur dans les applications 3D.
-*   **GLFW**: Création de fenêtres et gestion des entrées.
-*   **FMOD**: Gestion audio multiplateforme.
+*   **[Bullet Physics](https://github.com/bulletphysics/bullet3)**: Simulation de la physique en temps réel.
+*   **[Dear ImGui](https://github.com/ocornut/imgui)**: Création d'interfaces utilisateur dans les applications 3D.
+*   **[GLFW](https://github.com/glfw/glfw)**: Création de fenêtres et gestion des entrées.
+*   **[FMOD](https://www.fmod.com/)**: Gestion audio multiplateforme.
 *   **Winsock**: Programmation des sockets pour la communication réseau.
-*   **tinyObjLoader**: Chargement de fichiers obj pour les modèles 3D.
-*   **JSON for Modern C++**: Manipulation de fichiers JSON.
-*   **GLM**: Bibliothèque mathématique pour les graphiques.
+*   **[tinyObjLoader](https://github.com/tinyobjloader/tinyobjloader)**: Chargement de fichiers obj pour les modèles 3D.
+*   **[JSON for Modern C++](https://github.com/nlohmann/json)**: Manipulation de fichiers JSON.
+*   **[GLM](https://github.com/g-truc/glm)**: Bibliothèque mathématique pour les graphiques.
 
 ⛓️ Fonctionnalités
 ---------------
