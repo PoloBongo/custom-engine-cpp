@@ -21,19 +21,6 @@ Ce projet est un moteur de jeu 3D développé en C++ utilisant Vulkan pour les g
 *   **[JSON for Modern C++](https://github.com/nlohmann/json)**: Manipulation de fichiers JSON.
 *   **[GLM](https://github.com/g-truc/glm)**: Bibliothèque mathématique pour les graphiques.
 
-⛓️ Fonctionnalités
----------------
-
-*   Rendu graphique 3D en temps réel avec Vulkan.
-*   Simulation de la physique des objets grâce à Bullet Physics.
-*   Interface utilisateur intuitive avec Dear ImGui.
-*   Gestion des fenêtres et des entrées avec GLFW.
-*   Gestion audio avec FMOD.
-*   Communication réseau avec Winsock.
-*   Chargement de modèles 3D à partir de fichiers obj avec tinyObjLoader.
-*   Manipulation de fichiers de configuration JSON avec JSON for Modern C++.
-*   Calculs mathématiques pour les graphiques avec GLM.
-
 Comment utiliser
 ----------------
 
@@ -52,6 +39,12 @@ Comment utiliser
 
 *   Lancez l'application compilée.
 *   Utilisez l'interface utilisateur pour charger des modèles 3D, définir les paramètres de simulation physique et interagir avec le moteur.
+
+### 🎹 Les commandes
+
+*   Z Q S D Pour les déplacements de la caméra
+*   A E Pour les déplacements en hauteur
+*   Fleches directionnelles pour la rotation de la caméra
 
 Informations supplémentaires
 ----------------------------
