@@ -15,7 +15,7 @@
 #include <unordered_map>
 
 #ifndef ENGINE_DIR
-#define ENGINE_DIR "../"
+#define ENGINE_DIR ""
 #endif
 
 

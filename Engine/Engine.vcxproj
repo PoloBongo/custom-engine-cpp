@@ -203,7 +203,9 @@
       </Command>
     </PreBuildEvent>
     <PostBuildEvent>
-      <Command>$(SolutionDir)compile.bat</Command>
+      <Command>xcopy /E /I /Y "$(ProjectDir)Shaders" "$(TargetDir)Shaders"
+xcopy /E /I /Y "$(ProjectDir)Models" "$(TargetDir)Models"
+$(SolutionDir)compile.bat</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='ServerTCP|x64'">
@@ -290,7 +292,9 @@
       </Command>
     </PreBuildEvent>
     <PostBuildEvent>
-      <Command>$(SolutionDir)compile.bat</Command>
+      <Command>xcopy /E /I /Y "$(ProjectDir)Shaders" "$(TargetDir)Shaders"
+xcopy /E /I /Y "$(ProjectDir)Models" "$(TargetDir)Models"
+$(SolutionDir)compile.bat</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
