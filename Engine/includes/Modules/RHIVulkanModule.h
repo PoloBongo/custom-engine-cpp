@@ -3,6 +3,8 @@
 #pragma once
 
 #include <vulkan/vulkan.hpp>
+
+#include "keyboard_movement_controller.h"
 #include "rhi.h"
 
 #include "lve_descriptors.h"
@@ -76,6 +78,7 @@ class RHIVulkanModule final : public RHIModule
 		 */
 		void Finalize() override;
 
+		void LoadGameObjects();
 	private:
 		// Autres méthodes pour la création de la surface, des périphériques logiques, etc.
 
@@ -84,27 +87,24 @@ class RHIVulkanModule final : public RHIModule
 		lve::SimpleRenderSystem* simpleRenderSystem;
 		lve::PointLightSystem* pointLightSystem;
 
-		lve::LveDevice* lveDevice;
-		lve::LveRenderer* lveRenderer;
-
 		lve::LveDescriptorPool::Builder* builder;
 
 		std::unique_ptr<lve::LveDescriptorSetLayout, std::default_delete<lve::LveDescriptorSetLayout>>* globalSetLayout;
 
 		lve::LveCamera* camera;
-
+		lve::KeyboardMovementController       cameraController{};
 		GameObject* viewerObject;
 
 		std::vector<vk::DescriptorSet>               globalDescriptorSets;
 		std::vector<std::unique_ptr<lve::LveBuffer>> uboBuffers;
+		std::vector<GameObject*>                gameObjects;
 
 		// note : order of declarations matters
 		std::unique_ptr<lve::LveDescriptorPool> globalPool{};
+		int frameIndex;
+		lve::GlobalUbo ubo{};
 
-
-		lve::LveDevice*              p_lveDevice;
 		lve::LveWindow*              p_lveWindow;
-		lve::LveRenderer*            p_lveRenderer;
 		lve::LveSwapChain*           p_lveSwapChain;
 		lve::LveModel*               p_lveModel;
 		lve::LvePipeline*            p_lvePipeline;

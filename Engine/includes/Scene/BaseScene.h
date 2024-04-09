@@ -109,6 +109,8 @@ class BaseScene
 
 		GameObject::id_t FirstObjectWithTag(const std::string& _tag);
 
+		void TestLoadGameObjects();
+
 		std::string name;
 		std::string fileName;
 
@@ -116,6 +118,8 @@ class BaseScene
 		std::vector<GameObject*>      pendingAddObjects;     // Objects to add as root objects at LateUpdate
 		std::vector<GameObject*>      rootObjects;
 		std::vector<GameObject::id_t> pendingRemoveObjects;
+
+		std::vector<GameObject*>      gameObjects;
 
 		const GameObject::id_t invalidGameObjectId = {};
 

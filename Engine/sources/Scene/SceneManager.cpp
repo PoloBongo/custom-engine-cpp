@@ -13,6 +13,7 @@
 void SceneManager::CreateScene(std::string _name, bool _isActive)
 {
 	listScenes.insert(std::make_pair(_name, _isActive));
+
 }
 
 /**
@@ -249,6 +250,7 @@ void SceneManager::RenderMainScene() const
 void SceneManager::Init()
 {
 	Module::Init();
+	CreateScene("SampleScene", true);
 }
 
 /**
@@ -270,6 +272,8 @@ void SceneManager::FixedUpdate()
 void SceneManager::Update()
 {
 	Module::Update();
+
+	std::cout << "Scene count : " << SceneCount() << std::endl;
 }
 
 void SceneManager::PreRender()

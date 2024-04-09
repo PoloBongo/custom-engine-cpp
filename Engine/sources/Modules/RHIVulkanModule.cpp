@@ -2,7 +2,12 @@
 
 #include "Transform.h"
 #include "ModuleManager.h"
+#include "GameObject/PreGameObject/CubeGameObject.h"
+#include "GameObject/PreGameObject/LightGameObject.h"
+#include "GameObject/PreGameObject/PlaneGameObject.h"
+#include "Modules/TimeModule.h"
 #include "Modules/WindowModule.h"
+#include "Scene/SceneManager.h"
 
 RHIVulkanModule::RHIVulkanModule()
 {
@@ -14,20 +19,27 @@ RHIVulkanModule::~RHIVulkanModule()
 }
 void RHIVulkanModule::Init()
 {
-
+	p_lveWindow = moduleManager->GetModule<WindowModule>()->GetWindow();
+	p_lveDevice = new lve::LveDevice{ *p_lveWindow };
+	p_lveRenderer = new lve::LveRenderer{ *p_lveWindow, *p_lveDevice };
+	moduleManager->GetModule<SceneManager>()->GetCurrentScene()->TestLoadGameObjects(p_lveDevice);
 }
 
 void RHIVulkanModule::Start()
 {
-	p_lveWindow = moduleManager->GetModule<WindowModule>()->GetWindow();
-	p_lveDevice = moduleManager->GetModule<WindowModule>()->GetDevice();
-	p_lveRenderer = moduleManager->GetModule<WindowModule>()->GetRenderer();
+	builder = new lve::LveDescriptorPool::Builder{ *p_lveDevice };
+	builder->SetMaxSets(lve::LveSwapChain::MAX_FRAMES_IN_FLIGHT)
+		.AddPoolSize(vk::DescriptorType::eUniformBuffer, lve::LveSwapChain::MAX_FRAMES_IN_FLIGHT);
 
+	globalPool = builder->Build();
+
+	camera = new lve::LveCamera{};
 	uboBuffers.resize(lve::LveSwapChain::MAX_FRAMES_IN_FLIGHT);
+
 	for (int i = 0; i < uboBuffers.size(); i++)
 	{
 		uboBuffers[i] = std::make_unique<lve::LveBuffer>(
-			*lveDevice,
+			*p_lveDevice,
 			sizeof(lve::GlobalUbo),
 			1,
 			vk::BufferUsageFlagBits::eUniformBuffer,
@@ -36,7 +48,7 @@ void RHIVulkanModule::Start()
 		uboBuffers[i]->Map();
 	}
 
-	const auto global_set_layout = lve::LveDescriptorSetLayout::Builder(*lveDevice)
+	const auto global_set_layout = lve::LveDescriptorSetLayout::Builder(*p_lveDevice)
 		.AddBinding(0, vk::DescriptorType::eUniformBuffer,
 			vk::ShaderStageFlagBits::eAllGraphics)
 		.Build();
@@ -52,14 +64,15 @@ void RHIVulkanModule::Start()
 	}
 
 	simpleRenderSystem = new lve::SimpleRenderSystem{
-		*lveDevice, lveRenderer->GetSwapChainRenderPass(), global_set_layout->GetDescriptorSetLayout()
+		*p_lveDevice, p_lveRenderer->GetSwapChainRenderPass(), global_set_layout->GetDescriptorSetLayout()
 	};
 	pointLightSystem = new lve::PointLightSystem{
-		*lveDevice, lveRenderer->GetSwapChainRenderPass(), global_set_layout->GetDescriptorSetLayout()
+		*p_lveDevice, p_lveRenderer->GetSwapChainRenderPass(), global_set_layout->GetDescriptorSetLayout()
 	};
 
 	viewerObject = new GameObject(GameObject::CreateGameObject());
 	viewerObject->GetTransform()->SetPosition({ 0.f,0.f,-2.5f });
+
 }
 
 void RHIVulkanModule::FixedUpdate()
@@ -68,16 +81,40 @@ void RHIVulkanModule::FixedUpdate()
 
 void RHIVulkanModule::Update()
 {
+	gameObjects = moduleManager->GetModule<SceneManager>()->GetCurrentScene()->GetRootObjects();
+
+	cameraController.MoveInPlaneXZ(p_lveWindow->GetGlfwWindow(), TimeModule::GetDeltaTime(), *viewerObject);
+	camera->SetViewYXZ(viewerObject->GetPosition(), viewerObject->GetRotation());
+
+	const float aspect = p_lveRenderer->GetAspectRatio();
+	camera->SetPerspectiveProjection(glm::radians(50.f), aspect, 0.1f, 100.f);
+
+	ubo.projection = camera->GetProjection();
+	ubo.view = camera->GetView();
+
+	pointLightSystem->Update(gameObjects, ubo);
 }
 
 void RHIVulkanModule::PreRender()
 {
 	currentCommandBuffer.reset(new vk::CommandBuffer(p_lveRenderer->BeginFrame()));
-	p_lveRenderer->BeginSwapChainRenderPass(*currentCommandBuffer);
+	if (currentCommandBuffer)
+	{
+		frameIndex = p_lveRenderer->GetFrameIndex();
+		const float frame_time = TimeModule::GetDeltaTime();
+		// update
+
+		uboBuffers[frameIndex]->WriteToBuffer(&ubo);
+		uboBuffers[frameIndex]->Flush();
+		p_lveRenderer->BeginSwapChainRenderPass(*currentCommandBuffer);
+	}
+	
 }
 
 void RHIVulkanModule::Render()
 {
+	simpleRenderSystem->RenderGameObjects(gameObjects, *camera, *currentCommandBuffer, globalDescriptorSets[frameIndex]);      //render shadow casting objects
+	pointLightSystem->Render(gameObjects, *camera, *currentCommandBuffer, globalDescriptorSets[frameIndex]);                 //render shadow casting objects
 }
 
 void RHIVulkanModule::RenderGui()

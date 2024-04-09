@@ -14,9 +14,9 @@ ModuleManager::~ModuleManager()
 
 void ModuleManager::CreateDefaultModules()
 {
+	CreateModule<WindowModule>();
 	CreateModule<RHIVulkanModule>();
 	CreateModule<TimeModule>();
-	CreateModule<WindowModule>();
 	CreateModule<ImGuiModule>();
 	CreateModule<SceneManager>();
 }

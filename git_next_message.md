@@ -1,5 +1,4 @@
-FIX : Rework almost done
+NEW : Render GameObject
 
-- Fix des lumières avec des pointeurs de gameObject
-- Nettoyage de la plupart du code
-- Besoin d'intégrer de nouveaux component pour la génération du mesh et restructurer le code
+- Modification du RHI
+- TODO : fix la création des gameObjects dans la scène

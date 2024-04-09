@@ -7,6 +7,8 @@
 #include "Modules/WindowModule.h"
 
 
+class RHIModule;
+
 class ImGuiModule final : public Module
 {
 	/**
@@ -74,6 +76,7 @@ class ImGuiModule final : public Module
 		vk::Queue  graphicsQueue;
 
 		WindowModule* windowModule = nullptr;
+		RHIModule* rhiModule = nullptr;
 
 		~ImGuiModule() = default;
 };
