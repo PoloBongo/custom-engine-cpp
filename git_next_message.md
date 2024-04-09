@@ -1,5 +1,5 @@
-FIX : Rework almost done
+ENH: AllGameObjects
 
-- Fix des lumières avec des pointeurs de gameObject
-- Nettoyage de la plupart du code
-- Besoin d'intégrer de nouveaux component pour la génération du mesh et restructurer le code
+- Création et lancement d'une scène
+- Création de gameObjects dans la scène
+- Récupération des gameObjects de la scène pour les afficher dans le RHIVulkan

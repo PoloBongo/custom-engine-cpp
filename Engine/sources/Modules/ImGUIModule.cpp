@@ -7,6 +7,8 @@
 #include <imgui_impl_glfw.h>
 #include <imgui_impl_vulkan.h>
 
+#include "rhi.h"
+
 void ImGuiModule::ImmediateSubmit(std::function<void(vk::CommandBuffer _cmd)>&& _function) const
 {
 	const vk::Device device         = windowModule->GetDevice()->Device();
@@ -49,10 +51,10 @@ void ImGuiModule::Init()
 	Module::Init();
 
 	windowModule = moduleManager->GetModule<WindowModule>();
-
-	device                                             = windowModule->GetDevice()->Device();
-	graphicsQueue                                      = windowModule->GetDevice()->GraphicsQueue();
-	const lve::QueueFamilyIndices queue_family_indices = windowModule->GetDevice()->FindPhysicalQueueFamilies();
+	rhiModule = moduleManager->GetModule<RHIModule>();
+	device                                             = rhiModule->GetDevice()->Device();
+	graphicsQueue                                      = rhiModule->GetDevice()->GraphicsQueue();
+	const lve::QueueFamilyIndices queue_family_indices = rhiModule->GetDevice()->FindPhysicalQueueFamilies();
 
 	// Création du pool de commandes
 	const vk::CommandPoolCreateInfo command_pool_info(
@@ -104,7 +106,7 @@ void ImGuiModule::Start()
 	pool_info.pPoolSizes                   = pool_sizes;
 
 	vk::DescriptorPool im_gui_pool;
-	if (windowModule->GetDevice()->Device().createDescriptorPool(&pool_info, nullptr, &im_gui_pool) !=
+	if (rhiModule->GetDevice()->Device().createDescriptorPool(&pool_info, nullptr, &im_gui_pool) !=
 	    vk::Result::eSuccess)
 		throw std::runtime_error("Impossible de creer la pool de imgui!");
 
@@ -119,14 +121,14 @@ void ImGuiModule::Start()
 
 	// this initializes imgui for Vulkan
 	ImGui_ImplVulkan_InitInfo init_info = {};
-	init_info.Instance                  = windowModule->GetDevice()->GetInstance();
-	init_info.PhysicalDevice            = windowModule->GetDevice()->GetPhysicalDevice();
+	init_info.Instance                  = rhiModule->GetDevice()->GetInstance();
+	init_info.PhysicalDevice            = rhiModule->GetDevice()->GetPhysicalDevice();
 	init_info.Device                    = device;
 	init_info.Queue                     = graphicsQueue;
 	init_info.DescriptorPool            = im_gui_pool;
 	init_info.MinImageCount             = 3;
 	init_info.ImageCount                = 3;
-	init_info.RenderPass                = windowModule->GetRenderer()->GetSwapChainRenderPass();
+	init_info.RenderPass                = rhiModule->GetRenderer()->GetSwapChainRenderPass();
 	//init_info.UseDynamicRendering = VK_TRUE;
 	//init_info.ColorAttachmentFormat = _swapchainImageFormat;
 
@@ -171,7 +173,7 @@ void ImGuiModule::Render()
 	Module::Render();
 
 	ImGui::Render();
-	ImGui_ImplVulkan_RenderDrawData(ImGui::GetDrawData(), windowModule->GetRenderer()->GetCurrentCommandBuffer());
+	ImGui_ImplVulkan_RenderDrawData(ImGui::GetDrawData(), rhiModule->GetRenderer()->GetCurrentCommandBuffer());
 }
 
 void ImGuiModule::RenderGui()

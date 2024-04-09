@@ -2,7 +2,13 @@
 #include <fstream>
 #include <iostream>
 #include <string>
-#include "GameObject/GameObject.h"
+
+#include "CoreEngine.h"
+#include "rhi.h"
+#include "GameObject/PreGameObject/CubeGameObject.h"
+#include "GameObject/PreGameObject/LightGameObject.h"
+#include "GameObject/PreGameObject/PlaneGameObject.h"
+#include "Modules/TimeModule.h"
 
 
 /**
@@ -290,9 +296,10 @@ void BaseScene::Init()
 
 void BaseScene::Start()
 {
+	TestLoadGameObjects();
 }
 
-void BaseScene::FixedUpdate(const float& _deltaTime)
+void BaseScene::FixedUpdate()
 {
 }
 
@@ -300,12 +307,12 @@ void BaseScene::FixedUpdate(const float& _deltaTime)
  * @brief Met à jour la scène.
  * @param _deltaTime Temps écoulé depuis la dernière mise à jour.
  */
-void BaseScene::Update(const float& _deltaTime)
+void BaseScene::Update()
 {
 	// Mettez à jour chaque objet de la scène avec le delta time
 	for (const GameObject* root_object : rootObjects)
 	{
-		root_object->Update(_deltaTime); // Mettez à jour chaque objet avec le delta time
+		root_object->Update(TimeModule::GetDeltaTime()); // Mettez à jour chaque objet avec le delta time
 	}
 }
 
@@ -317,7 +324,7 @@ void BaseScene::PreRender()
  * @brief Effectue le rendu de la scène.
  * @param _lveWindow Fenêtre de rendu.
  */
-void BaseScene::Render(lve::LveWindow* _lveWindow)
+void BaseScene::Render()
 {
 	// Rendu de chaque objet de la scène
 	for (GameObject* root_object : rootObjects)
@@ -359,4 +366,67 @@ void BaseScene::Finalize()
 		}
 	}
 	rootObjects.clear();
+}
+
+
+void BaseScene::TestLoadGameObjects()
+{
+	lve::LveDevice* _p_lveDevice = Engine::GetInstance()->GetModuleManager()->GetModule<RHIModule>()->GetDevice();
+	std::shared_ptr<lve::LveModel> lve_model = lve::LveModel::CreateModelFromFile(*_p_lveDevice, "Models\\flat_vase.obj");
+
+	auto flatVaseGO = GameObject::CreatePGameObject();
+	flatVaseGO->model = lve_model;
+	flatVaseGO->GetTransform()->SetPosition(glm::vec3{ -.5f, .5f, 0.f });
+	flatVaseGO->GetTransform()->SetScale(glm::vec3{ 3.f, 1.5f, 3.f });
+	rootObjects.push_back(flatVaseGO);
+
+
+
+	lve_model = lve::LveModel::CreateModelFromFile(*_p_lveDevice, "Models\\smooth_vase.obj");
+	auto smooth_vase_go = GameObject::CreatePGameObject();
+	smooth_vase_go->model = lve_model;
+	smooth_vase_go->GetTransform()->SetPosition(glm::vec3{ .5f, .5f, 0.f });
+	smooth_vase_go->GetTransform()->SetScale(glm::vec3{ 3.f, 1.5f, 3.f });
+	rootObjects.push_back(smooth_vase_go);
+
+	auto quad_go = lve::PlaneGameObject::Creates(*_p_lveDevice, glm::vec3{ .0f, .5f, 0.f }, glm::vec3{ 3.f, 1.f, 3.f });
+	rootObjects.push_back(quad_go);
+
+	lve_model = lve::LveModel::CreateModelFromFile(*_p_lveDevice, "Models\\viking_room.obj");
+	auto viking = GameObject::CreatePGameObject();
+	viking->model = lve_model;
+	viking->GetTransform()->SetPosition(glm::vec3{ 0.f, 0.f, 5.f });
+	viking->GetTransform()->SetScale(glm::vec3{ 3.f, 3.f, 3.f });
+	viking->GetTransform()->SetRotation(glm::vec3{ glm::radians(90.0f), glm::radians(90.0f), 0.0f });
+	rootObjects.push_back(viking);
+
+	auto cube = lve::CubeGameObject::Creates(*_p_lveDevice);
+	rootObjects.push_back(cube);
+
+	auto color_cube = lve::CubeGameObject::CreateColors(*_p_lveDevice, glm::vec3{ 0.f, 0.f, 10.f });
+	rootObjects.push_back(color_cube);
+
+	std::vector<glm::vec3> light_colors{
+		{1.f, .1f, .1f},
+		{.1f, .1f, 1.f},
+		{.1f, 1.f, .1f},
+		{1.f, 1.f, .1f},
+		{.1f, 1.f, 1.f},
+		{1.f, 1.f, 1.f}
+	};
+
+	for (int i = 0; i < light_colors.size(); i++)
+	{
+		auto point_light = lve::LightGameObject::Creates(0.2f, 0.1f);
+		point_light->color = light_colors[i];
+		auto rotate_light = rotate(
+			glm::mat4(1.f),
+			(i * glm::two_pi<float>()) / light_colors.size(),
+			{ 0.f, -1.f, 0.f });
+		point_light->GetTransform()->SetPosition(glm::vec3(rotate_light * glm::vec4(-1.f, -1.f, -1.f, 1.f)));
+		rootObjects.push_back(point_light);
+	}
+
+	auto sun = lve::LightGameObject::Creates(1000000.f, 2.0f, glm::vec3{ 0.f, -1000.f, 0.f });
+	rootObjects.push_back(sun);
 }
