@@ -2,10 +2,12 @@ Moteur de jeu 3D avec Vulkan
 ============================
 
 Ce projet est un moteur de jeu 3D développé en C++ utilisant Vulkan pour les graphismes, conçu par une équipe de développement du Gaming Campus.
-[![My Skills](https://skillicons.dev/icons?i=js,html,css,wasm)](https://skillicons.dev)
+[![](https://skillicons.dev/icons?i=cpp,git,,wasm)](https://skillicons.dev)
 
 Technologies utilisées
 ----------------------
+
+[![](https://skillicons.dev/icons?i=cpp,git,,wasm)](https://skillicons.dev)
 
 *   **C++**: Langage principal de programmation.
 *   **Vulkan**: API graphique pour le rendu 3D.
