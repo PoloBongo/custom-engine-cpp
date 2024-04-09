@@ -10,7 +10,7 @@ Ce projet est un moteur de jeu 3D développé en C++ utilisant Vulkan pour les g
 
 🔍 Librairies utilisées
 ----------------------
-
+<a href="https://www.vulkan.org/" target="_blank">Vulkan</a>
 *   **[Vulkan](https://www.vulkan.org/)**: API graphique pour le rendu 3D.
 *   **Bullet Physics**: Simulation de la physique en temps réel.
 *   **Dear ImGui**: Création d'interfaces utilisateur dans les applications 3D.
