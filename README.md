@@ -44,7 +44,7 @@ Comment utiliser
 
 *   Z Q S D Pour les déplacements de la caméra
 *   A E Pour les déplacements en hauteur
-*   Fleches directionnelles pour la rotation de la caméra
+*   ⬆️ ⬇️ ➡️ ⬅️ pour la rotation de la caméra
 
 Informations supplémentaires
 ----------------------------
