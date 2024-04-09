@@ -4,6 +4,7 @@
 
 class RHIModule : public Module
 {
+
 	public:
 		virtual ~RHIModule()
 		= default;

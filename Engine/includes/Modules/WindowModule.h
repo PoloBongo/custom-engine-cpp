@@ -21,6 +21,8 @@
 #include <string>
 #include <vector>
 
+#include "GameObject/GameObject.h"
+
 
 /**
  * @brief Classe WindowModule.
@@ -44,19 +46,20 @@ class WindowModule final : public Module
 		void RenderGui() override;
 		void PostRender() override;
 		void Release() override;
+		void Finalize() override;
 
-		lve::LveWindow*   GetWindow() { return &lveWindow; }
-		lve::LveDevice*   GetDevice() { return &lveDevice; }
-		lve::LveRenderer* GetRenderer() { return &lveRenderer; }
+		lve::LveWindow*   GetWindow() const { return lveWindow; }
+		lve::LveDevice*   GetDevice() const { return lveDevice; }
+		lve::LveRenderer* GetRenderer() const { return lveRenderer; }
 
 	private:
 		void LoadGameObjects();
 
-		lve::LveWindow   lveWindow{WIDTH, HEIGHT, "Hello Vulkan!"}; /// Fenêtre de l'application.
-		lve::LveDevice   lveDevice{lveWindow};
-		lve::LveRenderer lveRenderer{lveWindow, lveDevice};
+		lve::LveWindow*   lveWindow; /// Fenêtre de l'application.
+		lve::LveDevice*   lveDevice;
+		lve::LveRenderer* lveRenderer;
 
-		lve::LveDescriptorPool::Builder builder{lveDevice};
+		lve::LveDescriptorPool::Builder* builder;
 
 		std::unique_ptr<lve::LveDescriptorSetLayout, std::default_delete<lve::LveDescriptorSetLayout>>* globalSetLayout;
 
@@ -66,14 +69,18 @@ class WindowModule final : public Module
 
 		std::chrono::steady_clock::time_point currentTime;
 		lve::KeyboardMovementController       cameraController{};
-		lve::LveGameObject*                   viewerObject;
+		GameObject*								viewerObject;
 
 		std::vector<vk::DescriptorSet>               globalDescriptorSets;
 		std::vector<std::unique_ptr<lve::LveBuffer>> uboBuffers;
 
 		// note : order of declarations matters
 		std::unique_ptr<lve::LveDescriptorPool> globalPool{};
-		lve::LveGameObject::Map*                gameObjects;
+		std::vector<GameObject*>                gameObjects;
 
 		vk::CommandBuffer* p_commandBuffer;
+		lve::FrameInfo* p_frameInfo;
+
+		int frameIndex;
+		lve::GlobalUbo ubo{};
 };

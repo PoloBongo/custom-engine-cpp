@@ -11,12 +11,12 @@ class Engine
 		void Run() const;
 		void Quit() { shouldQuit = true; }
 
-		[[nodiscard]] ModuleManager* GetModuleManager() const { return moduleModule; }
+		[[nodiscard]] ModuleManager* GetModuleManager() const { return moduleManager; }
 
 	private:
 		static Engine* instance;
 
-		ModuleManager* moduleModule = new ModuleManager;
+		ModuleManager* moduleManager = new ModuleManager;
 
 		bool shouldQuit = false;
 };

@@ -92,5 +92,5 @@ class Module
 		}
 
 	protected:
-		ModuleManager* moduleModule = nullptr; /**< Pointeur vers le gestionnaire de modules. */
+		ModuleManager* moduleManager = nullptr; /**< Pointeur vers le gestionnaire de modules. */
 };
