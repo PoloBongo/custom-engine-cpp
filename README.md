@@ -8,7 +8,9 @@ Ce projet est un moteur de jeu 3D développé en C++ utilisant Vulkan pour les g
 
 [![](https://skillicons.dev/icons?i=cpp,git)](https://skillicons.dev)
 
-*   **C++**: Langage principal de programmation.
+🔍 Librairies utilisées
+----------------------
+
 *   **Vulkan**: API graphique pour le rendu 3D.
 *   **Bullet Physics**: Simulation de la physique en temps réel.
 *   **Dear ImGui**: Création d'interfaces utilisateur dans les applications 3D.
