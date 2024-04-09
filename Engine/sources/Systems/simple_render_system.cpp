@@ -58,7 +58,7 @@ namespace lve
 			pipelineConfig);
 	}
 
-	void SimpleRenderSystem::RenderGameObjects(std::vector<GameObject>& _gameObjects, const LveCamera& _camera, const vk::CommandBuffer _commandBuffer, const vk::DescriptorSet _globalDescriptorSet)
+	void SimpleRenderSystem::RenderGameObjects(const std::vector<GameObject*>& _gameObjects, const LveCamera& _camera, const vk::CommandBuffer _commandBuffer, const vk::DescriptorSet _globalDescriptorSet) const
 	{
 		// Liaison du pipeline
 		lvePipeline->Bind(_commandBuffer);
@@ -71,12 +71,12 @@ namespace lve
 			_globalDescriptorSet,
 			nullptr);
 
-		for (auto& game_object : _gameObjects)
+		for (const auto& game_object : _gameObjects)
 		{
-			if (game_object.model == nullptr) continue;
+			if (game_object->model == nullptr) continue;
 			SimplePushConstantData push{};
-			push.modelMatrix  = game_object.GetTransform()->Mat4();
-			push.normalMatrix = game_object.GetTransform()->NormalMatrix();
+			push.modelMatrix  = game_object->GetTransform()->Mat4();
+			push.normalMatrix = game_object->GetTransform()->NormalMatrix();
 
 			// Mise à jour des push constants
 			_commandBuffer.pushConstants<SimplePushConstantData>(
@@ -86,8 +86,8 @@ namespace lve
 				push);
 
 			// Liaison du modèle et dessin
-			game_object.model->Bind(_commandBuffer);
-			game_object.model->Draw(_commandBuffer);
+			game_object->model->Bind(_commandBuffer);
+			game_object->model->Draw(_commandBuffer);
 		}
 	}
 } // namespace lve

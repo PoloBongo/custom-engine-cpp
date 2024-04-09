@@ -81,6 +81,12 @@ class GameObject
 			return GameObject{current_id++};
 		}
 
+		static GameObject* CreatePGameObject()
+		{ 
+			static id_t current_id = 0;
+			return new GameObject{ current_id++ };
+		}
+
 		void AddComponent(Component* _component);
 
 		template <typename T>

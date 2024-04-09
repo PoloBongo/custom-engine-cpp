@@ -46,6 +46,7 @@ class WindowModule final : public Module
 		void RenderGui() override;
 		void PostRender() override;
 		void Release() override;
+		void Finalize() override;
 
 		lve::LveWindow*   GetWindow() const { return lveWindow; }
 		lve::LveDevice*   GetDevice() const { return lveDevice; }
@@ -68,14 +69,14 @@ class WindowModule final : public Module
 
 		std::chrono::steady_clock::time_point currentTime;
 		lve::KeyboardMovementController       cameraController{};
-		GameObject*                   viewerObject;
+		GameObject*								viewerObject;
 
 		std::vector<vk::DescriptorSet>               globalDescriptorSets;
 		std::vector<std::unique_ptr<lve::LveBuffer>> uboBuffers;
 
 		// note : order of declarations matters
 		std::unique_ptr<lve::LveDescriptorPool> globalPool{};
-		std::vector<GameObject>                gameObjects;
+		std::vector<GameObject*>                gameObjects;
 
 		vk::CommandBuffer* p_commandBuffer;
 		lve::FrameInfo* p_frameInfo;

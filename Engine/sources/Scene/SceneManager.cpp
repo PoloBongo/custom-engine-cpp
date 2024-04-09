@@ -280,6 +280,7 @@ void SceneManager::PreRender()
 void SceneManager::Render()
 {
 	Module::Render();
+	
 }
 
 void SceneManager::RenderGui()

@@ -169,6 +169,8 @@
     <ClCompile Include="..\Librairies\imgui\imgui_widgets.cpp" />
     <ClCompile Include="BoxCollider.cpp" />
     <ClCompile Include="Convertisseur.cpp" />
+    <ClCompile Include="sources\GameObject\Components\Mesh.cpp" />
+    <ClCompile Include="sources\Modules\DisplayModule.cpp" />
     <ClCompile Include="Light.cpp" />
     <ClCompile Include="rhi.cpp" />
     <ClCompile Include="sources\Modules\RHIVulkanModule.cpp" />
@@ -199,6 +201,7 @@
   <ItemGroup>
     <ClInclude Include="BoxCollider.h" />
     <ClInclude Include="Convertisseur.h" />
+    <ClInclude Include="includes\Modules\DisplayModule.h" />
     <ClInclude Include="includes\GameObject\PreGameObject\CubeGameObject.h" />
     <ClInclude Include="includes\Camera\CameraManager.h" />
     <ClInclude Include="functionHelpers.h" />
@@ -239,6 +242,7 @@
     <ClInclude Include="lve_constants.h" />
     <ClInclude Include="lve_image.h" />
     <ClInclude Include="includes\GameObject\PreGameObject\PlaneGameObject.h" />
+    <ClInclude Include="includes\GameObject\Components\Mesh.h" />
     <ClInclude Include="rhi.h" />
     <ClInclude Include="includes\Modules\RHIVulkanModule.h" />
     <ClInclude Include="RigidBody.h" />

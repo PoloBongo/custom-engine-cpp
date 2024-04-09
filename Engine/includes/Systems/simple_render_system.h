@@ -48,7 +48,7 @@ namespace lve
 			 * @param _commandBuffer
 			 * @param _globalDescriptorSet
 			 */
-			void RenderGameObjects(std::vector<GameObject>& _gameObjects, const LveCamera& _camera, const vk::CommandBuffer _commandBuffer, const vk::DescriptorSet _globalDescriptorSet);
+			void RenderGameObjects(const std::vector<GameObject*>& _gameObjects, const LveCamera& _camera, const vk::CommandBuffer _commandBuffer, const vk::DescriptorSet _globalDescriptorSet) const;
 
 		private:
 			/**
