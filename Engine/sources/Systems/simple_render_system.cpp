@@ -6,6 +6,7 @@
 #define GLM_FORCE_RADIANS
 #define GLM_FORCE_DEPTH_ZERO_TO_ONE
 #include <glm.hpp>
+#include <iostream>
 
 // std
 #include <cassert>
@@ -61,7 +62,7 @@ namespace lve
 	void SimpleRenderSystem::RenderGameObjects(FrameInfo& _frameInfo)
 	{
 		// Liaison du pipeline
-		lvePipeline->Bind(_frameInfo.commandBuffer);
+		//lvePipeline->Bind(_frameInfo.commandBuffer);
 
 		// Liaison de l'ensemble de descripteurs global
 		//_frameInfo.commandBuffer.bindDescriptorSets(
@@ -76,12 +77,35 @@ namespace lve
 			auto& obj = kv.second;
 			if (obj.model == nullptr) continue;
 			if (obj.texture != nullptr) {
+
+				// Si pas de texture, render avec un autre shader ?
+
+				vk::Fence fence;
+				vk::FenceCreateInfo fenceInfo = {};
+				fenceInfo.sType = vk::StructureType::eFenceCreateInfo;
+				lveDevice.Device().createFence(&fenceInfo, nullptr, &fence);
+
+
 				vk::DescriptorImageInfo imageInfo{};
 				imageInfo.sampler = obj.texture->getSampler();
 				imageInfo.imageView = obj.texture->getImageView();
 				imageInfo.imageLayout = obj.texture->getImageLayout();
 
+				std::cout << "1\n";
 
+				if (_frameInfo.globalDescriptorSet == VK_NULL_HANDLE) {
+					std::cout << "Descriptor is null\n";
+				}
+
+
+				//vk::WriteDescriptorSet descriptorWrites[1];
+				//descriptorWrites[0].sType = vk::StructureType::eWriteDescriptorSet;
+				//descriptorWrites[0].dstSet = _frameInfo.globalDescriptorSet;
+				//descriptorWrites[0].dstBinding = 1;
+				//descriptorWrites[0].dstArrayElement = 0;
+				//descriptorWrites[0].descriptorType = vk::DescriptorType::eCombinedImageSampler;
+				//descriptorWrites[0].descriptorCount = 1;
+				//descriptorWrites[0].pImageInfo = &imageInfo;
 
 				vk::WriteDescriptorSet descriptorWrite{
 					_frameInfo.globalDescriptorSet, // Use the global descriptor set for the frame
@@ -93,17 +117,36 @@ namespace lve
 					nullptr, // Optional buffer info
 					nullptr // Optional texel buffer view info
 				};
-
+				std::cout << "2\n";
 				// Update the descriptor set
+
+				if (_frameInfo.globalDescriptorSet == VK_NULL_HANDLE) {
+					throw
+						std::runtime_error("globaldescriptorset is vkNullHandle");
+				}
+				if (descriptorWrite.dstSet == VK_NULL_HANDLE) {
+					throw std::runtime_error("Descriptor set handle is VK_NULL_HANDLE");
+				}
+
 				lveDevice.Device().updateDescriptorSets(1, &descriptorWrite, 0, nullptr);
+				std::cout << "3\n";
+
+				// Wait for the fence to be signaled
+				//lveDevice.Device().waitForFences(1, &fence, vk::True, UINT64_MAX);
+
+				// Reset the fence
+				lveDevice.Device().resetFences(1, &fence);
 			}
 
-			_frameInfo.commandBuffer.bindDescriptorSets(
-				vk::PipelineBindPoint::eGraphics,
-				pipelineLayout,
-				0,
-				_frameInfo.globalDescriptorSet,
-				nullptr);
+			// Bind the descriptor set again after updating
+			if (obj.texture != nullptr) {
+				_frameInfo.commandBuffer.bindDescriptorSets(
+					vk::PipelineBindPoint::eGraphics,
+					pipelineLayout,
+					0,
+					_frameInfo.globalDescriptorSet,
+					nullptr);
+			}
 
 			SimplePushConstantData push{};
 			push.modelMatrix  = obj.transform.Mat4();
@@ -117,7 +160,7 @@ namespace lve
 				push);
 
 			// Liaison du modèle et dessin
-
+			lvePipeline->Bind(_frameInfo.commandBuffer);
 			obj.model->Bind(_frameInfo.commandBuffer);
 			obj.model->Draw(_frameInfo.commandBuffer);
 		}
