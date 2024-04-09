@@ -67,7 +67,7 @@ class BaseScene
 		GameObject*              CreateGameObject();
 		void                     DestroyGameObject(const GameObject* _gameObject);
 		GameObject*              GetGameObjectById(const GameObject::id_t& _gameObjectId) const;
-		std::vector<GameObject*> FindGameObjectsByName(const std::string& _name) const;
+		std::vector<GameObject*> FindGameObjectsByName(const std::string& _name);
 
 
 		bool IsInitialized() const;

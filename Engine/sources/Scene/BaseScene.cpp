@@ -274,12 +274,10 @@ GameObject* BaseScene::GetGameObjectById(const GameObject::id_t& _gameObjectId) 
  * @param _name Nom des objets de jeu à rechercher.
  * @return Vecteur contenant les pointeurs vers les objets de jeu trouvés.
  */
-std::vector<GameObject*> BaseScene::FindGameObjectsByName(const std::string& _name) const
-{
+std::vector<GameObject*> BaseScene::FindGameObjectsByName(const std::string& name) {
 	std::vector<GameObject*> result;
-	for (const GameObject* root_object : rootObjects)
-	{
-		std::vector<GameObject*> found = root_object->FindChildrenByName(_name);
+	for (GameObject* rootObject : rootObjects) {
+		std::vector<GameObject*> found = rootObject->FindChildrenByName(name);
 		result.insert(result.end(), found.begin(), found.end());
 	}
 	return result;

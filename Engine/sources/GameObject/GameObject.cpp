@@ -110,7 +110,7 @@ void GameObject::Finalize()
 }
 
 
-std::vector<GameObject*> GameObject::FindChildrenByName(const std::string& _name) const
+std::vector<GameObject*> GameObject::FindChildrenByName(const std::string& _name) 
 {
 	std::vector<GameObject*> found_objects;
 
@@ -128,4 +128,44 @@ std::vector<GameObject*> GameObject::FindChildrenByName(const std::string& _name
 	}
 
 	return found_objects;
+}
+
+void GameObject::SetParent(GameObject* _parent) {
+	parent = _parent;
+}
+
+void GameObject::AddChildObject(GameObject* child) {
+	children.push_back(child);
+	child->SetParent(this);  
+
+	glm::vec3 parentPosition = this->GetPosition();
+	glm::vec3 childPosition = child->GetPosition();
+	glm::vec3 relativePosition = childPosition - parentPosition;
+	child->SetPosition(relativePosition);
+}
+
+
+Component* GameObject::GetComponentRecursive(const std::string& componentName) {
+	// Vérifier si le GameObject a le composant spécifié
+	for (Component* component : components) {
+		if (component->GetName() == componentName) {
+			return component;
+		}
+	}
+
+	// Recherche récursive dans les enfants
+	for (GameObject* child : children) {
+		Component* foundComponent = child->GetComponentRecursive(componentName);
+		if (foundComponent != nullptr) {
+			return foundComponent;
+		}
+	}
+
+	// Recherche récursive dans le parent
+	if (parent != nullptr) {
+		return parent->GetComponentRecursive(componentName);
+	}
+
+	// Le composant n'a pas été trouvé dans ce GameObject ou ses enfants
+	return nullptr;
 }
