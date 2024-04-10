@@ -71,13 +71,6 @@ namespace lve
 		//	0,
 		//	_frameInfo.globalDescriptorSet,
 		//	nullptr);
-		vk::WriteDescriptorSet descriptorWrites[1];
-		descriptorWrites[0].sType = vk::StructureType::eWriteDescriptorSet;
-		descriptorWrites[0].dstSet = _frameInfo.globalDescriptorSet;
-		descriptorWrites[0].dstBinding = 1;
-		descriptorWrites[0].dstArrayElement = 0;
-		descriptorWrites[0].descriptorType = vk::DescriptorType::eCombinedImageSampler;
-		descriptorWrites[0].descriptorCount = 1;
 
 		for (auto& kv : _frameInfo.gameObjects)
 		{
@@ -86,6 +79,23 @@ namespace lve
 			if (obj.texture != nullptr) {
 
 				// Si pas de texture, render avec un autre shader ?
+
+				vk::DescriptorSetAllocateInfo allocInfo{};
+				allocInfo.sType = vk::StructureType::eDescriptorSetAllocateInfo;
+				allocInfo.descriptorPool = descriptorPool;
+
+
+				//VkDescriptorSetAllocateInfo allocInfo{};
+				//allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
+				//allocInfo.descriptorPool = descriptorPool;
+				//allocInfo.descriptorSetCount = 1;
+				//allocInfo.pSetLayouts = &textureDescriptorSetLayout;
+
+				//if (vkAllocateDescriptorSets(device, &allocInfo, &descriptorSet) != VK_SUCCESS) {
+				//	throw std::runtime_error("failed to allocate descriptor sets!");
+				//}
+
+
 
 				vk::DescriptorImageInfo imageInfo{};
 				imageInfo.sampler = obj.texture->getSampler();
@@ -98,7 +108,16 @@ namespace lve
 					std::cout << "Descriptor is null\n";
 				}
 
-				descriptorWrites[0].pImageInfo = &imageInfo;
+				vk::WriteDescriptorSet descriptorWrite = {};
+				descriptorWrite.sType = vk::StructureType::eWriteDescriptorSet;
+				descriptorWrite.dstSet = _frameInfo.globalDescriptorSet; // The descriptor set to update
+				descriptorWrite.dstBinding = 1; // Binding 0
+				descriptorWrite.dstArrayElement = 0;
+				descriptorWrite.descriptorType = vk::DescriptorType::eCombinedImageSampler;
+				descriptorWrite.descriptorCount = 1;
+				descriptorWrite.pImageInfo = &imageInfo;
+
+				//_frameInfo.commandBuffer.bindDescriptorSets(vk::PipelineBindPoint::eGraphics, pipelineLayout, 1, 1, )
 
 				std::cout << "2\n";
 
@@ -108,17 +127,17 @@ namespace lve
 				// and any of the descriptor bindings that are updated were not created with the VK_DESCRIPTOR_BINDING_UPDATE_AFTER_BIND_BIT or 
 				// VK_DESCRIPTOR_BINDING_UPDATE_UNUSED_WHILE_PENDING_BIT bits set, that command buffer becomes invalid.
 
-				lveDevice.Device().updateDescriptorSets(1, descriptorWrites, 0, nullptr);
+				lveDevice.Device().updateDescriptorSets(1, &descriptorWrite, 0, nullptr);
+				std::cout << "3\n";
 			}
 
-			if (obj.texture != nullptr) {
-				_frameInfo.commandBuffer.bindDescriptorSets(
-					vk::PipelineBindPoint::eGraphics,
-					pipelineLayout,
-					0,
-					_frameInfo.globalDescriptorSet,
-					nullptr);
-			}
+
+			_frameInfo.commandBuffer.bindDescriptorSets(
+				vk::PipelineBindPoint::eGraphics,
+				pipelineLayout,
+				0,
+				_frameInfo.globalDescriptorSet,
+				nullptr);
 
 			SimplePushConstantData push{};
 			push.modelMatrix  = obj.transform.Mat4();
