@@ -345,18 +345,6 @@ void BaseScene::Release()
 {
 }
 
-void BaseScene::RenderGui()
-{
-}
-
-void BaseScene::PostRender()
-{
-}
-
-void BaseScene::Release()
-{
-}
-
 /**
  * @brief Destructeur de la sc�ne.
  * R�initialise les indicateurs de chargement et d'initialisation, et d�truit tous les objets racine de la sc�ne.

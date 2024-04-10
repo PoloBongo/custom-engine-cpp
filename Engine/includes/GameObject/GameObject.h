@@ -39,7 +39,7 @@ public:
 	*
 	* @param _id Identifiant unique du GameObject.
 	*/
-	GameObject(id_t _id) : id(_id){}
+	GameObject(id_t _id);
 	~GameObject();
 
 	
@@ -87,7 +87,6 @@ public:
 			return children;
 		}
 
-		[[nodiscard]] id_t GetId() const { return id; }
 
 		static GameObject CreateGameObject()
 		{

@@ -70,7 +70,7 @@ void RHIVulkanModule::Start()
 	};
 
 	viewerObject = new GameObject(GameObject::CreateGameObject());
-	viewerObject->GetTransform()->SetPosition({ 0.f,0.f,-2.5f });
+	viewerObject->GetTransform()->SetPosition(glm::vec3{ 0.f,0.f,-2.5f });
 
 }
 

@@ -1,4 +1,3 @@
-FIX: Exe
+FIX: Master
 
-- Exe fonctionnel
-- Copie les dossiers Shaders et Models
+- Fix du merge de Mathias

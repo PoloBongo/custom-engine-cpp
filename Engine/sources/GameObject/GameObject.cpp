@@ -10,6 +10,12 @@ GameObject::GameObject()
 	this->transform = new Transform();
 }
 
+GameObject::GameObject(id_t _id) : id(_id)
+{
+	this->isActive = true;
+	this->transform = new Transform();
+}
+
 GameObject::~GameObject()
 {
 	for (const Component* component : components)
