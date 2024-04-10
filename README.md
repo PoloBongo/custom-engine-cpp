@@ -6,7 +6,8 @@ Notre moteur 3D en développement s'appuie sur la puissance de Vulkan et intègr
 🔍 Technologies utilisées
 ----------------------
 
-[![](https://skillicons.dev/icons?i=cpp,git)](https://skillicons.dev)
+[![](https://skillicons.dev/icons?i=cpp,git)](https://skillicons.dev)<img src="https://www.vulkan.org/user/themes/vulkan/images/logo/vulkan-logo.svg" width="150">
+
 
 🔍 Librairies utilisées
 ----------------------
