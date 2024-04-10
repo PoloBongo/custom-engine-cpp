@@ -75,11 +75,15 @@ class ImGuiModule final : public Module
 	void DrawHierarchy();
 	void DrawInspector();
 	void DisplayTransform(Transform* _transform);
+	void AnchorWindow(const std::string& _windowName);
+	void DrawEngineGUISettings();
+	void DrawColorsSettings();
 
 	void ShowRenamePopup();
 	void RenameGameObject(GameObject* _gameObject, const std::string& _newName);
 	void DeleteGameObject(GameObject* _gameObject);
 	void DuplicateGameObject(int _index);
+
 
 	protected:
 		vk::Device device;
@@ -103,5 +107,7 @@ class ImGuiModule final : public Module
 		float rotationEdit;
 		glm::vec3 scaleEdit;
 
+		std::vector<bool> isOpen;
+		
 		~ImGuiModule() = default;
 };

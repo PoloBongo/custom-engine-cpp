@@ -306,6 +306,7 @@ $(SolutionDir)compile.bat</Command>
     <ClCompile Include="..\Librairies\imgui\imgui_tables.cpp" />
     <ClCompile Include="..\Librairies\imgui\imgui_widgets.cpp" />
     <ClCompile Include="BoxCollider.cpp" />
+    <ClCompile Include="ImGUIInterface.cpp" />
     <ClCompile Include="sources\TCP\Client\Client.cpp" />
     <ClCompile Include="Convertisseur.cpp" />
     <ClCompile Include="sources\GameObject\Components\Mesh.cpp" />
@@ -384,6 +385,7 @@ $(SolutionDir)compile.bat</Command>
     <ClCompile Include="sources\Systems\point_light_system.cpp" />
     <ClCompile Include="sources\Systems\simple_render_system.cpp" />
     <ClInclude Include="includes\GameObject\PreGameObject\LightGameObject.h" />
+    <ClInclude Include="ImGUIInterface.h" />
     <ClInclude Include="Light.h" />
     <ClInclude Include="includes\TCP\Messages.h" />
     <ClInclude Include="includes\TCP\Utils.h" />
