@@ -148,6 +148,7 @@ void WindowModule::Update()
 				*gameObjects
 			};
 
+
 			// update
 			lve::GlobalUbo ubo{};
 			ubo.projection = camera->GetProjection();

@@ -87,12 +87,6 @@ namespace lve
 
 				// Si pas de texture, render avec un autre shader ?
 
-				vk::Fence fence;
-				vk::FenceCreateInfo fenceInfo = {};
-				fenceInfo.sType = vk::StructureType::eFenceCreateInfo;
-				lveDevice.Device().createFence(&fenceInfo, nullptr, &fence);
-
-
 				vk::DescriptorImageInfo imageInfo{};
 				imageInfo.sampler = obj.texture->getSampler();
 				imageInfo.imageView = obj.texture->getImageView();
@@ -108,23 +102,15 @@ namespace lve
 
 				std::cout << "2\n";
 
-				// OUI le command buffer est bon
-				// OUI le descriptor set est bon
-				// OUI le globaldescriptor est toujours valide avant
-				// OUI TOTOUTOUTOUTOUTOPTUOPUZEAOPUTAOIZHRIUOAZB NOIHJKZAZ A BEIJABZ OUEBN ZOP
-				// JEDEVIENSFOUZOIEHJAOIEHNNOIAZNBEOIKLL
+				// Le command buffer record avant et ducoup ça fait l'erreur
+				// "If the dstSet member of any element of pDescriptorWrites or pDescriptorCopies is bound, accessed, 
+				// or modified by any command that was recorded to a command buffer which is currently in the recording or executable state, 
+				// and any of the descriptor bindings that are updated were not created with the VK_DESCRIPTOR_BINDING_UPDATE_AFTER_BIND_BIT or 
+				// VK_DESCRIPTOR_BINDING_UPDATE_UNUSED_WHILE_PENDING_BIT bits set, that command buffer becomes invalid.
 
 				lveDevice.Device().updateDescriptorSets(1, descriptorWrites, 0, nullptr);
-
-
-				// Wait for the fence to be signaled
-				//lveDevice.Device().waitForFences(1, &fence, vk::True, UINT64_MAX);
-
-				// Reset the fence
-				lveDevice.Device().resetFences(1, &fence);
 			}
 
-			// Bind the descriptor set again after updating
 			if (obj.texture != nullptr) {
 				_frameInfo.commandBuffer.bindDescriptorSets(
 					vk::PipelineBindPoint::eGraphics,
