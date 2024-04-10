@@ -375,6 +375,7 @@ void BaseScene::TestLoadGameObjects()
 	std::shared_ptr<lve::LveModel> lve_model = lve::LveModel::CreateModelFromFile(*_p_lveDevice, "Models\\flat_vase.obj");
 
 	auto flatVaseGO = GameObject::CreatePGameObject();
+	flatVaseGO->SetName("FlatVase");
 	flatVaseGO->model = lve_model;
 	flatVaseGO->GetTransform()->SetPosition(glm::vec3{ -.5f, .5f, 0.f });
 	flatVaseGO->GetTransform()->SetScale(glm::vec3{ 3.f, 1.5f, 3.f });
@@ -384,16 +385,19 @@ void BaseScene::TestLoadGameObjects()
 
 	lve_model = lve::LveModel::CreateModelFromFile(*_p_lveDevice, "Models\\smooth_vase.obj");
 	auto smooth_vase_go = GameObject::CreatePGameObject();
+	smooth_vase_go->SetName("SmoothVase");
 	smooth_vase_go->model = lve_model;
 	smooth_vase_go->GetTransform()->SetPosition(glm::vec3{ .5f, .5f, 0.f });
 	smooth_vase_go->GetTransform()->SetScale(glm::vec3{ 3.f, 1.5f, 3.f });
 	rootObjects.push_back(smooth_vase_go);
 
 	auto quad_go = lve::PlaneGameObject::Creates(*_p_lveDevice, glm::vec3{ .0f, .5f, 0.f }, glm::vec3{ 3.f, 1.f, 3.f });
+	quad_go->SetName("QuadGo");
 	rootObjects.push_back(quad_go);
 
 	lve_model = lve::LveModel::CreateModelFromFile(*_p_lveDevice, "Models\\viking_room.obj");
 	auto viking = GameObject::CreatePGameObject();
+	viking->SetName("Viking");
 	viking->model = lve_model;
 	viking->GetTransform()->SetPosition(glm::vec3{ 0.f, 0.f, 5.f });
 	viking->GetTransform()->SetScale(glm::vec3{ 3.f, 3.f, 3.f });
@@ -401,9 +405,11 @@ void BaseScene::TestLoadGameObjects()
 	rootObjects.push_back(viking);
 
 	auto cube = lve::CubeGameObject::Creates(*_p_lveDevice);
+	cube->SetName("Cube");
 	rootObjects.push_back(cube);
 
 	auto color_cube = lve::CubeGameObject::CreateColors(*_p_lveDevice, glm::vec3{ 0.f, 0.f, 10.f });
+	color_cube->SetName("ColorCube");
 	rootObjects.push_back(color_cube);
 
 	std::vector<glm::vec3> light_colors{
@@ -418,6 +424,7 @@ void BaseScene::TestLoadGameObjects()
 	for (int i = 0; i < light_colors.size(); i++)
 	{
 		auto point_light = lve::LightGameObject::Creates(0.2f, 0.1f);
+		point_light->SetName("Point Light " + std::to_string(i));
 		point_light->color = light_colors[i];
 		auto rotate_light = rotate(
 			glm::mat4(1.f),
@@ -428,5 +435,6 @@ void BaseScene::TestLoadGameObjects()
 	}
 
 	auto sun = lve::LightGameObject::Creates(1000000.f, 2.0f, glm::vec3{ 0.f, -1000.f, 0.f });
+	sun->SetName("Sun");
 	rootObjects.push_back(sun);
 }

@@ -15,7 +15,7 @@ class Transform final : public Component
 		// Méthode pour récupérer et définir la position
 		glm::vec3 GetPosition() const { return position; }
 		void      SetPosition(const float& _x, const float& _y, const float& _z) { position = glm::vec3(_x, -_y, -_z); }
-		void      SetPosition(const glm::vec3& _position) { position = _position; }
+		void      SetPosition(const glm::vec3& _position) { position = _position;}
 
 		// Méthode pour récupérer et définir la rotation en utilisant un angle
 		glm::vec3 GetRotation() const { return rotation; }
@@ -30,7 +30,7 @@ class Transform final : public Component
 			scale = glm::vec3(_scaleX, _scaleY, _scaleZ);
 		}
 
-		void SetScale(const glm::vec3& _scale) { scale = _scale; }
+		void SetScale(const glm::vec3& _scale) { scale = _scale; } 
 
 		/*void Rotate(const float _angle)
 		{

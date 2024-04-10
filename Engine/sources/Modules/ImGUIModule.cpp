@@ -9,42 +9,11 @@
 
 #include "rhi.h"
 
-void ImGuiModule::ImmediateSubmit(std::function<void(vk::CommandBuffer _cmd)>&& _function) const
-{
-	const vk::Device device         = windowModule->GetDevice()->Device();
-	const vk::Queue  graphics_queue = windowModule->GetDevice()->GraphicsQueue();
+#include "Transform.h"
+#include "Scene/SceneManager.h"
+#include "TCP/Errors.h"
 
-	device.resetFences(immFence);
-	immCommandBuffer.reset(vk::CommandBufferResetFlagBits::eReleaseResources);
-
-	const vk::CommandBuffer cmd = immCommandBuffer;
-
-	vk::CommandBufferBeginInfo cmd_begin_info{};
-	cmd_begin_info.sType = vk::StructureType::eCommandBufferBeginInfo;
-	cmd_begin_info.flags = vk::CommandBufferUsageFlagBits::eOneTimeSubmit;
-
-	cmd.begin(cmd_begin_info);
-
-	_function(cmd);
-
-	cmd.end();
-
-	vk::CommandBufferSubmitInfo cmd_info;
-	cmd_info.sType         = vk::StructureType::eCommandBufferSubmitInfo;
-	cmd_info.pNext         = nullptr;
-	cmd_info.commandBuffer = cmd;
-	cmd_info.deviceMask    = 0;
-
-	vk::SubmitInfo2 submitInfo{};
-	submitInfo.commandBufferInfoCount = 1;
-	submitInfo.pCommandBufferInfos    = &cmd_info;
-	constexpr auto dispatcher         = vk::DispatchLoaderDynamic();
-	// submit command buffer to the queue and execute it.
-	//  _renderFence will now block until the graphic commands finish execution
-	graphics_queue.submit2KHR(submitInfo, immFence, dispatcher);
-
-	device.waitForFences(immFence, VK_TRUE, 9999999999);
-}
+class BaseScene;
 
 void ImGuiModule::Init()
 {
@@ -52,6 +21,7 @@ void ImGuiModule::Init()
 
 	windowModule = moduleManager->GetModule<WindowModule>();
 	rhiModule = moduleManager->GetModule<RHIModule>();
+	sceneManager = moduleManager->GetModule<SceneManager>();
 	device                                             = rhiModule->GetDevice()->Device();
 	graphicsQueue                                      = rhiModule->GetDevice()->GraphicsQueue();
 	const lve::QueueFamilyIndices queue_family_indices = rhiModule->GetDevice()->FindPhysicalQueueFamilies();
@@ -158,8 +128,8 @@ void ImGuiModule::Update()
 	ImGui_ImplGlfw_NewFrame();
 	ImGui::NewFrame();
 
-	ImGui::ShowDemoWindow();
-
+	//ImGui::ShowDemoWindow();
+	GetGui();
 	//imgui commands
 }
 
@@ -202,12 +172,298 @@ void ImGuiModule::Finalize()
 	ImGui::DestroyContext();
 }
 
+void ImGuiModule::ImmediateSubmit(std::function<void(vk::CommandBuffer _cmd)>&& _function) const
+{
+	const vk::Device device = rhiModule->GetDevice()->Device();
+	const vk::Queue  graphics_queue = rhiModule->GetDevice()->GraphicsQueue();
+
+	device.resetFences(immFence);
+	immCommandBuffer.reset(vk::CommandBufferResetFlagBits::eReleaseResources);
+
+	const vk::CommandBuffer cmd = immCommandBuffer;
+
+	vk::CommandBufferBeginInfo cmd_begin_info{};
+	cmd_begin_info.sType = vk::StructureType::eCommandBufferBeginInfo;
+	cmd_begin_info.flags = vk::CommandBufferUsageFlagBits::eOneTimeSubmit;
+
+	cmd.begin(cmd_begin_info);
+
+	_function(cmd);
+
+	cmd.end();
+
+	vk::CommandBufferSubmitInfo cmd_info;
+	cmd_info.sType = vk::StructureType::eCommandBufferSubmitInfo;
+	cmd_info.pNext = nullptr;
+	cmd_info.commandBuffer = cmd;
+	cmd_info.deviceMask = 0;
+
+	vk::SubmitInfo2 submitInfo{};
+	submitInfo.commandBufferInfoCount = 1;
+	submitInfo.pCommandBufferInfos = &cmd_info;
+	constexpr auto dispatcher = vk::DispatchLoaderDynamic();
+	// submit command buffer to the queue and execute it.
+	//  _renderFence will now block until the graphic commands finish execution
+	graphics_queue.submit2KHR(submitInfo, immFence, dispatcher);
+
+	device.waitForFences(immFence, VK_TRUE, 9999999999);
+}
+
 
 void ImGuiModule::GetGui()
 {
-	ImGui::Begin("Scene");
+	DrawHierarchy();
+	DrawInspector();
+}
 
-	if (ImGui::Button("New GameObject")) std::cout << "Pressed Create GameObject." << std::endl;
+
+
+void ImGuiModule::DrawInspector() {
+	ImGui::SetNextWindowSize(ImVec2(300, 400), ImGuiCond_FirstUseEver);
+	ImGui::Begin("Inspector");
+
+	// Vérifier si un GameObject est sélectionné
+	if (selectedGameObject) {
+		// Affichage du nom du GameObject
+		ImGui::Text("Name: ");
+		ImGui::SameLine();
+		ImGui::SetWindowFontScale(1.2f);
+		ImGui::TextColored(ImVec4(1.0f, 0.5f, 0.0f, 1.0f), selectedGameObject->GetName().c_str());
+		ImGui::SetWindowFontScale(1.0f);
+
+		// Bouton pour afficher la popup de renommage
+		ImGui::SameLine();
+		if (ImGui::Button("Rename")) {
+			isRenamePopupOpen = true;
+			strncpy_s(renameBuffer, selectedGameObject->GetName().c_str(), sizeof(renameBuffer) - 1);
+			renameBuffer[sizeof(renameBuffer) - 1] = '\0';
+			ImGui::OpenPopup("Rename Entity");
+		}
+		ShowRenamePopup();
+
+		// Affichage des propriétés de transformation
+		if (ImGui::CollapsingHeader("Transform")) {
+			DisplayTransform(selectedGameObject->GetTransform());
+		}
+
+		// Bouton pour ajouter un composant (logique d'ajout à implémenter)
+		if (ImGui::Button("Add Component")) {
+			// TODO: Logique d'ajout de composant
+		}
+	}
+	else {
+		ImGui::Text("No GameObject selected");
+	}
 
 	ImGui::End();
+}
+
+void ImGuiModule::DisplayTransform(Transform* _transform) {
+	if (!_transform) return;
+
+	// Position
+	glm::vec3 position = _transform->GetPosition();
+	if (ImGui::DragFloat3("Position", &position[0])) {
+		_transform->SetPosition(position);
+	}
+
+	// Rotation
+	glm::vec3 rotation = _transform->GetRotation();
+	if (ImGui::DragFloat3("Rotation", &rotation[0])) {
+		_transform->SetRotation(rotation);
+	}
+
+	// Scale
+	glm::vec3 scale = _transform->GetScale();
+	if (ImGui::DragFloat3("Scale", &scale[0])) {
+		_transform->SetScale(scale);
+	}
+}
+
+void ImGuiModule::DrawHierarchy() {
+	ImGui::SetNextWindowSize(ImVec2(300, 600), ImGuiCond_FirstUseEver);
+	ImGui::Begin("Hierarchy");
+
+	// Bouton pour créer un nouveau GameObject
+	if (ImGui::Button("New GameObject")) {
+		BaseScene* currentScene = sceneManager->GetCurrentScene();
+		if (currentScene) {
+			currentScene->CreateGameObject();  // Ajoute un GameObject à la scène actuelle
+			std::cout << "Added new GameObject to current scene." << std::endl;
+		}
+		else {
+			std::cout << "No active scene found." << std::endl;
+		}
+	}
+	ImGui::SameLine();
+	// Bouton pour ajouter une nouvelle scène
+	if (ImGui::Button("Add New Scene")) {
+		sceneManager->CreateScene("New Scene", false);
+	}
+
+	// Barre de recherche
+	static char searchBuffer[100];
+	ImGui::InputText("Search", searchBuffer, IM_ARRAYSIZE(searchBuffer));
+
+	// Affichage des scènes et de leurs GameObjects
+	const auto& scenes = sceneManager->GetScenes();
+	for (size_t i = 0; i < scenes.size(); ++i) {
+		const auto& scene = scenes[i];
+		bool isCurrentScene = (sceneManager->GetCurrentScene() == scene.get());
+
+		ImGui::PushID(i);
+
+		// Affichage du nom de la scène avec un bouton "Set Active" si nécessaire
+		if (ImGui::TreeNode(scene->GetName().c_str())) {
+			// Affichage des GameObjects
+			const auto& gameObjects = scene->GetRootObjects();
+			for (size_t j = 0; j < gameObjects.size(); ++j) {
+				const auto& gameObject = gameObjects[j];
+				if (strstr(gameObject->GetName().c_str(), searchBuffer)) {
+					ImGui::PushID(j);
+					if (ImGui::Selectable(gameObject->GetName().c_str(), selectedGameObject == gameObject)) {
+						selectedGameObject = gameObject;
+					}
+
+					// Menu contextuel pour GameObject
+					if (ImGui::BeginPopupContextItem()) {
+						if (ImGui::MenuItem("Rename")) {
+							isRenamePopupOpen = true;
+							entityToRename = j;
+							strncpy_s(renameBuffer, gameObject->GetName().c_str(), sizeof(renameBuffer) - 1);
+							renameBuffer[sizeof(renameBuffer) - 1] = '\0';
+							ImGui::OpenPopup("Rename Entity");
+						}
+
+						ImGui::Separator();
+						if (ImGui::MenuItem("Delete")) { DeleteGameObject(selectedGameObject); }
+
+						ImGui::Separator();
+						if (ImGui::MenuItem("Duplicate")) { DuplicateGameObject(j); }
+
+						ImGui::EndPopup();
+					}
+					ImGui::PopID();
+				}
+			}
+			ImGui::TreePop();
+		}
+
+		if (!isCurrentScene) {
+			ImGui::SameLine();
+			std::string buttonLabel = "Set Active##" + std::to_string(i);
+			if (ImGui::Button(buttonLabel.c_str())) {
+				sceneManager->SetCurrentScene(static_cast<int>(i));
+			}
+		}
+
+		// Menu contextuel pour chaque scène
+		if (ImGui::BeginPopupContextItem()) {
+			if (ImGui::MenuItem("Set as Main")) {
+				sceneManager->SetMainScene(scene->GetName());
+			}
+
+			ImGui::Separator();
+			if (ImGui::MenuItem("Rename")) {
+				sceneToRename = i;
+				strncpy_s(renameSceneBuffer, scene->GetName().c_str(), sizeof(renameSceneBuffer));
+				renameSceneBuffer[sizeof(renameSceneBuffer) - 1] = '\0';
+				ImGui::OpenPopup("Rename Scene");
+			}
+
+			ImGui::Separator();
+			if (ImGui::MenuItem("Delete")) {
+				sceneManager->DestroyScene(scene->GetName());
+			}
+			ImGui::EndPopup();
+		}
+
+		ImGui::PopID(); // Restaure l'ID précédent
+	}
+
+	ImGui::End(); // Ferme la fenêtre ImGUI
+}
+
+
+void ImGuiModule::ShowRenamePopup() {
+	// Gestion de la fenêtre popup pour renommer un gameobject
+	if (isRenamePopupOpen && selectedGameObject) {
+		ImGui::OpenPopup("Rename Entity");
+		if (ImGui::BeginPopup("Rename Entity")) {
+			ImGui::InputText("##edit", renameBuffer, IM_ARRAYSIZE(renameBuffer));
+			if (ImGui::Button("OK##Rename")) {
+				RenameGameObject(selectedGameObject, std::string(renameBuffer));
+				isRenamePopupOpen = false;
+			}
+			ImGui::SameLine();
+			if (ImGui::Button("Cancel##Rename")) {
+				isRenamePopupOpen = false;
+			}
+			ImGui::EndPopup();
+		}
+	}
+
+	// Gestion de la fenêtre popup pour renommer la scène
+	if (sceneToRename >= 0) {
+		ImGui::OpenPopup("Rename Scene");
+		if (ImGui::BeginPopup("Rename Scene")) {
+			ImGui::InputText("New Name", renameSceneBuffer, IM_ARRAYSIZE(renameSceneBuffer));
+			if (ImGui::Button("OK")) {
+				const auto& scenes = sceneManager->GetScenes();
+				if (sceneToRename < scenes.size()) {
+					sceneManager->RenameScene(scenes[sceneToRename]->GetName(), renameSceneBuffer);
+				}
+				sceneToRename = -1;
+			}
+			ImGui::SameLine();
+			if (ImGui::Button("Cancel")) {
+				sceneToRename = -1;
+			}
+			ImGui::EndPopup();
+		}
+	}
+}
+
+void ImGuiModule::RenameGameObject(GameObject* _gameObject, const std::string& _newName) {
+	if (_gameObject) {
+		std::cout << "Renamed GameObject: " << _gameObject->GetName() << " to " << _newName << std::endl;
+		_gameObject->SetName(_newName);
+	}
+}
+
+void ImGuiModule::DeleteGameObject(GameObject* _gameObject) {
+	//if (_gameObject) {
+	//	// Récupération de la scène active
+	//	BaseScene* currentScene = sceneManager->GetCurrentScene();
+	//	if (currentScene) {
+	//		// Trouve l'index du GameObject dans la scène active
+	//		auto& gameObjects = currentScene->GetRootObjects();
+	//		auto it = std::find(gameObjects.begin(), gameObjects.end(), _gameObject);
+	//		if (it != gameObjects.end()) {
+	//			// Supprime le GameObject et libère la mémoire
+	//			delete* it;
+	//			gameObjects.erase(it);
+
+	//			// Réinitialiser la sélection si c'était l'objet sélectionné
+	//			if (selectedGameObject == _gameObject) {
+	//				selectedGameObject = nullptr;
+	//			}
+	//			std::cout << "Deleted GameObject: " << _gameObject->GetName() << std::endl;
+	//		}
+	//	}
+	//}
+}
+
+
+
+
+void ImGuiModule::DuplicateGameObject(int _index) {
+	//auto& gameObjects = sceneManager->GetMainScene()->GetRootObjects();
+	//if (_index < gameObjects.size()) {
+	//	GameObject* original = gameObjects[_index];
+	//	GameObject* clone = original->Clone();
+	//	
+	//	// Ajoute le clone à la scène
+	//	sceneManager->GetMainScene()->AddRootObject(clone);
+	//}
 }

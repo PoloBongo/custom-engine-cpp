@@ -49,36 +49,8 @@ class WindowModule final : public Module
 		void Finalize() override;
 
 		lve::LveWindow*   GetWindow() const { return lveWindow; }
-		lve::LveDevice*   GetDevice() const { return lveDevice; }
-		lve::LveRenderer* GetRenderer() const { return lveRenderer; }
 
 	private:
-		void LoadGameObjects();
 
 		lve::LveWindow*   lveWindow; /// Fenêtre de l'application.
-		lve::LveDevice*   lveDevice;
-		lve::LveRenderer* lveRenderer;
-
-		lve::LveDescriptorPool::Builder* builder;
-
-		std::unique_ptr<lve::LveDescriptorSetLayout, std::default_delete<lve::LveDescriptorSetLayout>>* globalSetLayout;
-
-		lve::LveCamera*          camera;
-
-		std::chrono::steady_clock::time_point currentTime;
-		lve::KeyboardMovementController       cameraController{};
-		GameObject*								viewerObject;
-
-		std::vector<vk::DescriptorSet>               globalDescriptorSets;
-		std::vector<std::unique_ptr<lve::LveBuffer>> uboBuffers;
-
-		// note : order of declarations matters
-		std::unique_ptr<lve::LveDescriptorPool> globalPool{};
-		std::vector<GameObject*>                gameObjects;
-
-		vk::CommandBuffer* p_commandBuffer;
-		lve::FrameInfo* p_frameInfo;
-
-		int frameIndex;
-		lve::GlobalUbo ubo{};
 };
