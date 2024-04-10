@@ -30,7 +30,7 @@ class Transform final : public Component
 			scale = glm::vec3(_scaleX, _scaleY, _scaleZ);
 		}
 
-		void SetScale(const glm::vec3& _scale) { scale = _scale; }
+		void SetScale(const glm::vec3& _scale) { scale = _scale; } 
 
 		/*void Rotate(const float _angle)
 		{
