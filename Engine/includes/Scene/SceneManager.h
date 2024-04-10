@@ -39,6 +39,7 @@ class SceneManager final : public Module
 		std::pair<std::string, bool> GetSceneAt(int _index);
 
 		BaseScene* GetCurrentScene() const;
+		std::vector<std::unique_ptr<BaseScene>>& GetScenes() { return scenes; }
 
 		void SetCurrentScene(int _sceneIndex);
 		void SetNextSceneActive();
