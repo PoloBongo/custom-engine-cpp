@@ -2,12 +2,9 @@
 #include "Transform.h"
 
 
-GameObject::GameObject(): id(0)
-{
-	this->isActive  = true;
-	this->transform = new Transform();
-}
-GameObject::GameObject(const id_t _id) : id(_id)
+
+
+GameObject::GameObject()
 {
 	this->isActive = true;
 	this->transform = new Transform();
@@ -117,12 +114,12 @@ std::vector<GameObject*> GameObject::FindChildrenByName(const std::string& _name
 	// Parcourir tous les enfants du GameObject
 	for (GameObject* child : children)
 	{
-		// Vérifier si le nom du GameObject correspond au nom recherché
+		// Vï¿½rifier si le nom du GameObject correspond au nom recherchï¿½
 		if (child->GetName() == _name)
-			// Ajouter le GameObject à la liste des objets trouvés
+			// Ajouter le GameObject ï¿½ la liste des objets trouvï¿½s
 			found_objects.push_back(child);
 
-		// Récursivement chercher les enfants du GameObject actuel
+		// Rï¿½cursivement chercher les enfants du GameObject actuel
 		std::vector<GameObject*> nested_found = child->FindChildrenByName(_name);
 		found_objects.insert(found_objects.end(), nested_found.begin(), nested_found.end());
 	}
@@ -146,14 +143,14 @@ void GameObject::AddChildObject(GameObject* child) {
 
 
 Component* GameObject::GetComponentRecursive(const std::string& componentName) {
-	// Vérifier si le GameObject a le composant spécifié
+	// Vï¿½rifier si le GameObject a le composant spï¿½cifiï¿½
 	for (Component* component : components) {
 		if (component->GetName() == componentName) {
 			return component;
 		}
 	}
 
-	// Recherche récursive dans les enfants
+	// Recherche rï¿½cursive dans les enfants
 	for (GameObject* child : children) {
 		Component* foundComponent = child->GetComponentRecursive(componentName);
 		if (foundComponent != nullptr) {
@@ -161,11 +158,11 @@ Component* GameObject::GetComponentRecursive(const std::string& componentName) {
 		}
 	}
 
-	// Recherche récursive dans le parent
+	// Recherche rï¿½cursive dans le parent
 	if (parent != nullptr) {
 		return parent->GetComponentRecursive(componentName);
 	}
 
-	// Le composant n'a pas été trouvé dans ce GameObject ou ses enfants
+	// Le composant n'a pas ï¿½tï¿½ trouvï¿½ dans ce GameObject ou ses enfants
 	return nullptr;
 }

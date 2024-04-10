@@ -22,22 +22,22 @@ class BaseScene
 		virtual void Init();
 
 		/**
-		 * @brief Démarre le module.
+		 * @brief Dï¿½marre le module.
 		 */
 		virtual void Start();
 
 		/**
-		 * @brief Effectue une mise à jour fixe du module.
+		 * @brief Effectue une mise ï¿½ jour fixe du module.
 		 */
 		virtual void FixedUpdate();
 
 		/**
-		 * @brief Met à jour le module.
+		 * @brief Met ï¿½ jour le module.
 		 */
 		virtual void Update();
 
 		/**
-		 * @brief Fonction pré-rendu du module.
+		 * @brief Fonction prï¿½-rendu du module.
 		 */
 		virtual void PreRender();
 
@@ -57,7 +57,7 @@ class BaseScene
 		virtual void PostRender();
 
 		/**
-		 * @brief Libère les ressources utilisées par le module.
+		 * @brief Libï¿½re les ressources utilisï¿½es par le module.
 		 */
 		virtual void Release();
 

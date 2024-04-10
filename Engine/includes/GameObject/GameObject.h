@@ -26,13 +26,21 @@ class Transform;
 
 class GameObject
 {
-	public:
-		using id_t = unsigned int;
-		GameObject();
+public:
+	GameObject();
+	using id_t = unsigned int;
+	id_t GetId() const { return id; }
 
-		GameObject(const id_t _id);
-
-		~GameObject();
+	/**
+	* @brief Constructeur de GameObject avec ID spécifique.
+	*
+	* Initialise un GameObject avec un identifiant unique. Cela garantit que chaque GameObject
+	* a un identifiant unique au sein de la scène.
+	*
+	* @param _id Identifiant unique du GameObject.
+	*/
+	GameObject(id_t _id) : id(_id){}
+	~GameObject();
 
 	
 
@@ -92,6 +100,21 @@ class GameObject
 			static id_t current_id = 0;
 			return new GameObject{ current_id++ };
 		}
+	/**
+	 * @brief Supprime directement cet objet de jeu.
+	 *
+	 * Cette méthode supprime directement l'objet de jeu de la scène et libère la mémoire associée.
+	 * À utiliser avec prudence, car elle ne gère pas les relations entre objets.
+	 */
+	void DestroyGameObject();
+
+	/**
+	 * @brief Marque cet objet de jeu pour suppression.
+	 *
+	 * Cette méthode marque l'objet de jeu pour suppression par le gestionnaire de scènes.
+	 * La suppression réelle aura lieu plus tard, gérée par le gestionnaire de scènes.
+	 */
+	void MarkForDeletion();
 
 		void AddComponent(Component* _component);
 
@@ -214,5 +237,5 @@ class GameObject
 		bool isActive  = true;
 		bool isVisible = true;
 
-		id_t id;
+	id_t id; // Identifiant unique du GameObject
 };
