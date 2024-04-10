@@ -144,6 +144,7 @@ void ImGUIInterface::EditTheme() {
 
                 ImGui::TreePop();
             }
+            ImGui::TreePop();
         }
         if (ImGui::TreeNode("Colors")) {
             ImGui::ColorEdit4("Main Color", (float*)&mainColor);     
