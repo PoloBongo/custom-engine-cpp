@@ -1,6 +1,7 @@
 #include "Managers/ImGUIManager.h"
 #include "ModuleManager.h"
-#include "GAmeObject/GameObject.h"
+#include "GameObject/GameObject.h"
+#include "Transform.h"
 #include "lve_renderer.h"
 
 #include <imgui.h>
@@ -175,7 +176,6 @@ void ImGuiManager::Finalize()
 }
 
 void ImGuiManager::GetGUI() {
-
 	DrawHierarchy();
 	DrawInspector();
 }
@@ -186,119 +186,34 @@ void ImGuiManager::DrawInspector() {
 	ImGui::SetNextWindowSize(ImVec2(300, 400), ImGuiCond_FirstUseEver);
 	ImGui::Begin("Inspector");
 
-	if (selectedEntityIndex >= 0 && selectedEntityIndex < sceneManager->GetMainScene()->GetRootObjects().size()) {
-		GameObject* gameObject = sceneManager->GetMainScene()->GetRootObjects()[selectedEntityIndex];
-		Transform* transform = gameObject->GetTransform();
-
-		// Afficher le nom du GameObject
+	// Vérifier si un GameObject est sélectionné
+	if (selectedGameObject) {
+		// Affichage du nom du GameObject
 		ImGui::Text("Name: ");
 		ImGui::SameLine();
 		ImGui::SetWindowFontScale(1.2f);
-		ImGui::TextColored(ImVec4(1.0f, 0.5f, 0.0f, 1.0f), gameObject->GetName().c_str());
+		ImGui::TextColored(ImVec4(1.0f, 0.5f, 0.0f, 1.0f), selectedGameObject->GetName().c_str());
 		ImGui::SetWindowFontScale(1.0f);
 
 		// Bouton pour afficher la popup de renommage
 		ImGui::SameLine();
 		if (ImGui::Button("Rename")) {
 			isRenamePopupOpen = true;
-			entityToRename = selectedEntityIndex;
-			strncpy_s(renameBuffer, gameObject->GetName().c_str(), sizeof(renameBuffer) - 1);
+			strncpy_s(renameBuffer, selectedGameObject->GetName().c_str(), sizeof(renameBuffer) - 1);
 			renameBuffer[sizeof(renameBuffer) - 1] = '\0';
 			ImGui::OpenPopup("Rename Entity");
 		}
 		ShowRenamePopup();
 
-		// Header Transform
+		// Affichage des propriétés de transformation
 		if (ImGui::CollapsingHeader("Transform")) {
-			// Variables pour la modification manuelle
-			bool openPositionEdit = false, openRotationEdit = false, openScaleEdit = false;
-			glm::vec3 positionEdit, scaleEdit;
-			float rotationEdit;
-
-			// Position
-			glm::vec3 position = gameObject->GetPosition();
-			if (ImGui::Button("...##position")) {
-				openPositionEdit = true;
-				positionEdit = position;
-			}
-			ImGui::SameLine();
-			if (ImGui::DragFloat3("Position", &position[0])) {
-				gameObject->SetPosition(position);
-			}
-			// Rotation
-			float rotation = gameObject->GetRotation();
-			if (ImGui::Button("...##rotation")) {
-				openRotationEdit = true;
-				rotationEdit = rotation;
-			}
-			ImGui::SameLine();
-			if (ImGui::DragFloat("Rotation", &rotation)) {
-				gameObject->SetRotation(rotation);
-			}
-			// Scale
-			glm::vec3 scale = gameObject->GetScale();
-			if (ImGui::Button("...##scale")) {
-				openScaleEdit = true;
-				scaleEdit = scale;
-			}
-			ImGui::SameLine();
-			if (ImGui::DragFloat3("Scale", &scale[0])) {
-				gameObject->SetScale(scale);
-			}
-
-			// Popups pour la saisie manuelle
-			if (openPositionEdit) {
-				ImGui::OpenPopup("Edit Position");
-				if (ImGui::BeginPopupModal("Edit Position")) {
-					ImGui::InputFloat3("New Position", &positionEdit[0]);
-					if (ImGui::Button("OK##Position")) {
-						gameObject->SetPosition(positionEdit);
-						openPositionEdit = false;
-					}
-					ImGui::SameLine();
-					if (ImGui::Button("Cancel##Position")) {
-						openPositionEdit = false;
-					}
-					ImGui::EndPopup();
-				}
-			}
-			if (openRotationEdit) {
-				ImGui::OpenPopup("Edit Rotation");
-				if (ImGui::BeginPopupModal("Edit Rotation")) {
-					ImGui::InputFloat("New Rotation", &rotationEdit);
-					if (ImGui::Button("OK##Rotation")) {
-						gameObject->SetRotation(rotationEdit);
-						openRotationEdit = false;
-					}
-					ImGui::SameLine();
-					if (ImGui::Button("Cancel##Rotation")) {
-						openRotationEdit = false;
-					}
-					ImGui::EndPopup();
-				}
-			}
-			if (openScaleEdit) {
-				ImGui::OpenPopup("Edit Scale");
-				if (ImGui::BeginPopupModal("Edit Scale")) {
-					ImGui::InputFloat3("New Scale", &scaleEdit[0]);
-					if (ImGui::Button("OK##Scale")) {
-						gameObject->SetScale(scaleEdit);
-						openScaleEdit = false;
-					}
-					ImGui::SameLine();
-					if (ImGui::Button("Cancel##Scale")) {
-						openScaleEdit = false;
-					}
-					ImGui::EndPopup();
-				}
-			}
+			DisplayTransform(selectedGameObject->GetTransform());
 		}
 
-		// Bouton pour ajouter un composant
+		// Bouton pour ajouter un composant (logique d'ajout à implémenter)
 		if (ImGui::Button("Add Component")) {
-			// Logique d'ajout de composant (à implémenter)
+			// TODO: Logique d'ajout de composant
 		}
-
 	}
 	else {
 		ImGui::Text("No GameObject selected");
@@ -307,106 +222,213 @@ void ImGuiManager::DrawInspector() {
 	ImGui::End();
 }
 
+void ImGuiManager::DisplayTransform(Transform* _transform) {
+	if (!_transform) return;
 
+	// Position
+	glm::vec3 position = _transform->GetPosition();
+	if (ImGui::DragFloat3("Position", &position[0])) {
+		_transform->SetPosition(position);
+	}
+
+	// Rotation
+	float rotation = _transform->GetRotation();
+	if (ImGui::DragFloat("Rotation", &rotation)) {
+		_transform->SetRotation(rotation);
+	}
+
+	// Scale
+	glm::vec3 scale = _transform->GetScale();
+	if (ImGui::DragFloat3("Scale", &scale[0])) {
+		_transform->SetScale(scale);
+	}
+}
 
 void ImGuiManager::DrawHierarchy() {
 	ImGui::SetNextWindowSize(ImVec2(300, 600), ImGuiCond_FirstUseEver);
 	ImGui::Begin("Hierarchy");
 
-	// Creation d'un nouvel objet
+	// Bouton pour créer un nouveau GameObject
 	if (ImGui::Button("New GameObject")) {
-		if (sceneManager->GetScene("Default") != nullptr) {
-			sceneManager->GetScene("Default")->CreateGameObject();
-			std::cout << "Added new GameObject." << std::endl;
+		BaseScene* currentScene = sceneManager->GetCurrentScene();
+		if (currentScene) {
+			currentScene->CreateGameObject();  // Ajoute un GameObject à la scène actuelle
+			std::cout << "Added new GameObject to current scene." << std::endl;
 		}
 		else {
-			std::cout << "No scene found." << std::endl;
+			std::cout << "No active scene found." << std::endl;
 		}
+	}
+	ImGui::SameLine();
+	// Bouton pour ajouter une nouvelle scène
+	if (ImGui::Button("Add New Scene")) {
+		sceneManager->CreateScene("New Scene", false);
 	}
 
 	// Barre de recherche
 	static char searchBuffer[100];
 	ImGui::InputText("Search", searchBuffer, IM_ARRAYSIZE(searchBuffer));
 
-	// Liste des objets de la scène
-	auto& gameObjects = sceneManager->GetMainScene()->GetRootObjects();
+	// Affichage des scènes et de leurs GameObjects
+	const auto& scenes = sceneManager->GetScenes();
+	for (size_t i = 0; i < scenes.size(); ++i) {
+		const auto& scene = scenes[i];
+		bool isCurrentScene = (sceneManager->GetCurrentScene() == scene);
 
-	for (size_t i = 0; i < gameObjects.size(); ++i) {
-		GameObject* gameObject = gameObjects[i];
+		ImGui::PushID(i);
 
-		// Appliquer le filtre de recherche
-		if (strstr(gameObject->GetName().c_str(), searchBuffer)) {
-			// Afficher l'entité comme une option sélectionnable
-			bool isSelected = (selectedEntityIndex == i);
-			ImGui::PushID(i);
+		// Affichage du nom de la scène avec un bouton "Set Active" si nécessaire
+		if (ImGui::TreeNode(scene->GetName().c_str())) {
+			// Affichage des GameObjects
+			const auto& gameObjects = scene->GetRootObjects();
+			for (size_t j = 0; j < gameObjects.size(); ++j) {
+				const auto& gameObject = gameObjects[j];
+				if (strstr(gameObject->GetName().c_str(), searchBuffer)) {
+					ImGui::PushID(j);
+					if (ImGui::Selectable(gameObject->GetName().c_str(), selectedGameObject == gameObject)) {
+						selectedGameObject = gameObject;
+					}
 
-			if (ImGui::Selectable(gameObject->GetName().c_str(), isSelected)) {
-				selectedEntityIndex = i;
-			}
+					// Menu contextuel pour GameObject
+					if (ImGui::BeginPopupContextItem()) {
+						if (ImGui::MenuItem("Rename")) {
+							isRenamePopupOpen = true;
+							entityToRename = j;
+							strncpy_s(renameBuffer, gameObject->GetName().c_str(), sizeof(renameBuffer) - 1);
+							renameBuffer[sizeof(renameBuffer) - 1] = '\0';
+							ImGui::OpenPopup("Rename Entity");
+						}
 
-			// Construire le menu contextuel
-			if (ImGui::BeginPopupContextItem()) {
-				// Option de renommage
-				if (ImGui::MenuItem("Rename")) {
-					isRenamePopupOpen = true;
-					entityToRename = i;
-					strncpy_s(renameBuffer, gameObjects[i]->GetName().c_str(), sizeof(renameBuffer) - 1);
-					renameBuffer[sizeof(renameBuffer) - 1] = '\0';
-					ImGui::OpenPopup("Rename Entity");
-				}	ShowRenamePopup();
+						ImGui::Separator();
+						if (ImGui::MenuItem("Delete")) { DeleteGameObject(selectedGameObject); }
 
-				ImGui::Separator();
-				// Option de suppression
-				if (ImGui::MenuItem("Delete")) {
-					DeleteGameObject(i);
+						ImGui::Separator();
+						if (ImGui::MenuItem("Duplicate")) { DuplicateGameObject(j); }
+
+						ImGui::EndPopup();
+					}
+					ImGui::PopID();
 				}
-
-				ImGui::Separator();
-				// Option de duplication
-				if (ImGui::MenuItem("Duplicate")) {
-					DuplicateGameObject(i);
-				}
-				ImGui::EndPopup();
 			}
-			ImGui::PopID();
+			ImGui::TreePop();
 		}
+
+		if (!isCurrentScene) {
+			ImGui::SameLine();
+			std::string buttonLabel = "Set Active##" + std::to_string(i);
+			if (ImGui::Button(buttonLabel.c_str())) {
+				sceneManager->SetCurrentScene(static_cast<int>(i));
+			}
+		}
+
+		// Menu contextuel pour chaque scène
+		if (ImGui::BeginPopupContextItem()) {
+			if (ImGui::MenuItem("Set as Main")) {
+				sceneManager->SetMainScene(scene->GetName());
+			}
+
+			ImGui::Separator();
+			if (ImGui::MenuItem("Rename")) {
+				sceneToRename = i;
+				strncpy_s(renameSceneBuffer, scene->GetName().c_str(), sizeof(renameSceneBuffer));
+				renameSceneBuffer[sizeof(renameSceneBuffer) - 1] = '\0';
+				ImGui::OpenPopup("Rename Scene");
+			}
+
+			ImGui::Separator();
+			if (ImGui::MenuItem("Delete")) {
+				sceneManager->DestroyScene(scene->GetName());
+			}
+			ImGui::EndPopup();
+		}
+
+		ImGui::PopID(); // Restaure l'ID précédent
 	}
-	ImGui::End();
+
+	ImGui::End(); // Ferme la fenêtre ImGUI
 }
+
 
 void ImGuiManager::ShowRenamePopup() {
-	if (ImGui::BeginPopup("Rename Entity")) {
-		ImGui::InputText("##edit", renameBuffer, IM_ARRAYSIZE(renameBuffer));
-		if (ImGui::Button("OK##Rename")) {
-			RenameGameObject(entityToRename, std::string(renameBuffer));
-			ImGui::CloseCurrentPopup();
+	// Gestion de la fenêtre popup pour renommer un gameobject
+	if (isRenamePopupOpen && selectedGameObject) {
+		ImGui::OpenPopup("Rename Entity");
+		if (ImGui::BeginPopup("Rename Entity")) {
+			ImGui::InputText("##edit", renameBuffer, IM_ARRAYSIZE(renameBuffer));
+			if (ImGui::Button("OK##Rename")) {
+				RenameGameObject(selectedGameObject, std::string(renameBuffer));
+				isRenamePopupOpen = false;
+			}
+			ImGui::SameLine();
+			if (ImGui::Button("Cancel##Rename")) {
+				isRenamePopupOpen = false;
+			}
+			ImGui::EndPopup();
 		}
-		ImGui::SameLine();
-		if (ImGui::Button("Cancel##Rename")) {
-			ImGui::CloseCurrentPopup();
+	}
+
+	// Gestion de la fenêtre popup pour renommer la scène
+	if (sceneToRename >= 0) {
+		ImGui::OpenPopup("Rename Scene");
+		if (ImGui::BeginPopup("Rename Scene")) {
+			ImGui::InputText("New Name", renameSceneBuffer, IM_ARRAYSIZE(renameSceneBuffer));
+			if (ImGui::Button("OK")) {
+				auto& scenes = sceneManager->GetScenes();
+				if (sceneToRename < scenes.size()) {
+					sceneManager->RenameScene(scenes[sceneToRename]->GetName(), renameSceneBuffer);
+				}
+				sceneToRename = -1;
+			}
+			ImGui::SameLine();
+			if (ImGui::Button("Cancel")) {
+				sceneToRename = -1;
+			}
+			ImGui::EndPopup();
 		}
-		ImGui::EndPopup();
 	}
 }
 
-void ImGuiManager::RenameGameObject(int _index, const std::string& _newName) {
-	auto& gameObjects = sceneManager->GetMainScene()->GetRootObjects();
-	if (_index >= 0 && _index < gameObjects.size()) {
-		gameObjects[_index]->SetName(_newName);
+void ImGuiManager::RenameGameObject(GameObject* _gameObject, const std::string& _newName) {
+	if (_gameObject) {
+		std::cout << "Renamed GameObject: " << _gameObject->GetName() << " to " << _newName << std::endl;
+		_gameObject->SetName(_newName);
 	}
 }
 
-void ImGuiManager::DeleteGameObject(int _index) {
-	auto& gameObjects = sceneManager->GetMainScene()->GetRootObjects();
-	if (_index >= 0 && _index < gameObjects.size()) {
-		sceneManager->GetMainScene()->DestroyGameObject(gameObjects[_index]);
-		gameObjects.erase(gameObjects.begin() + _index);
-	}
+void ImGuiManager::DeleteGameObject(GameObject* _gameObject) {
+	//if (_gameObject) {
+	//	// Récupération de la scène active
+	//	BaseScene* currentScene = sceneManager->GetCurrentScene();
+	//	if (currentScene) {
+	//		// Trouve l'index du GameObject dans la scène active
+	//		auto& gameObjects = currentScene->GetRootObjects();
+	//		auto it = std::find(gameObjects.begin(), gameObjects.end(), _gameObject);
+	//		if (it != gameObjects.end()) {
+	//			// Supprime le GameObject et libère la mémoire
+	//			delete* it;
+	//			gameObjects.erase(it);
+
+	//			// Réinitialiser la sélection si c'était l'objet sélectionné
+	//			if (selectedGameObject == _gameObject) {
+	//				selectedGameObject = nullptr;
+	//			}
+	//			std::cout << "Deleted GameObject: " << _gameObject->GetName() << std::endl;
+	//		}
+	//	}
+	//}
 }
+
+
+
 
 void ImGuiManager::DuplicateGameObject(int _index) {
-	auto& gameObjects = sceneManager->GetMainScene()->GetRootObjects();
-	if (_index < gameObjects.size()) {
-		//sceneManager->GetMainScene()->CloneGameObject(gameObjects[_index]);
-	}
+	//auto& gameObjects = sceneManager->GetMainScene()->GetRootObjects();
+	//if (_index < gameObjects.size()) {
+	//	GameObject* original = gameObjects[_index];
+	//	GameObject* clone = original->Clone();
+	//	
+	//	// Ajoute le clone à la scène
+	//	sceneManager->GetMainScene()->AddRootObject(clone);
+	//}
 }
+

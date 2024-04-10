@@ -34,10 +34,13 @@ private:
 
 	void immediate_submit(std::function<void(vk::CommandBuffer cmd)>&& function);
 
-	int selectedEntityIndex = -1; // Index de l'entité sélectionnée
+	GameObject* selectedGameObject = nullptr; // Entité sélectionnée
+	std::map<BaseScene*, int> selectedEntityIndices; // Index de l'entité sélectionnée
 	bool isRenamePopupOpen = false; // État de la fenêtre de renommage
 	int entityToRename = -1; // Index de l'entité à renommer
 	char renameBuffer[256]; // Buffer pour le nouveau nom de l'entité
+	int sceneToRename = -1;
+	char renameSceneBuffer[100];
 
 	bool openPositionEdit = false;
 	bool openRotationEdit = false;
@@ -50,9 +53,10 @@ private:
 
 	void DrawHierarchy();
 	void DrawInspector();
+	void DisplayTransform(Transform* _transform);
 
 	void ShowRenamePopup();
-	void RenameGameObject(int _index, const std::string& _newName);
-	void DeleteGameObject(int _index);
+	void RenameGameObject(GameObject* _gameObject, const std::string& _newName);
+	void DeleteGameObject(GameObject* _gameObject);
 	void DuplicateGameObject(int _index);
 };

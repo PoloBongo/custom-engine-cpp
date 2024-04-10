@@ -146,6 +146,9 @@ void SceneManager::SetPreviousSceneActive() {
  * @return Un pointeur vers la scène courante si l'index de la scène courante est valide, sinon nullptr.
  */
 BaseScene* SceneManager::GetCurrentScene() const {
+	if (currentSceneIndex >= 0 && currentSceneIndex < static_cast<int>(scenes.size())) {
+		return scenes[currentSceneIndex];
+	}
 	return nullptr;//(currentSceneIndex >= 0 && currentSceneIndex < static_cast<int>(scenes.size())) ? scenes[currentSceneIndex].get() : nullptr;
 }
 
@@ -184,6 +187,7 @@ bool SceneManager::SceneFileExists(const std::string& fileName) const
 
 
 //--------------------------A MODIFIER TRES SIMPLIFIE------------------------------------
+static GameObject::id_t nextGameObjectID = 0;
 GameObject* CreateGameObjectFromSceneData(const std::string& sceneObjectName) {
 
 	GameObject* gameObject = new GameObject();
@@ -266,6 +270,14 @@ BaseScene* SceneManager::GetScene(const std::string& sceneName) {
 }
 
 /**
+ * @brief Récupère la scène principale.
+ * @return Un pointeur vers la scène principale.
+ */
+std::vector<BaseScene*>& SceneManager::GetScenes() {
+	return scenes;
+}
+
+/**
  * @brief Renomme une scène dans la liste des scènes.
  * @param oldName Ancien nom de la scène à renommer.
  * @param newName Nouveau nom de la scène.
@@ -294,5 +306,18 @@ void SceneManager::UpdateMainScene()
  */
 void SceneManager::RenderMainScene()
 {
-	mainScene->Render(windowManager->GetWindow()); // Passer le pointeur de la fenêtre à la fonction Render
+	mainScene->Render(windowManager->GetWindow()); // Passe le pointeur de la fenêtre à la fonction Render
+}
+
+void SceneManager::MarkGameObjectForDeletion(GameObject* _gameObject) {
+	// Ajoute le GameObject à une liste de suppression
+	objectsToDelete.push_back(_gameObject);
+}
+
+void SceneManager::DeleteMarkedGameObjects() {
+	for (auto* gameObject : objectsToDelete) {
+		// Supprime l'objet ici
+		delete gameObject;
+	}
+	objectsToDelete.clear();
 }

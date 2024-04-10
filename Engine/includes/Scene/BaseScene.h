@@ -67,6 +67,13 @@ public:
 
 	GameObject::id_t FirstObjectWithTag(const std::string& tag);
 
+	/**
+	* @brief Ajoute un GameObject à la scène actuelle.
+	*
+	* @param gameObject Pointeur vers le GameObject à ajouter.
+	*/
+	void RemoveGameObject(GameObject* gameObject);
+
 private:
 	std::string m_Name;
 	std::string m_FileName;

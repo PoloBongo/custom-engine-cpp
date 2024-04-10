@@ -23,6 +23,7 @@ public:
 	void SetMainScene(const std::string& sceneName);
 	BaseScene* GetScene(const std::string& sceneName);
 	BaseScene* GetMainScene() { return mainScene; }
+	std::vector<BaseScene*>& GetScenes();
 	void RenameScene(const std::string& oldName, const std::string& newName);
 	void UpdateMainScene();
 	void RenderMainScene();
@@ -48,6 +49,21 @@ public:
 	void SetNextSceneActive();
 	void SetPreviousSceneActive();
 
+	/**
+	 * @brief Marque un GameObject pour suppression.
+	 *
+	 * @param _gameObject Pointeur vers le GameObject à supprimer.
+	 */
+	void MarkGameObjectForDeletion(GameObject* _gameObject);
+
+	/**
+	 * @brief Supprime tous les GameObjects marqués pour suppression.
+	 *
+	 * Cette méthode est appelée à la fin de chaque frame pour supprimer de manière sécurisée
+	 * tous les GameObjects marqués pour suppression.
+	 */
+	void DeleteMarkedGameObjects();
+
 
 private:
 	WindowManager* windowManager = nullptr;
@@ -58,6 +74,7 @@ private:
 	bool SceneFileExists(const std::string& filePath) const;
 	std::vector<BaseScene*> scenes;
 	int currentSceneIndex = -1;
+	std::vector<GameObject*> objectsToDelete;
 };
 
 

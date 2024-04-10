@@ -1,5 +1,6 @@
 #include "GameObject/GameObject.h"
 #include "Transform.h"
+//#include "Managers/SceneManager.h"
 
 
 
@@ -126,3 +127,25 @@ std::vector<GameObject*> GameObject::FindChildrenByName(const std::string& name)
 	return foundObjects;
 }
 
+void GameObject::DestroyGameObject() {
+	// Suppression de tous les composants
+	for (Component* component : components) {
+		delete component;
+	}
+	components.clear();
+
+	for (Component* component : components) {
+		delete component;
+	}
+	components.clear();
+
+	// RETIRER LE GAMEOBJECT DE LA SCENE VISUELLEMENT
+	// Exemple : Scene->RemoveGameObject(this);
+
+	//delete this; // Attention : après cette ligne, l'objet est détruit
+}
+
+void GameObject::MarkForDeletion() {
+	// Marquer l'objet pour suppression
+	//SceneManager::GetInstance().MarkGameObjectForDeletion(this);
+}

@@ -364,4 +364,23 @@ void BaseScene::Update(float deltaTime)
 	{
 		rootObject->Update(deltaTime); // Mettez à jour chaque objet avec le delta time
 	}
+
+	// Traitement des objets à détruire
+	for (const auto& id : m_PendingDestroyObjects) {
+		auto it = std::find_if(m_RootObjects.begin(), m_RootObjects.end(),
+			[id](const GameObject* obj) { return obj->GetId() == id; });
+		if (it != m_RootObjects.end()) {
+			delete* it;  // Supprimer l'objet
+			m_RootObjects.erase(it);  // Enlever l'objet de la liste
+		}
+	}
+	m_PendingDestroyObjects.clear();
+}
+
+void BaseScene::RemoveGameObject(GameObject* gameObject) {
+	auto it = std::find(m_RootObjects.begin(), m_RootObjects.end(), gameObject);
+	if (it != m_RootObjects.end()) {
+		m_RootObjects.erase(it); // Retirer de la liste des objets
+		delete gameObject;       // Libérer la mémoire
+	}
 }
