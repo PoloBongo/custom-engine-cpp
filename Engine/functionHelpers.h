@@ -1,5 +1,9 @@
 #pragma once
 
+#include <iomanip>
+#include <ios>
+#include <sstream>
+
 #include "lve_constants.h"
 
 namespace lve
@@ -18,5 +22,12 @@ namespace lve
 	FLEX_NO_DISCARD T Saturate(T _val)
 	{
 		return glm::clamp(_val, T(0), T(1));
+	}
+
+	std::string FloatToString(const float _f, const uint32_t _precision /* = DEFAULT_FLOAT_PRECISION */)
+	{
+		std::stringstream stream;
+		stream << std::fixed << std::setprecision(_precision) << _f;
+		return stream.str();
 	}
 }
