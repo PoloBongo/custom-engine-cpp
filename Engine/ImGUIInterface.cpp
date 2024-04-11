@@ -18,7 +18,7 @@ void ResetToDefaults() {
     ImGUIInterface::mainColor = style.Colors[ImGuiCol_WindowBg];    // Exemple de récupération d'une couleur de base d'ImGui
     ImGUIInterface::accentColor = style.Colors[ImGuiCol_Border];
     ImGUIInterface::textColor = style.Colors[ImGuiCol_Text];
-    ImGUIInterface::areaBgColor = style.Colors[ImGuiCol_FrameBg];
+    ImGUIInterface::areaBgColor = ImVec4(0.066f, 0.066f, 0.066f, 0.666f);
     ImGUIInterface::secondaryColor = style.Colors[ImGuiCol_Button];
 
     ImGUIInterface::ApplyCustomTheme();  // Applique le thème personnalisé après réinitialisation

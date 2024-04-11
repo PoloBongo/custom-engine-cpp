@@ -433,20 +433,19 @@ void ImGuiModule::DrawHierarchy() {
 	}
 }
 
-
 void ImGuiModule::DrawEngineGUISettings() {
 	if (ImGui::Begin("Settings")) {
 		ImGUIInterface::EditTheme();
-		if (ImGui::CollapsingHeader("Input", ImGuiTreeNodeFlags_DefaultOpen)) {
+		if (ImGui::CollapsingHeader("Input")) {
 			// Input settings
 		}
-		if (ImGui::CollapsingHeader("Graphics", ImGuiTreeNodeFlags_DefaultOpen)) {
+		if (ImGui::CollapsingHeader("Graphics")) {
 			// Graphics settings
 		}
-		if (ImGui::CollapsingHeader("Audio", ImGuiTreeNodeFlags_DefaultOpen)) {
+		if (ImGui::CollapsingHeader("Audio")) {
 			// Audio settings
 		}
-		if (ImGui::CollapsingHeader("Network", ImGuiTreeNodeFlags_DefaultOpen)) {
+		if (ImGui::CollapsingHeader("Network")) {
 			//Network settings
 		}
 	}
