@@ -22,7 +22,7 @@ void WindowModule::Init()
 {
 	Module::Init();
 
-	builder.SetMaxSets(lve::LveSwapChain::MAX_FRAMES_IN_FLIGHT)
+	builder.SetMaxSets(6)//lve::LveSwapChain::MAX_FRAMES_IN_FLIGHT)
 	       .AddPoolSize(vk::DescriptorType::eUniformBuffer, lve::LveSwapChain::MAX_FRAMES_IN_FLIGHT)
 		   .AddPoolSize(vk::DescriptorType::eCombinedImageSampler, lve::LveSwapChain::MAX_FRAMES_IN_FLIGHT);
 
@@ -50,33 +50,22 @@ void WindowModule::Start()
 		uboBuffers[i]->Map();
 	}
 
-
-
-	// Create textures and add them to the vector
-	textures.emplace_back(std::make_unique<lve::LveTexture>(lveDevice, "../Textures/coconut.jpg"));
-	textures.emplace_back(std::make_unique<lve::LveTexture>(lveDevice, "../Textures/meme.png"));
-
-	texture1 = std::make_unique<lve::LveTexture>(lveDevice, "../Textures/coconut.jpg");
-	texture2 = std::make_unique<lve::LveTexture>(lveDevice, "../Textures/meme.png");
+	texture1 = new lve::LveTexture(lveDevice, "../Textures/coconut.jpg");
+	texture2 = new lve::LveTexture(lveDevice, "../Textures/meme.png");
+	texture3 = new lve::LveTexture(lveDevice, "../Textures/viking_room.png");
+	
 
 	// Print the size of the vector
 	std::cout << "Texture vector size: " << textures.size() << std::endl;
 	vk::DescriptorImageInfo imageInfo{};
-	// Access the first texture in the vector
-	if (!textures.empty()) {
-		imageInfo.sampler = textures[0]->getSampler();
-		imageInfo.imageView = textures[0]->getImageView();
-		imageInfo.imageLayout = textures[0]->getImageLayout();
-	}
+	imageInfo.sampler = texture1->getSampler();
+	imageInfo.imageView = texture1->getImageView();
+	imageInfo.imageLayout = texture1->getImageLayout();
 
-	// Access the second texture in the vector
-	if (textures.size() > 1) {
-		imageInfo.sampler = textures[1]->getSampler();
-		imageInfo.imageView = textures[1]->getImageView();
-		imageInfo.imageLayout = textures[1]->getImageLayout();
-	}
-
-
+	vk::DescriptorImageInfo imageInfo3{};
+	imageInfo3.sampler = texture3->getSampler();
+	imageInfo3.imageView = texture3->getImageView();
+	imageInfo3.imageLayout = texture3->getImageLayout();
 
 	const auto global_set_layout = lve::LveDescriptorSetLayout::Builder(lveDevice)
 	                               .AddBinding(0, vk::DescriptorType::eUniformBuffer,
@@ -85,6 +74,8 @@ void WindowModule::Start()
 											   vk::ShaderStageFlagBits::eFragment)
 	                               .Build();
 
+	//texture2->createTextureDescriptorSet(globalPool->GetDescriptorPool(), global_set_layout->GetDescriptorSetLayout());
+	
 	globalDescriptorSets.resize(lve::LveSwapChain::MAX_FRAMES_IN_FLIGHT);
 
 	for (int i = 0; i < globalDescriptorSets.size(); i++)
@@ -94,6 +85,35 @@ void WindowModule::Start()
 			.WriteBuffer(0, &buffer_info)
 			.WriteImage(1, &imageInfo)
 			.Build(globalDescriptorSets[i]);
+	}
+
+	vk::DescriptorImageInfo imageInfo2{};
+	imageInfo2.sampler = texture2->getSampler();
+	imageInfo2.imageView = texture2->getImageView();
+	imageInfo2.imageLayout = texture2->getImageLayout();
+
+	//texture1->createTextureDescriptorSet(globalPool->GetDescriptorPool(), global_set_layout->GetDescriptorSetLayout());
+
+	tex1DescriptorSets.resize(lve::LveSwapChain::MAX_FRAMES_IN_FLIGHT);
+
+	for (int i = 0; i < tex1DescriptorSets.size(); i++)
+	{
+		auto buffer_info = uboBuffers[i]->DescriptorInfo();
+		lve::LveDescriptorWriter(*global_set_layout, *globalPool)
+			.WriteBuffer(0, &buffer_info)
+			.WriteImage(1, &imageInfo2)
+			.Build(tex1DescriptorSets[i]);
+	}
+
+	tex2DescriptorSets.resize(lve::LveSwapChain::MAX_FRAMES_IN_FLIGHT);
+
+	for (int i = 0; i < tex2DescriptorSets.size(); i++)
+	{
+		auto buffer_info = uboBuffers[i]->DescriptorInfo();
+		lve::LveDescriptorWriter(*global_set_layout, *globalPool)
+			.WriteBuffer(0, &buffer_info)
+			.WriteImage(1, &imageInfo3)
+			.Build(tex2DescriptorSets[i]);
 	}
 
 	simpleRenderSystem = new lve::SimpleRenderSystem{
@@ -145,6 +165,8 @@ void WindowModule::Update()
 				*p_commandBuffer,
 				*camera,
 				globalDescriptorSets[frame_index],
+				tex1DescriptorSets[frame_index],
+				tex2DescriptorSets[frame_index],
 				*gameObjects
 			};
 
@@ -214,7 +236,7 @@ void WindowModule::LoadGameObjects()
 	flatVaseGO.model                 = lve_model;
 	flatVaseGO.transform.translation = {-.5f, .5f, 0.f};
 	flatVaseGO.transform.scale       = {3.f, 1.5f, 3.f};
-	flatVaseGO.texture = std::make_unique<lve::LveTexture>(lveDevice, "../Textures/coconut.jpg");
+	flatVaseGO.texture = 1;
 	gameObjects->emplace(flatVaseGO.GetId(), std::move(flatVaseGO));
 
 	lve_model                            = lve::LveModel::CreateModelFromFile(lveDevice, "Models\\smooth_vase.obj");
@@ -222,11 +244,11 @@ void WindowModule::LoadGameObjects()
 	smooth_vase_go.model                 = lve_model;
 	smooth_vase_go.transform.translation = {.5f, .5f, 0.f};
 	smooth_vase_go.transform.scale       = {3.f, 1.5f, 3.f};
-	smooth_vase_go.texture = std::make_unique<lve::LveTexture>(lveDevice, "../Textures/coconut.jpg");
+	smooth_vase_go.texture = 1;
 	gameObjects->emplace(smooth_vase_go.GetId(), std::move(smooth_vase_go));
 
 	auto quad_go = lve::PlaneGameObject::Create(lveDevice, {.0f, .5f, 0.f}, {3.f, 1.f, 3.f});
-	quad_go.texture = std::make_unique<lve::LveTexture>(lveDevice, "../Textures/meme.png");
+	quad_go.texture = 1;
 	gameObjects->emplace(quad_go.GetId(), std::move(quad_go));
 
 	lve_model                    = lve::LveModel::CreateModelFromFile(lveDevice, "Models\\viking_room.obj");
@@ -235,7 +257,7 @@ void WindowModule::LoadGameObjects()
 	viking.transform.translation = {0.f, 0.f, 5.f};
 	viking.transform.scale       = {3.f, 3.f, 3.f};
 	viking.transform.rotation    = {glm::radians(90.0f), glm::radians(90.0f), 0.0f};
-	viking.texture = std::make_unique<lve::LveTexture>(lveDevice, "../Textures/viking_room.png");
+	viking.texture = 2;
 	gameObjects->emplace(viking.GetId(), std::move(viking));
 
 	auto cube = lve::CubeGameObject::Create(lveDevice);

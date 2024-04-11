@@ -62,8 +62,9 @@ class WindowModule final : public Module
 		std::unique_ptr<lve::LveDescriptorSetLayout, std::default_delete<lve::LveDescriptorSetLayout>>* globalSetLayout;
 
 		std::vector<std::unique_ptr<lve::LveTexture>> textures;
-		std::unique_ptr<lve::LveTexture > texture1;
-		std::unique_ptr<lve::LveTexture > texture2;
+		lve::LveTexture* texture1;
+		lve::LveTexture* texture2;
+		lve::LveTexture* texture3;
 
 		lve::SimpleRenderSystem* simpleRenderSystem;
 		lve::PointLightSystem*   pointLightSystem;
@@ -74,6 +75,8 @@ class WindowModule final : public Module
 		lve::LveGameObject*                   viewerObject;
 
 		std::vector<vk::DescriptorSet>               globalDescriptorSets;
+		std::vector<vk::DescriptorSet>               tex1DescriptorSets;
+		std::vector<vk::DescriptorSet>               tex2DescriptorSets;
 		std::vector<std::unique_ptr<lve::LveBuffer>> uboBuffers;
 
 		// note : order of declarations matters

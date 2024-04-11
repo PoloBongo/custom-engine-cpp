@@ -9,6 +9,10 @@ namespace lve {
 	class LveTexture
 	{
 	public: 
+		vk::DescriptorSet descriptorSet;
+
+		vk::DescriptorSet GetDescriptorSet() { return descriptorSet; }
+
 		LveTexture(LveDevice& _device, const std::string& filepath);
 		~LveTexture();
 
@@ -20,6 +24,8 @@ namespace lve {
 		vk::Sampler getSampler() { return sampler; }
 		vk::ImageView getImageView() { return imageView; }
 		vk::ImageLayout getImageLayout() { return imageLayout; }
+
+		void createTextureDescriptorSet(vk::DescriptorPool descriptorPool, vk::DescriptorSetLayout textureDescriptorSetLayout);
 
 	private:
 

@@ -33,7 +33,6 @@
     <ClCompile Include="SphereCollider.cpp" />
     <ClCompile Include="Transform.cpp" />
     <ClCompile Include="VulkanHooks.cpp" />
-    <ClCompile Include="first_app.cpp" />
     <ClCompile Include="sources\GameObject\GameObject.cpp" />
     <ClCompile Include="sources\keyboard_movement_controller.cpp" />
     <ClCompile Include="sources\lve_buffer.cpp" />
@@ -82,7 +81,6 @@
     <ClInclude Include="SphereCollider.h" />
     <ClInclude Include="Transform.h" />
     <ClInclude Include="VulkanHooks.h" />
-    <ClInclude Include="first_app.h" />
     <ClInclude Include="includes\GameObject\GameObject.h" />
     <ClInclude Include="includes\keyboard_movement_controller.h" />
     <ClInclude Include="includes\lve_buffer.h" />

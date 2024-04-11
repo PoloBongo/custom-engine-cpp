@@ -211,7 +211,6 @@
     <ClInclude Include="Component.h" />
     <ClInclude Include="EngineTestCode.h" />
     <ClInclude Include="includes\Modules\SoundSystemModule.h" />
-    <ClCompile Include="first_app.cpp" />
     <ClCompile Include="sources\GameObject\GameObject.cpp" />
     <ClCompile Include="sources\keyboard_movement_controller.cpp" />
     <ClCompile Include="sources\lve_buffer.cpp" />
@@ -244,7 +243,6 @@
     <ClInclude Include="VulkanHooks.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="first_app.h" />
     <ClInclude Include="includes\GameObject\GameObject.h" />
     <ClInclude Include="includes\keyboard_movement_controller.h" />
     <ClInclude Include="includes\lve_buffer.h" />

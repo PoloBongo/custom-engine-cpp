@@ -76,68 +76,37 @@ namespace lve
 		{
 			auto& obj = kv.second;
 			if (obj.model == nullptr) continue;
-			if (obj.texture != nullptr) {
 
-				// Si pas de texture, render avec un autre shader ?
+			//_frameInfo.commandBuffer.bindDescriptorSets(vk::PipelineBindPoint::eGraphics, pipelineLayout, 1, 1, )
+			switch (obj.texture) {
+				case 0:
+					_frameInfo.commandBuffer.bindDescriptorSets(
+						vk::PipelineBindPoint::eGraphics,
+						pipelineLayout,
+						0,
+						_frameInfo.globalDescriptorSet,
+						nullptr);
+					break;
+				case 1:
+					_frameInfo.commandBuffer.bindDescriptorSets(
+						vk::PipelineBindPoint::eGraphics,
+						pipelineLayout,
+						0,
+						_frameInfo.tex1DescriptorSet,
+						nullptr);
+					break;
+				case 2:
+					_frameInfo.commandBuffer.bindDescriptorSets(
+						vk::PipelineBindPoint::eGraphics,
+						pipelineLayout,
+						0,
+						_frameInfo.tex2DescriptorSet,
+						nullptr);
+					break;
 
-				vk::DescriptorSetAllocateInfo allocInfo{};
-				allocInfo.sType = vk::StructureType::eDescriptorSetAllocateInfo;
-				allocInfo.descriptorPool = descriptorPool;
-
-
-				//VkDescriptorSetAllocateInfo allocInfo{};
-				//allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
-				//allocInfo.descriptorPool = descriptorPool;
-				//allocInfo.descriptorSetCount = 1;
-				//allocInfo.pSetLayouts = &textureDescriptorSetLayout;
-
-				//if (vkAllocateDescriptorSets(device, &allocInfo, &descriptorSet) != VK_SUCCESS) {
-				//	throw std::runtime_error("failed to allocate descriptor sets!");
-				//}
-
-
-
-				vk::DescriptorImageInfo imageInfo{};
-				imageInfo.sampler = obj.texture->getSampler();
-				imageInfo.imageView = obj.texture->getImageView();
-				imageInfo.imageLayout = obj.texture->getImageLayout();
-
-				std::cout << "1\n";
-
-				if (_frameInfo.globalDescriptorSet == VK_NULL_HANDLE) {
-					std::cout << "Descriptor is null\n";
-				}
-
-				vk::WriteDescriptorSet descriptorWrite = {};
-				descriptorWrite.sType = vk::StructureType::eWriteDescriptorSet;
-				descriptorWrite.dstSet = _frameInfo.globalDescriptorSet; // The descriptor set to update
-				descriptorWrite.dstBinding = 1; // Binding 0
-				descriptorWrite.dstArrayElement = 0;
-				descriptorWrite.descriptorType = vk::DescriptorType::eCombinedImageSampler;
-				descriptorWrite.descriptorCount = 1;
-				descriptorWrite.pImageInfo = &imageInfo;
-
-				//_frameInfo.commandBuffer.bindDescriptorSets(vk::PipelineBindPoint::eGraphics, pipelineLayout, 1, 1, )
-
-				std::cout << "2\n";
-
-				// Le command buffer record avant et ducoup ça fait l'erreur
-				// "If the dstSet member of any element of pDescriptorWrites or pDescriptorCopies is bound, accessed, 
-				// or modified by any command that was recorded to a command buffer which is currently in the recording or executable state, 
-				// and any of the descriptor bindings that are updated were not created with the VK_DESCRIPTOR_BINDING_UPDATE_AFTER_BIND_BIT or 
-				// VK_DESCRIPTOR_BINDING_UPDATE_UNUSED_WHILE_PENDING_BIT bits set, that command buffer becomes invalid.
-
-				lveDevice.Device().updateDescriptorSets(1, &descriptorWrite, 0, nullptr);
-				std::cout << "3\n";
 			}
 
 
-			_frameInfo.commandBuffer.bindDescriptorSets(
-				vk::PipelineBindPoint::eGraphics,
-				pipelineLayout,
-				0,
-				_frameInfo.globalDescriptorSet,
-				nullptr);
 
 			SimplePushConstantData push{};
 			push.modelMatrix  = obj.transform.Mat4();

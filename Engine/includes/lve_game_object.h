@@ -102,7 +102,7 @@ namespace lve
 			std::shared_ptr<LveModel>            model{}; /**< Modèle de l'objet. */
 			std::unique_ptr<PointLightComponent> pointLight = nullptr;
 			/**< Composant de lumière ponctuelle de l'objet, s'il y en a un. */
-			std::unique_ptr<lve::LveTexture> texture = nullptr;
+			unsigned int texture = 0;
 
 		private:
 			id_t id; /**< Identifiant de l'objet. */
