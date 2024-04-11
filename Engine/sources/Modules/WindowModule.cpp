@@ -43,7 +43,7 @@ void WindowModule::CreateWindowSurface(const vk::Instance _instance, vk::Surface
 void WindowModule::FrameBufferResizeCallBack(GLFWwindow* _window, const int _width, const int _height)
 {
 	const auto window_module = static_cast<WindowModule*>(glfwGetWindowUserPointer(_window));
-	window_module->frameBufferResize = true;
+	window_module->bFrameBufferResize = true;
 	window_module->SetSize(_width, _height);
 }
 

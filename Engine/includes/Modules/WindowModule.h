@@ -156,14 +156,14 @@ class WindowModule final : public Module
 		 * @return true si la fenêtre a été redimensionnée, sinon false.
 		 */
 
-		bool WasWindowResized() const { return frameBufferResize; }
+		bool WasWindowResized() const { return bFrameBufferResize; }
 
 		/**
 		 * @brief Réinitialise le drapeau de redimensionnement de la fenêtre.
 		 *
 		 * Cette fonction réinitialise le drapeau indiquant que la fenêtre a été redimensionnée.
 		 */
-		void ResetWindowResizedFlag() { frameBufferResize = false; }
+		void ResetWindowResizedFlag() { bFrameBufferResize = false; }
 
 		/**
 		 * @brief Crée une surface Vulkan associée à une fenêtre.
@@ -235,8 +235,27 @@ class WindowModule final : public Module
 		[[nodiscard]] int         GetHeight() const { return size.y; }
 		[[nodiscard]] glm::vec2	  GetSize() const { return size; }
 
+		[[nodiscard]] int         GetFrameBufferWidth() const { return frameBufferSize.x; }
+		[[nodiscard]] int         GetFrameBufferHeight() const { return frameBufferSize.y; }
+		[[nodiscard]] glm::vec2	  GetFrameBufferSize() const { return frameBufferSize; }
+
 		#pragma endregion
-		[[nodiscard]] bool        GetFrameBufferResize() const { return frameBufferResize; }
+
+		#pragma region Position
+
+		[[nodiscard]] glm::ivec2 GetPosition() const { return position; }
+		[[nodiscard]] int GetPositionX() const { return position.x; }
+		[[nodiscard]] int GetPositionY() const { return position.y; }
+
+		[[nodiscard]] glm::ivec2 GetStartingPosition() const { return startingPosition; }
+		[[nodiscard]] int GetStartingPositionX() const { return startingPosition.x; }
+		[[nodiscard]] int GetStartingPositionY() const { return startingPosition.y; }
+
+		#pragma endregion
+
+		[[nodiscard]] bool        GetFrameBufferResize() const { return bFrameBufferResize; }
+		[[nodiscard]] bool        HasFocus() const { return bHasFocus; }
+
 		[[nodiscard]] std::string GetName() const { return windowName; }
 		[[nodiscard]] std::string GetWindowTitle() const { return windowTitle; }
 
@@ -245,6 +264,7 @@ class WindowModule final : public Module
 		// Autres
 		[[nodiscard]] bool                         GetVSyncEnabled() const { return bVSyncEnabled; }
 		[[nodiscard]] GlfwCursorMode GetCursorMode() const { return cursorMode; }
+		[[nodiscard]] WindowMode getWindowMode() const { return currentWindowMode; }
 
 #pragma endregion
 
@@ -256,7 +276,7 @@ class WindowModule final : public Module
 		void SetSize(const uint32_t _newWidth, const uint32_t _newHeight) { size = glm::vec2(_newWidth, _newHeight); }
 		void SetWidth(const int& _newWidth) { size.x = _newWidth; }
 		void SetHeight(const int& _newHeight) { size.y = _newHeight; }
-		void SetFrameBufferResize(const bool& _state) { frameBufferResize = _state; }
+		void SetFrameBufferResize(const bool& _state) { bFrameBufferResize = _state; }
 		void SetName(const std::string& _newName) { windowName = _newName;}
 		void SetWindowTitle(const std::string& _windowTitle) { windowTitle = _windowTitle; glfwSetWindowTitle(window, windowTitle.c_str());}
 
@@ -298,7 +318,7 @@ class WindowModule final : public Module
 
 		std::string GenerateWindowTitle() const;
 
-		bool frameBufferResize = false; // Booléen indiquant si le framebuffer a été redimensionné.
+		bool bFrameBufferResize = false; // Booléen indiquant si le framebuffer a été redimensionné.
 
 		SceneManager* sceneManager = nullptr;
 
