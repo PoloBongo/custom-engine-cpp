@@ -2,6 +2,9 @@
 #include "lve_renderer.h"
 #include "ModuleManager.h"
 #include "Modules/WindowModule.h"
+#include "Modules/ImGUIModule.h"
+
+#include "ImGUIInterface.h"
 
 #include <imgui.h>
 #include <imgui_impl_glfw.h>
@@ -122,15 +125,11 @@ void ImGuiModule::Update()
 {
 	Module::Update();
 
-	//ImGui_ImplGlfw_ProcessEvent(&e);
-
+	// Mise à jour d'ImGui
 	ImGui_ImplVulkan_NewFrame();
 	ImGui_ImplGlfw_NewFrame();
 	ImGui::NewFrame();
-
-	//ImGui::ShowDemoWindow();
 	GetGui();
-	//imgui commands
 }
 
 void ImGuiModule::PreRender()
@@ -142,6 +141,7 @@ void ImGuiModule::Render()
 {
 	Module::Render();
 
+	// Rendu d'ImGui
 	ImGui::Render();
 	ImGui_ImplVulkan_RenderDrawData(ImGui::GetDrawData(), rhiModule->GetRenderer()->GetCurrentCommandBuffer());
 }
@@ -212,16 +212,56 @@ void ImGuiModule::ImmediateSubmit(std::function<void(vk::CommandBuffer _cmd)>&& 
 
 void ImGuiModule::GetGui()
 {
+	ImVec2 mainWindowSize = ImGui::GetMainViewport()->Size;
+
+	// Flags pour les fenêtres déplaçables et non-redimensionnables
+	ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize;
+
+	// Dessin de la fenêtre "Hierarchy" - Gauche
+	ImGui::SetNextWindowSize(ImVec2(300, mainWindowSize.y), ImGuiCond_Always); // Hauteur fixe et non-redimensionnable
+	ImGui::SetNextWindowPos(ImVec2(0, 0), ImGuiCond_Always); // Ancrage en haut à gauche
+	ImGui::Begin("Hierarchy", nullptr, window_flags);
 	DrawHierarchy();
+	ImGui::End();
+
+	// Dessin de la fenêtre "Inspector" - Droite
+	ImGui::SetNextWindowSize(ImVec2(300, mainWindowSize.y), ImGuiCond_Always); // Hauteur fixe et non-redimensionnable
+	ImGui::SetNextWindowPos(ImVec2(mainWindowSize.x - 300, 0), ImGuiCond_Always); // Ancrage en haut à droite
+	ImGui::Begin("Inspector", nullptr, window_flags);
 	DrawInspector();
+	ImGui::End();
+
+	DrawEngineGUISettings();
 }
 
+void ImGuiModule::AnchorWindow(const std::string& _windowName)
+{
+	ImVec2 windowPos = ImGui::GetWindowPos();
+	ImVec2 mainWindowPos = ImGui::GetMainViewport()->Pos;
+	ImVec2 mainWindowSize = ImGui::GetMainViewport()->Size;
 
+	// Ancrage à droite avec mise à jour dynamique lors du redimensionnement
+	ImGui::SetWindowPos(_windowName.c_str(), ImVec2(mainWindowSize.x - 300, windowPos.y));
+
+	// Ancrage à gauche ou à droite si nécessaire
+	if (windowPos.x < mainWindowPos.x + 50) {
+		ImGui::SetWindowPos(_windowName.c_str(), ImVec2(mainWindowPos.x, windowPos.y));
+	}
+	else if (windowPos.x > mainWindowPos.x + mainWindowSize.x - 350) {
+		// S'assurer que la fenêtre reste collée au bord droit même après redimensionnement
+		ImGui::SetWindowPos(_windowName.c_str(), ImVec2(mainWindowPos.x + mainWindowSize.x - 300, windowPos.y));
+	}
+
+	// Correction pour éviter le débordement par le haut ou par le bas
+	if (windowPos.y < mainWindowPos.y) {
+		ImGui::SetWindowPos(_windowName.c_str(), ImVec2(windowPos.x, mainWindowPos.y));
+	}
+	else if (windowPos.y + mainWindowSize.y > mainWindowPos.y + mainWindowSize.y) {
+		ImGui::SetWindowPos(_windowName.c_str(), ImVec2(windowPos.x, mainWindowPos.y + mainWindowSize.y - mainWindowSize.y));
+	}
+}
 
 void ImGuiModule::DrawInspector() {
-	ImGui::SetNextWindowSize(ImVec2(300, 400), ImGuiCond_FirstUseEver);
-	ImGui::Begin("Inspector");
-
 	// Vérifier si un GameObject est sélectionné
 	if (selectedGameObject) {
 		// Affichage du nom du GameObject
@@ -254,8 +294,6 @@ void ImGuiModule::DrawInspector() {
 	else {
 		ImGui::Text("No GameObject selected");
 	}
-
-	ImGui::End();
 }
 
 void ImGuiModule::DisplayTransform(Transform* _transform) {
@@ -281,9 +319,6 @@ void ImGuiModule::DisplayTransform(Transform* _transform) {
 }
 
 void ImGuiModule::DrawHierarchy() {
-	ImGui::SetNextWindowSize(ImVec2(300, 600), ImGuiCond_FirstUseEver);
-	ImGui::Begin("Hierarchy");
-
 	// Bouton pour créer un nouveau GameObject
 	if (ImGui::Button("New GameObject")) {
 		BaseScene* currentScene = sceneManager->GetCurrentScene();
@@ -308,21 +343,40 @@ void ImGuiModule::DrawHierarchy() {
 	// Affichage des scènes et de leurs GameObjects
 	const auto& scenes = sceneManager->GetScenes();
 	for (size_t i = 0; i < scenes.size(); ++i) {
+		ImGui::Spacing();
+		ImGui::Separator();
+
 		const auto& scene = scenes[i];
 		bool isCurrentScene = (sceneManager->GetCurrentScene() == scene.get());
 
-		ImGui::PushID(i);
+		ImGui::PushID(i); // Identifiant unique pour chaque scène
 
 		// Affichage du nom de la scène avec un bouton "Set Active" si nécessaire
 		if (ImGui::TreeNode(scene->GetName().c_str())) {
+			// Bouton pour définir la scène active
+			if (!isCurrentScene) {
+				ImGui::SameLine(ImGui::GetWindowWidth() - 100); // Décalage à droite
+				std::string buttonLabel = "Set Active##" + std::to_string(i);
+				if (ImGui::Button(buttonLabel.c_str())) {
+					sceneManager->SetCurrentScene(static_cast<int>(i));
+				}
+			}
+
 			// Affichage des GameObjects
 			const auto& gameObjects = scene->GetRootObjects();
 			for (size_t j = 0; j < gameObjects.size(); ++j) {
 				const auto& gameObject = gameObjects[j];
+
+				ImGui::PushID(j); // Identifiant unique pour chaque GameObject
+
 				if (strstr(gameObject->GetName().c_str(), searchBuffer)) {
-					ImGui::PushID(j);
 					if (ImGui::Selectable(gameObject->GetName().c_str(), selectedGameObject == gameObject)) {
 						selectedGameObject = gameObject;
+					}
+					if (j == gameObjects.size() - 1) {
+						ImGui::Spacing();
+						ImGui::Spacing();
+						ImGui::Spacing();
 					}
 
 					// Menu contextuel pour GameObject
@@ -333,6 +387,7 @@ void ImGuiModule::DrawHierarchy() {
 							strncpy_s(renameBuffer, gameObject->GetName().c_str(), sizeof(renameBuffer) - 1);
 							renameBuffer[sizeof(renameBuffer) - 1] = '\0';
 							ImGui::OpenPopup("Rename Entity");
+							selectedGameObject = gameObject;
 						}
 
 						ImGui::Separator();
@@ -343,27 +398,22 @@ void ImGuiModule::DrawHierarchy() {
 
 						ImGui::EndPopup();
 					}
-					ImGui::PopID();
+					ImGui::PopID();  // Restaure l'ID précédent pour les GameObjects
 				}
 			}
 			ImGui::TreePop();
 		}
 
-		if (!isCurrentScene) {
-			ImGui::SameLine();
-			std::string buttonLabel = "Set Active##" + std::to_string(i);
-			if (ImGui::Button(buttonLabel.c_str())) {
-				sceneManager->SetCurrentScene(static_cast<int>(i));
-			}
-		}
+
 
 		// Menu contextuel pour chaque scène
-		if (ImGui::BeginPopupContextItem()) {
-			if (ImGui::MenuItem("Set as Main")) {
-				sceneManager->SetMainScene(scene->GetName());
+		if (ImGui::BeginPopupContextItem("Scene Menu")) {
+			if (ImGui::MenuItem("Set Active")) {
+				sceneManager->SetCurrentScene(static_cast<int>(i)); // Définit la scène courante
 			}
 
 			ImGui::Separator();
+
 			if (ImGui::MenuItem("Rename")) {
 				sceneToRename = i;
 				strncpy_s(renameSceneBuffer, scene->GetName().c_str(), sizeof(renameSceneBuffer));
@@ -372,18 +422,35 @@ void ImGuiModule::DrawHierarchy() {
 			}
 
 			ImGui::Separator();
+
 			if (ImGui::MenuItem("Delete")) {
-				sceneManager->DestroyScene(scene->GetName());
+				sceneManager->DestroyScene(scene->GetName()); // Supprime la scène
 			}
+
 			ImGui::EndPopup();
 		}
-
-		ImGui::PopID(); // Restaure l'ID précédent
+		ImGui::PopID();  // Restaure l'ID précédent pour les scènes
 	}
-
-	ImGui::End(); // Ferme la fenêtre ImGUI
 }
 
+void ImGuiModule::DrawEngineGUISettings() {
+	if (ImGui::Begin("Settings")) {
+		ImGUIInterface::EditTheme();
+		if (ImGui::CollapsingHeader("Input")) {
+			// Input settings
+		}
+		if (ImGui::CollapsingHeader("Graphics")) {
+			// Graphics settings
+		}
+		if (ImGui::CollapsingHeader("Audio")) {
+			// Audio settings
+		}
+		if (ImGui::CollapsingHeader("Network")) {
+			//Network settings
+		}
+	}
+	ImGui::End();
+}
 
 void ImGuiModule::ShowRenamePopup() {
 	// Gestion de la fenêtre popup pour renommer un gameobject
@@ -453,9 +520,6 @@ void ImGuiModule::DeleteGameObject(GameObject* _gameObject) {
 	//	}
 	//}
 }
-
-
-
 
 void ImGuiModule::DuplicateGameObject(int _index) {
 	//auto& gameObjects = sceneManager->GetMainScene()->GetRootObjects();
