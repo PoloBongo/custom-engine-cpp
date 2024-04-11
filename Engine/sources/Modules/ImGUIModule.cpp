@@ -1,7 +1,6 @@
 #include "Modules/ImGUIModule.h"
 #include "lve_renderer.h"
 #include "ModuleManager.h"
-#include "Modules/WindowModule.h"
 
 #include <imgui.h>
 #include <imgui_impl_glfw.h>
@@ -87,7 +86,7 @@ void ImGuiModule::Start()
 	ImGui::CreateContext();
 
 	// this initializes imgui for SDL
-	ImGui_ImplGlfw_InitForVulkan(windowModule->GetWindow()->GetGlfwWindow(), true);
+	ImGui_ImplGlfw_InitForVulkan(windowModule->GetGlfwWindow(), true);
 
 	// this initializes imgui for Vulkan
 	ImGui_ImplVulkan_InitInfo init_info = {};
@@ -206,7 +205,10 @@ void ImGuiModule::ImmediateSubmit(std::function<void(vk::CommandBuffer _cmd)>&& 
 	//  _renderFence will now block until the graphic commands finish execution
 	graphics_queue.submit2KHR(submitInfo, immFence, dispatcher);
 
-	device.waitForFences(immFence, VK_TRUE, 9999999999);
+	if(device.waitForFences(immFence, VK_TRUE, 9999999999) != vk::Result::eSuccess)
+	{
+		throw std::runtime_error("Failed GUI");
+	}
 }
 
 

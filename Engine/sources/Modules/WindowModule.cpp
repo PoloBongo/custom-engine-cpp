@@ -5,10 +5,8 @@
 #define GLM_FORCE_RADIANS
 #define GLM_FORCE_DEPTH_ZERO_TO_ONE
 #include <glm.hpp>
-#include <gtc/constants.hpp>
 
 // std
-#include <array>
 #include <cassert>
 #include <chrono>
 #include <stdexcept>
@@ -19,11 +17,11 @@
 #include "Scene/SceneManager.h"
 
 
-void WindowModule::CreateWindowSurface(const vk::Instance _instance, vk::SurfaceKHR* _surface) const
+
+
+WindowModule::WindowModule(): windowName("VulkanIty"), window(nullptr), size(WIDTH,HEIGHT), lastWindowedSize(glm::ivec2(0)), lastWindowedPos(glm::ivec2(0))
 {
-	if (glfwCreateWindowSurface(_instance, window, nullptr, reinterpret_cast<VkSurfaceKHR*>(_surface)) !=
-		VK_SUCCESS)
-		throw std::runtime_error("failed to create window surface");
+	updateWindowTitleFrequency = 0.2f;
 }
 
 // Destructeur de la classe LveWindow
@@ -35,12 +33,18 @@ WindowModule::~WindowModule()
 	glfwTerminate();
 }
 
+void WindowModule::CreateWindowSurface(const vk::Instance _instance, vk::SurfaceKHR* _surface) const
+{
+	if (glfwCreateWindowSurface(_instance, window, nullptr, reinterpret_cast<VkSurfaceKHR*>(_surface)) !=
+		VK_SUCCESS)
+		throw std::runtime_error("failed to create window surface");
+}
+
 void WindowModule::FrameBufferResizeCallBack(GLFWwindow* _window, const int _width, const int _height)
 {
 	const auto window_module = static_cast<WindowModule*>(glfwGetWindowUserPointer(_window));
 	window_module->frameBufferResize = true;
-	window_module->width = _width;
-	window_module->height = _height;
+	window_module->SetSize(_width, _height);
 }
 
 void WindowModule::CubeCursorWindow(const int _color) const
@@ -131,7 +135,7 @@ void WindowModule::Init()
 	glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
 
 	// Crée la fenêtre GLFW avec la taille et le nom spécifiés
-	window = glfwCreateWindow(width, height, windowName.c_str(), nullptr, nullptr);
+	window = glfwCreateWindow(size.x, size.y, windowName.c_str(), nullptr, nullptr);
 	if (!window) {
 		std::cerr << "Erreur lors de la création de la fenêtre GLFW" << std::endl;
 		glfwTerminate();
@@ -145,6 +149,7 @@ void WindowModule::Init()
 void WindowModule::Start()
 {
 	Module::Start();
+	sceneManager = moduleManager->GetModule<SceneManager>();
 }
 
 void WindowModule::FixedUpdate()
@@ -159,6 +164,12 @@ void WindowModule::Update()
 	if (!ShouldClose())
 	{
 		glfwPollEvents();
+		secondsSinceTitleUpdate += TimeModule::GetDeltaTime();
+		if (secondsSinceTitleUpdate >= updateWindowTitleFrequency)
+		{
+			secondsSinceTitleUpdate = 0.0f;
+			SetWindowTitle(GenerateWindowTitle());
+		}
 	}
 	else
 	{
@@ -206,7 +217,7 @@ void WindowModule::Finalize()
 std::string WindowModule::GenerateWindowTitle() const
 {
 	std::string result = windowName;
-	result += " | " + sceneManager->GetCurrentScene()->GetName();
+	result += " | " + sceneManager->GetMainScene()->GetName();
 	if (bShowMSInWindowTitle)
 	{
 		result += " | " + lve::FloatToString(TimeModule::GetDeltaTimeMilliseconds(), 2) + "ms";

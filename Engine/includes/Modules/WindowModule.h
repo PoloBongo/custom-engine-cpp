@@ -238,9 +238,10 @@ class WindowModule final : public Module
 		#pragma endregion
 		[[nodiscard]] bool        GetFrameBufferResize() const { return frameBufferResize; }
 		[[nodiscard]] std::string GetName() const { return windowName; }
+		[[nodiscard]] std::string GetWindowTitle() const { return windowTitle; }
 
-		float GetAspectRatio() const { size.x / static_cast<float>(size.y); }
-		float GetInvAspectRatio() const { size.y / static_cast<float>(size.x); }
+		float GetAspectRatio() const { return static_cast<float>(size.x) / static_cast<float>(size.y); }
+		float GetInvAspectRatio() const { return static_cast<float>(size.y) / static_cast<float>(size.x); }
 		// Autres
 		[[nodiscard]] bool                         GetVSyncEnabled() const { return bVSyncEnabled; }
 		[[nodiscard]] GlfwCursorMode GetCursorMode() const { return cursorMode; }
@@ -256,7 +257,8 @@ class WindowModule final : public Module
 		void SetWidth(const int& _newWidth) { size.x = _newWidth; }
 		void SetHeight(const int& _newHeight) { size.y = _newHeight; }
 		void SetFrameBufferResize(const bool& _state) { frameBufferResize = _state; }
-		void SetName(const std::string& _newName) { windowName = _newName; }
+		void SetName(const std::string& _newName) { windowName = _newName;}
+		void SetWindowTitle(const std::string& _windowTitle) { windowTitle = _windowTitle; glfwSetWindowTitle(window, windowTitle.c_str());}
 
 		// Autres
 
@@ -301,12 +303,13 @@ class WindowModule final : public Module
 		SceneManager* sceneManager = nullptr;
 
 		std::string windowName; // Nom de la fenêtre
+		std::string windowTitle; // Nom de la fenêtre
 		GLFWwindow* window;     // Fenêtre GLFW
 
-		glm::vec2 size             = {0, 0};
-		glm::vec2 startingPosition = {0, 0};
-		glm::vec2 position         = {0, 0};
-		glm::vec2 frameBufferSize  = {0, 0};
+		glm::ivec2 size             = {0, 0};
+		glm::ivec2 startingPosition = {0, 0};
+		glm::ivec2 position         = {0, 0};
+		glm::ivec2 frameBufferSize  = {0, 0};
 		bool      bHasFocus        = false;
 
 		// Whether to move the console to an additional monitor when present
@@ -317,8 +320,8 @@ class WindowModule final : public Module
 		WindowMode currentWindowMode = WindowMode::_NONE;
 
 		// Used to store previous window size and position to restore after exiting fullscreen
-		glm::vec2  lastWindowedSize;
-		glm::vec2  lastWindowedPos;
+		glm::ivec2  lastWindowedSize;
+		glm::ivec2  lastWindowedPos;
 		WindowMode lastNonFullscreenWindowMode = WindowMode::_NONE;
 		// Stores which mode we were in before entering fullscreen
 

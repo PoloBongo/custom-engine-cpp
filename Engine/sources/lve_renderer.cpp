@@ -7,7 +7,7 @@
 
 namespace lve
 {
-	LveRenderer::LveRenderer(LveWindow& window, LveDevice& device) : lveWindow{window}, lveDevice{device}
+	LveRenderer::LveRenderer(WindowModule* _windowModule, LveDevice& _device) : windowModule{_windowModule}, lveDevice{_device}
 	{
 		RecreateSwapChain();
 		CreateCommandBuffers();
@@ -17,10 +17,10 @@ namespace lve
 
 	void LveRenderer::RecreateSwapChain()
 	{
-		auto extent = lveWindow.GetExtent();
+		auto extent = windowModule->GetExtent();
 		while (extent.width == 0 || extent.height == 0)
 		{
-			extent = lveWindow.GetExtent();
+			extent = windowModule->GetExtent();
 			glfwWaitEvents();
 		}
 
@@ -35,7 +35,7 @@ namespace lve
 			std::shared_ptr<LveSwapChain> oldSwapChain = std::move(lveSwapChain);
 			lveSwapChain = std::make_unique<LveSwapChain>(lveDevice, extent, oldSwapChain);
 
-			if (!oldSwapChain->CompareSwapFormats(*lveSwapChain.get()))
+			if (!oldSwapChain->CompareSwapFormats(*lveSwapChain))
 				throw std::runtime_error(
 					"Swap chain image(or depth) format has changed!");
 		}
@@ -46,13 +46,13 @@ namespace lve
 	{
 		commandBuffers.resize(LveSwapChain::MAX_FRAMES_IN_FLIGHT);
 
-		vk::CommandBufferAllocateInfo allocInfo{};
-		allocInfo.sType              = vk::StructureType::eCommandBufferAllocateInfo;
-		allocInfo.level              = vk::CommandBufferLevel::ePrimary;
-		allocInfo.commandPool        = lveDevice.GetCommandPool();
-		allocInfo.commandBufferCount = static_cast<uint32_t>(commandBuffers.size());
+		vk::CommandBufferAllocateInfo alloc_info{};
+		alloc_info.sType              = vk::StructureType::eCommandBufferAllocateInfo;
+		alloc_info.level              = vk::CommandBufferLevel::ePrimary;
+		alloc_info.commandPool        = lveDevice.GetCommandPool();
+		alloc_info.commandBufferCount = static_cast<uint32_t>(commandBuffers.size());
 
-		if (lveDevice.Device().allocateCommandBuffers(&allocInfo, commandBuffers.data()) !=
+		if (lveDevice.Device().allocateCommandBuffers(&alloc_info, commandBuffers.data()) !=
 		    vk::Result::eSuccess)
 			throw std::runtime_error("failed to allocate command buffers!");
 	}
@@ -103,9 +103,9 @@ namespace lve
 
 		if (const auto result = lveSwapChain->SubmitCommandBuffers(&command_buffer, &currentImageIndex);
 			result == vk::Result::eErrorOutOfDateKHR || result == vk::Result::eSuboptimalKHR ||
-			lveWindow.WasWindowResized())
+			windowModule->WasWindowResized())
 		{
-			lveWindow.ResetWindowResizedFlag();
+			windowModule->ResetWindowResizedFlag();
 			RecreateSwapChain();
 		}
 		else if (result != vk::Result::eSuccess)
@@ -125,9 +125,9 @@ namespace lve
 
 		if (const auto result = lveSwapChain->SubmitCommandBuffers(_commandBuffer, &currentImageIndex);
 			result == vk::Result::eErrorOutOfDateKHR || result == vk::Result::eSuboptimalKHR ||
-			lveWindow.WasWindowResized())
+			windowModule->WasWindowResized())
 		{
-			lveWindow.ResetWindowResizedFlag();
+			windowModule->ResetWindowResizedFlag();
 			RecreateSwapChain();
 		}
 		else if (result != vk::Result::eSuccess)

@@ -8,16 +8,13 @@
 #include "rhi.h"
 
 #include "lve_descriptors.h"
-#include "lve_device.h"
 #include "lve_model.h"
 #include "lve_pipeline.h"
 #include "lve_renderer.h"
 #include "Systems/simple_render_system.h"
+#include "Systems/point_light_system.h"
+#include "Modules/WindowModule.h"
 
-namespace lve
-{
-	class PointLightSystem;
-}
 
 class RHIVulkanModule final : public RHIModule
 {
@@ -78,7 +75,6 @@ class RHIVulkanModule final : public RHIModule
 		 */
 		void Finalize() override;
 
-		void LoadGameObjects();
 	private:
 		// Autres méthodes pour la création de la surface, des périphériques logiques, etc.
 
@@ -104,7 +100,7 @@ class RHIVulkanModule final : public RHIModule
 		int frameIndex;
 		lve::GlobalUbo ubo{};
 
-		lve::LveWindow*              p_lveWindow;
+		WindowModule*                windowModule = nullptr;
 		lve::LveSwapChain*           p_lveSwapChain;
 		lve::LveModel*               p_lveModel;
 		lve::LvePipeline*            p_lvePipeline;

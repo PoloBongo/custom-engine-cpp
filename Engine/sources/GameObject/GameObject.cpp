@@ -82,7 +82,7 @@ void GameObject::PreRender()
 {
 }
 
-void GameObject::Render(lve::LveWindow* _window) const
+void GameObject::Render() const
 {
 	/*if (this->isVisible)
 		for (const auto component : components)
