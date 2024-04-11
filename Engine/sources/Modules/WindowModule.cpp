@@ -121,6 +121,21 @@ void WindowModule::SetInputCursorMode(const GlfwCursorMode _mode) const
 }
 
 
+WindowMode WindowModule::StrToWindowMode(const char* _modeStr)
+{
+	for (uint32_t i = 0; i < static_cast<uint32_t>(WindowMode::_NONE); ++i)
+	{
+		if (strcmp(WindowModeStrings[i], _modeStr) == 0)
+		{
+			return static_cast<WindowMode>(i);
+		}
+	}
+
+	std::cout << ("Unhandled window mode passed to StrToWindowMode: %s, returning WindowMode::WINDOWED\n", _modeStr) << std::endl;
+
+	return WindowMode::WINDOWED;
+}
+
 void WindowModule::Init()
 {
 	Module::Init();
@@ -216,7 +231,7 @@ void WindowModule::Finalize()
 
 std::string WindowModule::GenerateWindowTitle() const
 {
-	std::string result = windowName;
+	std::string result = windowName;	
 	result += " | " + sceneManager->GetMainScene()->GetName();
 	if (bShowMSInWindowTitle)
 	{
@@ -226,7 +241,5 @@ std::string WindowModule::GenerateWindowTitle() const
 	{
 		result += " - " + lve::FloatToString(1.0f / TimeModule::GetDeltaTime(), 0) + " FPS ";
 	}
-
-
 	return result;
 }

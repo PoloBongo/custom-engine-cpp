@@ -65,6 +65,7 @@
     <ClCompile Include="sources\TCP\Server\Server.cpp" />
     <ClCompile Include="sources\TCP\Client\TCPClientStart.cpp" />
     <ClCompile Include="sources\TCP\Server\TCPServerStart.cpp" />
+    <ClCompile Include="InputKeyCode.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BoxCollider.h" />
@@ -126,6 +127,7 @@
     <ClInclude Include="includes\TCP\Server\Server.h" />
     <ClInclude Include="includes\TCP\Client\TCPClientStart.h" />
     <ClInclude Include="includes\TCP\Server\TCPServerStart.h" />
+    <ClInclude Include="InputKeyCode.h" />
   </ItemGroup>
   <ItemGroup>
     <CopyFileToFolders Include="..\Librairies\FMOD\lib\fmod.dll" />
@@ -133,5 +135,23 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="imgui.ini" />
+    <None Include="Shaders\point_light.frag" />
+    <None Include="Shaders\point_light.frag.spv" />
+    <None Include="Shaders\point_light.spv" />
+    <None Include="Shaders\point_light.vert" />
+    <None Include="Shaders\point_light.vert.spv" />
+    <None Include="Shaders\simple_shader.frag" />
+    <None Include="Shaders\simple_shader.frag.spv" />
+    <None Include="Shaders\simple_shader.spv" />
+    <None Include="Shaders\simple_shader.vert" />
+    <None Include="Shaders\simple_shader.vert.spv" />
+  </ItemGroup>
+  <ItemGroup>
+    <Object Include="Models\colored_cube.obj" />
+    <Object Include="Models\cube.obj" />
+    <Object Include="Models\flat_vase.obj" />
+    <Object Include="Models\quad.obj" />
+    <Object Include="Models\smooth_vase.obj" />
+    <Object Include="Models\viking_room.obj" />
   </ItemGroup>
 </Project>
