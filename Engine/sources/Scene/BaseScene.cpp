@@ -322,6 +322,12 @@ void BaseScene::FixedUpdate()
  */
 void BaseScene::Update()
 {
+	// Ajoutez tous les objets en attente à la liste principale des objets de la scène
+	for (auto* obj : pendingAddObjects) {
+		rootObjects.push_back(obj);
+	}
+	pendingAddObjects.clear();
+
 	// Mettez � jour chaque objet de la sc�ne avec le delta time
 	for (const GameObject* root_object : rootObjects)
 	{
