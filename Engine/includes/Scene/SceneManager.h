@@ -21,6 +21,7 @@ class SceneManager final : public Module
 		void RunScene(const std::string& _sceneName);
 
 		void       SetMainScene(const std::string& _sceneName);
+		BaseScene* GetMainScene() const { return mainScene; }
 		BaseScene* GetScene(const std::string& _sceneName);
 		void       RenameScene(const std::string& _oldName, const std::string& _newName);
 

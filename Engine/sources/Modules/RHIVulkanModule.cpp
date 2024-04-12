@@ -1,12 +1,11 @@
 #include "Modules/RHIVulkanModule.h"
 
-#include "Transform.h"
 #include "ModuleManager.h"
+#include "Transform.h"
 #include "GameObject/PreGameObject/CubeGameObject.h"
 #include "GameObject/PreGameObject/LightGameObject.h"
 #include "GameObject/PreGameObject/PlaneGameObject.h"
 #include "Modules/TimeModule.h"
-#include "Modules/WindowModule.h"
 #include "Scene/SceneManager.h"
 
 RHIVulkanModule::RHIVulkanModule()
@@ -17,11 +16,11 @@ RHIVulkanModule::~RHIVulkanModule()
 {
 	Release();
 }
-void RHIVulkanModule::Init()
+void RHIVulkanModule:: Init()
 {
-	p_lveWindow = moduleManager->GetModule<WindowModule>()->GetWindow();
-	p_lveDevice = new lve::LveDevice{ *p_lveWindow };
-	p_lveRenderer = new lve::LveRenderer{ *p_lveWindow, *p_lveDevice };
+	windowModule = moduleManager->GetModule<WindowModule>();
+	p_lveDevice = new lve::LveDevice{ windowModule };
+	p_lveRenderer = new lve::LveRenderer{ windowModule, *p_lveDevice };
 }
 
 void RHIVulkanModule::Start()
@@ -82,7 +81,7 @@ void RHIVulkanModule::Update()
 {
 	gameObjects = moduleManager->GetModule<SceneManager>()->GetCurrentScene()->GetAllGameObject();
 
-	cameraController.MoveInPlaneXZ(p_lveWindow->GetGlfwWindow(), TimeModule::GetDeltaTime(), *viewerObject);
+	cameraController.MoveInPlaneXZ(windowModule->GetGlfwWindow(), TimeModule::GetDeltaTime(), *viewerObject);
 	camera->SetViewYXZ(viewerObject->GetPosition(), viewerObject->GetRotation());
 
 	const float aspect = p_lveRenderer->GetAspectRatio();
