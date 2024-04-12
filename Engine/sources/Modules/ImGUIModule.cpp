@@ -17,6 +17,7 @@
 #include "TCP/Errors.h"
 
 class BaseScene;
+// ----------========== IMGUI SETTINGS ==========---------- //
 
 void ImGuiModule::Init()
 {
@@ -209,6 +210,7 @@ void ImGuiModule::ImmediateSubmit(std::function<void(vk::CommandBuffer _cmd)>&& 
 	device.waitForFences(immFence, VK_TRUE, 9999999999);
 }
 
+// ----------========== IMGUI SHOWN ==========---------- //
 
 void ImGuiModule::GetGui()
 {
@@ -221,17 +223,17 @@ void ImGuiModule::GetGui()
 	ImGui::SetNextWindowSize(ImVec2(300, mainWindowSize.y), ImGuiCond_Always); // Hauteur fixe et non-redimensionnable
 	ImGui::SetNextWindowPos(ImVec2(0, 0), ImGuiCond_Always); // Ancrage en haut à gauche
 	ImGui::Begin("Hierarchy", nullptr, window_flags);
-	DrawHierarchy();
+	DrawHierarchyWindow();
 	ImGui::End();
 
 	// Dessin de la fenêtre "Inspector" - Droite
 	ImGui::SetNextWindowSize(ImVec2(300, mainWindowSize.y), ImGuiCond_Always); // Hauteur fixe et non-redimensionnable
 	ImGui::SetNextWindowPos(ImVec2(mainWindowSize.x - 300, 0), ImGuiCond_Always); // Ancrage en haut à droite
 	ImGui::Begin("Inspector", nullptr, window_flags);
-	DrawInspector();
+	DrawInspectorWindow();
 	ImGui::End();
 
-	DrawEngineGUISettings();
+	DrawSettingsWindow();
 }
 
 void ImGuiModule::AnchorWindow(const std::string& _windowName)
@@ -261,7 +263,9 @@ void ImGuiModule::AnchorWindow(const std::string& _windowName)
 	}
 }
 
-void ImGuiModule::DrawInspector() {
+// ----------========== DRAW WINDOWS ==========---------- //
+
+void ImGuiModule::DrawInspectorWindow() {
 	// Vérifier si un GameObject est sélectionné
 	if (selectedGameObject) {
 		// Affichage du nom du GameObject
@@ -296,16 +300,10 @@ void ImGuiModule::DrawInspector() {
 	}
 }
 
-
-void ImGuiModule::DrawHierarchy() {
+void ImGuiModule::DrawHierarchyWindow() {
 	// Bouton pour créer un nouveau GameObject
 	if (ImGui::Button("New GameObject")) {
 		ImGui::OpenPopup("CreateGameObjectPopup");
-
-		//currentScene->CreateGameObject();  // Ajoute un GameObject à la scène actuelle
-		//std::cout << "Added new GameObject to current scene." << std::endl;
-		// Popup pour créer un nouveau GameObject
-
 	}
 	ImGui::SameLine();
 	// Bouton pour ajouter une nouvelle scène
@@ -315,14 +313,18 @@ void ImGuiModule::DrawHierarchy() {
 	if (ImGui::BeginPopup("CreateGameObjectPopup")) {
 		if (ImGui::MenuItem("Cube")) {
 			CreateSpecificGameObject(GameObjectType::Cube);
-			std::cout << "Added new GameObject to current scene." << std::endl;
+			std::cout << "Added new GameObject-Cube to current scene." << std::endl;
 
 		}
 		if (ImGui::MenuItem("Light")) {
 			CreateSpecificGameObject(GameObjectType::Light);
+			std::cout << "Added new GameObject-Light to current scene." << std::endl;
+
 		}
 		if (ImGui::MenuItem("Plane")) {
 			CreateSpecificGameObject(GameObjectType::Plane);
+			std::cout << "Added new GameObject-Plane to current scene." << std::endl;
+
 		}
 		ImGui::EndPopup();
 	}
@@ -424,7 +426,7 @@ void ImGuiModule::DrawHierarchy() {
 	}
 }
 
-void ImGuiModule::DrawEngineGUISettings() {
+void ImGuiModule::DrawSettingsWindow() {
 	if (ImGui::Begin("Settings")) {
 		ImGUIInterface::EditTheme();
 		if (ImGui::CollapsingHeader("Input")) {
@@ -442,6 +444,30 @@ void ImGuiModule::DrawEngineGUISettings() {
 	}
 	ImGui::End();
 }
+
+void ImGuiModule::DisplayTransform(Transform* _transform) {
+	if (!_transform) return;
+
+	// Position
+	glm::vec3 position = _transform->GetPosition();
+	if (ImGui::DragFloat3("Position", &position[0])) {
+		_transform->SetPosition(position);
+	}
+
+	// Rotation
+	glm::vec3 rotation = _transform->GetRotation();
+	if (ImGui::DragFloat3("Rotation", &rotation[0])) {
+		_transform->SetRotation(rotation);
+	}
+
+	// Scale
+	glm::vec3 scale = _transform->GetScale();
+	if (ImGui::DragFloat3("Scale", &scale[0])) {
+		_transform->SetScale(scale);
+	}
+}
+
+// ----------========== POPUPS ==========---------- //
 
 void ImGuiModule::ShowRenamePopup() {
 	// Gestion de la fenêtre popup pour renommer un gameobject
@@ -482,28 +508,7 @@ void ImGuiModule::ShowRenamePopup() {
 	}
 }
 
-// Affiche et permet l'édition des propriétés de transformation d'un objet dans la Hierarchie
-void ImGuiModule::DisplayTransform(Transform* _transform) {
-	if (!_transform) return;
-
-	// Position
-	glm::vec3 position = _transform->GetPosition();
-	if (ImGui::DragFloat3("Position", &position[0])) {
-		_transform->SetPosition(position);
-	}
-
-	// Rotation
-	glm::vec3 rotation = _transform->GetRotation();
-	if (ImGui::DragFloat3("Rotation", &rotation[0])) {
-		_transform->SetRotation(rotation);
-	}
-
-	// Scale
-	glm::vec3 scale = _transform->GetScale();
-	if (ImGui::DragFloat3("Scale", &scale[0])) {
-		_transform->SetScale(scale);
-	}
-}
+// ----------========== RENAME / DELETE / DUPLICATE ==========---------- //
 
 void ImGuiModule::RenameGameObject(GameObject* _gameObject, const std::string& _newName) {
 	if (_gameObject) {
@@ -511,7 +516,6 @@ void ImGuiModule::RenameGameObject(GameObject* _gameObject, const std::string& _
 		_gameObject->SetName(_newName);
 	}
 }
-
 void ImGuiModule::DeleteGameObject(GameObject* _gameObject) {
 	if (_gameObject) {
 		BaseScene* currentScene = sceneManager->GetCurrentScene();
@@ -545,4 +549,3 @@ void ImGuiModule::CreateSpecificGameObject(GameObjectType _type) {
 		}
 	}
 }
-
