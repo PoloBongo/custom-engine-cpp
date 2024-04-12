@@ -8,6 +8,7 @@
 #include "rhi.h"
 
 #include "lve_descriptors.h"
+#include "lve_texture.h"
 #include "lve_device.h"
 #include "lve_model.h"
 #include "lve_pipeline.h"
@@ -91,11 +92,18 @@ class RHIVulkanModule final : public RHIModule
 
 		std::unique_ptr<lve::LveDescriptorSetLayout, std::default_delete<lve::LveDescriptorSetLayout>>* globalSetLayout;
 
+		lve::LveTexture* texture1;
+		lve::LveTexture* texture2;
+		lve::LveTexture* texture3;
+
 		lve::LveCamera* camera;
 		lve::KeyboardMovementController       cameraController{};
 		GameObject* viewerObject;
 
 		std::vector<vk::DescriptorSet>               globalDescriptorSets;
+		std::vector<vk::DescriptorSet>               tex1DescriptorSets;
+		std::vector<vk::DescriptorSet>               tex2DescriptorSets;
+
 		std::vector<std::unique_ptr<lve::LveBuffer>> uboBuffers;
 		std::vector<GameObject*>                gameObjects;
 

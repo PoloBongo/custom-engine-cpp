@@ -25,7 +25,7 @@ namespace lve {
 		vk::ImageView getImageView() { return imageView; }
 		vk::ImageLayout getImageLayout() { return imageLayout; }
 
-		void createTextureDescriptorSet(vk::DescriptorPool descriptorPool, vk::DescriptorSetLayout textureDescriptorSetLayout);
+		//void createTextureDescriptorSet(vk::DescriptorPool descriptorPool, vk::DescriptorSetLayout textureDescriptorSetLayout);
 
 	private:
 

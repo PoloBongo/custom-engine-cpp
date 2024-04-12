@@ -281,34 +281,34 @@ namespace lve {
 
 	}
 
-	void LveTexture::createTextureDescriptorSet(vk::DescriptorPool descriptorPool, vk::DescriptorSetLayout textureDescriptorSetLayout) {
+	//void LveTexture::createTextureDescriptorSet(vk::DescriptorPool descriptorPool, vk::DescriptorSetLayout textureDescriptorSetLayout) {
 
-		vk::DescriptorSetAllocateInfo allocInfo{};
-		allocInfo.sType = vk::StructureType::eDescriptorSetAllocateInfo;
-		allocInfo.descriptorPool = descriptorPool;
-		allocInfo.descriptorSetCount = 1;
-		allocInfo.pSetLayouts = &textureDescriptorSetLayout;
-		
-		if (lveDevice.Device().allocateDescriptorSets(&allocInfo, &descriptorSet) != vk::Result::eSuccess) {
-			throw std::runtime_error("failed to allocate descriptor sets !");
-		}
+	//	vk::DescriptorSetAllocateInfo allocInfo{};
+	//	allocInfo.sType = vk::StructureType::eDescriptorSetAllocateInfo;
+	//	allocInfo.descriptorPool = descriptorPool;
+	//	allocInfo.descriptorSetCount = 1;
+	//	allocInfo.pSetLayouts = &textureDescriptorSetLayout;
+	//	
+	//	if (lveDevice.Device().allocateDescriptorSets(&allocInfo, &descriptorSet) != vk::Result::eSuccess) {
+	//		throw std::runtime_error("failed to allocate descriptor sets !");
+	//	}
 
-		vk::DescriptorImageInfo imageInfo{};
-		imageInfo.sampler = getSampler();
-		imageInfo.imageView = getImageView();
-		imageInfo.imageLayout = getImageLayout();
+	//	vk::DescriptorImageInfo imageInfo{};
+	//	imageInfo.sampler = getSampler();
+	//	imageInfo.imageView = getImageView();
+	//	imageInfo.imageLayout = getImageLayout();
 
-		vk::WriteDescriptorSet descriptorWrite = {};
-		descriptorWrite.sType = vk::StructureType::eWriteDescriptorSet;
-		descriptorWrite.dstSet = descriptorSet; 
-		descriptorWrite.dstBinding = 1;
-		descriptorWrite.dstArrayElement = 0;
-		descriptorWrite.descriptorType = vk::DescriptorType::eCombinedImageSampler;
-		descriptorWrite.descriptorCount = 1;
-		descriptorWrite.pImageInfo = &imageInfo;
+	//	vk::WriteDescriptorSet descriptorWrite = {};
+	//	descriptorWrite.sType = vk::StructureType::eWriteDescriptorSet;
+	//	descriptorWrite.dstSet = descriptorSet; 
+	//	descriptorWrite.dstBinding = 1;
+	//	descriptorWrite.dstArrayElement = 0;
+	//	descriptorWrite.descriptorType = vk::DescriptorType::eCombinedImageSampler;
+	//	descriptorWrite.descriptorCount = 1;
+	//	descriptorWrite.pImageInfo = &imageInfo;
 
-		lveDevice.Device().updateDescriptorSets(1,&descriptorWrite, 0, nullptr);
+	//	lveDevice.Device().updateDescriptorSets(1,&descriptorWrite, 0, nullptr);
 
-	}
+	//}
 
 }

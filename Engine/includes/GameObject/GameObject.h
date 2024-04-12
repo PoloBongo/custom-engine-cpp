@@ -222,6 +222,7 @@ public:
 
 		std::shared_ptr<lve::LveModel>            model{}; /**< Modèle de l'objet. */
 		glm::vec3          color{};     /**< Couleur de l'objet. */
+		int texture = 0;
 	protected:
 		std::string             name = "GameObject";
 		std::vector<Component*> components;

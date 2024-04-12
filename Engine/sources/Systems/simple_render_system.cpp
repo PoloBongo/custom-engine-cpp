@@ -61,22 +61,53 @@ namespace lve
 			pipelineConfig);
 	}
 
-	void SimpleRenderSystem::RenderGameObjects(const std::vector<GameObject*>& _gameObjects, const LveCamera& _camera, const vk::CommandBuffer _commandBuffer, const vk::DescriptorSet _globalDescriptorSet) const
+	void SimpleRenderSystem::RenderGameObjects(const std::vector<GameObject*>& _gameObjects, const LveCamera& _camera, const vk::CommandBuffer _commandBuffer, const vk::DescriptorSet _globalDescriptorSet, const vk::DescriptorSet _tex1DescriptorSet, const vk::DescriptorSet _tex2DescriptorSet) const
 	{
 		// Liaison du pipeline
 		lvePipeline->Bind(_commandBuffer);
 
 		// Liaison de l'ensemble de descripteurs global
-		_commandBuffer.bindDescriptorSets(
-			vk::PipelineBindPoint::eGraphics,
-			pipelineLayout,
-			0,
-			_globalDescriptorSet,
-			nullptr);
+		//_commandBuffer.bindDescriptorSets(
+		//	vk::PipelineBindPoint::eGraphics,
+		//	pipelineLayout,
+		//	0,
+		//	_globalDescriptorSet,
+		//	nullptr);
 
 		for (const auto& game_object : _gameObjects)
 		{
 			if (game_object->model == nullptr) continue;
+
+			switch (game_object->texture) {
+			case 0:
+				_commandBuffer.bindDescriptorSets(
+					vk::PipelineBindPoint::eGraphics,
+					pipelineLayout,
+					0,
+					_globalDescriptorSet,
+					nullptr);
+				break;
+			case 1:
+				_commandBuffer.bindDescriptorSets(
+					vk::PipelineBindPoint::eGraphics,
+					pipelineLayout,
+					0,
+					_tex1DescriptorSet,
+					nullptr);
+				break;
+			case 2:
+				_commandBuffer.bindDescriptorSets(
+					vk::PipelineBindPoint::eGraphics,
+					pipelineLayout,
+					0,
+					_tex2DescriptorSet,
+					nullptr);
+				break;
+
+			}
+
+
+
 			SimplePushConstantData push{};
 			push.modelMatrix  = game_object->GetTransform()->Mat4();
 			push.normalMatrix = game_object->GetTransform()->NormalMatrix();
