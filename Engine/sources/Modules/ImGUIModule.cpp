@@ -321,19 +321,31 @@ void ImGuiModule::DisplayTransform(Transform* _transform) {
 void ImGuiModule::DrawHierarchy() {
 	// Bouton pour créer un nouveau GameObject
 	if (ImGui::Button("New GameObject")) {
-		BaseScene* currentScene = sceneManager->GetCurrentScene();
-		if (currentScene) {
-			currentScene->CreateGameObject();  // Ajoute un GameObject à la scène actuelle
-			std::cout << "Added new GameObject to current scene." << std::endl;
-		}
-		else {
-			std::cout << "No active scene found." << std::endl;
-		}
+		ImGui::OpenPopup("CreateGameObjectPopup");
+
+		//currentScene->CreateGameObject();  // Ajoute un GameObject à la scène actuelle
+		//std::cout << "Added new GameObject to current scene." << std::endl;
+		// Popup pour créer un nouveau GameObject
+
 	}
 	ImGui::SameLine();
 	// Bouton pour ajouter une nouvelle scène
 	if (ImGui::Button("Add New Scene")) {
 		sceneManager->CreateScene("New Scene", false);
+	}
+	if (ImGui::BeginPopup("CreateGameObjectPopup")) {
+		if (ImGui::MenuItem("Cube")) {
+			CreateSpecificGameObject(GameObjectType::Cube);
+			std::cout << "Added new GameObject to current scene." << std::endl;
+
+		}
+		if (ImGui::MenuItem("Light")) {
+			CreateSpecificGameObject(GameObjectType::Light);
+		}
+		if (ImGui::MenuItem("Plane")) {
+			CreateSpecificGameObject(GameObjectType::Plane);
+		}
+		ImGui::EndPopup();
 	}
 
 	// Barre de recherche
@@ -394,7 +406,7 @@ void ImGuiModule::DrawHierarchy() {
 						if (ImGui::MenuItem("Delete")) { DeleteGameObject(selectedGameObject); }
 
 						ImGui::Separator();
-						if (ImGui::MenuItem("Duplicate")) { DuplicateGameObject(j); }
+						if (ImGui::MenuItem("Duplicate")) { /*DuplicateGameObject(selectedGameObject);*/ }
 
 						ImGui::EndPopup();
 					}
@@ -499,35 +511,37 @@ void ImGuiModule::RenameGameObject(GameObject* _gameObject, const std::string& _
 }
 
 void ImGuiModule::DeleteGameObject(GameObject* _gameObject) {
-	//if (_gameObject) {
-	//	// Récupération de la scène active
-	//	BaseScene* currentScene = sceneManager->GetCurrentScene();
-	//	if (currentScene) {
-	//		// Trouve l'index du GameObject dans la scène active
-	//		auto& gameObjects = currentScene->GetRootObjects();
-	//		auto it = std::find(gameObjects.begin(), gameObjects.end(), _gameObject);
-	//		if (it != gameObjects.end()) {
-	//			// Supprime le GameObject et libère la mémoire
-	//			delete* it;
-	//			gameObjects.erase(it);
-
-	//			// Réinitialiser la sélection si c'était l'objet sélectionné
-	//			if (selectedGameObject == _gameObject) {
-	//				selectedGameObject = nullptr;
-	//			}
-	//			std::cout << "Deleted GameObject: " << _gameObject->GetName() << std::endl;
-	//		}
-	//	}
-	//}
+	if (_gameObject) {
+		BaseScene* currentScene = sceneManager->GetCurrentScene();
+		if (currentScene) {
+			currentScene->RemoveObject(_gameObject, true); // Suppression de l'objet
+		}
+	}
 }
 
-void ImGuiModule::DuplicateGameObject(int _index) {
-	//auto& gameObjects = sceneManager->GetMainScene()->GetRootObjects();
-	//if (_index < gameObjects.size()) {
-	//	GameObject* original = gameObjects[_index];
-	//	GameObject* clone = original->Clone();
-	//	
-	//	// Ajoute le clone à la scène
-	//	sceneManager->GetMainScene()->AddRootObject(clone);
-	//}
+void ImGuiModule::DuplicateGameObject(GameObject* _gameObject) {
+
 }
+
+void ImGuiModule::CreateSpecificGameObject(GameObjectType _type) {
+	BaseScene* currentScene = sceneManager->GetCurrentScene();
+	if (currentScene) {
+		GameObject* newGameObject = nullptr;
+		switch (_type) {
+		case GameObjectType::Cube:
+			newGameObject = currentScene->CreateCubeGameObject();
+			break;
+		case GameObjectType::Light:
+			newGameObject = currentScene->CreateLightGameObject();
+			break;
+		case GameObjectType::Plane:
+			newGameObject = currentScene->CreatePlaneGameObject();
+			break;
+		}
+
+		if (newGameObject) {
+			currentScene->AddRootObject(newGameObject);
+		}
+	}
+}
+

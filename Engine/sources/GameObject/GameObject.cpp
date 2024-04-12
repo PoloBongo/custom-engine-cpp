@@ -1,6 +1,6 @@
 #include "GameObject/GameObject.h"
 #include "Transform.h"
-
+#include "Scene/SceneManager.h"
 
 
 
@@ -172,3 +172,4 @@ Component* GameObject::GetComponentRecursive(const std::string& componentName) {
 	// Le composant n'a pas �t� trouv� dans ce GameObject ou ses enfants
 	return nullptr;
 }
+

@@ -128,9 +128,11 @@ public:
 
 	/**
 	 * @brief Duplique l'objet de jeu situé à l'index spécifié.
-	 * @param _index Index de l'objet de jeu à dupliquer.
+	 * @param _gameObject Pointeur vers l'objet de jeu à à dupliquer.
 	 */
-	void DuplicateGameObject(int _index);
+	void DuplicateGameObject(GameObject* _gameObject);
+
+	void CreateSpecificGameObject(GameObjectType _type);
 
 protected:
 	vk::Device device; ///< Périphérique utilisé pour le rendu avec Vulkan.
