@@ -1,3 +1,3 @@
 ENH : WindowModule Update
 
-- Ajout de la sauvegarde et Lecture de fichier
+- Ajout de nouvelles fonctionnalités pour la fenetre

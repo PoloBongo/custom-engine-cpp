@@ -4,6 +4,7 @@
 #include "lve_descriptors.h"
 #include "lve_window.h"
 //std
+#include <iostream>
 #include <string>
 
 #include "GameObject/GameObject.h"
@@ -63,7 +64,9 @@ enum GlfwCursorMode
 	/**< Curseur caché. */
 	NORMAL,
 	/**< Curseur normal (visible). */
-	CAPTURED /**< Curseur capturé (exclusif à la fenêtre). */
+	CAPTURED, /**< Curseur capturé (exclusif à la fenêtre). */
+
+	_NONE
 };
 
 enum class WindowMode
@@ -75,6 +78,7 @@ enum class WindowMode
 
 	_NONE
 };
+
 
 static const char* WindowModeStrings[] =
 {
@@ -137,15 +141,6 @@ public:
 	 * @return Une référence vers l'objet WindowModule après affectation.
 	 */
 	WindowModule& operator=(const WindowModule&) = delete;
-
-	/**
-	 * @brief Vérifie si la fenêtre doit être fermée.
-	 *
-	 * Cette fonction renvoie true si la fenêtre doit être fermée, false sinon.
-	 *
-	 * @return true si la fenêtre doit être fermée, false sinon.
-	 */
-	bool ShouldClose() const { return glfwWindowShouldClose(window); }
 
 	/**
 	 * @brief Obtient les dimensions de la fenêtre.
@@ -228,9 +223,9 @@ public:
 	 * @param _mode
 	 * @param mode Le mode de curseur d'entrée à définir.
 	 */
-	void SetInputCursorMode(GlfwCursorMode _mode) const;
+	void SetInputCursorMode(GlfwCursorMode _mode);
 
-	bool ShouldClose()
+	[[nodiscard]] bool ShouldClose() const
 	{
 		return glfwWindowShouldClose(window);
 	}
@@ -266,8 +261,12 @@ public:
 	[[nodiscard]] bool GetFrameBufferResize() const { return bFrameBufferResize; }
 	[[nodiscard]] bool HasFocus() const { return bHasFocus; }
 
+#pragma region Name&Title
+
 	[[nodiscard]] std::string GetName() const { return windowName; }
 	[[nodiscard]] std::string GetWindowTitle() const { return windowTitle; }
+
+#pragma endregion
 
 	[[nodiscard]] float GetAspectRatio() const { return static_cast<float>(size.x) / static_cast<float>(size.y); }
 	[[nodiscard]] float GetInvAspectRatio() const { return static_cast<float>(size.y) / static_cast<float>(size.x); }
@@ -275,6 +274,11 @@ public:
 	[[nodiscard]] bool GetVSyncEnabled() const { return bVSyncEnabled; }
 	[[nodiscard]] GlfwCursorMode GetCursorMode() const { return cursorMode; }
 	[[nodiscard]] WindowMode GetWindowMode() const { return currentWindowMode; }
+
+	const char* GetClipboardText() const
+	{
+		return glfwGetClipboardString(window);
+	}
 
 #pragma endregion
 
@@ -299,31 +303,69 @@ public:
 
 #pragma endregion
 
-	void SetPosition(const glm::ivec2& _position) { position = _position; }
-
-	void SetPosition(const int32_t& _newPositionX, const int32_t& _newPositionY)
-	{
-		position = glm::vec2(_newPositionX, _newPositionY);
-	}
-
-	void SetPositionX(const int& _positionX) { position.x = _positionX; }
-	void SetPositionY(const int& _positionY) { position.y = _positionY; }
-
-	void SetStartingPosition(const glm::ivec2& _position) { startingPosition = _position; }
-
-	void SetStartingPosition(const int32_t& _newPositionX, const int32_t& _newPositionY)
-	{
-		startingPosition = glm::vec2(_newPositionX, _newPositionY);
-	}
-
-	void SetStartingPositionX(const int& _positionX) { startingPosition.x = _positionX; }
-	void SetStartingPositionY(const int& _positionY) { startingPosition.y = _positionY; }
 
 #pragma region Position
 
+	void SetPosition(const glm::ivec2& _position) {
+		if (window)
+		{
+			glfwSetWindowPos(window, _position.x, _position.y);
+		}
+		else
+		{
+			startingPosition = _position;
+		}
+		OnPositionChanged(_position);
+	}
+
+	void SetPosition(const int32_t& _newPositionX, const int32_t& _newPositionY)
+	{
+		if (window)
+		{
+			glfwSetWindowPos(window, _newPositionX, _newPositionY);
+		}
+		else
+		{
+			startingPosition = { _newPositionX, _newPositionY };
+		}
+		OnPositionChanged(_newPositionX, _newPositionY);
+	}
+
+	void SetPositionX(const int& _positionX) {
+		if (window)
+		{
+			glfwSetWindowPos(window, _positionX, position.y);
+		}
+		else
+		{
+			startingPosition = { _positionX, position.y };
+		}
+		OnPositionChanged(_positionX, position.y);
+	}
+
+	void SetPositionY(const int& _positionY) {
+		if (window)
+		{
+			glfwSetWindowPos(window,  position.x, _positionY);
+		}
+		else
+		{
+			startingPosition = {position.x, _positionY };
+		}
+		OnPositionChanged( position.x, _positionY);
+	}
 
 #pragma endregion
+
+	void SetMousePosition(const glm::ivec2 _mousePosition) const
+	{
+		glfwSetCursorPos(window, static_cast<double>(_mousePosition.x), static_cast<double>(_mousePosition.y));
+	}
+
 	void SetFrameBufferResize(const bool& _state) { bFrameBufferResize = _state; }
+
+#pragma region Name&Title
+
 	void SetName(const std::string& _newName) { windowName = _newName; }
 
 	void SetWindowTitle(const std::string& _windowTitle)
@@ -332,22 +374,147 @@ public:
 		glfwSetWindowTitle(window, windowTitle.c_str());
 	}
 
-	void SetUpdateWindowTitleFrequency(const float _updateFrequencyInSeconds)
+#pragma endregion
+
+	void SetUpdateWindowTitleFrequency(const float& _updateFrequencyInSeconds)
 	{
 		updateWindowTitleFrequency = _updateFrequencyInSeconds;	
 	}
 		
 	// Autres
 
-	void SetVSyncEnabled(const bool _bEnabled) { bVSyncEnabled = _bEnabled; }
-	void SetCursorMode(const GlfwCursorMode _cursorMode) { cursorMode = _cursorMode; }
-	const char* WindowModeToStr(WindowMode _mode)
+	void SetVSyncEnabled(const bool& _bEnabled) { bVSyncEnabled = _bEnabled; }
+	void SetCursorMode(const GlfwCursorMode& _mode)
+	{
+		if (cursorMode != _mode)
+		{
+			cursorMode = _mode;
+			//g_InputManager->OnCursorModeChanged(_mode);
+		}
+	}
+	const char* WindowModeToStr(WindowMode& _mode)
 	{
 		return WindowModeStrings[static_cast<int32_t>(_mode)];
 	}
 
+void SetCursorPos(const glm::vec2& _newCursorPos) const
+	{
+		glfwSetCursorPos(window, _newCursorPos.x, _newCursorPos.y);
+	}
+
+void SetWindowMode(const WindowMode& _mode, const bool _bForce = false)
+	{
+	if (_bForce || currentWindowMode != _mode)
+	{
+		currentWindowMode = _mode;
+
+		GLFWmonitor* monitor = glfwGetPrimaryMonitor();
+		if (!monitor)
+		{
+			std::cout << ("Failed to find primary monitor! Can't set window mode\n");
+			return;
+		}
+
+		const GLFWvidmode* video_mode = glfwGetVideoMode(monitor);
+		if (!video_mode)
+		{
+			std::cout << ("Failed to get monitor's video mode! Can't set window mode\n");
+			return;
+		}
+
+		switch (_mode)
+		{
+		case WindowMode::FULLSCREEN:
+		{
+			glfwSetWindowMonitor(window, monitor, 0, 0, video_mode->width, video_mode->height, video_mode->refreshRate);
+		} break;
+		case WindowMode::WINDOWED_FULLSCREEN:
+		{
+			glfwSetWindowMonitor(window, monitor, 0, 0, video_mode->width, video_mode->height, video_mode->refreshRate);
+			lastNonFullscreenWindowMode = WindowMode::WINDOWED_FULLSCREEN;
+		} break;
+		case WindowMode::WINDOWED:
+		{
+			//CHECK(lastWindowedSize.x != 0 && lastWindowedSize.y != 0);
+
+			if (lastWindowedPos.y == 0)
+			{
+				// When in windowed mode a y position of 0 means the title bar isn't
+				// visible. This will occur if the app launched in fullscreen since
+				// the last y position to never have been set to a valid value.
+				lastWindowedPos.y = 40;
+			}
+
+			glfwSetWindowMonitor(window, nullptr, lastWindowedPos.x, lastWindowedPos.y,lastWindowedSize.x,lastWindowedSize.y, video_mode->refreshRate);
+			lastNonFullscreenWindowMode = WindowMode::WINDOWED;
+		} break;
+		case WindowMode::_NONE:
+		default:
+		{
+			std::cout << ("Unhandled window mode: %u\n", static_cast<uint32_t>(_mode));
+		} break;
+		}
+	}
+	}
+
+void SetClipboardText(const char* _text) const
+{
+	glfwSetClipboardString(window, _text);
+}
+
 #pragma endregion
 
+	
+
+	void OnSizeChanged(const int32_t _width, const int32_t _height)
+	{
+		size = glm::ivec2(_width, _height);
+		frameBufferSize = size;
+		if (currentWindowMode == WindowMode::WINDOWED)
+		{
+			lastWindowedSize = size;
+		}
+
+		/*if (g_Renderer)
+		{
+			g_Renderer->OnWindowSizeChanged(_width, _height);
+		}*/
+	}
+
+	void OnSizeChanged(const glm::ivec2& _newPosition)
+	{
+		size = _newPosition;
+		frameBufferSize = size;
+		if (currentWindowMode == WindowMode::WINDOWED)
+		{
+			lastWindowedSize = size;
+		}
+
+		/*if (g_Renderer)
+		{
+			g_Renderer->OnWindowSizeChanged(_width, _height);
+		}*/
+	}
+
+	void OnPositionChanged(const int32_t _newPositionX, const int32_t _newPositionY)
+	{
+		position = glm::ivec2{ _newPositionX, _newPositionY };
+
+		if (currentWindowMode == WindowMode::WINDOWED)
+		{
+			lastWindowedPos = position;
+		}
+	}
+
+	void OnPositionChanged(const glm::ivec2& _newPosition)
+	{
+		position = _newPosition;
+
+		if (currentWindowMode == WindowMode::WINDOWED)
+		{
+			lastWindowedPos = position;
+		}
+	}
 	/*void KeyCallback(Inputs::KeyCode keycode, Inputs::KeyAction action, int32_t mods){}
 	void CharCallback(uint32_t character){}
 	void MouseButtonCallback(Inputs::MouseButton mouseButton, Inputs::KeyAction action, int32_t mods){}
@@ -360,6 +527,28 @@ public:
 
 
 	WindowMode StrToWindowMode(const char* _modeStr);
+	void ToggleFullscreen(const bool _bForce = false)
+	{
+		if (currentWindowMode == WindowMode::FULLSCREEN)
+		{
+			//CHECK(lastNonFullscreenWindowMode == WindowMode::WINDOWED || lastNonFullscreenWindowMode == WindowMode::WINDOWED_FULLSCREEN);
+
+			SetWindowMode(lastNonFullscreenWindowMode, _bForce);
+		}
+		else
+		{
+			SetWindowMode(WindowMode::FULLSCREEN, _bForce);
+		}
+	}
+	void Maximize() const
+	{
+		glfwMaximizeWindow(window);
+	}
+
+	void Iconify() const
+	{
+		glfwIconifyWindow(window);
+	}
 
 	/**
 	 * @brief Initialise la fenêtre GLFW.
