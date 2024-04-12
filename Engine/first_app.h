@@ -1,3 +1,4 @@
+/*
 #pragma once
 
 #include "lve_descriptors.h"
@@ -16,7 +17,7 @@ namespace lve
 	 * @brief Classe représentant la première application utilisant Vulkan.
 	 *
 	 * Cette classe gère l'exécution de la première application Vulkan, incluant la création de la fenêtre.
-	 */
+	 #1#
 	class FirstApp
 	{
 		public:
@@ -33,7 +34,7 @@ namespace lve
 			 * @brief Lance l'exécution de l'application.
 			 *
 			 * Cette fonction démarre l'exécution de l'application Vulkan, y compris la création de la fenêtre.
-			 */
+			 #1#
 			void Run();
 
 		private:
@@ -48,3 +49,4 @@ namespace lve
 			LveGameObject::Map                 gameObjects;
 	};
 } // namespace lve
+*/

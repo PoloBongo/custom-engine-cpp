@@ -3,13 +3,31 @@
 #include "first_app.h"
 #include "Modules/SoundSystemModule.h"
 
+#include "TCP/Client/TCPClientStart.h"
+#include "TCP/Server/TCPServerStart.h"
+
 #include <cstdlib>
 #include <iostream>
 
-int main()
+int main(int argc, char* argv[])
 {
 	EngineTestCode engine_test_code;
 	engine_test_code.TestCode();
+
+	printf("You have entered %d arguments:\n", argc);
+
+	for (int i = 0; i < argc; i++) {
+		if (strcmp(argv[i], "clientTCP") == 0)
+		{
+			TCPClientStart client;
+			client.TCPClient();
+		}
+		if (strcmp(argv[i], "serverTCP") == 0)
+		{
+			TCPServerStart server;
+			server.TCPServer();
+		}
+	}
 
 	//SoundSystemModule sound;
 	//SoundClass soundSample;
@@ -35,16 +53,16 @@ int main()
 	//SceneManager* scene_module = engine->GetModuleManager()->GetModule<SceneManager>();
 	//scene_module->SetScene<MenuScene>();
 
-	try
-	{
+	/*try
+	{*/
 		engine->Run();
 		//app.Run();
-	}
+	/*}
 	catch (const std::exception& e)
 	{
 		std::cerr << e.what() << std::endl;
 		return EXIT_FAILURE;
-	}
+	}*/
 
 	//sound.releaseSound(soundSample);
 

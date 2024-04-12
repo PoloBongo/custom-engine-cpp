@@ -17,6 +17,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Test", "Test\Test.vcxproj",
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		ClientTCP|x64 = ClientTCP|x64
+		ClientTCP|x86 = ClientTCP|x86
 		Debug|x64 = Debug|x64
 		Debug|x86 = Debug|x86
 		MinSizeRel|x64 = MinSizeRel|x64
@@ -25,8 +27,14 @@ Global
 		Release|x86 = Release|x86
 		RelWithDebInfo|x64 = RelWithDebInfo|x64
 		RelWithDebInfo|x86 = RelWithDebInfo|x86
+		ServerTCP|x64 = ServerTCP|x64
+		ServerTCP|x86 = ServerTCP|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{3F6B355B-73BE-4B94-8850-041F0DA72704}.ClientTCP|x64.ActiveCfg = ClientTCP|x64
+		{3F6B355B-73BE-4B94-8850-041F0DA72704}.ClientTCP|x64.Build.0 = ClientTCP|x64
+		{3F6B355B-73BE-4B94-8850-041F0DA72704}.ClientTCP|x86.ActiveCfg = ClientTCP|Win32
+		{3F6B355B-73BE-4B94-8850-041F0DA72704}.ClientTCP|x86.Build.0 = ClientTCP|Win32
 		{3F6B355B-73BE-4B94-8850-041F0DA72704}.Debug|x64.ActiveCfg = Debug|x64
 		{3F6B355B-73BE-4B94-8850-041F0DA72704}.Debug|x64.Build.0 = Debug|x64
 		{3F6B355B-73BE-4B94-8850-041F0DA72704}.Debug|x86.ActiveCfg = Debug|Win32
@@ -43,6 +51,14 @@ Global
 		{3F6B355B-73BE-4B94-8850-041F0DA72704}.RelWithDebInfo|x64.Build.0 = Release|x64
 		{3F6B355B-73BE-4B94-8850-041F0DA72704}.RelWithDebInfo|x86.ActiveCfg = Release|Win32
 		{3F6B355B-73BE-4B94-8850-041F0DA72704}.RelWithDebInfo|x86.Build.0 = Release|Win32
+		{3F6B355B-73BE-4B94-8850-041F0DA72704}.ServerTCP|x64.ActiveCfg = ServerTCP|x64
+		{3F6B355B-73BE-4B94-8850-041F0DA72704}.ServerTCP|x64.Build.0 = ServerTCP|x64
+		{3F6B355B-73BE-4B94-8850-041F0DA72704}.ServerTCP|x86.ActiveCfg = ServerTCP|Win32
+		{3F6B355B-73BE-4B94-8850-041F0DA72704}.ServerTCP|x86.Build.0 = ServerTCP|Win32
+		{DDA8E77C-B563-416C-85DE-C00CC2C5444F}.ClientTCP|x64.ActiveCfg = ClientTCP|x64
+		{DDA8E77C-B563-416C-85DE-C00CC2C5444F}.ClientTCP|x64.Build.0 = ClientTCP|x64
+		{DDA8E77C-B563-416C-85DE-C00CC2C5444F}.ClientTCP|x86.ActiveCfg = ClientTCP|Win32
+		{DDA8E77C-B563-416C-85DE-C00CC2C5444F}.ClientTCP|x86.Build.0 = ClientTCP|Win32
 		{DDA8E77C-B563-416C-85DE-C00CC2C5444F}.Debug|x64.ActiveCfg = Debug|x64
 		{DDA8E77C-B563-416C-85DE-C00CC2C5444F}.Debug|x64.Build.0 = Debug|x64
 		{DDA8E77C-B563-416C-85DE-C00CC2C5444F}.Debug|x86.ActiveCfg = Debug|Win32
@@ -59,6 +75,14 @@ Global
 		{DDA8E77C-B563-416C-85DE-C00CC2C5444F}.RelWithDebInfo|x64.Build.0 = Release|x64
 		{DDA8E77C-B563-416C-85DE-C00CC2C5444F}.RelWithDebInfo|x86.ActiveCfg = Release|Win32
 		{DDA8E77C-B563-416C-85DE-C00CC2C5444F}.RelWithDebInfo|x86.Build.0 = Release|Win32
+		{DDA8E77C-B563-416C-85DE-C00CC2C5444F}.ServerTCP|x64.ActiveCfg = ServerTCP|x64
+		{DDA8E77C-B563-416C-85DE-C00CC2C5444F}.ServerTCP|x64.Build.0 = ServerTCP|x64
+		{DDA8E77C-B563-416C-85DE-C00CC2C5444F}.ServerTCP|x86.ActiveCfg = ServerTCP|Win32
+		{DDA8E77C-B563-416C-85DE-C00CC2C5444F}.ServerTCP|x86.Build.0 = ServerTCP|Win32
+		{B0C43174-830E-4067-95F9-0ABCF728479F}.ClientTCP|x64.ActiveCfg = ClientTCP|x64
+		{B0C43174-830E-4067-95F9-0ABCF728479F}.ClientTCP|x64.Build.0 = ClientTCP|x64
+		{B0C43174-830E-4067-95F9-0ABCF728479F}.ClientTCP|x86.ActiveCfg = ClientTCP|Win32
+		{B0C43174-830E-4067-95F9-0ABCF728479F}.ClientTCP|x86.Build.0 = ClientTCP|Win32
 		{B0C43174-830E-4067-95F9-0ABCF728479F}.Debug|x64.ActiveCfg = Debug|x64
 		{B0C43174-830E-4067-95F9-0ABCF728479F}.Debug|x64.Build.0 = Debug|x64
 		{B0C43174-830E-4067-95F9-0ABCF728479F}.Debug|x86.ActiveCfg = Debug|Win32
@@ -71,6 +95,10 @@ Global
 		{B0C43174-830E-4067-95F9-0ABCF728479F}.Release|x86.Build.0 = Release|Win32
 		{B0C43174-830E-4067-95F9-0ABCF728479F}.RelWithDebInfo|x64.ActiveCfg = Release|x64
 		{B0C43174-830E-4067-95F9-0ABCF728479F}.RelWithDebInfo|x86.ActiveCfg = Release|Win32
+		{B0C43174-830E-4067-95F9-0ABCF728479F}.ServerTCP|x64.ActiveCfg = ServerTCP|x64
+		{B0C43174-830E-4067-95F9-0ABCF728479F}.ServerTCP|x64.Build.0 = ServerTCP|x64
+		{B0C43174-830E-4067-95F9-0ABCF728479F}.ServerTCP|x86.ActiveCfg = ServerTCP|Win32
+		{B0C43174-830E-4067-95F9-0ABCF728479F}.ServerTCP|x86.Build.0 = ServerTCP|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

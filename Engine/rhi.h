@@ -1,9 +1,11 @@
 #pragma once
 #pragma once
+#include "lve_renderer.h"
 #include "Modules/Module.h"
 
 class RHIModule : public Module
 {
+
 	public:
 		virtual ~RHIModule()
 		= default;
@@ -57,4 +59,14 @@ class RHIModule : public Module
 		 * @brief Finalise le module.
 		 */
 		void Finalize() override = 0;
+
+		lve::LveDevice*   GetDevice() const { return p_lveDevice; }
+		lve::LveRenderer* GetRenderer() const { return p_lveRenderer; }
+
+		void SetDevice(lve::LveDevice* _pDevice) { p_lveDevice = _pDevice; }
+		void SetRenderer(lve::LveRenderer* _pRenderer) { p_lveRenderer = _pRenderer; }
+
+	protected:
+		lve::LveDevice* p_lveDevice;
+		lve::LveRenderer* p_lveRenderer;
 };

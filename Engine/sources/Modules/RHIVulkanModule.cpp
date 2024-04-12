@@ -1,6 +1,15 @@
 #include "Modules/RHIVulkanModule.h"
 
-RHIVulkanModule::RHIVulkanModule() : instance(VK_NULL_HANDLE), debugMessenger(VK_NULL_HANDLE)
+#include "Transform.h"
+#include "ModuleManager.h"
+#include "GameObject/PreGameObject/CubeGameObject.h"
+#include "GameObject/PreGameObject/LightGameObject.h"
+#include "GameObject/PreGameObject/PlaneGameObject.h"
+#include "Modules/TimeModule.h"
+#include "Modules/WindowModule.h"
+#include "Scene/SceneManager.h"
+
+RHIVulkanModule::RHIVulkanModule()
 {
 }
 
@@ -8,41 +17,61 @@ RHIVulkanModule::~RHIVulkanModule()
 {
 	Release();
 }
-
-bool RHIVulkanModule::CreateVulkanInstance()
-{
-	instance = new vk::Instance(p_lveDevice->CreateInstance());
-	if (instance != VK_NULL_HANDLE)
-		// Gestion des erreurs
-		return false;
-
-	return true;
-}
-
-bool RHIVulkanModule::SetupDebugMessenger()
-{
-	debugMessenger = new vk::DebugUtilsMessengerEXT(p_lveDevice->SetupDebugMessenger());
-	if (debugMessenger != VK_NULL_HANDLE)
-		// Gestion des erreurs
-		return false;
-
-	return true;
-}
-
 void RHIVulkanModule::Init()
 {
-	p_lveWindow = new lve::LveWindow{WIDTH, HEIGHT, "Hello Vulkan!"};
-	p_lveDevice = new lve::LveDevice{*p_lveWindow};
-
-	if (!CreateVulkanInstance()) throw std::runtime_error("Failed");
-
-	if (!SetupDebugMessenger()) throw std::runtime_error("Failed");
-
-	// Autres étapes d'initialisation de Vulkan
+	p_lveWindow = moduleManager->GetModule<WindowModule>()->GetWindow();
+	p_lveDevice = new lve::LveDevice{ *p_lveWindow };
+	p_lveRenderer = new lve::LveRenderer{ *p_lveWindow, *p_lveDevice };
 }
 
 void RHIVulkanModule::Start()
 {
+	builder = new lve::LveDescriptorPool::Builder{ *p_lveDevice };
+	builder->SetMaxSets(lve::LveSwapChain::MAX_FRAMES_IN_FLIGHT)
+		.AddPoolSize(vk::DescriptorType::eUniformBuffer, lve::LveSwapChain::MAX_FRAMES_IN_FLIGHT);
+
+	globalPool = builder->Build();
+
+	camera = new lve::LveCamera{};
+	uboBuffers.resize(lve::LveSwapChain::MAX_FRAMES_IN_FLIGHT);
+
+	for (int i = 0; i < uboBuffers.size(); i++)
+	{
+		uboBuffers[i] = std::make_unique<lve::LveBuffer>(
+			*p_lveDevice,
+			sizeof(lve::GlobalUbo),
+			1,
+			vk::BufferUsageFlagBits::eUniformBuffer,
+			vk::MemoryPropertyFlagBits::eHostVisible);
+
+		uboBuffers[i]->Map();
+	}
+
+	const auto global_set_layout = lve::LveDescriptorSetLayout::Builder(*p_lveDevice)
+		.AddBinding(0, vk::DescriptorType::eUniformBuffer,
+			vk::ShaderStageFlagBits::eAllGraphics)
+		.Build();
+
+	globalDescriptorSets.resize(lve::LveSwapChain::MAX_FRAMES_IN_FLIGHT);
+
+	for (size_t i = 0; i < globalDescriptorSets.size(); i++)
+	{
+		auto buffer_info = uboBuffers[i]->DescriptorInfo();
+		lve::LveDescriptorWriter(*global_set_layout, *globalPool)
+			.WriteBuffer(0, &buffer_info)
+			.Build(globalDescriptorSets[i]);
+	}
+
+	simpleRenderSystem = new lve::SimpleRenderSystem{
+		*p_lveDevice, p_lveRenderer->GetSwapChainRenderPass(), global_set_layout->GetDescriptorSetLayout()
+	};
+	pointLightSystem = new lve::PointLightSystem{
+		*p_lveDevice, p_lveRenderer->GetSwapChainRenderPass(), global_set_layout->GetDescriptorSetLayout()
+	};
+
+	viewerObject = new GameObject(GameObject::CreateGameObject());
+	viewerObject->GetTransform()->SetPosition(glm::vec3{ 0.f,0.f,-2.5f });
+
 }
 
 void RHIVulkanModule::FixedUpdate()
@@ -51,16 +80,40 @@ void RHIVulkanModule::FixedUpdate()
 
 void RHIVulkanModule::Update()
 {
+	gameObjects = moduleManager->GetModule<SceneManager>()->GetCurrentScene()->GetAllGameObject();
+
+	cameraController.MoveInPlaneXZ(p_lveWindow->GetGlfwWindow(), TimeModule::GetDeltaTime(), *viewerObject);
+	camera->SetViewYXZ(viewerObject->GetPosition(), viewerObject->GetRotation());
+
+	const float aspect = p_lveRenderer->GetAspectRatio();
+	camera->SetPerspectiveProjection(glm::radians(50.f), aspect, 0.1f, 100.f);
+
+	ubo.projection = camera->GetProjection();
+	ubo.view = camera->GetView();
+
+	pointLightSystem->Update(gameObjects, ubo);
 }
 
 void RHIVulkanModule::PreRender()
 {
 	currentCommandBuffer.reset(new vk::CommandBuffer(p_lveRenderer->BeginFrame()));
-	p_lveRenderer->BeginSwapChainRenderPass(*currentCommandBuffer);
+	if (currentCommandBuffer)
+	{
+		frameIndex = p_lveRenderer->GetFrameIndex();
+		const float frame_time = TimeModule::GetDeltaTime();
+		// update
+
+		uboBuffers[frameIndex]->WriteToBuffer(&ubo);
+		uboBuffers[frameIndex]->Flush();
+		p_lveRenderer->BeginSwapChainRenderPass(*currentCommandBuffer);
+	}
+	
 }
 
 void RHIVulkanModule::Render()
 {
+	simpleRenderSystem->RenderGameObjects(gameObjects, *camera, *currentCommandBuffer, globalDescriptorSets[frameIndex]);      //render shadow casting objects
+	pointLightSystem->Render(gameObjects, *camera, *currentCommandBuffer, globalDescriptorSets[frameIndex]);                 //render shadow casting objects
 }
 
 void RHIVulkanModule::RenderGui()
@@ -75,16 +128,6 @@ void RHIVulkanModule::PostRender()
 
 void RHIVulkanModule::Release()
 {
-	if (instance != VK_NULL_HANDLE)
-	{
-		instance->destroy();
-		delete instance;
-	}
-	if (instance != VK_NULL_HANDLE)
-	{
-		instance->destroy();
-		delete instance;
-	}
 }
 
 void RHIVulkanModule::Finalize()

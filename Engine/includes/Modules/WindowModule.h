@@ -22,19 +22,21 @@
 #include <string>
 #include <vector>
 
+#include "GameObject/GameObject.h"
+
 
 /**
  * @brief Classe WindowModule.
  *
- * Cette classe représente le gestionnaire de fenêtres dans le système.
- * Elle hérite de la classe Module, ce qui lui permet d'être intégrée dans le système de modules.
- * Le WindowModule est responsable de la gestion et de la manipulation des fenêtres de l'application.
+ * Cette classe reprï¿½sente le gestionnaire de fenï¿½tres dans le systï¿½me.
+ * Elle hï¿½rite de la classe Module, ce qui lui permet d'ï¿½tre intï¿½grï¿½e dans le systï¿½me de modules.
+ * Le WindowModule est responsable de la gestion et de la manipulation des fenï¿½tres de l'application.
  */
 class WindowModule final : public Module
 {
 	public:
-		static constexpr int WIDTH  = 800; ///< Largeur de la fenêtre par défaut.
-		static constexpr int HEIGHT = 600; ///< Hauteur de la fenêtre par défaut.
+		static constexpr int WIDTH  = 800; ///< Largeur de la fenï¿½tre par dï¿½faut.
+		static constexpr int HEIGHT = 600; ///< Hauteur de la fenï¿½tre par dï¿½faut.
 
 		void Init() override;
 		void Start() override;
@@ -45,43 +47,11 @@ class WindowModule final : public Module
 		void RenderGui() override;
 		void PostRender() override;
 		void Release() override;
+		void Finalize() override;
 
-		lve::LveWindow*   GetWindow() { return &lveWindow; }
-		lve::LveDevice*   GetDevice() { return &lveDevice; }
-		lve::LveRenderer* GetRenderer() { return &lveRenderer; }
+		lve::LveWindow*   GetWindow() const { return lveWindow; }
 
 	private:
-		void LoadGameObjects();
 
-		lve::LveWindow   lveWindow{WIDTH, HEIGHT, "Hello Vulkan!"}; /// Fenêtre de l'application.
-		lve::LveDevice   lveDevice{lveWindow};
-		lve::LveRenderer lveRenderer{lveWindow, lveDevice};
-
-		lve::LveDescriptorPool::Builder builder{lveDevice};
-
-		std::unique_ptr<lve::LveDescriptorSetLayout, std::default_delete<lve::LveDescriptorSetLayout>>* globalSetLayout;
-
-		std::vector<std::unique_ptr<lve::LveTexture>> textures;
-		lve::LveTexture* texture1;
-		lve::LveTexture* texture2;
-		lve::LveTexture* texture3;
-
-		lve::SimpleRenderSystem* simpleRenderSystem;
-		lve::PointLightSystem*   pointLightSystem;
-		lve::LveCamera*          camera;
-
-		std::chrono::steady_clock::time_point currentTime;
-		lve::KeyboardMovementController       cameraController{};
-		lve::LveGameObject*                   viewerObject;
-
-		std::vector<vk::DescriptorSet>               globalDescriptorSets;
-		std::vector<vk::DescriptorSet>               tex1DescriptorSets;
-		std::vector<vk::DescriptorSet>               tex2DescriptorSets;
-		std::vector<std::unique_ptr<lve::LveBuffer>> uboBuffers;
-
-		// note : order of declarations matters
-		std::unique_ptr<lve::LveDescriptorPool> globalPool{};
-		lve::LveGameObject::Map*                gameObjects;
-
-		vk::CommandBuffer* p_commandBuffer;
+		lve::LveWindow*   lveWindow; /// Fenï¿½tre de l'application.
 };

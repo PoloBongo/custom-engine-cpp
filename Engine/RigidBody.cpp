@@ -18,7 +18,7 @@ RigidBody::RigidBody(btDiscreteDynamicsWorld* _dynamicsWorld, btCollisionShape* 
 	dynamicsWorld->addRigidBody(rigidBody);
 }
 
-void RigidBody::Update(const float& _deltaTime)
+void RigidBody::Update()
 {
 	dynamicsWorld->stepSimulation(1 / 60.f);
 }

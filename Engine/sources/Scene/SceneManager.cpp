@@ -6,17 +6,6 @@
 
 
 /**
- * @brief Démarre le gestionnaire de scènes.
- * Initialise le gestionnaire de fenêtres.
- */
-void SceneManager::Start()
-{
-	Module::Start();
-
-	windowModule = moduleModule->GetModule<WindowModule>();
-}
-
-/**
  * @brief Crée une nouvelle scène.
  * @param _name Nom de la nouvelle scène.
  * @param _isActive Indique si la nouvelle scène est active.
@@ -24,6 +13,7 @@ void SceneManager::Start()
 void SceneManager::CreateScene(std::string _name, bool _isActive)
 {
 	listScenes.insert(std::make_pair(_name, _isActive));
+	scenes.push_back(std::make_unique<BaseScene>(_name));
 }
 
 /**
@@ -132,20 +122,6 @@ BaseScene* SceneManager::GetCurrentScene() const
 }
 
 /**
- * @brief Détruit toutes les scènes et vide la liste des scènes.
- * L'index de la scène courante est réinitialisé à -1.
- */
-void SceneManager::Destroy()
-{
-	if (currentSceneIndex >= 0 && currentSceneIndex < static_cast<int>(scenes.size()))
-		scenes[currentSceneIndex]->
-			Finalize();
-
-	scenes.clear();
-	currentSceneIndex = -1;
-}
-
-/**
  * @brief Vérifie si un fichier de scène existe dans la liste des scènes.
  * @param fileName Nom du fichier de scène à rechercher.
  * @return true si le fichier de scène existe, sinon false.
@@ -214,6 +190,23 @@ bool SceneManager::LoadSceneFromFile(const std::string& _fileName)
 	return true;
 }
 
+
+void SceneManager::RunScene(const std::string& _sceneName)
+{
+	if(listScenes.contains(_sceneName))
+	{
+		if(sceneActive)
+		{
+			GetCurrentScene()->Release();
+			GetCurrentScene()->Finalize();
+		}
+		SetMainScene(_sceneName);
+		mainScene->Init();
+		mainScene->Start();
+	}
+}
+
+
 /**
  * @brief Définit la scène principale à utiliser.
  * @param _sceneName Nom de la scène à définir comme scène principale.
@@ -222,6 +215,14 @@ void SceneManager::SetMainScene(const std::string& _sceneName)
 {
 	if (const auto it = listScenes.find(_sceneName);
 		it != listScenes.end()) currentSceneIndex = std::distance(listScenes.begin(), it);
+	for (const auto& scene : scenes)
+	{
+		if(scene->name == _sceneName)
+		{
+			mainScene = scene.get();
+			break;
+		}
+	}
 }
 
 
@@ -251,21 +252,80 @@ void SceneManager::RenameScene(const std::string& _oldName, const std::string& _
 	}
 }
 
-/**
- * @brief Met à jour la scène principale.
- * Appelle la méthode Update de la scène principale avec un delta time fixe.
- */
-void SceneManager::UpdateMainScene() const
+
+
+void SceneManager::Init()
 {
-	constexpr float delta_time = 0.016f;
-	mainScene->Update(delta_time); // Appel de la méthode Update de BaseScene
+	Module::Init();
+	CreateScene("SampleScene", true);
+	SetMainScene("SampleScene");
+
 }
 
 /**
- * @brief Effectue le rendu de la scène principale.
- * Appelle la méthode Render de la scène principale en passant le pointeur de la fenêtre.
+ * @brief Démarre le gestionnaire de scènes.
+ * Initialise le gestionnaire de fenêtres.
  */
-void SceneManager::RenderMainScene() const
+void SceneManager::Start()
 {
-	mainScene->Render(windowModule->GetWindow()); // Passer le pointeur de la fenêtre à la fonction Render
+	Module::Start();
+	RunScene("SampleScene");
+	windowModule = moduleManager->GetModule<WindowModule>();
+}
+
+void SceneManager::FixedUpdate()
+{
+	Module::FixedUpdate();
+	if (mainScene) mainScene->FixedUpdate();
+}
+
+void SceneManager::Update()
+{
+	Module::Update();
+	if (mainScene) mainScene->Update();
+}
+
+void SceneManager::PreRender()
+{
+	Module::PreRender();
+	if (mainScene) mainScene->PreRender();
+}
+
+void SceneManager::Render()
+{
+	Module::Render();
+	if (mainScene) mainScene->Render();
+}
+
+void SceneManager::RenderGui()
+{
+	Module::RenderGui();
+	if (mainScene) mainScene->RenderGui();
+}
+
+void SceneManager::PostRender()
+{
+	Module::PostRender();
+	if (mainScene) mainScene->PostRender();
+}
+
+/**
+ * @brief Détruit toutes les scènes et vide la liste des scènes.
+ * L'index de la scène courante est réinitialisé à -1.
+ */
+void SceneManager::Release()
+{
+	if (mainScene) mainScene->Release();
+	if (mainScene) mainScene->Finalize();
+	if (currentSceneIndex >= 0 && currentSceneIndex < static_cast<int>(scenes.size()))
+		scenes[currentSceneIndex]->
+		Finalize();
+
+	scenes.clear();
+	currentSceneIndex = -1;
+}
+
+void SceneManager::Finalize()
+{
+	Module::Finalize();
 }

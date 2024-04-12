@@ -2,13 +2,19 @@
 #include <fstream>
 #include <iostream>
 #include <string>
-#include "GameObject/GameObject.h"
+
+#include "CoreEngine.h"
+#include "rhi.h"
+#include "GameObject/PreGameObject/CubeGameObject.h"
+#include "GameObject/PreGameObject/LightGameObject.h"
+#include "GameObject/PreGameObject/PlaneGameObject.h"
+#include "Modules/TimeModule.h"
 
 
 /**
- * @brief Ajoute un objet de jeu en tant qu'objet racine à la scène.
- * @param _gameObject Pointeur vers l'objet de jeu à ajouter.
- * @return Pointeur vers l'objet de jeu ajouté.
+ * @brief Ajoute un objet de jeu en tant qu'objet racine ï¿½ la scï¿½ne.
+ * @param _gameObject Pointeur vers l'objet de jeu ï¿½ ajouter.
+ * @return Pointeur vers l'objet de jeu ajoutï¿½.
  */
 GameObject* BaseScene::AddRootObject(GameObject* _gameObject)
 {
@@ -20,7 +26,7 @@ GameObject* BaseScene::AddRootObject(GameObject* _gameObject)
 }
 
 /**
- * @brief Supprime tous les objets de la scène à la fin du frame.
+ * @brief Supprime tous les objets de la scï¿½ne ï¿½ la fin du frame.
  */
 void BaseScene::RemoveAllObjects()
 {
@@ -31,8 +37,8 @@ void BaseScene::RemoveAllObjects()
 }
 
 /**
- * @brief Vérifie si la scène est initialisée.
- * @return true si la scène est initialisée, sinon false.
+ * @brief Vï¿½rifie si la scï¿½ne est initialisï¿½e.
+ * @return true si la scï¿½ne est initialisï¿½e, sinon false.
  */
 bool BaseScene::IsInitialized() const
 {
@@ -40,8 +46,8 @@ bool BaseScene::IsInitialized() const
 }
 
 /**
- * @brief Définit le nom de la scène.
- * @param _name Nouveau nom de la scène.
+ * @brief Dï¿½finit le nom de la scï¿½ne.
+ * @param _name Nouveau nom de la scï¿½ne.
  */
 void BaseScene::SetName(const std::string& _name)
 {
@@ -49,8 +55,8 @@ void BaseScene::SetName(const std::string& _name)
 }
 
 /**
- * @brief Récupère le nom de la scène.
- * @return Le nom de la scène.
+ * @brief Rï¿½cupï¿½re le nom de la scï¿½ne.
+ * @return Le nom de la scï¿½ne.
  */
 std::string BaseScene::GetName() const
 {
@@ -58,8 +64,8 @@ std::string BaseScene::GetName() const
 }
 
 /**
- * @brief Vérifie si la scène utilise un fichier de sauvegarde.
- * @return true si la scène utilise un fichier de sauvegarde, sinon false.
+ * @brief Vï¿½rifie si la scï¿½ne utilise un fichier de sauvegarde.
+ * @return true si la scï¿½ne utilise un fichier de sauvegarde, sinon false.
  */
 bool BaseScene::IsUsingSaveFile() const
 {
@@ -67,8 +73,8 @@ bool BaseScene::IsUsingSaveFile() const
 }
 
 /**
- * @brief Récupère les objets racine de la scène.
- * @return Une référence vers le vecteur contenant les objets racine de la scène.
+ * @brief Rï¿½cupï¿½re les objets racine de la scï¿½ne.
+ * @return Une rï¿½fï¿½rence vers le vecteur contenant les objets racine de la scï¿½ne.
  */
 std::vector<GameObject*>& BaseScene::GetRootObjects()
 {
@@ -77,8 +83,8 @@ std::vector<GameObject*>& BaseScene::GetRootObjects()
 
 
 /**
- * @brief Récupère le nom du fichier de la scène.
- * @return Le nom du fichier de la scène.
+ * @brief Rï¿½cupï¿½re le nom du fichier de la scï¿½ne.
+ * @return Le nom du fichier de la scï¿½ne.
  */
 std::string BaseScene::GetFileName() const
 {
@@ -86,10 +92,10 @@ std::string BaseScene::GetFileName() const
 }
 
 /**
- * @brief Définit le nom du fichier de la scène.
- * @param _fileName Nouveau nom du fichier de la scène.
- * @param _bDeletePreviousFiles Indique s'il faut supprimer les fichiers précédents.
- * @return true si le nom du fichier est défini avec succès, sinon false.
+ * @brief Dï¿½finit le nom du fichier de la scï¿½ne.
+ * @param _fileName Nouveau nom du fichier de la scï¿½ne.
+ * @param _bDeletePreviousFiles Indique s'il faut supprimer les fichiers prï¿½cï¿½dents.
+ * @return true si le nom du fichier est dï¿½fini avec succï¿½s, sinon false.
  */
 bool BaseScene::SetFileName(const std::string& _fileName, bool _bDeletePreviousFiles) const
 {
@@ -100,8 +106,8 @@ bool BaseScene::SetFileName(const std::string& _fileName, bool _bDeletePreviousF
 }
 
 /**
- * @brief Récupère le chemin de fichier par défaut de la scène.
- * @return Le chemin de fichier par défaut de la scène.
+ * @brief Rï¿½cupï¿½re le chemin de fichier par dï¿½faut de la scï¿½ne.
+ * @return Le chemin de fichier par dï¿½faut de la scï¿½ne.
  */
 std::string BaseScene::GetDefaultRelativeFilePath() const
 {
@@ -111,8 +117,8 @@ std::string BaseScene::GetDefaultRelativeFilePath() const
 }
 
 /**
- * @brief Vérifie si un fichier existe.
- * @param _filePath Chemin du fichier à vérifier.
+ * @brief Vï¿½rifie si un fichier existe.
+ * @param _filePath Chemin du fichier ï¿½ vï¿½rifier.
  * @return true si le fichier existe, sinon false.
  */
 
@@ -123,7 +129,7 @@ bool BaseScene::FileExists(const std::string& _filePath)
 }
 
 /**
- * @brief Supprime les fichiers de sauvegarde de la scène.
+ * @brief Supprime les fichiers de sauvegarde de la scï¿½ne.
  */
 void BaseScene::DeleteSaveFiles()
 {
@@ -155,10 +161,10 @@ void BaseScene::DeleteSaveFiles()
 }
 
 /**
- * @brief Vérifie si un élément est contenu dans un vecteur.
+ * @brief Vï¿½rifie si un ï¿½lï¿½ment est contenu dans un vecteur.
  * @param _container Vecteur dans lequel chercher.
- * @param _value Valeur à chercher.
- * @return true si la valeur est trouvée dans le vecteur, sinon false.
+ * @param _value Valeur ï¿½ chercher.
+ * @return true si la valeur est trouvï¿½e dans le vecteur, sinon false.
  */
 bool BaseScene::Contains(const std::vector<GameObject::id_t>& _container, const GameObject::id_t& _value)
 {
@@ -166,9 +172,9 @@ bool BaseScene::Contains(const std::vector<GameObject::id_t>& _container, const 
 }
 
 /**
- * @brief Supprime un objet de jeu de la scène.
- * @param _gameObjectId Identifiant de l'objet de jeu à supprimer.
- * @param _bDestroy Indique s'il faut détruire l'objet de jeu.
+ * @brief Supprime un objet de jeu de la scï¿½ne.
+ * @param _gameObjectId Identifiant de l'objet de jeu ï¿½ supprimer.
+ * @param _bDestroy Indique s'il faut dï¿½truire l'objet de jeu.
  */
 void BaseScene::RemoveObject(const GameObject::id_t& _gameObjectId, bool _bDestroy)
 {
@@ -183,9 +189,9 @@ void BaseScene::RemoveObject(const GameObject::id_t& _gameObjectId, bool _bDestr
 }
 
 /**
- * @brief Supprime un objet de jeu de la scène.
- * @param _gameObject Pointeur vers l'objet de jeu à supprimer.
- * @param _bDestroy Indique s'il faut détruire l'objet de jeu.
+ * @brief Supprime un objet de jeu de la scï¿½ne.
+ * @param _gameObject Pointeur vers l'objet de jeu ï¿½ supprimer.
+ * @param _bDestroy Indique s'il faut dï¿½truire l'objet de jeu.
  */
 void BaseScene::RemoveObject(const GameObject* _gameObject, const bool _bDestroy)
 {
@@ -194,9 +200,9 @@ void BaseScene::RemoveObject(const GameObject* _gameObject, const bool _bDestroy
 
 
 /**
- * @brief Supprime plusieurs objets de jeu de la scène.
- * @param _gameObjects Vecteur contenant les identifiants des objets de jeu à supprimer.
- * @param _bDestroy Indique s'il faut détruire les objets de jeu.
+ * @brief Supprime plusieurs objets de jeu de la scï¿½ne.
+ * @param _gameObjects Vecteur contenant les identifiants des objets de jeu ï¿½ supprimer.
+ * @param _bDestroy Indique s'il faut dï¿½truire les objets de jeu.
  */
 void BaseScene::RemoveObjects(const std::vector<GameObject::id_t>& _gameObjects, const bool _bDestroy)
 {
@@ -205,9 +211,9 @@ void BaseScene::RemoveObjects(const std::vector<GameObject::id_t>& _gameObjects,
 }
 
 /**
- * @brief Supprime plusieurs objets de jeu de la scène.
- * @param _gameObjects Vecteur contenant les pointeurs vers les objets de jeu à supprimer.
- * @param _bDestroy Indique s'il faut détruire les objets de jeu.
+ * @brief Supprime plusieurs objets de jeu de la scï¿½ne.
+ * @param _gameObjects Vecteur contenant les pointeurs vers les objets de jeu ï¿½ supprimer.
+ * @param _bDestroy Indique s'il faut dï¿½truire les objets de jeu.
  */
 void BaseScene::RemoveObjects(const std::vector<GameObject*>& _gameObjects, bool _bDestroy)
 {
@@ -235,8 +241,8 @@ void BaseScene::RemoveObjects(const std::vector<GameObject*>& _gameObjects, bool
 
 
 /**
- * @brief Crée un nouvel objet de jeu.
- * @return Pointeur vers le nouvel objet de jeu créé.
+ * @brief Crï¿½e un nouvel objet de jeu.
+ * @return Pointeur vers le nouvel objet de jeu crï¿½ï¿½.
  */
 GameObject* BaseScene::CreateGameObject()
 {
@@ -246,8 +252,8 @@ GameObject* BaseScene::CreateGameObject()
 }
 
 /**
- * @brief Détruit un objet de jeu.
- * @param _gameObject Pointeur vers l'objet de jeu à détruire.
+ * @brief Dï¿½truit un objet de jeu.
+ * @param _gameObject Pointeur vers l'objet de jeu ï¿½ dï¿½truire.
  */
 
 void BaseScene::DestroyGameObject(const GameObject* _gameObject)
@@ -256,9 +262,9 @@ void BaseScene::DestroyGameObject(const GameObject* _gameObject)
 }
 
 /**
- * @brief Récupère un objet de jeu par son identifiant.
- * @param _gameObjectId Identifiant de l'objet de jeu à récupérer.
- * @return Pointeur vers l'objet de jeu correspondant à l'identifiant.
+ * @brief Rï¿½cupï¿½re un objet de jeu par son identifiant.
+ * @param _gameObjectId Identifiant de l'objet de jeu ï¿½ rï¿½cupï¿½rer.
+ * @return Pointeur vers l'objet de jeu correspondant ï¿½ l'identifiant.
  */
 GameObject* BaseScene::GetGameObjectById(const GameObject::id_t& _gameObjectId) const
 {
@@ -271,15 +277,13 @@ GameObject* BaseScene::GetGameObjectById(const GameObject::id_t& _gameObjectId) 
 
 /**
  * @brief Recherche des objets de jeu par leur nom.
- * @param _name Nom des objets de jeu à rechercher.
- * @return Vecteur contenant les pointeurs vers les objets de jeu trouvés.
+ * @param _name Nom des objets de jeu ï¿½ rechercher.
+ * @return Vecteur contenant les pointeurs vers les objets de jeu trouvï¿½s.
  */
-std::vector<GameObject*> BaseScene::FindGameObjectsByName(const std::string& _name) const
-{
+std::vector<GameObject*> BaseScene::FindGameObjectsByName(const std::string& name) {
 	std::vector<GameObject*> result;
-	for (const GameObject* root_object : rootObjects)
-	{
-		std::vector<GameObject*> found = root_object->FindChildrenByName(_name);
+	for (GameObject* rootObject : rootObjects) {
+		std::vector<GameObject*> found = rootObject->FindChildrenByName(name);
 		result.insert(result.end(), found.begin(), found.end());
 	}
 	return result;
@@ -292,22 +296,23 @@ void BaseScene::Init()
 
 void BaseScene::Start()
 {
+	TestLoadGameObjects();
 }
 
-void BaseScene::FixedUpdate(const float& _deltaTime)
+void BaseScene::FixedUpdate()
 {
 }
 
 /**
- * @brief Met à jour la scène.
- * @param _deltaTime Temps écoulé depuis la dernière mise à jour.
+ * @brief Met ï¿½ jour la scï¿½ne.
+ * @param _deltaTime Temps ï¿½coulï¿½ depuis la derniï¿½re mise ï¿½ jour.
  */
-void BaseScene::Update(const float& _deltaTime)
+void BaseScene::Update()
 {
-	// Mettez à jour chaque objet de la scène avec le delta time
+	// Mettez ï¿½ jour chaque objet de la scï¿½ne avec le delta time
 	for (const GameObject* root_object : rootObjects)
 	{
-		root_object->Update(_deltaTime); // Mettez à jour chaque objet avec le delta time
+		root_object->Update(TimeModule::GetDeltaTime()); // Mettez ï¿½ jour chaque objet avec le delta time
 	}
 }
 
@@ -316,12 +321,12 @@ void BaseScene::PreRender()
 }
 
 /**
- * @brief Effectue le rendu de la scène.
- * @param _lveWindow Fenêtre de rendu.
+ * @brief Effectue le rendu de la scï¿½ne.
+ * @param _lveWindow Fenï¿½tre de rendu.
  */
-void BaseScene::Render(lve::LveWindow* _lveWindow)
+void BaseScene::Render()
 {
-	// Rendu de chaque objet de la scène
+	// Rendu de chaque objet de la scï¿½ne
 	for (GameObject* root_object : rootObjects)
 	{
 		//RenderObject(rootObject);
@@ -341,8 +346,8 @@ void BaseScene::Release()
 }
 
 /**
- * @brief Destructeur de la scène.
- * Réinitialise les indicateurs de chargement et d'initialisation, et détruit tous les objets racine de la scène.
+ * @brief Destructeur de la scï¿½ne.
+ * Rï¿½initialise les indicateurs de chargement et d'initialisation, et dï¿½truit tous les objets racine de la scï¿½ne.
  */
 void BaseScene::Finalize()
 {
@@ -361,4 +366,75 @@ void BaseScene::Finalize()
 		}
 	}
 	rootObjects.clear();
+}
+
+
+void BaseScene::TestLoadGameObjects()
+{
+	lve::LveDevice* _p_lveDevice = Engine::GetInstance()->GetModuleManager()->GetModule<RHIModule>()->GetDevice();
+	std::shared_ptr<lve::LveModel> lve_model = lve::LveModel::CreateModelFromFile(*_p_lveDevice, "Models\\flat_vase.obj");
+
+	auto flatVaseGO = GameObject::CreatePGameObject();
+	flatVaseGO->SetName("FlatVase");
+	flatVaseGO->model = lve_model;
+	flatVaseGO->GetTransform()->SetPosition(glm::vec3{ -.5f, .5f, 0.f });
+	flatVaseGO->GetTransform()->SetScale(glm::vec3{ 3.f, 1.5f, 3.f });
+	rootObjects.push_back(flatVaseGO);
+
+
+
+	lve_model = lve::LveModel::CreateModelFromFile(*_p_lveDevice, "Models\\smooth_vase.obj");
+	auto smooth_vase_go = GameObject::CreatePGameObject();
+	smooth_vase_go->SetName("SmoothVase");
+	smooth_vase_go->model = lve_model;
+	smooth_vase_go->GetTransform()->SetPosition(glm::vec3{ .5f, .5f, 0.f });
+	smooth_vase_go->GetTransform()->SetScale(glm::vec3{ 3.f, 1.5f, 3.f });
+	rootObjects.push_back(smooth_vase_go);
+
+	auto quad_go = lve::PlaneGameObject::Creates(*_p_lveDevice, glm::vec3{ .0f, .5f, 0.f }, glm::vec3{ 3.f, 1.f, 3.f });
+	quad_go->SetName("QuadGo");
+	rootObjects.push_back(quad_go);
+
+	lve_model = lve::LveModel::CreateModelFromFile(*_p_lveDevice, "Models\\viking_room.obj");
+	auto viking = GameObject::CreatePGameObject();
+	viking->SetName("Viking");
+	viking->model = lve_model;
+	viking->GetTransform()->SetPosition(glm::vec3{ 0.f, 0.f, 5.f });
+	viking->GetTransform()->SetScale(glm::vec3{ 3.f, 3.f, 3.f });
+	viking->GetTransform()->SetRotation(glm::vec3{ glm::radians(90.0f), glm::radians(90.0f), 0.0f });
+	rootObjects.push_back(viking);
+
+	auto cube = lve::CubeGameObject::Creates(*_p_lveDevice);
+	cube->SetName("Cube");
+	rootObjects.push_back(cube);
+
+	auto color_cube = lve::CubeGameObject::CreateColors(*_p_lveDevice, glm::vec3{ 0.f, 0.f, 10.f });
+	color_cube->SetName("ColorCube");
+	rootObjects.push_back(color_cube);
+
+	std::vector<glm::vec3> light_colors{
+		{1.f, .1f, .1f},
+		{.1f, .1f, 1.f},
+		{.1f, 1.f, .1f},
+		{1.f, 1.f, .1f},
+		{.1f, 1.f, 1.f},
+		{1.f, 1.f, 1.f}
+	};
+
+	for (int i = 0; i < light_colors.size(); i++)
+	{
+		auto point_light = lve::LightGameObject::Creates(0.2f, 0.1f);
+		point_light->SetName("Point Light " + std::to_string(i));
+		point_light->color = light_colors[i];
+		auto rotate_light = rotate(
+			glm::mat4(1.f),
+			(i * glm::two_pi<float>()) / light_colors.size(),
+			{ 0.f, -1.f, 0.f });
+		point_light->GetTransform()->SetPosition(glm::vec3(rotate_light * glm::vec4(-1.f, -1.f, -1.f, 1.f)));
+		rootObjects.push_back(point_light);
+	}
+
+	auto sun = lve::LightGameObject::Creates(1000000.f, 2.0f, glm::vec3{ 0.f, -1000.f, 0.f });
+	sun->SetName("Sun");
+	rootObjects.push_back(sun);
 }

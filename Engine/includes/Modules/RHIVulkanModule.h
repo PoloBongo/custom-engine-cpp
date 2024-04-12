@@ -3,6 +3,8 @@
 #pragma once
 
 #include <vulkan/vulkan.hpp>
+
+#include "keyboard_movement_controller.h"
 #include "rhi.h"
 
 #include "lve_descriptors.h"
@@ -10,15 +12,21 @@
 #include "lve_model.h"
 #include "lve_pipeline.h"
 #include "lve_renderer.h"
+#include "Systems/simple_render_system.h"
+
+namespace lve
+{
+	class PointLightSystem;
+}
 
 class RHIVulkanModule final : public RHIModule
 {
 	public:
-		static constexpr int WIDTH  = 800; ///< Largeur de la fenêtre par défaut.
-		static constexpr int HEIGHT = 600; ///< Hauteur de la fenêtre par défaut.
 
 		RHIVulkanModule();
 		~RHIVulkanModule() override;
+
+		vk::CommandBuffer* GetCurrentCommandBuffer() const { return currentCommandBuffer.get(); }
 
 		/**
 		* @brief Initialise le module.
@@ -70,20 +78,33 @@ class RHIVulkanModule final : public RHIModule
 		 */
 		void Finalize() override;
 
+		void LoadGameObjects();
 	private:
-		// Méthodes et membres privés spécifiques à Vulkan
-		bool CreateVulkanInstance();
-		bool SetupDebugMessenger();
 		// Autres méthodes pour la création de la surface, des périphériques logiques, etc.
 
-		vk::Instance*                      instance;
-		vk::DebugUtilsMessengerEXT*        debugMessenger;
 		std::unique_ptr<vk::CommandBuffer> currentCommandBuffer;
 
+		lve::SimpleRenderSystem* simpleRenderSystem;
+		lve::PointLightSystem* pointLightSystem;
 
-		lve::LveDevice*              p_lveDevice;
+		lve::LveDescriptorPool::Builder* builder;
+
+		std::unique_ptr<lve::LveDescriptorSetLayout, std::default_delete<lve::LveDescriptorSetLayout>>* globalSetLayout;
+
+		lve::LveCamera* camera;
+		lve::KeyboardMovementController       cameraController{};
+		GameObject* viewerObject;
+
+		std::vector<vk::DescriptorSet>               globalDescriptorSets;
+		std::vector<std::unique_ptr<lve::LveBuffer>> uboBuffers;
+		std::vector<GameObject*>                gameObjects;
+
+		// note : order of declarations matters
+		std::unique_ptr<lve::LveDescriptorPool> globalPool{};
+		int frameIndex;
+		lve::GlobalUbo ubo{};
+
 		lve::LveWindow*              p_lveWindow;
-		lve::LveRenderer*            p_lveRenderer;
 		lve::LveSwapChain*           p_lveSwapChain;
 		lve::LveModel*               p_lveModel;
 		lve::LvePipeline*            p_lvePipeline;

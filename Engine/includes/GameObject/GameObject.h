@@ -4,7 +4,14 @@
 #include <string>
 #include <vector>
 #include "Component.h"
+#include "lve_game_object.h"
 #include "lve_window.h"
+
+namespace lve
+{
+	struct PointLightComponent;
+	class LveModel;
+}
 
 enum class LayerType
 {
@@ -19,15 +26,23 @@ class Transform;
 
 class GameObject
 {
-	public:
-		using id_t = unsigned int;
-		GameObject();
+public:
+	GameObject();
+	using id_t = unsigned int;
+	id_t GetId() const { return id; }
 
-		GameObject(const id_t _id) : id(_id)
-		{
-		}
+	/**
+	* @brief Constructeur de GameObject avec ID spécifique.
+	*
+	* Initialise un GameObject avec un identifiant unique. Cela garantit que chaque GameObject
+	* a un identifiant unique au sein de la scène.
+	*
+	* @param _id Identifiant unique du GameObject.
+	*/
+	GameObject(id_t _id);
+	~GameObject();
 
-		~GameObject();
+	
 
 		[[nodiscard]] std::string GetName() const { return name; }
 		void                      SetName(const std::string& _newName) { name = _newName; }
@@ -40,7 +55,7 @@ class GameObject
 		[[nodiscard]] glm::vec3 GetScale() const;
 		void                    SetScale(glm::vec3 _newScale) const;
 
-		[[nodiscard]] float GetRotation() const;
+		[[nodiscard]] glm::vec3 GetRotation() const;
 		void                SetRotation(float _newRotation) const;
 
 		void               SetActive(const bool& _state) { isActive = _state; }
@@ -58,21 +73,47 @@ class GameObject
 		[[nodiscard]] LayerType GetLayer() const { return layerType; }
 		void                    SetLayer(const LayerType& _layerType) { layerType = _layerType; }
 
-		std::vector<GameObject*> FindChildrenByName(const std::string& _name) const;
+		GameObject* parent = nullptr;
+		void SetParent(GameObject* _parent);
+
 		std::vector<GameObject*> children;
+		std::vector<GameObject*> FindChildrenByName(const std::string& name);
+		void AddChildObject(GameObject* child);
+
+		Component* GetComponentRecursive(const std::string& componentName);
 
 		const std::vector<GameObject*>& GetChildren() const
 		{
 			return children;
 		}
 
-		[[nodiscard]] id_t GetId() const { return id; }
 
 		static GameObject CreateGameObject()
 		{
 			static id_t current_id = 0;
 			return GameObject{current_id++};
 		}
+
+		static GameObject* CreatePGameObject()
+		{ 
+			static id_t current_id = 0;
+			return new GameObject{ current_id++ };
+		}
+	/**
+	 * @brief Supprime directement cet objet de jeu.
+	 *
+	 * Cette méthode supprime directement l'objet de jeu de la scène et libère la mémoire associée.
+	 * À utiliser avec prudence, car elle ne gère pas les relations entre objets.
+	 */
+	void DestroyGameObject();
+
+	/**
+	 * @brief Marque cet objet de jeu pour suppression.
+	 *
+	 * Cette méthode marque l'objet de jeu pour suppression par le gestionnaire de scènes.
+	 * La suppression réelle aura lieu plus tard, gérée par le gestionnaire de scènes.
+	 */
+	void MarkForDeletion();
 
 		void AddComponent(Component* _component);
 
@@ -130,8 +171,8 @@ class GameObject
 		void RemoveComponent(Component* _component);
 
 		/**
-					* @brief Initialise le module.
-					*/
+		* @brief Initialise le module.
+		*/
 		virtual void Init();
 
 		/**
@@ -179,6 +220,8 @@ class GameObject
 		 */
 		virtual void Finalize();
 
+		std::shared_ptr<lve::LveModel>            model{}; /**< Modèle de l'objet. */
+		glm::vec3          color{};     /**< Couleur de l'objet. */
 	protected:
 		std::string             name = "GameObject";
 		std::vector<Component*> components;
@@ -193,5 +236,5 @@ class GameObject
 		bool isActive  = true;
 		bool isVisible = true;
 
-		id_t id;
+	id_t id; // Identifiant unique du GameObject
 };
