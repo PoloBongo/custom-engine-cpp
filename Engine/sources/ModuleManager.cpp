@@ -15,10 +15,10 @@ ModuleManager::~ModuleManager()
 void ModuleManager::CreateDefaultModules()
 {
 	CreateModule<WindowModule>();
+	CreateModule<SceneManager>();
 	CreateModule<RHIVulkanModule>();
 	CreateModule<TimeModule>();
 	CreateModule<ImGuiModule>();
-	CreateModule<SceneManager>();
 }
 
 void ModuleManager::Init() const

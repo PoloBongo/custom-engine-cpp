@@ -306,6 +306,8 @@ xcopy /E /I /Y "$(ProjectDir)Models" "$(TargetDir)Models"</Command>
     <ClCompile Include="..\Librairies\imgui\imgui_tables.cpp" />
     <ClCompile Include="..\Librairies\imgui\imgui_widgets.cpp" />
     <ClCompile Include="BoxCollider.cpp" />
+    <ClCompile Include="FileManager.cpp" />
+    <ClCompile Include="InputKeyCode.cpp" />
     <ClCompile Include="ImGUIInterface.cpp" />
     <ClCompile Include="sources\TCP\Client\Client.cpp" />
     <ClCompile Include="Convertisseur.cpp" />
@@ -345,6 +347,7 @@ xcopy /E /I /Y "$(ProjectDir)Models" "$(TargetDir)Models"</Command>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BoxCollider.h" />
+    <ClInclude Include="FileManager.h" />
     <ClInclude Include="includes\TCP\Client\Client.h" />
     <ClInclude Include="Convertisseur.h" />
     <ClInclude Include="includes\Modules\DisplayModule.h" />
@@ -384,6 +387,7 @@ xcopy /E /I /Y "$(ProjectDir)Models" "$(TargetDir)Models"</Command>
     <ClCompile Include="sources\Systems\point_light_system.cpp" />
     <ClCompile Include="sources\Systems\simple_render_system.cpp" />
     <ClInclude Include="includes\GameObject\PreGameObject\LightGameObject.h" />
+    <ClInclude Include="InputKeyCode.h" />
     <ClInclude Include="ImGUIInterface.h" />
     <ClInclude Include="Light.h" />
     <ClInclude Include="includes\TCP\Messages.h" />
@@ -436,6 +440,36 @@ xcopy /E /I /Y "$(ProjectDir)Models" "$(TargetDir)Models"</Command>
   </ItemGroup>
   <ItemGroup>
     <None Include="imgui.ini" />
+    <None Include="Shaders\point_light.frag" />
+    <None Include="Shaders\point_light.frag.spv" />
+    <None Include="Shaders\point_light.spv" />
+    <None Include="Shaders\point_light.vert" />
+    <None Include="Shaders\point_light.vert.spv" />
+    <None Include="Shaders\simple_shader.frag" />
+    <None Include="Shaders\simple_shader.frag.spv" />
+    <None Include="Shaders\simple_shader.spv" />
+    <None Include="Shaders\simple_shader.vert" />
+    <None Include="Shaders\simple_shader.vert.spv" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Models\colored_cube.obj">
+      <FileType>Document</FileType>
+    </None>
+    <None Include="Models\cube.obj">
+      <FileType>Document</FileType>
+    </None>
+    <None Include="Models\flat_vase.obj">
+      <FileType>Document</FileType>
+    </None>
+    <None Include="Models\quad.obj">
+      <FileType>Document</FileType>
+    </None>
+    <None Include="Models\smooth_vase.obj">
+      <FileType>Document</FileType>
+    </None>
+    <None Include="Models\viking_room.obj">
+      <FileType>Document</FileType>
+    </None>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

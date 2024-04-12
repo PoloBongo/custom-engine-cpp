@@ -198,7 +198,7 @@ public:
 		/**
 		 * @brief Rendu du module.
 		 */
-		virtual void Render(lve::LveWindow* _window) const;
+		virtual void Render() const;
 
 		/**
 		 * @brief Rendu de l'interface graphique du module.

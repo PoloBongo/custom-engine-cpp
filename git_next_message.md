@@ -1,5 +1,3 @@
-FIX : IMGUI
+ENH : WindowModule Update
 
-- Affichage du IMGUI de Mathias
-- Changement des noms des GameObjects
-- Récupération des Scènes et GameObjects avec le SceneManager
+- Ajout de la sauvegarde et Lecture de fichier

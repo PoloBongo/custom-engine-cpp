@@ -7,6 +7,7 @@
 #include <unordered_set>
 
 #include "VulkanHooks.h"
+#include "Modules/WindowModule.h"
 
 namespace lve
 {
@@ -92,7 +93,7 @@ namespace lve
 	// class member functions
 
 	// Constructeur de la classe LveDevice
-	LveDevice::LveDevice(LveWindow& _window) : window{_window}
+	LveDevice::LveDevice(WindowModule* _windowModule) : windowModule{ _windowModule }
 	{
 		CreateInstance();      // Crée une instance Vulkan
 		SetupDebugMessenger(); // Configure le messager de débogage Vulkan
@@ -317,7 +318,7 @@ namespace lve
 	 *
 	 * @throw std::runtime_error si la création de la surface échoue.
 	 */
-	void LveDevice::CreateSurface() { window.CreateWindowSurface(instance, &surface_); }
+	void LveDevice::CreateSurface() { windowModule->CreateWindowSurface(instance, &surface_); }
 
 	/**
 	 * @brief Vérifie si le périphérique physique Vulkan spécifié convient aux besoins de l'application.

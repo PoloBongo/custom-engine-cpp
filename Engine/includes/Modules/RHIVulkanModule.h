@@ -8,17 +8,13 @@
 #include "rhi.h"
 
 #include "lve_descriptors.h"
-#include "lve_texture.h"
-#include "lve_device.h"
 #include "lve_model.h"
 #include "lve_pipeline.h"
 #include "lve_renderer.h"
 #include "Systems/simple_render_system.h"
+#include "Systems/point_light_system.h"
+#include "Modules/WindowModule.h"
 
-namespace lve
-{
-	class PointLightSystem;
-}
 
 class RHIVulkanModule final : public RHIModule
 {
@@ -35,22 +31,22 @@ class RHIVulkanModule final : public RHIModule
 		void Init() override;
 
 		/**
-		 * @brief Démarre le module.
+		 * @brief Dï¿½marre le module.
 		 */
 		void Start() override;
 
 		/**
-		 * @brief Effectue une mise à jour fixe du module.
+		 * @brief Effectue une mise ï¿½ jour fixe du module.
 		 */
 		void FixedUpdate() override;
 
 		/**
-		 * @brief Met à jour le module.
+		 * @brief Met ï¿½ jour le module.
 		 */
 		void Update() override;
 
 		/**
-		 * @brief Fonction pré-rendu du module.
+		 * @brief Fonction prï¿½-rendu du module.
 		 */
 		void PreRender() override;
 
@@ -70,7 +66,7 @@ class RHIVulkanModule final : public RHIModule
 		void PostRender() override;
 
 		/**
-		 * @brief Libère les ressources utilisées par le module.
+		 * @brief Libï¿½re les ressources utilisï¿½es par le module.
 		 */
 		void Release() override;
 
@@ -79,9 +75,8 @@ class RHIVulkanModule final : public RHIModule
 		 */
 		void Finalize() override;
 
-		void LoadGameObjects();
 	private:
-		// Autres méthodes pour la création de la surface, des périphériques logiques, etc.
+		// Autres mï¿½thodes pour la crï¿½ation de la surface, des pï¿½riphï¿½riques logiques, etc.
 
 		std::unique_ptr<vk::CommandBuffer> currentCommandBuffer;
 
@@ -112,7 +107,7 @@ class RHIVulkanModule final : public RHIModule
 		int frameIndex;
 		lve::GlobalUbo ubo{};
 
-		lve::LveWindow*              p_lveWindow;
+		WindowModule*                windowModule = nullptr;
 		lve::LveSwapChain*           p_lveSwapChain;
 		lve::LveModel*               p_lveModel;
 		lve::LvePipeline*            p_lvePipeline;
@@ -120,5 +115,5 @@ class RHIVulkanModule final : public RHIModule
 		lve::LveDescriptorPool*      p_lveDescriptorPool;
 		lve::LveDescriptorSetLayout* p_lveDescriptorSetLayout;
 		lve::LveDescriptorWriter*    p_lveDescriptorWriter;
-		// Autres membres spécifiques à Vulkan
+		// Autres membres spï¿½cifiques ï¿½ Vulkan
 };

@@ -64,6 +64,8 @@
     <ClCompile Include="sources\TCP\Server\Server.cpp" />
     <ClCompile Include="sources\TCP\Client\TCPClientStart.cpp" />
     <ClCompile Include="sources\TCP\Server\TCPServerStart.cpp" />
+    <ClCompile Include="InputKeyCode.cpp" />
+    <ClCompile Include="FileManager.cpp" />
     <ClCompile Include="ImGUIInterface.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -125,6 +127,8 @@
     <ClInclude Include="includes\TCP\Server\Server.h" />
     <ClInclude Include="includes\TCP\Client\TCPClientStart.h" />
     <ClInclude Include="includes\TCP\Server\TCPServerStart.h" />
+    <ClInclude Include="InputKeyCode.h" />
+    <ClInclude Include="FileManager.h" />
     <ClInclude Include="ImGUIInterface.h" />
   </ItemGroup>
   <ItemGroup>
@@ -133,5 +137,21 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="imgui.ini" />
+    <None Include="Shaders\point_light.frag" />
+    <None Include="Shaders\point_light.frag.spv" />
+    <None Include="Shaders\point_light.spv" />
+    <None Include="Shaders\point_light.vert" />
+    <None Include="Shaders\point_light.vert.spv" />
+    <None Include="Shaders\simple_shader.frag" />
+    <None Include="Shaders\simple_shader.frag.spv" />
+    <None Include="Shaders\simple_shader.spv" />
+    <None Include="Shaders\simple_shader.vert" />
+    <None Include="Shaders\simple_shader.vert.spv" />
+    <None Include="Models\colored_cube.obj" />
+    <None Include="Models\cube.obj" />
+    <None Include="Models\flat_vase.obj" />
+    <None Include="Models\quad.obj" />
+    <None Include="Models\smooth_vase.obj" />
+    <None Include="Models\viking_room.obj" />
   </ItemGroup>
 </Project>
