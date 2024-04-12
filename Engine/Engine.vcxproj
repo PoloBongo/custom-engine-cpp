@@ -238,11 +238,12 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_DEBUG;_CONSOLE;WIN32_LEAN_AND_MEAN;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(SolutionDir)Librairies\stb_lib;$(SolutionDir)Librairies\glm;$(SolutionDir)Librairies\tinyObjLoader;$(SolutionDir)Librairies\glfw-3.4.bin.WIN64\include;$(SolutionDir)Librairies\VulkanSDK\Include;$(SolutionDir)Librairies\FMOD\inc;$(SolutionDir)\Engine;$(SolutionDir)\Engine\includes;$(SolutionDir)Librairies\bullet3_x64-windows\include\bullet;$(SolutionDir)\Engine;$(SolutionDir)\Engine\includes;$(SolutionDir)Librairies\stb_lib;$(SolutionDir)Librairies\Json/include;%(AdditionalIncludeDirectories);$(SolutionDir)Librairies/imgui</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <UndefinePreprocessorDefinitions>%(UndefinePreprocessorDefinitions)</UndefinePreprocessorDefinitions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -301,6 +302,11 @@
     <ClCompile Include="..\Librairies\imgui\imgui_impl_vulkan.cpp" />
     <ClCompile Include="..\Librairies\imgui\imgui_tables.cpp" />
     <ClCompile Include="..\Librairies\imgui\imgui_widgets.cpp" />
+    <ClCompile Include="sources\UDP\DistanceClient_Test.cpp" />
+    <ClCompile Include="sources\UDP\Address.cpp" />
+    <ClCompile Include="sources\UDP\DistantClient.cpp" />
+    <ClCompile Include="sources\UDP\ClientUDP.cpp" />
+    <ClCompile Include="sources\UDP\AckHandler_Test.cpp" />
     <ClCompile Include="BoxCollider.cpp" />
     <ClCompile Include="sources\TCP\Client\Client.cpp" />
     <ClCompile Include="Convertisseur.cpp" />
@@ -328,13 +334,22 @@
     <ClCompile Include="Engine.cpp" />
     <ClCompile Include="EngineTestCode.cpp" />
     <ClCompile Include="sources\Modules\SoundSystemModule.cpp" />
+    <ClCompile Include="sources\UDP\AckHandler.cpp" />
     <ClCompile Include="SphereCollider.cpp" />
     <ClCompile Include="sources\TCP\Client\TCPClientStart.cpp" />
     <ClCompile Include="sources\TCP\Server\TCPServerStart.cpp" />
+    <ClCompile Include="sources\UDP\Tester.cpp" />
     <ClCompile Include="Transform.cpp" />
+    <ClCompile Include="sources\UDP\Utils.cpp" />
+    <ClCompile Include="sources\UDP\Utils_Test.cpp" />
     <ClCompile Include="VulkanHooks.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="includes\UDP\DistanceClient_Test.h" />
+    <ClInclude Include="includes\UDP\Address.h" />
+    <ClInclude Include="includes\UDP\DistantClient.h" />
+    <ClInclude Include="includes\UDP\ClientUDP.h" />
+    <ClInclude Include="includes\UDP\AckHandler_Test.h" />
     <ClInclude Include="BoxCollider.h" />
     <ClInclude Include="includes\TCP\Client\Client.h" />
     <ClInclude Include="Convertisseur.h" />
@@ -377,6 +392,8 @@
     <ClInclude Include="includes\GameObject\PreGameObject\LightGameObject.h" />
     <ClInclude Include="includes\TCP\Messages.h" />
     <ClInclude Include="includes\TCP\Utils.h" />
+    <ClInclude Include="includes\UDP\AckHandler.h" />
+    <ClInclude Include="includes\UDP\Datagram.h" />
     <ClInclude Include="lve_constants.h" />
     <ClInclude Include="lve_image.h" />
     <ClInclude Include="includes\GameObject\PreGameObject\PlaneGameObject.h" />
@@ -388,7 +405,10 @@
     <ClInclude Include="SphereCollider.h" />
     <ClInclude Include="includes\TCP\Client\TCPClientStart.h" />
     <ClInclude Include="includes\TCP\Server\TCPServerStart.h" />
+    <ClInclude Include="includes\UDP\Tester.h" />
     <ClInclude Include="Transform.h" />
+    <ClInclude Include="includes\UDP\Utils.h" />
+    <ClInclude Include="includes\UDP\Utils_Test.h" />
     <ClInclude Include="VulkanHooks.h" />
   </ItemGroup>
   <ItemGroup>
@@ -424,6 +444,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="imgui.ini" />
+    <None Include="includes\UDP\Utils.inl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

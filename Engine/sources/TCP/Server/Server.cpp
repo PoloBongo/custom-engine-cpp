@@ -132,7 +132,7 @@ namespace Network
 			return *this;
 		}
 
-		// permet de d�marrer le serveur
+		// permet de d�marrer le port du serveur
 		bool Server::start(unsigned short _port)
 		{
 			if (!mImpl)
