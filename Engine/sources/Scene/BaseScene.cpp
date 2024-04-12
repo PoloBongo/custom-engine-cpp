@@ -204,9 +204,9 @@ void BaseScene::RemoveObject(const GameObject* _gameObject, const bool _bDestroy
 		auto it = std::find(rootObjects.begin(), rootObjects.end(), _gameObject);
 		if (it != rootObjects.end()) {
 			rootObjects.erase(it);
-			if (_bDestroy) {
-				delete _gameObject;
-			}
+			//if (_bDestroy) {
+			//	delete _gameObject;
+			//}
 		}
 	}
 	RemoveObject(_gameObject->GetId(), _bDestroy);

@@ -296,27 +296,6 @@ void ImGuiModule::DrawInspector() {
 	}
 }
 
-void ImGuiModule::DisplayTransform(Transform* _transform) {
-	if (!_transform) return;
-
-	// Position
-	glm::vec3 position = _transform->GetPosition();
-	if (ImGui::DragFloat3("Position", &position[0])) {
-		_transform->SetPosition(position);
-	}
-
-	// Rotation
-	glm::vec3 rotation = _transform->GetRotation();
-	if (ImGui::DragFloat3("Rotation", &rotation[0])) {
-		_transform->SetRotation(rotation);
-	}
-
-	// Scale
-	glm::vec3 scale = _transform->GetScale();
-	if (ImGui::DragFloat3("Scale", &scale[0])) {
-		_transform->SetScale(scale);
-	}
-}
 
 void ImGuiModule::DrawHierarchy() {
 	// Bouton pour créer un nouveau GameObject
@@ -363,8 +342,34 @@ void ImGuiModule::DrawHierarchy() {
 
 		ImGui::PushID(i); // Identifiant unique pour chaque scène
 
+		auto SceneTree = ImGui::TreeNode(scene->GetName().c_str());
+
+		// Menu contextuel pour chaque scène
+		if (ImGui::BeginPopupContextItem("Scene Menu")) {
+			if (ImGui::MenuItem("Set Active")) {
+				sceneManager->SetCurrentScene(static_cast<int>(i)); // Définit la scène courante
+			}
+
+			ImGui::Separator();
+
+			if (ImGui::MenuItem("Rename")) {
+				sceneToRename = i;
+				strncpy_s(renameSceneBuffer, scene->GetName().c_str(), sizeof(renameSceneBuffer));
+				renameSceneBuffer[sizeof(renameSceneBuffer) - 1] = '\0';
+				ImGui::OpenPopup("Rename Scene");
+			}
+
+			ImGui::Separator();
+
+			if (ImGui::MenuItem("Delete")) {
+				sceneManager->DestroyScene(scene->GetName()); // Supprime la scène
+			}
+
+			ImGui::EndPopup();
+		}
+
 		// Affichage du nom de la scène avec un bouton "Set Active" si nécessaire
-		if (ImGui::TreeNode(scene->GetName().c_str())) {
+		if (SceneTree) {
 			// Bouton pour définir la scène active
 			if (!isCurrentScene) {
 				ImGui::SameLine(ImGui::GetWindowWidth() - 100); // Décalage à droite
@@ -406,7 +411,7 @@ void ImGuiModule::DrawHierarchy() {
 						if (ImGui::MenuItem("Delete")) { DeleteGameObject(selectedGameObject); }
 
 						ImGui::Separator();
-						if (ImGui::MenuItem("Duplicate")) { /*DuplicateGameObject(selectedGameObject);*/ }
+						if (ImGui::MenuItem("Duplicate")) {}
 
 						ImGui::EndPopup();
 					}
@@ -414,32 +419,6 @@ void ImGuiModule::DrawHierarchy() {
 				}
 			}
 			ImGui::TreePop();
-		}
-
-
-
-		// Menu contextuel pour chaque scène
-		if (ImGui::BeginPopupContextItem("Scene Menu")) {
-			if (ImGui::MenuItem("Set Active")) {
-				sceneManager->SetCurrentScene(static_cast<int>(i)); // Définit la scène courante
-			}
-
-			ImGui::Separator();
-
-			if (ImGui::MenuItem("Rename")) {
-				sceneToRename = i;
-				strncpy_s(renameSceneBuffer, scene->GetName().c_str(), sizeof(renameSceneBuffer));
-				renameSceneBuffer[sizeof(renameSceneBuffer) - 1] = '\0';
-				ImGui::OpenPopup("Rename Scene");
-			}
-
-			ImGui::Separator();
-
-			if (ImGui::MenuItem("Delete")) {
-				sceneManager->DestroyScene(scene->GetName()); // Supprime la scène
-			}
-
-			ImGui::EndPopup();
 		}
 		ImGui::PopID();  // Restaure l'ID précédent pour les scènes
 	}
@@ -503,6 +482,29 @@ void ImGuiModule::ShowRenamePopup() {
 	}
 }
 
+// Affiche et permet l'édition des propriétés de transformation d'un objet dans la Hierarchie
+void ImGuiModule::DisplayTransform(Transform* _transform) {
+	if (!_transform) return;
+
+	// Position
+	glm::vec3 position = _transform->GetPosition();
+	if (ImGui::DragFloat3("Position", &position[0])) {
+		_transform->SetPosition(position);
+	}
+
+	// Rotation
+	glm::vec3 rotation = _transform->GetRotation();
+	if (ImGui::DragFloat3("Rotation", &rotation[0])) {
+		_transform->SetRotation(rotation);
+	}
+
+	// Scale
+	glm::vec3 scale = _transform->GetScale();
+	if (ImGui::DragFloat3("Scale", &scale[0])) {
+		_transform->SetScale(scale);
+	}
+}
+
 void ImGuiModule::RenameGameObject(GameObject* _gameObject, const std::string& _newName) {
 	if (_gameObject) {
 		std::cout << "Renamed GameObject: " << _gameObject->GetName() << " to " << _newName << std::endl;
@@ -518,7 +520,6 @@ void ImGuiModule::DeleteGameObject(GameObject* _gameObject) {
 		}
 	}
 }
-
 void ImGuiModule::DuplicateGameObject(GameObject* _gameObject) {
 
 }

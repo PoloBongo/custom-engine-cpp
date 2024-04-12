@@ -148,5 +148,4 @@ class BaseScene
 		GameObject* CreateCubeGameObject();
 		GameObject* CreateLightGameObject();
 		GameObject* CreatePlaneGameObject();
-
 };
