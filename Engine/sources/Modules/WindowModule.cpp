@@ -10,17 +10,23 @@
 #include <cassert>
 #include <chrono>
 #include <stdexcept>
+#include <fstream>
 
 #include "functionHelpers.h"
 #include "Modules/RHIVulkanModule.h"
 #include "Modules/TimeModule.h"
 #include "Scene/SceneManager.h"
+#include <nlohmann/json.hpp>
 
+#include "FileManager.h"
+
+using json = nlohmann::json;
 
 
 
 WindowModule::WindowModule(): windowName("VulkanIty"), window(nullptr), size(WIDTH,HEIGHT), lastWindowedSize(glm::ivec2(0)), lastWindowedPos(glm::ivec2(0))
 {
+	lastNonFullscreenWindowMode = WindowMode::WINDOWED;
 	updateWindowTitleFrequency = 0.2f;
 }
 
@@ -242,4 +248,95 @@ std::string WindowModule::GenerateWindowTitle() const
 		result += " - " + lve::FloatToString(1.0f / TimeModule::GetDeltaTime(), 0) + " FPS ";
 	}
 	return result;
+}
+
+
+bool WindowModule::InitFromConfig()
+{
+	if (FileManager::FileExists(WINDOW_CONFIG_LOCATION))
+	{
+		try
+		{
+			std::ifstream config_file(WINDOW_CONFIG_LOCATION);
+			if (!config_file.is_open())
+			{
+				std::cerr << (std::string("Failed to open window settings config file %s\n")+ WINDOW_CONFIG_LOCATION) << std::endl;
+				return false;
+			}
+
+			json root_object;
+			config_file >> root_object;
+
+			bMoveConsoleToOtherMonitor = root_object.value("move console to other monitor on bootup", bMoveConsoleToOtherMonitor);
+			bAutoRestoreStateOnBootup = root_object.value("auto restore state", bAutoRestoreStateOnBootup);
+
+			if (bAutoRestoreStateOnBootup)
+			{
+				glm::ivec2 initial_window_pos;
+				
+				if (auto it = root_object.find("initial window position"); it != root_object.end() && it.value().is_array() && it.value().size() == 2) {
+					initial_window_pos.x = it.value()[0].get<int>();
+					initial_window_pos.y = it.value()[1].get<int>();
+				}
+				else {
+					initial_window_pos = glm::ivec2(0, 0); // Valeur par défaut si la clé n'est pas trouvée ou si elle est mal formée
+				}
+				position = glm::ivec2(initial_window_pos);
+
+				glm::ivec2 initial_window_size;
+				if (auto it = root_object.find("initial window size"); it != root_object.end() && it.value().is_array() && it.value().size() == 2) {
+					initial_window_size.x = it.value()[0].get<int>();
+					initial_window_size.y = it.value()[1].get<int>();
+				}
+				else {
+					initial_window_size = glm::ivec2(800.0f, 600.0f); // Valeur par défaut si la clé n'est pas trouvée ou si elle est mal formée
+				}
+				size = glm::ivec2(initial_window_size);
+
+				bMaximized = root_object.value("maximized", bMaximized);
+
+				const std::string window_mode_str = root_object.value("window mode", "default");
+				currentWindowMode = StrToWindowMode(window_mode_str.c_str());
+			}
+
+			bool b_v_sync_enabled = root_object.value("v-sync", true);
+			SetVSyncEnabled(b_v_sync_enabled);
+
+			return true;
+		}
+		catch (const std::exception& e)
+		{
+			throw std::runtime_error(std::string("Failed to parse window settings config file ") + WINDOW_CONFIG_LOCATION + "\n\terror: " + e.what());
+			return false;
+		}
+	}
+	else
+	{
+		throw std::runtime_error(std::string("Window settings config file not found: %s\n") + WINDOW_CONFIG_LOCATION);
+		return false;
+	}
+}
+
+
+void WindowModule::SaveToConfig()
+{
+	json root_object;
+
+	root_object["move console to other monitor on bootup"] = bMoveConsoleToOtherMonitor;
+	root_object["auto restore state"] = bAutoRestoreStateOnBootup;
+	root_object["initial window position"] = { position.x, position.y };
+	root_object["initial window size"] = { size.x, size.y };
+	root_object["maximized"] = bMaximized;
+	root_object["window mode"] = WindowModule::WindowModeToStr(GetWindowMode());
+	root_object["v-sync"] = bVSyncEnabled;
+
+	if (std::ofstream config_file(WINDOW_CONFIG_LOCATION); config_file.is_open())
+	{
+		config_file << root_object.dump(4); // 4-space indentation for pretty printing
+		config_file.close();
+	}
+	else
+	{
+		std::cerr <<("Failed to write window settings config file\n");
+	}
 }

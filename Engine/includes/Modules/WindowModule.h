@@ -8,6 +8,7 @@
 
 #include "GameObject/GameObject.h"
 
+#define WINDOW_CONFIG_LOCATION "Saves\\window_config.json"
 
 namespace Inputs
 {
@@ -340,6 +341,10 @@ public:
 
 	void SetVSyncEnabled(const bool _bEnabled) { bVSyncEnabled = _bEnabled; }
 	void SetCursorMode(const GlfwCursorMode _cursorMode) { cursorMode = _cursorMode; }
+	const char* WindowModeToStr(WindowMode _mode)
+	{
+		return WindowModeStrings[static_cast<int32_t>(_mode)];
+	}
 
 #pragma endregion
 
@@ -385,6 +390,9 @@ private:
 	static void FrameBufferResizeCallBack(GLFWwindow* _window, int _width, int _height);
 
 	std::string GenerateWindowTitle() const;
+
+	bool InitFromConfig();
+	void SaveToConfig();
 
 	bool bFrameBufferResize = false; // Booléen indiquant si le framebuffer a été redimensionné.
 

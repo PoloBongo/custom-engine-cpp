@@ -306,6 +306,7 @@ $(SolutionDir)compile.bat</Command>
     <ClCompile Include="..\Librairies\imgui\imgui_tables.cpp" />
     <ClCompile Include="..\Librairies\imgui\imgui_widgets.cpp" />
     <ClCompile Include="BoxCollider.cpp" />
+    <ClCompile Include="FileManager.cpp" />
     <ClCompile Include="InputKeyCode.cpp" />
     <ClCompile Include="sources\TCP\Client\Client.cpp" />
     <ClCompile Include="Convertisseur.cpp" />
@@ -345,6 +346,7 @@ $(SolutionDir)compile.bat</Command>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BoxCollider.h" />
+    <ClInclude Include="FileManager.h" />
     <ClInclude Include="includes\TCP\Client\Client.h" />
     <ClInclude Include="Convertisseur.h" />
     <ClInclude Include="includes\Modules\DisplayModule.h" />
@@ -450,12 +452,24 @@ $(SolutionDir)compile.bat</Command>
     <None Include="Shaders\simple_shader.vert.spv" />
   </ItemGroup>
   <ItemGroup>
-    <Object Include="Models\colored_cube.obj" />
-    <Object Include="Models\cube.obj" />
-    <Object Include="Models\flat_vase.obj" />
-    <Object Include="Models\quad.obj" />
-    <Object Include="Models\smooth_vase.obj" />
-    <Object Include="Models\viking_room.obj" />
+    <None Include="Models\colored_cube.obj">
+      <FileType>Document</FileType>
+    </None>
+    <None Include="Models\cube.obj">
+      <FileType>Document</FileType>
+    </None>
+    <None Include="Models\flat_vase.obj">
+      <FileType>Document</FileType>
+    </None>
+    <None Include="Models\quad.obj">
+      <FileType>Document</FileType>
+    </None>
+    <None Include="Models\smooth_vase.obj">
+      <FileType>Document</FileType>
+    </None>
+    <None Include="Models\viking_room.obj">
+      <FileType>Document</FileType>
+    </None>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
