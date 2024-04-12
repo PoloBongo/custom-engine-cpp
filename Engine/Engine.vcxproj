@@ -308,6 +308,7 @@ $(SolutionDir)compile.bat</Command>
     <ClCompile Include="BoxCollider.cpp" />
     <ClCompile Include="FileManager.cpp" />
     <ClCompile Include="InputKeyCode.cpp" />
+    <ClCompile Include="ImGUIInterface.cpp" />
     <ClCompile Include="sources\TCP\Client\Client.cpp" />
     <ClCompile Include="Convertisseur.cpp" />
     <ClCompile Include="sources\GameObject\Components\Mesh.cpp" />
@@ -388,6 +389,7 @@ $(SolutionDir)compile.bat</Command>
     <ClCompile Include="sources\Systems\simple_render_system.cpp" />
     <ClInclude Include="includes\GameObject\PreGameObject\LightGameObject.h" />
     <ClInclude Include="InputKeyCode.h" />
+    <ClInclude Include="ImGUIInterface.h" />
     <ClInclude Include="Light.h" />
     <ClInclude Include="includes\TCP\Messages.h" />
     <ClInclude Include="includes\TCP\Utils.h" />
