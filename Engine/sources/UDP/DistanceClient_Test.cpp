@@ -1,5 +1,14 @@
 #include "UDP/DistanceClient_Test.h"
+#include "UDP/Tester.h"
+
 #include <UDP/DistantClient.h>
+#include <UDP/ClientUDP.h>
+#include <UDP/Packet.h>
+#include <UDP/ChannelHeader.h>
+#include <UDP/Protocol/UnreliableOrdered.h>
+#include <UDP/Messages.h>
+#include <UDP/Utils.h>
+
 
 void DistanceClient_Test::Test()
 {
@@ -9,27 +18,39 @@ void DistanceClient_Test::Test()
 	static constexpr uint64_t MASK_FIRST_MISSING = ~MASK_FIRST_ACKED;
 	static constexpr uint64_t MASK_LAST_ACKED = (MASK_FIRST_ACKED << 63);
 
-	ClientUDP client;
-	sockaddr_in localAddress;
-	localAddress.sin_addr.s_addr = htonl(INADDR_LOOPBACK);
-	localAddress.sin_family = AF_INET;
-	localAddress.sin_port = htons(8888);
-	DistantClient distantClient(client, reinterpret_cast<const sockaddr_storage&>(localAddress));
+	Bousk::Network::UDP::ClientUDP client; //!< We need a client to test DistantClient
+	Bousk::Network::Address localAddress = Bousk::Network::Address::Loopback(Bousk::Network::Address::Type::IPv4, 8888); //!< Pretend we're a loopback distant client
+	Bousk::Network::UDP::DistantClient distantClient(client, localAddress, 0);
+	distantClient.registerChannel<Bousk::Network::UDP::Protocols::UnreliableOrdered>();
+	distantClient.onConnected();
+	// Consume connection message
+	{
+		auto polledMessages = client.poll();
+		CHECK(polledMessages.size() == 1);
+		const auto& msg = polledMessages[0];
+		CHECK(msg->is<Bousk::Network::Messages::Connection>());
+	}
 
 	CHECK(distantClient.mNextDatagramIdToSend == 0);
 	CHECK(distantClient.mReceivedAcks.lastAck() == std::numeric_limits<uint16_t>::max());
 
-	const char* TestString = "Test data";
+	constexpr const char TestString[] = "Test data";
 	constexpr size_t TestStringLength = sizeof(TestString);
-	distantClient.send(std::vector<uint8_t>(TestString, TestString + TestStringLength));
-	CHECK(distantClient.mNextDatagramIdToSend == 1);
 
-	//!< Créons un datagramme pour vérifier sa réception
-	Bousk::UDP::Datagram datagram;
-	datagram.header.id = 0;
-	memcpy(datagram.data.data(), TestString, TestStringLength);
-	datagram.datasize = TestStringLength;
-	//!< Si un datagramme est accepté, il créera un Message UserData chez le Client
+	//!< Craft the datagram to check reception
+	Bousk::Network::UDP::Datagram datagram;
+
+	auto QueueDatagram = [&]() {
+		distantClient.send(std::vector<uint8_t>(TestString, TestString + TestStringLength), 0);
+		datagram.datasize = distantClient.mChannelsHandler.serialize(datagram.data.data(), Bousk::Network::UDP::Datagram::DataMaxSize, distantClient.mNextDatagramIdToSend, false);
+		distantClient.fillDatagramHeader(datagram, Bousk::Network::UDP::Datagram::Type::ConnectedData);
+		};
+
+	QueueDatagram();
+	CHECK(distantClient.mNextDatagramIdToSend == 1);
+	CHECK(datagram.header.id == 0);
+	CHECK(datagram.datasize == TestStringLength + Bousk::Network::UDP::Packet::HeaderSize + Bousk::Network::UDP::ChannelHeader::Size);
+
 	{
 		distantClient.onDatagramReceived(std::move(datagram));
 		CHECK(distantClient.mReceivedAcks.lastAck() == 0);
@@ -38,13 +59,13 @@ void DistanceClient_Test::Test()
 		auto polledMessages = client.poll();
 		CHECK(polledMessages.size() == 1);
 		const auto& msg = polledMessages[0];
-		CHECK(msg->is<Network::Messages::UserData>());
-		const auto dataMsg = msg->as<Network::Messages::UserData>();
+		CHECK(msg->is<Bousk::Network::Messages::UserData>());
+		const auto dataMsg = msg->as<Bousk::Network::Messages::UserData>();
 		CHECK(dataMsg->data.size() == TestStringLength);
 		CHECK(memcmp(TestString, dataMsg->data.data(), TestStringLength) == 0);
 	}
 
-	//!< Le datagramme #0 est reçu en double : il doit être ignoré
+	//!< Datagram #0 received duplicate : will be ignored
 	datagram.header.id = 0;
 	{
 		distantClient.onDatagramReceived(std::move(datagram));
@@ -55,7 +76,8 @@ void DistanceClient_Test::Test()
 		CHECK(polledMessages.size() == 0);
 	}
 
-	//!< Envoi du datagramme #2, le #1 est maintenant manquant
+	//!< Receive datagram #2, #1 is now missing
+	QueueDatagram();
 	datagram.header.id = htons(2);
 	{
 		distantClient.onDatagramReceived(std::move(datagram));
@@ -65,14 +87,15 @@ void DistanceClient_Test::Test()
 		auto polledMessages = client.poll();
 		CHECK(polledMessages.size() == 1);
 		const auto& msg = polledMessages[0];
-		CHECK(msg->is<Network::Messages::UserData>());
-		const auto dataMsg = msg->as<Network::Messages::UserData>();
+		CHECK(msg->is<Bousk::Network::Messages::UserData>());
+		const auto dataMsg = msg->as<Bousk::Network::Messages::UserData>();
 		CHECK(dataMsg->data.size() == TestStringLength);
 		CHECK(memcmp(TestString, dataMsg->data.data(), TestStringLength) == 0);
 	}
 
-	//!< Réception du datagramme #1 désordonné
-	datagram.header.id == htons(1);
+	//!< Now receive datagram #1
+	QueueDatagram();
+	datagram.header.id = htons(1);
 	{
 		distantClient.onDatagramReceived(std::move(datagram));
 		CHECK(distantClient.mReceivedAcks.lastAck() == 2);
@@ -83,13 +106,14 @@ void DistanceClient_Test::Test()
 		auto polledMessages = client.poll();
 		CHECK(polledMessages.size() == 1);
 		const auto& msg = polledMessages[0];
-		CHECK(msg->is<Network::Messages::UserData>());
-		const auto dataMsg = msg->as<Network::Messages::UserData>();
+		CHECK(msg->is<Bousk::Network::Messages::UserData>());
+		const auto dataMsg = msg->as<Bousk::Network::Messages::UserData>();
 		CHECK(dataMsg->data.size() == TestStringLength);
 		CHECK(memcmp(TestString, dataMsg->data.data(), TestStringLength) == 0);
 	}
 
-	//!< Saut de 64 datagrammes, tous les intermédiaires sont manquants
+	//!< Jump 64 packets ahead, all missed in between
+	QueueDatagram();
 	datagram.header.id = htons(66);
 	{
 		distantClient.onDatagramReceived(std::move(datagram));
@@ -101,13 +125,14 @@ void DistanceClient_Test::Test()
 		auto polledMessages = client.poll();
 		CHECK(polledMessages.size() == 1);
 		const auto& msg = polledMessages[0];
-		CHECK(msg->is<Network::Messages::UserData>());
-		const auto dataMsg = msg->as<Network::Messages::UserData>();
+		CHECK(msg->is<Bousk::Network::Messages::UserData>());
+		const auto dataMsg = msg->as<Bousk::Network::Messages::UserData>();
 		CHECK(dataMsg->data.size() == TestStringLength);
 		CHECK(memcmp(TestString, dataMsg->data.data(), TestStringLength) == 0);
 	}
 
-	//!< Réception du datagramme suivant
+	//!< Receive next one and everything is missing in between
+	QueueDatagram();
 	datagram.header.id = htons(67);
 	{
 		distantClient.onDatagramReceived(std::move(datagram));
@@ -119,13 +144,14 @@ void DistanceClient_Test::Test()
 		auto polledMessages = client.poll();
 		CHECK(polledMessages.size() == 1);
 		const auto& msg = polledMessages[0];
-		CHECK(msg->is<Network::Messages::UserData>());
-		const auto dataMsg = msg->as<Network::Messages::UserData>();
+		CHECK(msg->is<Bousk::Network::Messages::UserData>());
+		const auto dataMsg = msg->as<Bousk::Network::Messages::UserData>();
 		CHECK(dataMsg->data.size() == TestStringLength);
 		CHECK(memcmp(TestString, dataMsg->data.data(), TestStringLength) == 0);
 	}
 
-	//!< Réception du suivant, le datagramme #3 est maintenant perdu
+	//!< Receive next one, #3 is now lost
+	QueueDatagram();
 	datagram.header.id = htons(68);
 	{
 		distantClient.onDatagramReceived(std::move(datagram));
@@ -136,13 +162,14 @@ void DistanceClient_Test::Test()
 		auto polledMessages = client.poll();
 		CHECK(polledMessages.size() == 1);
 		const auto& msg = polledMessages[0];
-		CHECK(msg->is<Network::Messages::UserData>());
-		const auto dataMsg = msg->as<Network::Messages::UserData>();
+		CHECK(msg->is<Bousk::Network::Messages::UserData>());
+		const auto dataMsg = msg->as<Bousk::Network::Messages::UserData>();
 		CHECK(dataMsg->data.size() == TestStringLength);
 		CHECK(memcmp(TestString, dataMsg->data.data(), TestStringLength) == 0);
 	}
 
-	//!< Réception du datagramme #3 : trop ancien, ignoré
+	//!< Receive datagram #3 : too old, ignored
+	QueueDatagram();
 	datagram.header.id = htons(3);
 	{
 		distantClient.onDatagramReceived(std::move(datagram));

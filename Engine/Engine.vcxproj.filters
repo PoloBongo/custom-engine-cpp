@@ -71,9 +71,16 @@
     <ClCompile Include="sources\UDP\Address.cpp" />
     <ClCompile Include="sources\UDP\DistanceClient_Test.cpp" />
     <ClCompile Include="sources\UDP\Packet.cpp" />
-    <ClCompile Include="includes\UDP\Datagram.cpp" />
+    <ClCompile Include="sources\UDP\Datagram.cpp" />
     <ClCompile Include="sources\UDP\Protocol\ReliableOrdered.cpp" />
     <ClCompile Include="sources\UDP\PacketHandling_Test.cpp" />
+    <ClCompile Include="sources\UDP\ChannelsHandler.cpp" />
+    <ClCompile Include="sources\UDP\Protocol\UnreliableOrdered.cpp" />
+    <ClCompile Include="sources\UDP\Serialization\Convert.cpp" />
+    <ClCompile Include="sources\UDP\Serialization\Serializer.cpp" />
+    <ClCompile Include="sources\UDP\Serialization\Serialization.cpp" />
+    <ClCompile Include="sources\UDP\Serialization\Deserializer.cpp" />
+    <ClCompile Include="sources\UDP\Sockets.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BoxCollider.h" />
@@ -144,6 +151,19 @@
     <ClInclude Include="includes\UDP\Packet.h" />
     <ClInclude Include="includes\UDP\Protocol\ReliableOrdered.h" />
     <ClInclude Include="includes\UDP\PacketHandling_Test.h" />
+    <ClInclude Include="includes\UDP\Settings.h" />
+    <ClInclude Include="includes\UDP\Protocol\ProtocolInterface.h" />
+    <ClInclude Include="includes\UDP\ChannelsHandler.h" />
+    <ClInclude Include="includes\UDP\Protocol\UnreliableOrdered.h" />
+    <ClInclude Include="includes\UDP\ChannelHeader.h" />
+    <ClInclude Include="includes\UDP\Types.h" />
+    <ClInclude Include="includes\UDP\Messages.h" />
+    <ClInclude Include="includes\UDP\Serialization\Convert.h" />
+    <ClInclude Include="includes\UDP\Serialization\Serializer.h" />
+    <ClInclude Include="includes\UDP\Serialization\Serialization.h" />
+    <ClInclude Include="includes\UDP\Serialization\Deserializer.h" />
+    <ClInclude Include="includes\UDP\Errors.h" />
+    <ClInclude Include="includes\UDP\Sockets.h" />
   </ItemGroup>
   <ItemGroup>
     <CopyFileToFolders Include="..\Librairies\FMOD\lib\fmod.dll" />
@@ -152,5 +172,7 @@
   <ItemGroup>
     <None Include="imgui.ini" />
     <None Include="includes\UDP\Utils.inl" />
+    <None Include="includes\UDP\Serialization\Serializer.inl" />
+    <None Include="includes\UDP\Serialization\Deserializer.inl" />
   </ItemGroup>
 </Project>

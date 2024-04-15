@@ -2,7 +2,7 @@
 
 #include "Tester.h"
 #include "ClientUDP.h"
-#include "TCP/Messages.h"
+#include "Messages.h"
 
 #include <limits>
 

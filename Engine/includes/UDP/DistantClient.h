@@ -4,40 +4,143 @@
 #include "ClientUDP.h"
 #include "AckHandler.h"
 #include "Address.h"
-
-#include "TCP/Messages.h"
+#include "ChannelsHandler.h"
+#include "Messages.h"
 
 #include <vector>
 #include <memory> // unique_ptr
 
-class DistantClient
+namespace Bousk
 {
-public:
-	DistantClient(ClientUDP& client, const Bousk::Network::Address& addr);
-	DistantClient(const DistantClient&) = delete;
-	DistantClient(DistantClient&&) = delete;
-	DistantClient& operator=(const DistantClient&) = delete;
-	DistantClient& operator=(DistantClient&&) = delete;
-	~DistantClient() = default;
+	namespace Network
+	{
+		namespace Messages
+		{
+			class Base;
+		}
+		namespace UDP
+		{
+			class ClientUDP;
+			struct Datagram;
 
-	void send(std::vector<uint8_t>&& data);
-	void onDatagramReceived(Bousk::UDP::Datagram&& datagram);
-	void onDataReceived(std::vector<uint8_t>&& data);
-	void onMessageReady(std::unique_ptr<Network::Messages::Base>&& msg);
+			class DistantClient
+			{
+				friend class ::DistanceClient_Test;
+				enum class State {
+					None,
+					ConnectionSent,
+					ConnectionReceived,
+					Connected,
+					Disconnecting,
+					Disconnected,
+				};
+				enum class DisconnectionReason {
+					None,
+					Refused,
+					ConnectionTimedOut,
+					Disconnected,
+					DisconnectedFromOtherEnd,
+					Lost,
+				};
+			public:
+				DistantClient(ClientUDP& client, const Address& addr, uint64_t clientid);
+				DistantClient(const DistantClient&) = delete;
+				DistantClient(DistantClient&&) = delete;
+				DistantClient& operator=(const DistantClient&) = delete;
+				DistantClient& operator=(DistantClient&&) = delete;
+				~DistantClient() = default;
 
-	void onDatagramSentAcked(Bousk::UDP::Datagram::ID datagramId);
-	void onDatagramReceivedLost(Bousk::UDP::Datagram::ID datagramId);
-	void onDatagramSentLost(Bousk::UDP::Datagram::ID datagramId);
+				static void SetTimeout(std::chrono::milliseconds timeout) { sTimeout = timeout; }
+				static std::chrono::milliseconds GetTimeout() { return sTimeout; }
 
-	inline const Bousk::Network::Address& address() const { return mAddress; }
-	
-	Bousk::UDP::Datagram::ID mNextDatagramIdToSend{ 0 };
-	Bousk::UDP::AckHandler mReceivedAcks;
+				inline bool isConnecting() const { return mState == State::ConnectionSent || mState == State::ConnectionReceived; }
+				inline bool isConnected() const { return mState == State::Connected; }
+				inline bool isDisconnecting() const { return mState == State::Disconnecting; }
+				inline bool isDisconnected() const { return mState == State::Disconnected; }
+				#if BOUSKNET_ALLOW_NETWORK_INTERRUPTION == BOUSKNET_SETTINGS_ENABLED
+				inline bool isInterrupted() const { return mInterrupted; }
+				inline bool hasInterruptedClients() const { return mDistantInterrupted; }
+				#endif // BOUSKNET_ALLOW_NETWORK_INTERRUPTION == BOUSKNET_SETTINGS_ENABLED
 
-private:
-	SOCKET mSocket { INVALID_SOCKET };
-	Bousk::Network::Address mAddress;
-	Bousk::UDP::AckHandler mSentAcks;
-	ClientUDP mClient;
-};
+				template<class T>
+				void registerChannel(uint8 channelId = 0);
+
+				void connect();
+				void disconnect();
+
+				void send(std::vector<uint8>&& data, uint32 channelIndex);
+				void processSend(uint8 maxDatagrams = 0);
+				void onDatagramReceived(Datagram&& datagram);
+
+				inline const Address& address() const { return mAddress; }
+				inline uint64 id() const { return mClientId; }
+
+			private:
+				#if BOUSKNET_ALLOW_NETWORK_INTERRUPTION == BOUSKNET_SETTINGS_ENABLED
+					void maintainConnection(bool distantNetworkInterrupted = false);
+				#else
+					void maintainConnection();
+				#endif // BOUSKNET_ALLOW_NETWORK_INTERRUPTION == BOUSKNET_SETTINGS_ENABLED
+
+				void onConnectionSent();
+				void onConnectionReceived();
+				void onConnected();
+				void onDisconnectionFromOtherEnd();
+				// Called when this client has its connection interrupted with us.
+				void onConnectionInterrupted();
+
+				#if BOUSKNET_ALLOW_NETWORK_INTERRUPTION == BOUSKNET_SETTINGS_ENABLED
+					// Called when this client reports having a connection interruption with one if its clients.
+					void onConnectionInterruptedForwarded();
+					void onConnectionResumed();
+				#endif // BOUSKNET_ALLOW_NETWORK_INTERRUPTION == BOUSKNET_SETTINGS_ENABLED
+
+				void onConnectionLost();
+				void onConnectionRefused();
+				void onConnectionTimedOut();
+
+				void onDatagramSentAcked(Datagram::ID datagramId);
+				void onDatagramSentLost(Datagram::ID datagramId);
+				void onDatagramReceivedLost(Datagram::ID datagramId);
+				void onDataReceived(const uint8* data, uint16 datasize);
+				void onMessageReady(std::unique_ptr<Messages::Base>&& msg);
+
+				void fillKeepAlive(Datagram& dgram);
+				void handleKeepAlive(const uint8* data, const uint16 datasize);
+
+				void fillDatagramHeader(Datagram& dgram, Datagram::Type type);
+				void send(const Datagram& dgram);
+
+				Bousk::Network::UDP::Datagram::ID mNextDatagramIdToSend{ 0 };
+				Bousk::UDP::AckHandler mReceivedAcks;
+
+			private:
+				SOCKET mSocket{ INVALID_SOCKET };
+				Address mAddress;
+				Bousk::UDP::AckHandler mSentAcks;
+				ClientUDP& mClient;
+				ChannelsHandler mChannelsHandler;
+				State mState{ State::None };
+
+				#if BOUSKNET_ALLOW_NETWORK_INTERRUPTION == BOUSKNET_SETTINGS_ENABLED
+					bool mInterrupted{ false }; // Whether the connectivity is interrupted with this client (this client stopped sending us data)
+					bool mDistantInterrupted{ false }; // Whether this client has its connectivity interrupted with one of its clients
+				#endif // BOUSKNET_ALLOW_NETWORK_INTERRUPTION == BOUSKNET_SETTINGS_ENABLED
+					DisconnectionReason mDisconnectionReason{ DisconnectionReason::None };
+					std::vector<std::unique_ptr<Messages::Base>> mPendingMessages; // Store messages before connection has been accepted
+
+				uint64_t mClientId;
+				std::chrono::milliseconds mConnectionStartTime; // Connection start time, for connection timeout
+				std::chrono::milliseconds mLastKeepAlive; // Last time this connection has been marked alive, for timeout disconnection
+				static std::chrono::milliseconds sTimeout; // Timeout is same for all clients
+			};
+
+			template<class T>
+			void DistantClient::registerChannel(uint8 channelId /* = 0 */)
+			{
+				mChannelsHandler.registerChannel<T>(channelId);
+			}
+		}
+	}
+}
 

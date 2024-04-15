@@ -1,31 +1,41 @@
 #pragma once
 
-#include <cstdint>
+//#include <cstdint>
 #include <array>
 
 namespace Bousk
 {
-	namespace UDP
+	namespace Network
 	{
-		struct Datagram
+		namespace UDP
 		{
-			using ID = uint16_t;
-			struct Header
+			struct Datagram
 			{
-				ID id;
-				ID ack;
-				uint16_t previousAcks;
+				using ID = uint16_t;
+				enum class Type : uint8_t {
+					ConnectedData,
+					KeepAlive,
+					Disconnection,
+				};
+				struct Header
+				{
+					ID id;
+					ID ack;
+					uint16_t previousAcks;
+					Type type;
+				};
+				static constexpr uint16_t BufferMaxSize = 1400;
+				static constexpr uint16_t HeaderSize = sizeof(Header);
+				static constexpr uint16_t DataMaxSize = BufferMaxSize - HeaderSize;
+
+				Header header;
+				std::array<uint8_t, DataMaxSize> data;
+
+				// permet de contenir la taille effective des données du datagram
+				// utilisation local uniquement
+				uint16_t datasize{ 0 };
+				uint16_t size() const { return HeaderSize + datasize; }
 			};
-			static constexpr size_t BufferMaxSize = 1400;
-			static constexpr size_t DataMaxSize = BufferMaxSize - sizeof(Header);
-			static constexpr uint16_t HeaderSize = sizeof(Header);
-
-			Header header;
-			std::array<uint8_t, DataMaxSize> data;
-
-			// permet de contenir la taille effective des données du datagram
-			// utilisation local uniquement
-			uint16_t datasize{ 0 };
-		};
+		}
 	}
 }

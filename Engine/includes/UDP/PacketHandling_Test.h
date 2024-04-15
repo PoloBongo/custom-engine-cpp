@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Packet.h"
+#include "Protocol/ReliableOrdered.h"
 #include "Tester.h"
 
 class Multiplexer_Test

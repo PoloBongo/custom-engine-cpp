@@ -302,7 +302,13 @@
     <ClCompile Include="..\Librairies\imgui\imgui_impl_vulkan.cpp" />
     <ClCompile Include="..\Librairies\imgui\imgui_tables.cpp" />
     <ClCompile Include="..\Librairies\imgui\imgui_widgets.cpp" />
-    <ClCompile Include="includes\UDP\Datagram.cpp" />
+    <ClCompile Include="sources\UDP\Sockets.cpp" />
+    <ClCompile Include="sources\UDP\Serialization\Deserializer.cpp" />
+    <ClCompile Include="sources\UDP\Serialization\Serialization.cpp" />
+    <ClCompile Include="sources\UDP\Serialization\Serializer.cpp" />
+    <ClCompile Include="sources\UDP\Serialization\Convert.cpp" />
+    <ClCompile Include="sources\UDP\ChannelsHandler.cpp" />
+    <ClCompile Include="sources\UDP\Datagram.cpp" />
     <ClCompile Include="sources\UDP\PacketHandling_Test.cpp" />
     <ClCompile Include="sources\UDP\Protocol\ReliableOrdered.cpp" />
     <ClCompile Include="sources\UDP\Packet.cpp" />
@@ -346,9 +352,15 @@
     <ClCompile Include="Transform.cpp" />
     <ClCompile Include="sources\UDP\Utils.cpp" />
     <ClCompile Include="sources\UDP\Utils_Test.cpp" />
+    <ClCompile Include="sources\UDP\Protocol\UnreliableOrdered.cpp" />
     <ClCompile Include="VulkanHooks.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="includes\UDP\Errors.h" />
+    <ClInclude Include="includes\UDP\Serialization\Deserializer.h" />
+    <ClInclude Include="includes\UDP\Serialization\Convert.h" />
+    <ClInclude Include="includes\UDP\ChannelHeader.h" />
+    <ClInclude Include="includes\UDP\ChannelsHandler.h" />
     <ClInclude Include="includes\UDP\DistanceClient_Test.h" />
     <ClInclude Include="includes\UDP\Address.h" />
     <ClInclude Include="includes\UDP\DistantClient.h" />
@@ -398,6 +410,10 @@
     <ClInclude Include="includes\TCP\Utils.h" />
     <ClInclude Include="includes\UDP\AckHandler.h" />
     <ClInclude Include="includes\UDP\Datagram.h" />
+    <ClInclude Include="includes\UDP\Messages.h" />
+    <ClInclude Include="includes\UDP\Protocol\ProtocolInterface.h" />
+    <ClInclude Include="includes\UDP\Settings.h" />
+    <ClInclude Include="includes\UDP\Types.h" />
     <ClInclude Include="lve_constants.h" />
     <ClInclude Include="lve_image.h" />
     <ClInclude Include="includes\GameObject\PreGameObject\PlaneGameObject.h" />
@@ -409,6 +425,9 @@
     <ClInclude Include="RigidBody.h" />
     <ClInclude Include="includes\TCP\Server\Server.h" />
     <ClInclude Include="includes\TCP\Sockets.h" />
+    <ClInclude Include="includes\UDP\Serialization\Serializer.h" />
+    <ClInclude Include="includes\UDP\Serialization\Serialization.h" />
+    <ClInclude Include="includes\UDP\Sockets.h" />
     <ClInclude Include="SphereCollider.h" />
     <ClInclude Include="includes\TCP\Client\TCPClientStart.h" />
     <ClInclude Include="includes\TCP\Server\TCPServerStart.h" />
@@ -416,6 +435,7 @@
     <ClInclude Include="Transform.h" />
     <ClInclude Include="includes\UDP\Utils.h" />
     <ClInclude Include="includes\UDP\Utils_Test.h" />
+    <ClInclude Include="includes\UDP\Protocol\UnreliableOrdered.h" />
     <ClInclude Include="VulkanHooks.h" />
   </ItemGroup>
   <ItemGroup>
@@ -451,6 +471,8 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="imgui.ini" />
+    <None Include="includes\UDP\Serialization\Deserializer.inl" />
+    <None Include="includes\UDP\Serialization\Serializer.inl" />
     <None Include="includes\UDP\Utils.inl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

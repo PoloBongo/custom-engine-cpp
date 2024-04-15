@@ -16,7 +16,7 @@ namespace Bousk
 				using Id = uint16_t;
 				enum class Type : uint16_t
 				{
-					Packet,
+					FullMessage,
 					FirstFragment,
 					Fragment,
 					LastFragment,
@@ -29,7 +29,7 @@ namespace Bousk
 					Type type;
 				};
 
-				static constexpr uint16_t PacketMaxSize = Bousk::UDP::Datagram::DataMaxSize;
+				static constexpr uint16_t PacketMaxSize = Datagram::DataMaxSize;
 				static constexpr uint16_t HeaderSize = sizeof(Header);
 				static constexpr uint16_t DataMaxSize = PacketMaxSize - HeaderSize;
 				static constexpr size_t MaxPacketsPerMessage = 32;
@@ -47,35 +47,6 @@ namespace Bousk
 				inline const uint8_t* buffer() const { return reinterpret_cast<const uint8_t*>(this); }
 				//!< Packet full size : header + data
 				inline uint16_t size() const { return HeaderSize + header.size; }
-			};
-
-			class Multiplexer
-			{
-			public:
-				Multiplexer() = default;
-				~Multiplexer() = default;
-
-				void queue(std::vector<uint8_t>&& messageData);
-				size_t serialize(uint8_t* buffer, const size_t buffersize);
-			//private:
-				std::vector<Packet> mQueue;
-				Packet::Id mNextId{ 0 };
-			};
-
-			class Demultiplexer
-			{
-			public:
-				Demultiplexer() = default;
-				~Demultiplexer() = default;
-
-				void onDataReceived(const uint8_t* data, const size_t datasize);
-				std::vector<std::vector<uint8_t>> process();
-			//private:
-				void onPacketReceived(const Packet* pckt);
-
-				static constexpr size_t QueueSize = 2 * Packet::MaxPacketsPerMessage;
-				std::vector<Packet> mPendingQueue;
-				Packet::Id mLastProcessed{ std::numeric_limits<Packet::Id>::max() };
 			};
 		}
 	}
