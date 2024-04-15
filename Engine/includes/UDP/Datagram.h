@@ -26,6 +26,6 @@ namespace Bousk
 			// permet de contenir la taille effective des données du datagram
 			// utilisation local uniquement
 			uint16_t datasize{ 0 };
-		}; 
+		};
 	}
 }

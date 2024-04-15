@@ -94,3 +94,8 @@ void ClientUDP::receive()
 		}
 	}
 }
+
+std::vector<std::unique_ptr<Network::Messages::Base>> ClientUDP::poll()
+{
+	return std::vector<std::unique_ptr<Network::Messages::Base>>();
+}

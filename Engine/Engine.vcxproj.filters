@@ -70,6 +70,10 @@
     <ClCompile Include="sources\UDP\DistantClient.cpp" />
     <ClCompile Include="sources\UDP\Address.cpp" />
     <ClCompile Include="sources\UDP\DistanceClient_Test.cpp" />
+    <ClCompile Include="sources\UDP\Packet.cpp" />
+    <ClCompile Include="includes\UDP\Datagram.cpp" />
+    <ClCompile Include="sources\UDP\Protocol\ReliableOrdered.cpp" />
+    <ClCompile Include="sources\UDP\PacketHandling_Test.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BoxCollider.h" />
@@ -137,6 +141,9 @@
     <ClInclude Include="includes\UDP\DistantClient.h" />
     <ClInclude Include="includes\UDP\Address.h" />
     <ClInclude Include="includes\UDP\DistanceClient_Test.h" />
+    <ClInclude Include="includes\UDP\Packet.h" />
+    <ClInclude Include="includes\UDP\Protocol\ReliableOrdered.h" />
+    <ClInclude Include="includes\UDP\PacketHandling_Test.h" />
   </ItemGroup>
   <ItemGroup>
     <CopyFileToFolders Include="..\Librairies\FMOD\lib\fmod.dll" />

@@ -6,6 +6,10 @@
 
 #include <limits>
 
+#ifdef max
+	#undef max
+#endif
+
 class DistanceClient_Test
 {
 public:

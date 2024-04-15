@@ -182,7 +182,7 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_DEBUG;_CONSOLE;WIN32_LEAN_AND_MEAN;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(SolutionDir)Librairies\stb_lib;$(SolutionDir)Librairies\glm;$(SolutionDir)Librairies\tinyObjLoader;$(SolutionDir)Librairies\glfw-3.4.bin.WIN64\include;$(SolutionDir)Librairies\VulkanSDK\Include;$(SolutionDir)Librairies\FMOD\inc;$(SolutionDir)\Engine;$(SolutionDir)\Engine\includes;$(SolutionDir)Librairies\bullet3_x64-windows\include\bullet;$(SolutionDir)\Engine;$(SolutionDir)\Engine\includes;$(SolutionDir)Librairies\stb_lib;$(SolutionDir)Librairies\Json/include;%(AdditionalIncludeDirectories);$(SolutionDir)Librairies/imgui</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
@@ -210,7 +210,7 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_DEBUG;_CONSOLE;WIN32_LEAN_AND_MEAN;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(SolutionDir)Librairies\stb_lib;$(SolutionDir)Librairies\glm;$(SolutionDir)Librairies\tinyObjLoader;$(SolutionDir)Librairies\glfw-3.4.bin.WIN64\include;$(SolutionDir)Librairies\VulkanSDK\Include;$(SolutionDir)Librairies\FMOD\inc;$(SolutionDir)\Engine;$(SolutionDir)\Engine\includes;$(SolutionDir)Librairies\bullet3_x64-windows\include\bullet;$(SolutionDir)\Engine;$(SolutionDir)\Engine\includes;$(SolutionDir)Librairies\stb_lib;$(SolutionDir)Librairies\Json/include;%(AdditionalIncludeDirectories);$(SolutionDir)Librairies/imgui</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
@@ -269,7 +269,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NDEBUG;_CONSOLE;WIN32_LEAN_AND_MEAN;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(SolutionDir)Librairies\Stb_image;$(SolutionDir)Librairies\FMOD\inc;$(SolutionDir)Librairies\glm;$(SolutionDir)Librairies\tinyObjLoader;$(SolutionDir)Librairies\glfw-3.4.bin.WIN64\include;$(SolutionDir)Librairies\VulkanSDK\Include;%(AdditionalIncludeDirectories);$(SolutionDir)Librairies/imgui;$(SolutionDir)Librairies\bullet3_x64-windows\include\bullet;$(SolutionDir)\Engine;$(SolutionDir)\Engine\includes;$(SolutionDir)Librairies\stb_lib</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
@@ -302,6 +302,10 @@
     <ClCompile Include="..\Librairies\imgui\imgui_impl_vulkan.cpp" />
     <ClCompile Include="..\Librairies\imgui\imgui_tables.cpp" />
     <ClCompile Include="..\Librairies\imgui\imgui_widgets.cpp" />
+    <ClCompile Include="includes\UDP\Datagram.cpp" />
+    <ClCompile Include="sources\UDP\PacketHandling_Test.cpp" />
+    <ClCompile Include="sources\UDP\Protocol\ReliableOrdered.cpp" />
+    <ClCompile Include="sources\UDP\Packet.cpp" />
     <ClCompile Include="sources\UDP\DistanceClient_Test.cpp" />
     <ClCompile Include="sources\UDP\Address.cpp" />
     <ClCompile Include="sources\UDP\DistantClient.cpp" />
@@ -397,6 +401,9 @@
     <ClInclude Include="lve_constants.h" />
     <ClInclude Include="lve_image.h" />
     <ClInclude Include="includes\GameObject\PreGameObject\PlaneGameObject.h" />
+    <ClInclude Include="includes\UDP\Packet.h" />
+    <ClInclude Include="includes\UDP\Protocol\ReliableOrdered.h" />
+    <ClInclude Include="includes\UDP\PacketHandling_Test.h" />
     <ClInclude Include="rhi.h" />
     <ClInclude Include="includes\Modules\RHIVulkanModule.h" />
     <ClInclude Include="RigidBody.h" />
