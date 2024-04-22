@@ -31,22 +31,22 @@ class RHIVulkanModule final : public RHIModule
 		void Init() override;
 
 		/**
-		 * @brief Démarre le module.
+		 * @brief Dï¿½marre le module.
 		 */
 		void Start() override;
 
 		/**
-		 * @brief Effectue une mise à jour fixe du module.
+		 * @brief Effectue une mise ï¿½ jour fixe du module.
 		 */
 		void FixedUpdate() override;
 
 		/**
-		 * @brief Met à jour le module.
+		 * @brief Met ï¿½ jour le module.
 		 */
 		void Update() override;
 
 		/**
-		 * @brief Fonction pré-rendu du module.
+		 * @brief Fonction prï¿½-rendu du module.
 		 */
 		void PreRender() override;
 
@@ -66,7 +66,7 @@ class RHIVulkanModule final : public RHIModule
 		void PostRender() override;
 
 		/**
-		 * @brief Libère les ressources utilisées par le module.
+		 * @brief Libï¿½re les ressources utilisï¿½es par le module.
 		 */
 		void Release() override;
 
@@ -76,7 +76,7 @@ class RHIVulkanModule final : public RHIModule
 		void Finalize() override;
 
 	private:
-		// Autres méthodes pour la création de la surface, des périphériques logiques, etc.
+		// Autres mï¿½thodes pour la crï¿½ation de la surface, des pï¿½riphï¿½riques logiques, etc.
 
 		std::unique_ptr<vk::CommandBuffer> currentCommandBuffer;
 
@@ -87,11 +87,18 @@ class RHIVulkanModule final : public RHIModule
 
 		std::unique_ptr<lve::LveDescriptorSetLayout, std::default_delete<lve::LveDescriptorSetLayout>>* globalSetLayout;
 
+		lve::LveTexture* texture1;
+		lve::LveTexture* texture2;
+		lve::LveTexture* texture3;
+
 		lve::LveCamera* camera;
 		lve::KeyboardMovementController       cameraController{};
 		GameObject* viewerObject;
 
 		std::vector<vk::DescriptorSet>               globalDescriptorSets;
+		std::vector<vk::DescriptorSet>               tex1DescriptorSets;
+		std::vector<vk::DescriptorSet>               tex2DescriptorSets;
+
 		std::vector<std::unique_ptr<lve::LveBuffer>> uboBuffers;
 		std::vector<GameObject*>                gameObjects;
 
@@ -108,5 +115,5 @@ class RHIVulkanModule final : public RHIModule
 		lve::LveDescriptorPool*      p_lveDescriptorPool;
 		lve::LveDescriptorSetLayout* p_lveDescriptorSetLayout;
 		lve::LveDescriptorWriter*    p_lveDescriptorWriter;
-		// Autres membres spécifiques à Vulkan
+		// Autres membres spï¿½cifiques ï¿½ Vulkan
 };

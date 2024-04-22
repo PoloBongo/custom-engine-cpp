@@ -23,15 +23,15 @@ class SceneManager;
 /**
  * @brief Classe WindowModule.
  *
- * Cette classe représente le gestionnaire de fenêtres dans le système.
- * Elle hérite de la classe Module, ce qui lui permet d'être intégrée dans le système de modules.
- * Le WindowModule est responsable de la gestion et de la manipulation des fenêtres de l'application.
+ * Cette classe reprï¿½sente le gestionnaire de fenï¿½tres dans le systï¿½me.
+ * Elle hï¿½rite de la classe Module, ce qui lui permet d'ï¿½tre intï¿½grï¿½e dans le systï¿½me de modules.
+ * Le WindowModule est responsable de la gestion et de la manipulation des fenï¿½tres de l'application.
  */
 
 enum GlfwCursorType
 {
 	ARROW,
-	/**< Curseur flèche. */
+	/**< Curseur flï¿½che. */
 	IBEAM,
 	/**< Curseur I-beam (curseur de texte). */
 	CROSSHAIR,
@@ -48,25 +48,25 @@ enum GlfwCursorType
 	/**< Curseur redimensionner diagonale NE-SW. */
 	RESIZE_ALL,
 	/**< Curseur redimensionner dans toutes les directions. */
-	NOT_ALLOWED /**< Curseur non autorisé. */
+	NOT_ALLOWED /**< Curseur non autorisï¿½. */
 };
 
 /**
- * @brief Enumération des modes de curseurs GLFW.
+ * @brief Enumï¿½ration des modes de curseurs GLFW.
  *
- * Cette énumération représente les différents modes de curseurs GLFW.
- * Ces modes définissent le comportement du curseur sur l'écran.
+ * Cette ï¿½numï¿½ration reprï¿½sente les diffï¿½rents modes de curseurs GLFW.
+ * Ces modes dï¿½finissent le comportement du curseur sur l'ï¿½cran.
  */
 enum GlfwCursorMode
 {
 	DISABLED,
-	/**< Curseur désactivé. */
+	/**< Curseur dï¿½sactivï¿½. */
 	HIDDEN,
-	/**< Curseur caché. */
+	/**< Curseur cachï¿½. */
 	NORMAL,
 	/**< Curseur normal (visible). */
 	CAPTURED,
-	/**< Curseur capturé (exclusif à la fenêtre). */
+	/**< Curseur capturï¿½ (exclusif ï¿½ la fenï¿½tre). */
 
 	_NONE
 };
@@ -96,25 +96,25 @@ class WindowModule final : public Module
 {
 	public:
 		/**
-				 * @brief Enumération des types de curseurs GLFW.
+				 * @brief Enumï¿½ration des types de curseurs GLFW.
 				 *
-				 * Cette énumération représente les différents types de curseurs GLFW disponibles.
-				 * Ces types peuvent être utilisés pour spécifier le style du curseur à afficher.
+				 * Cette ï¿½numï¿½ration reprï¿½sente les diffï¿½rents types de curseurs GLFW disponibles.
+				 * Ces types peuvent ï¿½tre utilisï¿½s pour spï¿½cifier le style du curseur ï¿½ afficher.
 				 */
 
 
-		static constexpr int WIDTH  = 800; ///< Largeur de la fenêtre par défaut.
-		static constexpr int HEIGHT = 600; ///< Hauteur de la fenêtre par défaut.
+		static constexpr int WIDTH  = 800; ///< Largeur de la fenï¿½tre par dï¿½faut.
+		static constexpr int HEIGHT = 600; ///< Hauteur de la fenï¿½tre par dï¿½faut.
 
 
 		/**
 		 * @brief Constructeur de la classe WindowModule.
 		 *
-		 * Initialise une instance de WindowModule avec les dimensions spécifiées et le nom de la fenêtre.
+		 * Initialise une instance de WindowModule avec les dimensions spï¿½cifiï¿½es et le nom de la fenï¿½tre.
 		 *
-		 * @param _width La largeur de la fenêtre.
-		 * @param _height La hauteur de la fenêtre.
-		 * @param _name Le nom de la fenêtre.
+		 * @param _width La largeur de la fenï¿½tre.
+		 * @param _height La hauteur de la fenï¿½tre.
+		 * @param _name Le nom de la fenï¿½tre.
 		 * @return Rien.
 		 */
 		WindowModule();
@@ -122,108 +122,108 @@ class WindowModule final : public Module
 		/**
 		 * @brief Destructeur de la classe WindowModule.
 		 *
-		 * Détruit la fenêtre GLFW.
+		 * Dï¿½truit la fenï¿½tre GLFW.
 		 */
 		~WindowModule();
 
 		/**
-		 * @brief Constructeur de copie supprimé.
+		 * @brief Constructeur de copie supprimï¿½.
 		 *
-		 * La copie d'objets de type WindowModule est explicitement interdite pour éviter les problèmes de gestion
-		 * des ressources associées à la fenêtre.
+		 * La copie d'objets de type WindowModule est explicitement interdite pour ï¿½viter les problï¿½mes de gestion
+		 * des ressources associï¿½es ï¿½ la fenï¿½tre.
 		 */
 		WindowModule(const WindowModule&) = delete;
 
 		/**
-		 * @brief Opérateur d'affectation par copie supprimé.
+		 * @brief Opï¿½rateur d'affectation par copie supprimï¿½.
 		 *
-		 * L'affectation par copie d'objets de type WindowModule est explicitement interdite pour éviter les problèmes
-		 * de gestion des ressources associées à la fenêtre.
+		 * L'affectation par copie d'objets de type WindowModule est explicitement interdite pour ï¿½viter les problï¿½mes
+		 * de gestion des ressources associï¿½es ï¿½ la fenï¿½tre.
 		 *
-		 * @return Une référence vers l'objet WindowModule après affectation.
+		 * @return Une rï¿½fï¿½rence vers l'objet WindowModule aprï¿½s affectation.
 		 */
 		WindowModule& operator=(const WindowModule&) = delete;
 
 		/**
-		 * @brief Obtient les dimensions de la fenêtre.
+		 * @brief Obtient les dimensions de la fenï¿½tre.
 		 *
-		 * Cette fonction retourne les dimensions de la fenêtre sous forme d'une structure vk::Extent2D.
+		 * Cette fonction retourne les dimensions de la fenï¿½tre sous forme d'une structure vk::Extent2D.
 		 *
-		 * @return Les dimensions de la fenêtre sous forme d'une structure vk::Extent2D.
+		 * @return Les dimensions de la fenï¿½tre sous forme d'une structure vk::Extent2D.
 		 */
 		vk::Extent2D GetExtent() const { return {static_cast<uint32_t>(size.x), static_cast<uint32_t>(size.y)}; }
 
 		/**
-		 * @brief Vérifie si la fenêtre a été redimensionnée.
+		 * @brief Vï¿½rifie si la fenï¿½tre a ï¿½tï¿½ redimensionnï¿½e.
 		 *
-		 * Cette fonction vérifie si la fenêtre a été redimensionnée depuis la dernière vérification.
+		 * Cette fonction vï¿½rifie si la fenï¿½tre a ï¿½tï¿½ redimensionnï¿½e depuis la derniï¿½re vï¿½rification.
 		 *
-		 * @return true si la fenêtre a été redimensionnée, sinon false.
+		 * @return true si la fenï¿½tre a ï¿½tï¿½ redimensionnï¿½e, sinon false.
 		 */
 
 		bool WasWindowResized() const { return bFrameBufferResize; }
 
 		/**
-		 * @brief Réinitialise le drapeau de redimensionnement de la fenêtre.
+		 * @brief Rï¿½initialise le drapeau de redimensionnement de la fenï¿½tre.
 		 *
-		 * Cette fonction réinitialise le drapeau indiquant que la fenêtre a été redimensionnée.
+		 * Cette fonction rï¿½initialise le drapeau indiquant que la fenï¿½tre a ï¿½tï¿½ redimensionnï¿½e.
 		 */
 		void ResetWindowResizedFlag() { bFrameBufferResize = false; }
 
 		/**
-		 * @brief Crée une surface Vulkan associée à une fenêtre.
+		 * @brief Crï¿½e une surface Vulkan associï¿½e ï¿½ une fenï¿½tre.
 		 *
-		 * Cette fonction crée une surface Vulkan associée à une fenêtre, permettant à Vulkan de dessiner dans cette fenêtre.
+		 * Cette fonction crï¿½e une surface Vulkan associï¿½e ï¿½ une fenï¿½tre, permettant ï¿½ Vulkan de dessiner dans cette fenï¿½tre.
 		 *
-		 * @param _instance L'instance Vulkan utilisée pour créer la surface.
-		 * @param _surface Un pointeur vers l'objet de surface Vulkan à créer. Ce pointeur sera mis à jour pour contenir la surface créée.
-		 * @throws Une exception en cas d'échec lors de la création de la surface.
+		 * @param _instance L'instance Vulkan utilisï¿½e pour crï¿½er la surface.
+		 * @param _surface Un pointeur vers l'objet de surface Vulkan ï¿½ crï¿½er. Ce pointeur sera mis ï¿½ jour pour contenir la surface crï¿½ï¿½e.
+		 * @throws Une exception en cas d'ï¿½chec lors de la crï¿½ation de la surface.
 		 */
 		void CreateWindowSurface(vk::Instance _instance, vk::SurfaceKHR* _surface) const;
 
 		/**
-		 * @brief Obtient un pointeur vers la fenêtre GLFW.
+		 * @brief Obtient un pointeur vers la fenï¿½tre GLFW.
 		 *
-		 * Cette fonction retourne un pointeur vers la fenêtre GLFW associée à l'instance actuelle.
+		 * Cette fonction retourne un pointeur vers la fenï¿½tre GLFW associï¿½e ï¿½ l'instance actuelle.
 		 *
-		 * @return Un pointeur vers la fenêtre GLFW.
+		 * @return Un pointeur vers la fenï¿½tre GLFW.
 		 */
 		[[nodiscard]] GLFWwindow* GetGlfwWindow() const { return window; }
 
 		/**
-		 * @brief Réinitialise le curseur de la fenêtre.
+		 * @brief Rï¿½initialise le curseur de la fenï¿½tre.
 		 *
-		 * Cette fonction réinitialise le curseur de la fenêtre à sa forme par défaut.
+		 * Cette fonction rï¿½initialise le curseur de la fenï¿½tre ï¿½ sa forme par dï¿½faut.
 		 */
 		void ResetCursorWindow() const { glfwSetCursor(window, nullptr); }
 
 		/**
-		 * @brief Change la forme du curseur de la fenêtre en un cube coloré.
+		 * @brief Change la forme du curseur de la fenï¿½tre en un cube colorï¿½.
 		 *
-		 * Cette fonction change la forme du curseur de la fenêtre en un cube coloré, avec la possibilité de spécifier la couleur du cube.
+		 * Cette fonction change la forme du curseur de la fenï¿½tre en un cube colorï¿½, avec la possibilitï¿½ de spï¿½cifier la couleur du cube.
 		 *
 		 * @param _color
-		 * @param color La couleur du cube. La valeur par défaut est 255.
+		 * @param color La couleur du cube. La valeur par dï¿½faut est 255.
 		 */
 		void CubeCursorWindow(int _color = 255) const;
 
 		/**
-		 * @brief Définit le curseur standard de la fenêtre.
+		 * @brief Dï¿½finit le curseur standard de la fenï¿½tre.
 		 *
-		 * Cette fonction définit le curseur standard de la fenêtre à un type spécifié.
+		 * Cette fonction dï¿½finit le curseur standard de la fenï¿½tre ï¿½ un type spï¿½cifiï¿½.
 		 *
 		 * @param _cursorType
-		 * @param CursorType Le type de curseur à définir.
+		 * @param CursorType Le type de curseur ï¿½ dï¿½finir.
 		 */
 		void StandardCursorWindow(GlfwCursorType _cursorType) const;
-
+    
 		/**
-		 * @brief Définit le mode de curseur d'entrée pour la fenêtre.
+		 * @brief Dï¿½finit le mode de curseur d'entrï¿½e pour la fenï¿½tre.
 		 *
-		 * Cette fonction définit le mode de curseur d'entrée pour la fenêtre à un mode spécifié.
+		 * Cette fonction dï¿½finit le mode de curseur d'entrï¿½e pour la fenï¿½tre ï¿½ un mode spï¿½cifiï¿½.
 		 *
 		 * @param _mode
-		 * @param mode Le mode de curseur d'entrée à définir.
+		 * @param mode Le mode de curseur d'entrï¿½e ï¿½ dï¿½finir.
 		 */
 		void SetInputCursorMode(GlfwCursorMode _mode);
 
@@ -536,9 +536,9 @@ class WindowModule final : public Module
 		}
 
 		/**
-		 * @brief Initialise la fenêtre GLFW.
+		 * @brief Initialise la fenï¿½tre GLFW.
 		 *
-		 * Cette fonction initialise GLFW, configure la fenêtre pour être non redimensionnable et crée une fenêtre GLFW avec la taille et le nom spécifiés.
+		 * Cette fonction initialise GLFW, configure la fenï¿½tre pour ï¿½tre non redimensionnable et crï¿½e une fenï¿½tre GLFW avec la taille et le nom spï¿½cifiï¿½s.
 		 */
 		void Init() override;
 		void Start() override;
@@ -568,13 +568,14 @@ class WindowModule final : public Module
 		bool InitFromConfig();
 		void SaveToConfig();
 
-		bool bFrameBufferResize = false; // Booléen indiquant si le framebuffer a été redimensionné.
+		bool bFrameBufferResize = false; // Boolï¿½en indiquant si le framebuffer a ï¿½tï¿½ redimensionnï¿½.
+
 
 		SceneManager* sceneManager = nullptr;
 
-		std::string windowName;  // Nom de la fenêtre
-		std::string windowTitle; // Nom de la fenêtre
-		GLFWwindow* window;      // Fenêtre GLFW
+		std::string windowName;  // Nom de la fenï¿½tre
+		std::string windowTitle; // Nom de la fenï¿½tre
+		GLFWwindow* window;      // Fenï¿½tre GLFW
 
 		glm::ivec2 size             = {0, 0};
 		glm::ivec2 startingPosition = {0, 0};

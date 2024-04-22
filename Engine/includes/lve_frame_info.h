@@ -42,6 +42,8 @@ namespace lve
 		vk::CommandBuffer   commandBuffer;       /**< Tampon de commandes Vulkan. */
 		LveCamera&          camera;              /**< Caméra utilisée pour le rendu. */
 		vk::DescriptorSet   globalDescriptorSet; /**< Ensemble de descripteurs global. */
+		vk::DescriptorSet   tex1DescriptorSet;
+		vk::DescriptorSet   tex2DescriptorSet;
 		LveGameObject::Map& gameObjects;         /**< Carte des objets de jeu. */
 	};
 } // namespace lve
