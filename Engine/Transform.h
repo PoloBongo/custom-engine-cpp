@@ -5,6 +5,7 @@
 #include <iostream>
 #include <gtc/matrix_transform.hpp>
 #include <gtc/type_ptr.hpp>
+#include <gtc/constants.hpp>
 
 #include "Component.h"
 
@@ -21,6 +22,14 @@ class Transform final : public Component
 		glm::vec3 GetRotation() const { return rotation; }
 		void  SetRotation(const float _angle) { rotation = glm::vec3{ _angle, _angle,_angle }; }
 		void  SetRotation(const glm::vec3& _rotation) { rotation = _rotation; }
+
+		glm::vec3 GetRotationDegrees() const {
+			return rotation * (180.0f / glm::pi<float>());
+		}
+
+		void SetRotationDegrees(const glm::vec3& degrees) {
+			rotation = degrees * (glm::pi<float>() / 180.0f);
+		}
 
 		// Méthode pour récupérer et définir l'échelle
 		glm::vec3 GetScale() const { return scale; }

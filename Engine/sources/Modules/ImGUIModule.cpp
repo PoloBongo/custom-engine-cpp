@@ -12,6 +12,7 @@
 
 #include "rhi.h"
 
+#include "GameObject/PreGameObject/LightGameObject.h"
 #include "Transform.h"
 #include "Scene/SceneManager.h"
 #include "TCP/Errors.h"
@@ -290,9 +291,37 @@ void ImGuiModule::DrawInspectorWindow() {
 			DisplayTransform(selectedGameObject->GetTransform());
 		}
 
-		// Bouton pour ajouter un composant (logique d'ajout à implémenter)
+
+
+		// Détection de Light et affichage des propriétés de la lumière
+		Light* lightComponent = selectedGameObject->GetComponent<Light>();
+		if (lightComponent) {
+			// Intensité de la lumière
+			float intensity = lightComponent->lightIntensity;
+			if (ImGui::DragFloat("Light Intensity", &intensity, 0.1f, 0.0f, 100.0f)) {
+				lightComponent->lightIntensity = intensity;
+			}
+
+			// Couleur de la lumière
+			glm::vec3 color = selectedGameObject->color;
+			if (ImGui::ColorEdit3("Color", glm::value_ptr(color))) {
+				selectedGameObject->color = color;
+			}
+		}
+
+		// Bouton pour ajouter un composant
 		if (ImGui::Button("Add Component")) {
-			// TODO: Logique d'ajout de composant
+			ImGui::OpenPopup("AddComponentPopup");
+		}
+
+		// Popup pour l'ajout de composant
+		if (ImGui::BeginPopup("AddComponentPopup")) {
+			if (ImGui::MenuItem("Add Light")) {
+				Light* newLight = selectedGameObject->CreateComponent<Light>();
+				newLight->lightIntensity = 1.0;  // Intensité initiale standard
+				ImGui::CloseCurrentPopup();
+			}
+			ImGui::EndPopup();
 		}
 	}
 	else {
@@ -455,9 +484,9 @@ void ImGuiModule::DisplayTransform(Transform* _transform) {
 	}
 
 	// Rotation
-	glm::vec3 rotation = _transform->GetRotation();
-	if (ImGui::DragFloat3("Rotation", &rotation[0])) {
-		_transform->SetRotation(rotation);
+	glm::vec3 rotationDegrees = _transform->GetRotationDegrees();
+	if (ImGui::DragFloat3("Rotation", &rotationDegrees[0])) {
+		_transform->SetRotationDegrees(rotationDegrees);
 	}
 
 	// Scale
