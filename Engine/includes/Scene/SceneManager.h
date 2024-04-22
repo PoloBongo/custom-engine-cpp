@@ -97,6 +97,10 @@ class SceneManager final : public Module
 		 */
 		void Finalize() override;
 
+		static SceneManager* GetInstance() {
+			static SceneManager instance;
+			return &instance;
+		}
 	private:
 		bool        SceneFileExists(const std::string& _filePath) const;
 		GameObject* CreateGameObjectFromSceneData();
