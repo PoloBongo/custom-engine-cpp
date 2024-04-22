@@ -8,6 +8,7 @@ namespace Bousk
 	{
 		namespace UDP
 		{
+			// Initialisation des membres de DistantClient
 			DistantClient::DistantClient(ClientUDP& client, const Address& addr, uint64_t clientid)
 				: mClient(client)
 				, mAddress(addr)
@@ -16,6 +17,7 @@ namespace Bousk
 				, mLastKeepAlive(Utils::Now())
 			{}
 
+			// fonction "onConnectionSent()" et "onConnectionReceived()" sont appelé que lorsque la connexion est établie avec succès
 			void DistantClient::onConnectionSent()
 			{
 				if (mState == State::None)
@@ -46,12 +48,15 @@ namespace Bousk
 				}
 			}
 
+			// permet de gérer l'état de la connexion en cas de coupure/soucis du réseau
 		#if BOUSKNET_ALLOW_NETWORK_INTERRUPTION == BOUSKNET_SETTINGS_ENABLED
 			void DistantClient::maintainConnection(bool distantNetworkInterrupted /*= false*/)
 		#else
 			void DistantClient::maintainConnection()
 		#endif // BOUSKNET_ALLOW_NETWORK_INTERRUPTION == BOUSKNET_SETTINGS_ENABLED
 			{
+				// "onConnectionInterruptedForwarded()" est appelé lorsque le réseau est intérrompu
+				// "onConnectionResumed()" est appelé lorsque le réseau à repris
 				mLastKeepAlive = Utils::Now();
 			#if BOUSKNET_ALLOW_NETWORK_INTERRUPTION == BOUSKNET_SETTINGS_ENABLED
 				if (distantNetworkInterrupted)
@@ -179,12 +184,14 @@ namespace Bousk
 				mLastKeepAlive = Utils::Now();
 			}
 
+			// permet d'envoyer des données au client
 			void DistantClient::send(std::vector<uint8_t>&& data, uint32_t channelIndex)
 			{
 				onConnectionSent();
 				mChannelsHandler.queue(std::move(data), channelIndex);
 			}
 
+			// permet de remplir l'en-tête du datagram avant de l'envoyer
 			void DistantClient::fillDatagramHeader(Datagram& dgram, Datagram::Type type)
 			{
 				dgram.header.ack = htons(mReceivedAcks.lastAck());
@@ -203,6 +210,7 @@ namespace Bousk
 				}
 			}
 
+			// gère l'envoie de données et les différents timeout
 			void DistantClient::processSend(const uint8 maxDatagrams /*= 0*/)
 			{
 				const auto now = Utils::Now();
@@ -316,6 +324,7 @@ namespace Bousk
 				dgram.datasize = static_cast<uint16>(serializer.bufferSize());
 			}
 
+			// permet de traiter les messages de maintien de connexion du client
 			void DistantClient::handleKeepAlive(const uint8* data, const uint16 datasize)
 			{
 				Serialization::Deserializer deserializer(data, datasize);
@@ -339,21 +348,7 @@ namespace Bousk
 			#endif // BOUSKNET_ALLOW_NETWORK_INTERRUPTION == BOUSKNET_SETTINGS_ENABLED
 			}
 
-			//bool DistantClient::fillDatagram(Bousk::Network::UDP::Datagram& dgram)
-			//{
-			//	dgram.header.ack = htons(mReceivedAcks.lastAck());
-			//	dgram.header.previousAcks = mReceivedAcks.previousAcksMask();
-
-			//	dgram.datasize = mChannelsHandler.serialize(dgram.data.data(), Bousk::Network::UDP::Datagram::DataMaxSize, mNextDatagramIdToSend);
-			//	if (dgram.datasize > 0)
-			//	{
-			//		dgram.header.id = htons(mNextDatagramIdToSend);
-			//		++mNextDatagramIdToSend;
-			//		return true;
-			//	}
-			//	return false;
-			//}
-
+			// fonction appelé lorsqu'un datagram est reçu côté client
 			void DistantClient::onDatagramReceived(Datagram&& datagram)
 			{
 				const auto datagramid = ntohs(datagram.header.id);
@@ -403,16 +398,19 @@ namespace Bousk
 				}
 			}
 
+			// permet de gèrer les datagrams envoyés
 			void DistantClient::onDatagramSentAcked(Datagram::ID datagramId)
 			{
 				mChannelsHandler.onDatagramAcked(datagramId);
 			}
 
+			// permet de gèrer les datagrams perdus
 			void DistantClient::onDatagramSentLost(Datagram::ID datagramId)
 			{
 				mChannelsHandler.onDatagramLost(datagramId);
 			}
 
+			// permet de gèrer les datagrams reçus
 			void DistantClient::onDatagramReceivedLost(Datagram::ID) {}
 
 			void DistantClient::onDataReceived(const uint8_t* data, const uint16_t datasize)
@@ -425,6 +423,7 @@ namespace Bousk
 				}
 			}
 
+			// permet de traiter les messages prêt à être envoyer ou reçus
 			void DistantClient::onMessageReady(std::unique_ptr<Messages::Base>&& msg)
 			{
 				if (isConnecting())
@@ -435,18 +434,6 @@ namespace Bousk
 				{
 					mClient.onMessageReady(std::move(msg));
 				}
-			}
-
-			void DistantClient::onDatagramSentAcked(Datagram::ID datagramId)
-			{
-			}
-
-			void DistantClient::onDatagramReceivedLost(Datagram::ID datagramId)
-			{
-			}
-
-			void DistantClient::onDatagramSentLost(Datagram::ID datagramId)
-			{
 			}
 		}
 	}

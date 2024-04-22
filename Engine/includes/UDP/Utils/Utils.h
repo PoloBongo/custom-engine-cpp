@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Types.h"
+#include "../Types.h"
 
 #include <chrono>
 
@@ -12,12 +12,12 @@ namespace Bousk
 	{
 		inline std::chrono::milliseconds Now();
 
+		inline bool IsSequenceNewer(uint16_t sNew, uint16_t sLast);
+		inline uint16_t SequenceDiff(uint16_t sNew, uint16_t sLast);
+
 		inline void SetBit(uint64_t& bitfield, uint8_t n);
 		inline void UnsetBit(uint64_t& bitfield, uint8_t n);
 		inline bool HasBit(uint64_t bitfield, uint8_t n);
-
-		inline bool IsSequenceNewer(uint16_t sNew, uint16_t sLast);
-		inline uint16_t SequenceDiff(uint16_t sNew, uint16_t sLast);
 
 		using Bousk::Bit;
 

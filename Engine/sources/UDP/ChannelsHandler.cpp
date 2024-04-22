@@ -1,6 +1,5 @@
 #include "UDP/ChannelsHandler.h"
 
-#include "UDP/Datagram.h"
 #include "UDP/Protocol/ReliableOrdered.h"
 #include "UDP/Protocol/UnreliableOrdered.h"
 #include "UDP/ChannelHeader.h"
@@ -17,12 +16,16 @@ namespace Bousk
 			ChannelsHandler::~ChannelsHandler() = default;
 
 			// Multiplexer
+			// Permet d'ajouter les données à la file d'attente d'un canal spécifique
 			void ChannelsHandler::queue(std::vector<uint8_t>&& msgData, const uint32_t channelIndex)
 			{
 				assert(channelIndex < mChannels.size());
 				mChannels[channelIndex]->queue(std::move(msgData));
 			}
 
+			// Place les données sérializé par le protocole associé au canal ( elle parcours chaque canaux )
+			// Ensuite elle est place dans le tampon de sortie ( zone mémoire ou sont stocké temporairement les données )
+			// Pour finir on ajoute un en-tête pour y ajouté des infos en plus ou un identifiant
 			uint16_t ChannelsHandler::serialize(uint8_t* buffer, const uint16_t buffersize, const Datagram::ID datagramId
 			#if BOUSKNET_ALLOW_NETWORK_INTERRUPTION == BOUSKNET_SETTINGS_ENABLED
 				, const bool connectionInterrupted
@@ -59,6 +62,7 @@ namespace Bousk
 				return buffersize - remainingBuffersize;
 			}
 
+			// Permet d'informer les cannaux que les datagrames ont été reçus
 			void ChannelsHandler::onDatagramAcked(const Datagram::ID datagramId)
 			{
 				for (auto& channel : mChannels)
@@ -66,6 +70,8 @@ namespace Bousk
 					channel->onDatagramAcked(datagramId);
 				}
 			}
+
+			// Permet d'informer les cannaux que les datagrames ont été perdus
 			void ChannelsHandler::onDatagramLost(const Datagram::ID datagramId)
 			{
 				for (auto& channel : mChannels)
@@ -75,6 +81,7 @@ namespace Bousk
 			}
 
 			// Demultiplexer
+			// Reforme chaque données reçus en parcourant tout les cannaux pour associer chaque données au canal approprié
 			void ChannelsHandler::onDataReceived(const uint8_t* data, const uint16_t datasize)
 			{
 				uint16_t processedData = 0;
@@ -115,6 +122,13 @@ namespace Bousk
 					}
 				}
 				return messages;
+			}
+
+			// Permet d'ajouter un nouveau cannal avec comme paramètre le constructeur
+			template<class T>
+			void ChannelsHandler::registerChannel(uint8_t channelId)
+			{
+				mChannels.push_back(std::make_unique<T>(channelId));
 			}
 		}
 	}

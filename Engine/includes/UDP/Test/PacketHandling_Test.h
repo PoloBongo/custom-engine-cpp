@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Protocol/ReliableOrdered.h"
-#include "Tester.h"
+#include "../Protocol/ReliableOrdered.h"
+#include "../Tester.h"
 
 class Multiplexer_Test
 {

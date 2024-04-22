@@ -1,8 +1,8 @@
 #pragma once
 
-#include "Tester.h"
-#include "ClientUDP.h"
-#include "Messages.h"
+#include "../Tester.h"
+#include "../ClientUDP.h"
+#include "../Messages.h"
 
 #include <limits>
 

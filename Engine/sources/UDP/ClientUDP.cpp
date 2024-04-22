@@ -1,5 +1,6 @@
 #include "UDP/ClientUDP.h"
-#include <UDP/DistantClient.h>
+#include "UDP/DistantClient.h"
+#include "UDP/Sockets.h"
 
 namespace Bousk
 {
@@ -15,6 +16,8 @@ namespace Bousk
 			{
 			}
 
+			// permet de créer un socket qui sera associé au port spécifié par l'utilisateur
+			// le socket est config en mode non bloquant ( "SetNonBlocking()" )
 			bool ClientUDP::init(uint16_t port)
 			{
 				release();
@@ -39,11 +42,14 @@ namespace Bousk
 			{
 			}
 
+			// ajoute le messages qui est prêt à être traité à la file d'attente
 			void ClientUDP::onMessageReady(std::unique_ptr<Network::Messages::Base>&& msg)
 			{
 				mMessages.push_back(std::move(msg));
 			}
 
+			// permet d'obtenir le client qui est associé à l'adresse passé en paramètre
+			// si aucun client n'est trouvé, alors il en créé un et l'ajoute à la liste
 			DistantClient& ClientUDP::getClient(const sockaddr_storage& clientAddr)
 			{
 				auto itClient = std::find_if(
@@ -57,12 +63,16 @@ namespace Bousk
 				return *(mClients.back());
 			}
 
+			// permet d'envoyer des données à une adresse spécifique
 			void ClientUDP::sendTo(const sockaddr_storage& target, std::vector<uint8_t>&& data)
 			{
 				auto& client = getClient(target);
 				//client.send(std::move(data));
 			}
 
+			// permet de récupérer les datagrammes sur le socket UDP
+			// for(;;) permet de récupérer en permanence les socket s'il y en a
+			// Ensuite ("onDatagramReceived()") permet de traiter et envoyer les socket au client
 			void ClientUDP::receive()
 			{
 				for (;;)
@@ -81,7 +91,7 @@ namespace Bousk
 						}
 						else
 						{
-							//!< Datagramme innatendu
+							//!< Datagramme inattendu
 						}
 					}
 					else

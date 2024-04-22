@@ -309,14 +309,14 @@
     <ClCompile Include="sources\UDP\Serialization\Convert.cpp" />
     <ClCompile Include="sources\UDP\ChannelsHandler.cpp" />
     <ClCompile Include="sources\UDP\Datagram.cpp" />
-    <ClCompile Include="sources\UDP\PacketHandling_Test.cpp" />
+    <ClCompile Include="sources\UDP\Test\PacketHandling_Test.cpp" />
     <ClCompile Include="sources\UDP\Protocol\ReliableOrdered.cpp" />
     <ClCompile Include="sources\UDP\Packet.cpp" />
-    <ClCompile Include="sources\UDP\DistanceClient_Test.cpp" />
+    <ClCompile Include="sources\UDP\Test\DistanceClient_Test.cpp" />
     <ClCompile Include="sources\UDP\Address.cpp" />
     <ClCompile Include="sources\UDP\DistantClient.cpp" />
     <ClCompile Include="sources\UDP\ClientUDP.cpp" />
-    <ClCompile Include="sources\UDP\AckHandler_Test.cpp" />
+    <ClCompile Include="sources\UDP\Test\AckHandler_Test.cpp" />
     <ClCompile Include="BoxCollider.cpp" />
     <ClCompile Include="sources\TCP\Client\Client.cpp" />
     <ClCompile Include="Convertisseur.cpp" />
@@ -350,8 +350,8 @@
     <ClCompile Include="sources\TCP\Server\TCPServerStart.cpp" />
     <ClCompile Include="sources\UDP\Tester.cpp" />
     <ClCompile Include="Transform.cpp" />
-    <ClCompile Include="sources\UDP\Utils.cpp" />
-    <ClCompile Include="sources\UDP\Utils_Test.cpp" />
+    <ClCompile Include="sources\UDP\Utils\Utils.cpp" />
+    <ClCompile Include="sources\UDP\Test\Utils_Test.cpp" />
     <ClCompile Include="sources\UDP\Protocol\UnreliableOrdered.cpp" />
     <ClCompile Include="VulkanHooks.cpp" />
   </ItemGroup>
@@ -361,11 +361,11 @@
     <ClInclude Include="includes\UDP\Serialization\Convert.h" />
     <ClInclude Include="includes\UDP\ChannelHeader.h" />
     <ClInclude Include="includes\UDP\ChannelsHandler.h" />
-    <ClInclude Include="includes\UDP\DistanceClient_Test.h" />
+    <ClInclude Include="includes\UDP\Test\DistanceClient_Test.h" />
     <ClInclude Include="includes\UDP\Address.h" />
     <ClInclude Include="includes\UDP\DistantClient.h" />
     <ClInclude Include="includes\UDP\ClientUDP.h" />
-    <ClInclude Include="includes\UDP\AckHandler_Test.h" />
+    <ClInclude Include="includes\UDP\Test\AckHandler_Test.h" />
     <ClInclude Include="BoxCollider.h" />
     <ClInclude Include="includes\TCP\Client\Client.h" />
     <ClInclude Include="Convertisseur.h" />
@@ -419,7 +419,7 @@
     <ClInclude Include="includes\GameObject\PreGameObject\PlaneGameObject.h" />
     <ClInclude Include="includes\UDP\Packet.h" />
     <ClInclude Include="includes\UDP\Protocol\ReliableOrdered.h" />
-    <ClInclude Include="includes\UDP\PacketHandling_Test.h" />
+    <ClInclude Include="includes\UDP\Test\PacketHandling_Test.h" />
     <ClInclude Include="rhi.h" />
     <ClInclude Include="includes\Modules\RHIVulkanModule.h" />
     <ClInclude Include="RigidBody.h" />
@@ -433,8 +433,8 @@
     <ClInclude Include="includes\TCP\Server\TCPServerStart.h" />
     <ClInclude Include="includes\UDP\Tester.h" />
     <ClInclude Include="Transform.h" />
-    <ClInclude Include="includes\UDP\Utils.h" />
-    <ClInclude Include="includes\UDP\Utils_Test.h" />
+    <ClInclude Include="includes\UDP\Utils\Utils.h" />
+    <ClInclude Include="includes\UDP\Test\Utils_Test.h" />
     <ClInclude Include="includes\UDP\Protocol\UnreliableOrdered.h" />
     <ClInclude Include="VulkanHooks.h" />
   </ItemGroup>
@@ -473,7 +473,7 @@
     <None Include="imgui.ini" />
     <None Include="includes\UDP\Serialization\Deserializer.inl" />
     <None Include="includes\UDP\Serialization\Serializer.inl" />
-    <None Include="includes\UDP\Utils.inl" />
+    <None Include="includes\UDP\Utils\Utils.inl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

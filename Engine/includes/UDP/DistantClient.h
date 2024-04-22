@@ -6,6 +6,7 @@
 #include "Address.h"
 #include "ChannelsHandler.h"
 #include "Messages.h"
+#include "Test/DistanceClient_Test.h" // add
 
 #include <vector>
 #include <memory> // unique_ptr

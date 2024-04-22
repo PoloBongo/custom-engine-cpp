@@ -1,7 +1,7 @@
 #pragma once
 
-#include "UDP/Utils.h"
-#include "UDP/Utils.inl"
+#include "UDP/Utils/Utils.h"
+#include "UDP/Utils/Utils.inl"
 
 #include <cstdint>
 #include <vector>

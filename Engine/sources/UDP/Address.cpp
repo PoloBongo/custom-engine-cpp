@@ -15,6 +15,7 @@ namespace Bousk
 		{
 		}
 
+		// Permet de prendre en charge tout type d'adresses IP
 		Address Address::Any(Type type, uint16 port)
 		{
 			switch (type)
@@ -42,6 +43,8 @@ namespace Bousk
 				return Address();
 			}
 		}
+
+		// Permet de prendre en charge l'adresse IP locale
 		Address Address::Loopback(Type type, uint16 port)
 		{
 			switch (type)
@@ -65,6 +68,7 @@ namespace Bousk
 			}
 		}
 
+		// permet de déterminet si c'est une adresse IPv4 ou IPv6
 		void Address::set(const sockaddr_storage& src)
 		{
 			memcpy(&mStorage, &src, sizeof(mStorage));
@@ -94,11 +98,13 @@ namespace Bousk
 			return std::string();
 		}
 
+		// connecter un socket à une adresse
 		bool Address::connect(SOCKET sckt) const
 		{
 			return ::connect(sckt, reinterpret_cast<const sockaddr*>(&mStorage), sizeof(mStorage)) == 0;
 		}
 
+		// permet d'accepter la connexion entrante sur le socket et récupérer l'adresse du client connecté
 		bool Address::accept(SOCKET sckt, SOCKET& newClient)
 		{
 			sockaddr_storage storage{ 0 };
@@ -114,16 +120,19 @@ namespace Bousk
 			return true;
 		}
 
+		// Associe le socket à une adresse
 		bool Address::bind(SOCKET sckt) const
 		{
 			return ::bind(sckt, reinterpret_cast<const sockaddr*>(&mStorage), sizeof(mStorage)) == 0;
 		}
 
+		// permet d'envoyer des données via un socket UDP
 		int Address::sendTo(SOCKET sckt, const char* data, size_t datalen) const
 		{
 			return sendto(sckt, data, static_cast<int>(datalen), 0, reinterpret_cast<const sockaddr*>(&mStorage), sizeof(mStorage));
 		}
 
+		// permet de recevoir des données via un socket UDP
 		int Address::recvFrom(SOCKET sckt, uint8_t* buffer, size_t bufferSize)
 		{
 			sockaddr_storage storage{ 0 };

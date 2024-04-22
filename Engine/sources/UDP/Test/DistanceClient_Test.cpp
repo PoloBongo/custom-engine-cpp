@@ -1,13 +1,13 @@
-#include "UDP/DistanceClient_Test.h"
+#include "UDP/Test/DistanceClient_Test.h"
 #include "UDP/Tester.h"
 
-#include <UDP/DistantClient.h>
-#include <UDP/ClientUDP.h>
-#include <UDP/Packet.h>
-#include <UDP/ChannelHeader.h>
-#include <UDP/Protocol/UnreliableOrdered.h>
-#include <UDP/Messages.h>
-#include <UDP/Utils.h>
+#include "UDP/DistantClient.h"
+#include "UDP/ClientUDP.h"
+#include "UDP/Packet.h"
+#include "UDP/ChannelHeader.h"
+#include "UDP/Protocol/UnreliableOrdered.h"
+#include "UDP/Messages.h"
+#include "UDP/Utils/Utils.h"
 
 
 void DistanceClient_Test::Test()

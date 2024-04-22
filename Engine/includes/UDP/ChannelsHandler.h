@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Settings.h"
+#include "Datagram.h"
 
 #include <vector>
 #include <memory>
@@ -43,12 +44,6 @@ namespace Bousk
 			private:
 				std::vector<std::unique_ptr<Protocols::IProtocol>> mChannels;
 			};
-
-			template<class T>
-			void ChannelsHandler::registerChannel(uint8_t channelId)
-			{
-				mChannels.push_back(std::make_unique<T>(channelId));
-			}
 		}
 	}
 }

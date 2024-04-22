@@ -1,6 +1,6 @@
 #include "UDP/Protocol/ReliableOrdered.h"
 
-#include "UDP/Utils.h"
+#include "UDP/Utils/Utils.h"
 #include <cassert>
 
 namespace Bousk

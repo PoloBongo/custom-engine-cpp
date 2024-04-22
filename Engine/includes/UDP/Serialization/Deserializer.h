@@ -1,7 +1,7 @@
 #pragma once
 
-#include <UDP/Settings.h>
-#include <UDP/Types.h>
+#include "UDP/Settings.h"
+#include "UDP/Types.h"
 
 #include <string>
 #include <vector>

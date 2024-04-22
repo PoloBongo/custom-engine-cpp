@@ -1,7 +1,7 @@
-#include <UDP/Serialization/Serializer.h>
-#include <UDP/Serialization/Convert.h>
-#include <UDP/Serialization/Serialization.h>
-#include <UDP/Utils.h>
+#include "UDP/Serialization/Serializer.h"
+#include "UDP/Serialization/Convert.h"
+#include "UDP/Serialization/Serialization.h"
+#include "UDP/Utils/Utils.h"
 
 #include <algorithm>
 
@@ -133,13 +133,13 @@ namespace Bousk
 			return write(rangedData, static_cast<uint64>(0), range);
 		}
 
-#if BOUSKNET_ALLOW_FLOAT32_SERIALIZATION == BOUSKNET_SETTINGS_ENABLED
-		bool Serializer::write(const float32 data)
-		{
-			uint32 conv;
-			Conversion::ToNetwork(data, conv);
-			return writeBits(reinterpret_cast<const uint8*>(&conv), 4, 32);
-		}
-#endif // BOUSKNET_ALLOW_FLOAT32_SERIALIZATION == BOUSKNET_SETTINGS_ENABLED
+		#if BOUSKNET_ALLOW_FLOAT32_SERIALIZATION == BOUSKNET_SETTINGS_ENABLED
+			bool Serializer::write(const float32 data)
+			{
+				uint32 conv;
+				Conversion::ToNetwork(data, conv);
+				return writeBits(reinterpret_cast<const uint8*>(&conv), 4, 32);
+			}
+		#endif // BOUSKNET_ALLOW_FLOAT32_SERIALIZATION == BOUSKNET_SETTINGS_ENABLED
 	}
 }

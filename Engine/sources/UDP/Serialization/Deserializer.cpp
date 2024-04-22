@@ -1,7 +1,7 @@
-#include <UDP/Serialization/Deserializer.h>
-#include <UDP/Serialization/Serialization.h>
-#include <UDP/Serialization/Convert.h>
-#include <UDP/Utils.h>
+#include "UDP/Serialization/Deserializer.h"
+#include "UDP/Serialization/Serialization.h"
+#include "UDP/Serialization/Convert.h"
+#include "UDP/utils/Utils.h"
 
 #include <algorithm>
 
@@ -21,25 +21,25 @@ namespace Bousk
 			if (remainingBits() < nbBits)
 				return false;
 
-			uint8 totalReadBits = 0;
-			// buffer here must be in network/big endian, so bytes must be written right (buffer + bufferSize - 1) to left (buffer)
-			for (uint8 writingBytesOffset = 1; writingBytesOffset <= bufferSize && totalReadBits < nbBits; ++writingBytesOffset)
+			uint8_t totalReadBits = 0;
+			// Le tampon doit être en big-endian (réseau), donc les octets doivent être écrits de droite (buffer + bufferSize - 1) à gauche (buffer)
+			for (uint8_t writingBytesOffset = 1; writingBytesOffset <= bufferSize && totalReadBits < nbBits; ++writingBytesOffset)
 			{
-				uint8& dstByte = *(buffer + bufferSize - writingBytesOffset);
-				const uint8 bitsToRead = static_cast<uint8>(std::min(8, nbBits - totalReadBits));
-				uint8 bitsRead = 0;
+				uint8_t& dstByte = *(buffer + bufferSize - writingBytesOffset);
+				const uint8_t bitsToRead = static_cast<uint8_t>(std::min(8, nbBits - totalReadBits));
+				uint8_t bitsRead = 0;
 				{
-					const uint8 srcByte = *(mBuffer + mBytesRead);
-					// Read first bits from the current reading byte
-					const uint8 remainingBitsInCurrentByte = 8 - mBitsRead;
-					const uint8 leftBitsToSkip = mBitsRead;
-					const uint8 bitsToReadFromCurrentByte = std::min(bitsToRead, remainingBitsInCurrentByte);
-					const uint8 remainingBitsOnTheRight = 8 - bitsToReadFromCurrentByte - leftBitsToSkip;
-					// Extract bits from the left
-					const uint8 readMask = Utils::CreateBitsMask(bitsToReadFromCurrentByte, remainingBitsOnTheRight);
-					const uint8 bits = srcByte & readMask;
-					// Align those bits on the right in the output byte
-					const uint8 bitsAlignedRight = bits >> remainingBitsOnTheRight;
+					const uint8_t srcByte = *(mBuffer + mBytesRead);
+					// Lire les premiers bits du byte de lecture actuel
+					const uint8_t remainingBitsInCurrentByte = 8 - mBitsRead;
+					const uint8_t leftBitsToSkip = mBitsRead;
+					const uint8_t bitsToReadFromCurrentByte = std::min(bitsToRead, remainingBitsInCurrentByte);
+					const uint8_t remainingBitsOnTheRight = 8 - bitsToReadFromCurrentByte - leftBitsToSkip;
+					// Extraire les bits de gauche
+					const uint8_t readMask = Utils::CreateBitsMask(bitsToReadFromCurrentByte, remainingBitsOnTheRight);
+					const uint8_t bits = srcByte & readMask;
+					// Aligner ces bits à droite dans le byte de sortie
+					const uint8_t bitsAlignedRight = bits >> remainingBitsOnTheRight;
 					dstByte |= bitsAlignedRight;
 
 					bitsRead += bitsToReadFromCurrentByte;
@@ -50,15 +50,15 @@ namespace Bousk
 
 				if (bitsRead < bitsToRead)
 				{
-					const uint8 srcByte = *(mBuffer + mBytesRead);
-					// Read remaining bits of current output byte from next reading byte
-					const uint8 bitsToReadFromCurrentByte = bitsToRead - bitsRead;
-					const uint8 remainingBitsOnTheRight = 8 - bitsToReadFromCurrentByte;
-					// Those bits are on the left
-					const uint8 readMask = Utils::CreateBitsMask(bitsToReadFromCurrentByte, remainingBitsOnTheRight);
-					const uint8 bits = srcByte & readMask;
-					// Align them on the right to pack to first part read
-					const uint8 bitsAlignedRightToPack = bits >> (8 - bitsToReadFromCurrentByte - bitsRead);
+					const uint8_t srcByte = *(mBuffer + mBytesRead);
+					// Lire les bits restants du byte de sortie actuel depuis le byte de lecture suivant
+					const uint8_t bitsToReadFromCurrentByte = bitsToRead - bitsRead;
+					const uint8_t remainingBitsOnTheRight = 8 - bitsToReadFromCurrentByte;
+					// Ces bits sont à gauche
+					const uint8_t readMask = Utils::CreateBitsMask(bitsToReadFromCurrentByte, remainingBitsOnTheRight);
+					const uint8_t bits = srcByte & readMask;
+					// Les aligner à droite pour les emballer à la première partie lue
+					const uint8_t bitsAlignedRightToPack = bits >> (8 - bitsToReadFromCurrentByte - bitsRead);
 					dstByte |= bitsAlignedRightToPack;
 
 					bitsRead += bitsToReadFromCurrentByte;
@@ -67,7 +67,7 @@ namespace Bousk
 					mBitsRead %= 8;
 				}
 
-				// Update counters
+				// Mettre à jour les compteurs
 				totalReadBits += bitsRead;
 			}
 
