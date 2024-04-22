@@ -1,6 +1,7 @@
 #include "UDP/ClientUDP.h"
 #include "UDP/DistantClient.h"
-#include "UDP/Sockets.h"
+#include "UDP/SocketsUDP.h"
+#include "UDP/ErrorsUDP.h"
 
 namespace Bousk
 {
@@ -8,12 +9,21 @@ namespace Bousk
 	{
 		namespace UDP
 		{
-			ClientUDP::ClientUDP()
+			void ClientUDP::SetTimeout(std::chrono::milliseconds timeout)
 			{
+				DistantClient::SetTimeout(timeout);
 			}
+			std::chrono::milliseconds ClientUDP::GetTimeout()
+			{
+				return DistantClient::GetTimeout();
+			}
+
+			ClientUDP::ClientUDP()
+			{}
 
 			ClientUDP::~ClientUDP()
 			{
+				release();
 			}
 
 			// permet de créer un socket qui sera associé au port spécifié par l'utilisateur
@@ -32,7 +42,7 @@ namespace Bousk
 				int res = bind(mSocket, reinterpret_cast<sockaddr*>(&addr), sizeof(addr));
 				if (res != 0)
 					return false;
-				if (!SetNonBlocking(mSocket))
+				if (!Network::SetNonBlocking(mSocket))
 					return false;
 
 				return true;
@@ -40,35 +50,107 @@ namespace Bousk
 
 			void ClientUDP::release()
 			{
+
+				if (mSocket != INVALID_SOCKET)
+					CloseSocket(mSocket);
+				mSocket = INVALID_SOCKET;
+				{
+					OperationsLock lock(mOperationsLock);
+					mPendingOperations.clear();
+				}
+				{
+					MessagesLock lock(mMessagesLock);
+					mMessages.clear();
+				}
+				mClients.clear();
+				#if BOUSKNET_ALLOW_NETWORK_INTERRUPTION == BOUSKNET_SETTINGS_ENABLED
+					mInterruptedClients.clear();
+				#endif // BOUSKNET_ALLOW_NETWORK_INTERRUPTION == BOUSKNET_SETTINGS_ENABLED
 			}
 
-			// ajoute le messages qui est prêt à être traité à la file d'attente
-			void ClientUDP::onMessageReady(std::unique_ptr<Network::Messages::Base>&& msg)
+			void ClientUDP::connect(const Address& addr)
 			{
-				mMessages.push_back(std::move(msg));
+				assert(addr.isValid());
+				OperationsLock lock(mOperationsLock);
+				mPendingOperations.push_back(Operation::Connect(addr));
 			}
 
-			// permet d'obtenir le client qui est associé à l'adresse passé en paramètre
-			// si aucun client n'est trouvé, alors il en créé un et l'ajoute à la liste
-			DistantClient& ClientUDP::getClient(const sockaddr_storage& clientAddr)
+			void ClientUDP::disconnect(const Address& addr)
 			{
-				auto itClient = std::find_if(
-					mClients.begin(), mClients.end(), [&](const std::unique_ptr<DistantClient>& client)
-					{
-						return memcmp(&(client->address()), &clientAddr, sizeof(sockaddr_storage)) == 0; });
-				if (itClient != mClients.end())
-					return *(itClient->get());
-
-				mClients.emplace_back(std::make_unique<DistantClient>(*this, clientAddr));
-				return *(mClients.back());
+				assert(addr.isValid());
+				OperationsLock lock(mOperationsLock);
+				mPendingOperations.push_back(Operation::Disconnect(addr));
 			}
 
 			// permet d'envoyer des données à une adresse spécifique
-			void ClientUDP::sendTo(const sockaddr_storage& target, std::vector<uint8_t>&& data)
+			void ClientUDP::sendTo(const Address& target, std::vector<uint8>&& data, const uint32 channelIndex)
 			{
-				auto& client = getClient(target);
-				//client.send(std::move(data));
+				assert(target.isValid());
+				OperationsLock lock(mOperationsLock);
+				mPendingOperations.push_back(Operation::SendTo(target, std::move(data), channelIndex));
 			}
+
+			void ClientUDP::processSend()
+			{
+				// Process pending operations
+				std::vector<Operation> operations;
+				{
+					OperationsLock lock(mOperationsLock);
+					operations.swap(mPendingOperations);
+				}
+				for (Operation& op : operations)
+				{
+					switch (op.mType)
+					{
+					case Operation::Type::Connect:
+					{
+						if (auto client = getClient(op.mTarget, true))
+							client->connect();
+					} break;
+					case Operation::Type::SendTo:
+					{
+						if (auto client = getClient(op.mTarget, true))
+							client->send(std::move(op.mData), op.mChannel);
+					} break;
+					case Operation::Type::Disconnect:
+					{
+						if (auto client = getClient(op.mTarget))
+							client->disconnect();
+					} break;
+					}
+				}
+
+				// Do send data to clients
+				for (auto& client : mClients)
+					client->processSend();
+
+				// Remove disconnected clients
+				const auto clientsToRemove = std::remove_if(mClients.begin(), mClients.end(), [](const std::unique_ptr<DistantClient>& client) { return client->isDisconnected(); });
+#if BOUSKNET_ALLOW_NETWORK_INTERRUPTION == BOUSKNET_SETTINGS_ENABLED
+				// Make sure no interrupted clients have been removed : interrupted clients should resume before disconnecting
+				for (auto clientToRemove = clientsToRemove; clientToRemove != mClients.end(); ++clientToRemove)
+				{
+					const size_t erased = mInterruptedClients.erase(clientToRemove->get());
+					assert(erased == 0);
+				}
+#endif // BOUSKNET_ALLOW_NETWORK_INTERRUPTION == BOUSKNET_SETTINGS_ENABLED
+				mClients.erase(clientsToRemove, mClients.end());
+			}
+
+#if BOUSKNET_ALLOW_NETWORK_INTERRUPTION == BOUSKNET_SETTINGS_ENABLED
+			void ClientUDP::onClientInterrupted(const DistantClient* client)
+			{
+				mInterruptedClients.insert(client);
+			}
+			void ClientUDP::onClientResumed(const DistantClient* client)
+			{
+				mInterruptedClients.erase(client);
+			}
+			bool ClientUDP::isInterruptionCulprit(const DistantClient* client) const
+			{
+				return mInterruptedClients.size() == 1 && *(mInterruptedClients.begin()) == client;
+			}
+#endif // BOUSKNET_ALLOW_NETWORK_INTERRUPTION == BOUSKNET_SETTINGS_ENABLED
 
 			// permet de récupérer les datagrammes sur le socket UDP
 			// for(;;) permet de récupérer en permanence les socket s'il y en a
@@ -77,42 +159,95 @@ namespace Bousk
 			{
 				for (;;)
 				{
-					Bousk::Network::UDP::Datagram datagram;
-					sockaddr_in from{ 0 };
-					socklen_t fromlen = sizeof(from);
-					int ret = recvfrom(mSocket, reinterpret_cast<char*>(&datagram), Bousk::Network::UDP::Datagram::BufferMaxSize, 0, reinterpret_cast<sockaddr*>(&from), &fromlen);
+					Datagram datagram;
+					Address from;
+					int ret = from.recvFrom(mSocket, reinterpret_cast<uint8*>(&datagram), Datagram::BufferMaxSize);
 					if (ret > 0)
 					{
-						if (ret > Bousk::Network::UDP::Datagram::HeaderSize)
+						const uint16 receivedSize = static_cast<uint16>(ret);
+						if (receivedSize >= Datagram::HeaderSize)
 						{
-							datagram.datasize = ret - Bousk::Network::UDP::Datagram::HeaderSize;
-							auto& client = getClient(reinterpret_cast<sockaddr_storage&>(from));
-							client.onDatagramReceived(std::move(datagram));
+							datagram.datasize = receivedSize - Datagram::HeaderSize;
+#if BOUSKNET_ALLOW_NETWORK_SIMULATOR == BOUSKNET_SETTINGS_ENABLED
+							if (mSimulator.isEnabled())
+							{
+								// Push the datagram into the simulator
+								mSimulator.push(datagram, from);
+							}
+							else
+#endif // BOUSKNET_ALLOW_NETWORK_SIMULATOR == BOUSKNET_SETTINGS_ENABLED
+							{
+								// Handle the datagram directly
+								if (auto client = getClient(from, true))
+									client->onDatagramReceived(std::move(datagram));
+							}
 						}
 						else
 						{
-							//!< Datagramme inattendu
+							//!< Something is wrong, unexpected datagram
 						}
 					}
 					else
 					{
 						if (ret < 0)
 						{
-							//!< Gestion des erreurs
-							const auto err = Network::Errors::Get();
-							if (err != Network::Errors::WOULDBLOCK)
+							//!< Error handling
+							const auto err = ErrorsUDP::Get();
+							if (err != ErrorsUDP::WOULDBLOCK)
 							{
-								//!< Une erreur s’est produite
+								//!< Log that error
 							}
 						}
-						return;
+						break;
 					}
 				}
+				// Poll pending datagrams from the simulator
+#if BOUSKNET_ALLOW_NETWORK_SIMULATOR == BOUSKNET_SETTINGS_ENABLED
+				if (mSimulator.isEnabled())
+				{
+					std::vector<std::pair<Datagram, Address>> datagrams = mSimulator.poll();
+					for (auto& [datagram, from] : datagrams)
+					{
+						if (auto client = getClient(from, true))
+							client->onDatagramReceived(std::move(datagram));
+					}
+				}
+#endif // BOUSKNET_ALLOW_NETWORK_SIMULATOR == BOUSKNET_SETTINGS_ENABLED
 			}
 
-			std::vector<std::unique_ptr<Network::Messages::Base>> ClientUDP::poll()
+			std::vector<std::unique_ptr<Messages::Base>> ClientUDP::poll()
 			{
-				return std::vector<std::unique_ptr<Network::Messages::Base>>();
+				MessagesLock lock(mMessagesLock);
+				return std::move(mMessages);
+			}
+
+			// permet d'obtenir le client qui est associé à l'adresse passé en paramètre
+			// si aucun client n'est trouvé, alors il en créé un et l'ajoute à la liste
+			DistantClient* ClientUDP::getClient(const Address& clientAddr, bool create /*= false*/)
+			{
+				auto itClient = std::find_if(mClients.begin(), mClients.end(), [&](const std::unique_ptr<DistantClient>& client) { return client->address() == clientAddr; });
+				if (itClient != mClients.end())
+					return itClient->get();
+				else if (create)
+				{
+					mClients.emplace_back(std::make_unique<DistantClient>(*this, clientAddr, mClientIdsGenerator++));
+					setupChannels(*(mClients.back()));
+					return mClients.back().get();
+				}
+				else
+					return nullptr;
+			}
+
+			void ClientUDP::setupChannels(DistantClient& client)
+			{
+				for (auto& channel : mRegisteredChannels)
+					channel.creator(client);
+			}
+
+			void ClientUDP::onMessageReady(std::unique_ptr<Messages::Base>&& msg)
+			{
+				MessagesLock lock(mMessagesLock);
+				mMessages.push_back(std::move(msg));
 			}
 		}
 	}

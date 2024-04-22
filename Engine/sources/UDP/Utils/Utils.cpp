@@ -4,10 +4,10 @@ namespace Bousk
 {
 	namespace Utils
 	{
-		uint8_t CountNeededBits(uint64_t v)
+		uint8 CountNeededBits(uint64 v)
 		{
 			assert(v != 0);
-			uint8_t bits = 0;
+			uint8 bits = 0;
 			while (v)
 			{
 				++bits;
@@ -16,7 +16,7 @@ namespace Bousk
 			return bits;
 		}
 
-		uint8_t CreateRightBitsMask(uint8_t rightBits)
+		uint8 CreateRightBitsMask(uint8 rightBits)
 		{
 			assert(rightBits >= 1 && rightBits <= 8);
 			switch (rightBits)
@@ -32,7 +32,7 @@ namespace Bousk
 			}
 			return 0;
 		}
-		uint8_t CreateBitsMask(uint8_t nbBits, uint8_t rightBitsToSkip)
+		uint8 CreateBitsMask(uint8 nbBits, uint8 rightBitsToSkip)
 		{
 			assert(rightBitsToSkip < 8);
 			assert(rightBitsToSkip + nbBits <= 8);

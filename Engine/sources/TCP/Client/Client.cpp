@@ -255,7 +255,7 @@ namespace Network
 				disconnect();
 
 			mSocket = sckt;
-			if (!SetNonBlocking(mSocket))
+			if (!Network::SetNonBlocking(mSocket))
 			{
 				disconnect();
 				return false;
@@ -277,7 +277,7 @@ namespace Network
 			{
 				return false;
 			}
-			else if (!SetNonBlocking(mSocket))
+			else if (!Network::SetNonBlocking(mSocket))
 			{
 				disconnect();
 				return false;
@@ -294,7 +294,7 @@ namespace Network
 		{
 			if (mSocket != INVALID_SOCKET)
 			{
-				CloseSocket(mSocket);
+				Network::CloseSocket(mSocket);
 			}
 			mSocket = INVALID_SOCKET;
 			mState = State::Disconnected;

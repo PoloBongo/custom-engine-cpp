@@ -1,10 +1,11 @@
 #include "UDP/ChannelsHandler.h"
-
+#include "UDP/ChannelHeader.h"
 #include "UDP/Protocol/ReliableOrdered.h"
 #include "UDP/Protocol/UnreliableOrdered.h"
-#include "UDP/ChannelHeader.h"
+
 
 #include <cassert>
+#include <iterator>
 
 namespace Bousk
 {
@@ -17,7 +18,7 @@ namespace Bousk
 
 			// Multiplexer
 			// Permet d'ajouter les données à la file d'attente d'un canal spécifique
-			void ChannelsHandler::queue(std::vector<uint8_t>&& msgData, const uint32_t channelIndex)
+			void ChannelsHandler::queue(std::vector<uint8>&& msgData, const uint32 channelIndex)
 			{
 				assert(channelIndex < mChannels.size());
 				mChannels[channelIndex]->queue(std::move(msgData));
@@ -26,22 +27,22 @@ namespace Bousk
 			// Place les données sérializé par le protocole associé au canal ( elle parcours chaque canaux )
 			// Ensuite elle est place dans le tampon de sortie ( zone mémoire ou sont stocké temporairement les données )
 			// Pour finir on ajoute un en-tête pour y ajouté des infos en plus ou un identifiant
-			uint16_t ChannelsHandler::serialize(uint8_t* buffer, const uint16_t buffersize, const Datagram::ID datagramId
+			uint16 ChannelsHandler::serialize(uint8* buffer, const uint16 buffersize, const Datagram::ID datagramId
 			#if BOUSKNET_ALLOW_NETWORK_INTERRUPTION == BOUSKNET_SETTINGS_ENABLED
 				, const bool connectionInterrupted
 			#endif // BOUSKNET_ALLOW_NETWORK_INTERRUPTION == BOUSKNET_SETTINGS_ENABLED
 			)
 			{
-				uint16_t remainingBuffersize = buffersize;
-				for (uint32_t channelIndex = 0; channelIndex < mChannels.size(); ++channelIndex)
+				uint16 remainingBuffersize = buffersize;
+				for (uint32 channelIndex = 0; channelIndex < mChannels.size(); ++channelIndex)
 				{
 					Protocols::IProtocol* protocol = mChannels[channelIndex].get();
 
-					uint8_t* const channelHeaderStart = buffer;
-					uint8_t* const channelDataStart = buffer + ChannelHeader::Size;
-					const uint16_t channelAvailableSize = remainingBuffersize - ChannelHeader::Size;
+					uint8* const channelHeaderStart = buffer;
+					uint8* const channelDataStart = buffer + ChannelHeader::Size;
+					const uint16 channelAvailableSize = remainingBuffersize - ChannelHeader::Size;
 
-					const uint16_t serializedData = protocol->serialize(channelDataStart, channelAvailableSize, datagramId
+					const uint16 serializedData = protocol->serialize(channelDataStart, channelAvailableSize, datagramId
 					#if BOUSKNET_ALLOW_NETWORK_INTERRUPTION == BOUSKNET_SETTINGS_ENABLED
 						, connectionInterrupted
 					#endif // BOUSKNET_ALLOW_NETWORK_INTERRUPTION == BOUSKNET_SETTINGS_ENABLED
@@ -52,9 +53,9 @@ namespace Bousk
 						// Data added, let's add the protocol header
 						ChannelHeader* const channelHeader = reinterpret_cast<ChannelHeader*>(channelHeaderStart);
 						channelHeader->channelIndex = channelIndex;
-						channelHeader->datasize = static_cast<uint32_t>(serializedData);
+						channelHeader->datasize = static_cast<uint32>(serializedData);
 
-						const uint16_t channelTotalSize = serializedData + ChannelHeader::Size;
+						const uint16 channelTotalSize = serializedData + ChannelHeader::Size;
 						buffer += channelTotalSize;
 						remainingBuffersize -= channelTotalSize;
 					}
@@ -82,9 +83,9 @@ namespace Bousk
 
 			// Demultiplexer
 			// Reforme chaque données reçus en parcourant tout les cannaux pour associer chaque données au canal approprié
-			void ChannelsHandler::onDataReceived(const uint8_t* data, const uint16_t datasize)
+			void ChannelsHandler::onDataReceived(const uint8* data, const uint16 datasize)
 			{
-				uint16_t processedData = 0;
+				uint16 processedData = 0;
 				while (processedData < datasize)
 				{
 					const ChannelHeader* channelHeader = reinterpret_cast<const ChannelHeader*>(data);
@@ -99,18 +100,18 @@ namespace Bousk
 						return;
 					}
 					mChannels[channelHeader->channelIndex]->onDataReceived(data + ChannelHeader::Size, channelHeader->datasize);
-					const uint16_t channelTotalSize = channelHeader->datasize + ChannelHeader::Size;
+					const uint16 channelTotalSize = channelHeader->datasize + ChannelHeader::Size;
 					data += channelTotalSize;
 					processedData += channelTotalSize;
 				}
 			}
 
-			std::vector<std::tuple<uint8_t, std::vector<uint8_t>>> ChannelsHandler::process(bool isConnected)
+			std::vector<std::tuple<uint8, std::vector<uint8>>> ChannelsHandler::process(bool isConnected)
 			{
-				std::vector<std::tuple<uint8_t, std::vector<uint8_t>>> messages;
+				std::vector<std::tuple<uint8, std::vector<uint8>>> messages;
 				for (auto& channel : mChannels)
 				{
-					std::vector<std::vector<uint8_t>> protocolMessages = channel->process();
+					std::vector<std::vector<uint8>> protocolMessages = channel->process();
 					// If we're not connected, ignore and discard unreliable messages
 					if (!protocolMessages.empty() && (channel->isReliable() || isConnected))
 					{
@@ -124,9 +125,8 @@ namespace Bousk
 				return messages;
 			}
 
-			// Permet d'ajouter un nouveau cannal avec comme paramètre le constructeur
 			template<class T>
-			void ChannelsHandler::registerChannel(uint8_t channelId)
+			void ChannelsHandler::registerChannel(uint8 channelId)
 			{
 				mChannels.push_back(std::make_unique<T>(channelId));
 			}

@@ -1,16 +1,19 @@
 #pragma once
 
 #include "Datagram.h"
-#include "ClientUDP.h"
 #include "AckHandler.h"
 #include "Address.h"
 #include "ChannelsHandler.h"
+#include "Settings.h"
+#include "SocketsUDP.h"
 #include "Messages.h"
-#include "Test/DistanceClient_Test.h" // add
 
-#include <vector>
+#include <chrono>
 #include <memory> // unique_ptr
+#include <optional>
+#include <vector>
 
+class DistantClient_Test;
 namespace Bousk
 {
 	namespace Network
@@ -26,7 +29,7 @@ namespace Bousk
 
 			class DistantClient
 			{
-				friend class ::DistanceClient_Test;
+				friend class ::DistantClient_Test;
 				enum class State {
 					None,
 					ConnectionSent,
@@ -44,7 +47,7 @@ namespace Bousk
 					Lost,
 				};
 			public:
-				DistantClient(ClientUDP& client, const Address& addr, uint64_t clientid);
+				DistantClient(ClientUDP& client, const Address& addr, uint64 clientid);
 				DistantClient(const DistantClient&) = delete;
 				DistantClient(DistantClient&&) = delete;
 				DistantClient& operator=(const DistantClient&) = delete;
@@ -112,32 +115,28 @@ namespace Bousk
 				void fillDatagramHeader(Datagram& dgram, Datagram::Type type);
 				void send(const Datagram& dgram);
 
-				Bousk::Network::UDP::Datagram::ID mNextDatagramIdToSend{ 0 };
-				Bousk::UDP::AckHandler mReceivedAcks;
-
 			private:
-				SOCKET mSocket{ INVALID_SOCKET };
 				Address mAddress;
 				Bousk::UDP::AckHandler mSentAcks;
+				Bousk::UDP::AckHandler mReceivedAcks;
 				ClientUDP& mClient;
 				ChannelsHandler mChannelsHandler;
+				Datagram::ID mNextDatagramIdToSend{ 0 };
 				State mState{ State::None };
-
-				#if BOUSKNET_ALLOW_NETWORK_INTERRUPTION == BOUSKNET_SETTINGS_ENABLED
-					bool mInterrupted{ false }; // Whether the connectivity is interrupted with this client (this client stopped sending us data)
-					bool mDistantInterrupted{ false }; // Whether this client has its connectivity interrupted with one of its clients
-				#endif // BOUSKNET_ALLOW_NETWORK_INTERRUPTION == BOUSKNET_SETTINGS_ENABLED
-					DisconnectionReason mDisconnectionReason{ DisconnectionReason::None };
-					std::vector<std::unique_ptr<Messages::Base>> mPendingMessages; // Store messages before connection has been accepted
-
-				uint64_t mClientId;
+				uint64 mClientId;
 				std::chrono::milliseconds mConnectionStartTime; // Connection start time, for connection timeout
 				std::chrono::milliseconds mLastKeepAlive; // Last time this connection has been marked alive, for timeout disconnection
 				static std::chrono::milliseconds sTimeout; // Timeout is same for all clients
+			#if BOUSKNET_ALLOW_NETWORK_INTERRUPTION == BOUSKNET_SETTINGS_ENABLED
+				bool mInterrupted{ false }; // Whether the connectivity is interrupted with this client (this client stopped sending us data)
+				bool mDistantInterrupted{ false }; // Whether this client has its connectivity interrupted with one of its clients
+			#endif // BOUSKNET_ALLOW_NETWORK_INTERRUPTION == BOUSKNET_SETTINGS_ENABLED
+				DisconnectionReason mDisconnectionReason{ DisconnectionReason::None };
+				std::vector<std::unique_ptr<Messages::Base>> mPendingMessages; // Store messages before connection has been accepted
 			};
 
 			template<class T>
-			void DistantClient::registerChannel(uint8 channelId /* = 0 */)
+			void DistantClient::registerChannel(uint8 channelId)
 			{
 				mChannelsHandler.registerChannel<T>(channelId);
 			}

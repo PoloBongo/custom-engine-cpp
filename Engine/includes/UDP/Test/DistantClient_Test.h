@@ -10,7 +10,7 @@
 	#undef max
 #endif
 
-class DistanceClient_Test
+class DistantClient_Test
 {
 public:
 	static void Test();

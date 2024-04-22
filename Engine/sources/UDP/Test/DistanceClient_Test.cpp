@@ -1,4 +1,4 @@
-#include "UDP/Test/DistanceClient_Test.h"
+#include "UDP/Test/DistantClient_Test.h"
 #include "UDP/Tester.h"
 
 #include "UDP/DistantClient.h"
@@ -10,7 +10,7 @@
 #include "UDP/Utils/Utils.h"
 
 
-void DistanceClient_Test::Test()
+void DistantClient_Test::Test()
 {
 	static constexpr uint64_t MASK_COMPLETE = std::numeric_limits<uint64_t>::max();
 	static constexpr uint64_t MASK_FIRST_ACKED = Bousk::Utils::Bit<uint64_t>::Right;
@@ -21,7 +21,7 @@ void DistanceClient_Test::Test()
 	Bousk::Network::UDP::ClientUDP client; //!< We need a client to test DistantClient
 	Bousk::Network::Address localAddress = Bousk::Network::Address::Loopback(Bousk::Network::Address::Type::IPv4, 8888); //!< Pretend we're a loopback distant client
 	Bousk::Network::UDP::DistantClient distantClient(client, localAddress, 0);
-	distantClient.registerChannel<Bousk::Network::UDP::Protocols::UnreliableOrdered>();
+	//distantClient.registerChannel<Bousk::Network::UDP::Protocols::UnreliableOrdered>();
 	distantClient.onConnected();
 	// Consume connection message
 	{

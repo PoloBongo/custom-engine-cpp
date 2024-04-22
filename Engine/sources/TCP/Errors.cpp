@@ -8,11 +8,11 @@ namespace Network
 		int Get()
 		{
 			//std::cout << "function get" << std::endl;
-			#ifdef _WIN32
-				return WSAGetLastError();
-			#else
-				return errno;
-			#endif
+#ifdef _WIN32
+			return WSAGetLastError();
+#else
+			return errno;
+#endif
 		}
 	}
 }

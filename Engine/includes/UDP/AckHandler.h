@@ -20,20 +20,20 @@ namespace Bousk
 			AckHandler& operator=(AckHandler&&) = default;
 			~AckHandler() = default;
 
-			void update(uint16_t newAck, uint64_t previousAcks, bool trackLoss = false);
-			bool isAcked(uint16_t ack) const;
-			bool isNewlyAcked(uint16_t ack) const;
+			void update(uint16 newAck, uint64 previousAcks, bool trackLoss = false);
+			bool isAcked(uint16 ack) const;
+			bool isNewlyAcked(uint16 ack) const;
 
-			uint16_t lastAck() const;
-			uint64_t previousAcksMask() const;
-			std::vector<uint16_t> getNewAcks() const;
-			std::vector<uint16_t>&& loss();
+			uint16 lastAck() const;
+			uint64 previousAcksMask() const;
+			std::vector<uint16> getNewAcks() const;
+			std::vector<uint16>&& loss();
 
 		private:
-			uint16_t mLastAck = -1;
-			uint64_t mPreviousAcks = -1;
-			uint64_t mNewAcks = 0;
-			std::vector<uint16_t> mLoss;
+			uint16 mLastAck = -1;
+			uint64 mPreviousAcks = -1;
+			uint64 mNewAcks = 0;
+			std::vector<uint16> mLoss;
 			bool mLastAckIsNew { false };
 		};
 	}

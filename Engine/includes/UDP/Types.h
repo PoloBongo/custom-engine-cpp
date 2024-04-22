@@ -8,6 +8,14 @@
 #include <limits>
 #include <type_traits>
 
+#ifdef min
+#undef min
+#endif
+
+#ifdef max
+#undef max
+#endif
+
 namespace Bousk
 {
 	using int8 = int8_t;

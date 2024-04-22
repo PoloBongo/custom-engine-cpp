@@ -1,12 +1,20 @@
 ﻿#pragma once
 
+#ifdef _WIN32
 #include <winSock2.h>
+#else
+#include <cerrno>
+#define SOCKET int
+#define INVALID_SOCKET ((int)-1)
+#define SOCKET_ERROR (int(-1))
+#endif
+
 
 namespace Bousk
 {
     namespace Network
     {
-        namespace Errors
+        namespace ErrorsUDP
         {
             /**
              * @brief R�cup�re le code d'erreur du dernier appel r�seau.

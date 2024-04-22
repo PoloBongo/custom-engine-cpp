@@ -1,8 +1,6 @@
 #include <cassert>
 #include <numeric>
 
-#include "UDP/Serialization/Serializer.h"
-
 namespace Bousk
 {
 	namespace Serialization

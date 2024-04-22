@@ -302,7 +302,10 @@
     <ClCompile Include="..\Librairies\imgui\imgui_impl_vulkan.cpp" />
     <ClCompile Include="..\Librairies\imgui\imgui_tables.cpp" />
     <ClCompile Include="..\Librairies\imgui\imgui_widgets.cpp" />
-    <ClCompile Include="sources\UDP\Sockets.cpp" />
+    <ClCompile Include="sources\UDP\ErrorsUDP.cpp" />
+    <ClCompile Include="sources\UDP\Test\Serialization_Test.cpp" />
+    <ClCompile Include="sources\UDP\Protocol\Simulator.cpp" />
+    <ClCompile Include="sources\UDP\SocketsUDP.cpp" />
     <ClCompile Include="sources\UDP\Serialization\Deserializer.cpp" />
     <ClCompile Include="sources\UDP\Serialization\Serialization.cpp" />
     <ClCompile Include="sources\UDP\Serialization\Serializer.cpp" />
@@ -356,12 +359,14 @@
     <ClCompile Include="VulkanHooks.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="includes\UDP\Errors.h" />
+    <ClInclude Include="includes\UDP\ErrorsUDP.h" />
+    <ClInclude Include="includes\UDP\Float.h" />
+    <ClInclude Include="includes\UDP\RangedInteger.h" />
     <ClInclude Include="includes\UDP\Serialization\Deserializer.h" />
     <ClInclude Include="includes\UDP\Serialization\Convert.h" />
     <ClInclude Include="includes\UDP\ChannelHeader.h" />
     <ClInclude Include="includes\UDP\ChannelsHandler.h" />
-    <ClInclude Include="includes\UDP\Test\DistanceClient_Test.h" />
+    <ClInclude Include="includes\UDP\Test\DistantClient_Test.h" />
     <ClInclude Include="includes\UDP\Address.h" />
     <ClInclude Include="includes\UDP\DistantClient.h" />
     <ClInclude Include="includes\UDP\ClientUDP.h" />
@@ -427,7 +432,9 @@
     <ClInclude Include="includes\TCP\Sockets.h" />
     <ClInclude Include="includes\UDP\Serialization\Serializer.h" />
     <ClInclude Include="includes\UDP\Serialization\Serialization.h" />
-    <ClInclude Include="includes\UDP\Sockets.h" />
+    <ClInclude Include="includes\UDP\SocketsUDP.h" />
+    <ClInclude Include="includes\UDP\Protocol\Simulator.h" />
+    <ClInclude Include="includes\UDP\Test\Serialization_Test.h" />
     <ClInclude Include="SphereCollider.h" />
     <ClInclude Include="includes\TCP\Client\TCPClientStart.h" />
     <ClInclude Include="includes\TCP\Server\TCPServerStart.h" />

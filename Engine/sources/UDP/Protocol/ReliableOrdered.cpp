@@ -11,15 +11,15 @@ namespace Bousk
 		{
 			namespace Protocols
 			{
-				void ReliableOrdered::Multiplexer::queue(std::vector<uint8_t>&& msgData)
+				void ReliableOrdered::Multiplexer::queue(std::vector<uint8>&& msgData)
 				{
 					assert(msgData.size() <= Packet::MaxMessageSize);
 					if (msgData.size() > Packet::DataMaxSize)
 					{
-						uint16_t queuedSize = 0;
+						uint16 queuedSize = 0;
 						while (queuedSize < msgData.size())
 						{
-							const auto fragmentSize = std::min(Packet::DataMaxSize, static_cast<uint16_t>(msgData.size() - queuedSize));
+							const auto fragmentSize = std::min(Packet::DataMaxSize, static_cast<uint16>(msgData.size() - queuedSize));
 							mQueue.resize(mQueue.size() + 1);
 							Packet& packet = mQueue.back().packet();
 							packet.header.id = mNextId++;
@@ -38,12 +38,12 @@ namespace Bousk
 						Packet& packet = mQueue.back().packet();
 						packet.header.id = mNextId++;
 						packet.header.type = Packet::Type::FullMessage;
-						packet.header.size = static_cast<uint16_t>(msgData.size());
+						packet.header.size = static_cast<uint16>(msgData.size());
 						memcpy(packet.data(), msgData.data(), msgData.size());
 					}
 				}
 
-				uint16_t ReliableOrdered::Multiplexer::serialize(uint8_t* buffer, const uint16_t buffersize, Datagram::ID datagramId
+				uint16 ReliableOrdered::Multiplexer::serialize(uint8* buffer, const uint16 buffersize, Datagram::ID datagramId
 				#if BOUSKNET_ALLOW_NETWORK_INTERRUPTION == BOUSKNET_SETTINGS_ENABLED
 									, const bool connectionInterrupted
 				#endif // BOUSKNET_ALLOW_NETWORK_INTERRUPTION == BOUSKNET_SETTINGS_ENABLED
@@ -55,7 +55,7 @@ namespace Bousk
 										return 0;
 				#endif // BOUSKNET_ALLOW_NETWORK_INTERRUPTION == BOUSKNET_SETTINGS_ENABLED
 
-					uint16_t serializedSize = 0;
+					uint16 serializedSize = 0;
 					for (auto& packetHolder : mQueue)
 					{
 						if (!(Utils::SequenceDiff(packetHolder.packet().id(), mFirstAllowedPacket) < Demultiplexer::QueueSize))
@@ -99,10 +99,10 @@ namespace Bousk
 					}
 				}
 
-				void ReliableOrdered::Demultiplexer::onDataReceived(const uint8_t* data, const uint16_t datasize)
+				void ReliableOrdered::Demultiplexer::onDataReceived(const uint8* data, const uint16 datasize)
 				{
 					//<! Extraire les paquets du tampon
-					uint16_t processedDataSize = 0;
+					uint16 processedDataSize = 0;
 					while (processedDataSize < datasize)
 					{
 						const Packet* pckt = reinterpret_cast<const Packet*>(data);
@@ -137,11 +137,11 @@ namespace Bousk
 					}
 				}
 
-				std::vector<std::vector<uint8_t>> ReliableOrdered::Demultiplexer::process()
+				std::vector<std::vector<uint8>> ReliableOrdered::Demultiplexer::process()
 				{
 					//!< Fonction de réinitialisation d’un paquet
 					auto ResetPacket = [](Packet& pckt) { pckt.header.size = 0; };
-					std::vector<std::vector<uint8_t>> messagesReady;
+					std::vector<std::vector<uint8>> messagesReady;
 
 					Packet::Id expectedPacketId = mLastProcessed + 1;
 					//!< Il faut itérer sur notre tableau en commençant par le paquet attendu, qui peut ne pas être en index 0
@@ -154,7 +154,7 @@ namespace Bousk
 						if (packet.type() == Packet::Type::FullMessage)
 						{
 							//!< Message complet
-							std::vector<uint8_t> msg(packet.data(), packet.data() + packet.datasize());
+							std::vector<uint8> msg(packet.data(), packet.data() + packet.datasize());
 							mLastProcessed = packet.id();
 							ResetPacket(packet);
 							messagesReady.push_back(std::move(msg));
@@ -191,7 +191,7 @@ namespace Bousk
 									break; // Protocole ordonné fiable : si le message suivant à extraire est incomplet, nous pouvons arrêter le processus d’extraction
 
 								// Nous avons un message fragmenté complet, nous pouvons maintenant extraire les données et réinitialiser chaque paquet utilisé
-								std::vector<uint8_t> msg(packet.data(), packet.data() + packet.datasize());
+								std::vector<uint8> msg(packet.data(), packet.data() + packet.datasize());
 								++i;
 								++expectedPacketId;
 								// Itération sur les paquets restants pour compléter le message

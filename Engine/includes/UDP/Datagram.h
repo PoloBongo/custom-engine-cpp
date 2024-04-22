@@ -3,6 +3,8 @@
 //#include <cstdint>
 #include <array>
 
+#include "UDP/Types.h"
+
 namespace Bousk
 {
 	namespace Network

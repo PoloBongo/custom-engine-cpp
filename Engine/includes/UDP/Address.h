@@ -1,5 +1,7 @@
 #pragma once
 
+#include "UDP/Types.h"
+
 #include <string>
 #include <winSock2.h>
 
@@ -18,22 +20,27 @@ namespace Bousk
 
 		public:
 			Address() = default;
-			Address(const Address&);
-			Address(Address&&);
-			Address& operator=(const Address&);
-			Address& operator=(Address&&);
+			Address(const Address&) noexcept;
+			Address(Address&&) noexcept;
+			Address& operator=(const Address&) noexcept;
+			Address& operator=(Address&&) noexcept;
 			~Address() = default;
 
-			Address(const std::string& ip, uint16_t port);
-			Address(const sockaddr_storage& addr);
+			Address(const std::string& ip, uint16 port) noexcept;
+			Address(const sockaddr_storage& addr) noexcept;
 
-			static Address Any(Type type, uint16_t port);
-			static Address Loopback(Type type, uint16_t port);
+			static Address Any(Type type, uint16 port);
+			static Address Loopback(Type type, uint16 port);
 
-			Type type() const { return mType; }
+			inline bool isValid() const { return mType != Type::None; }
+			inline Type type() const { return mType; }
 			std::string address() const;
-			uint16_t port() const { return mPort; }
+			inline uint16 port() const { return mPort; }
 			std::string toString() const;
+
+			bool operator==(const Address& other) const;
+			bool operator!=(const Address& other) const { return !(*this == other); }
+			bool operator<(const Address& other) const;
 
 			// Connect the given socket to the internal address
 			// Returns true on success, false otherwise
@@ -46,14 +53,14 @@ namespace Bousk
 			// Send data from the given socket to the internal address
 			int sendTo(SOCKET sckt, const char* data, size_t datalen) const;
 			// Receive data from the given socket then update the internal address with the sender one
-			int recvFrom(SOCKET sckt, uint8_t* buffer, size_t bufferSize);
+			int recvFrom(SOCKET sckt, uint8* buffer, size_t bufferSize);
 
 		private:
 			void set(const sockaddr_storage& src);
 
 		private:
 			sockaddr_storage mStorage{ 0 };
-			uint16_t mPort{ 0 };
+			uint16 mPort{ 0 };
 			Type mType{ Type::None };
 		};
 	}

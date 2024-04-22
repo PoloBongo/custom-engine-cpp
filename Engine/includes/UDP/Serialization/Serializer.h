@@ -78,3 +78,4 @@ namespace Bousk
 	}
 }
 
+#include "Serializer.inl"

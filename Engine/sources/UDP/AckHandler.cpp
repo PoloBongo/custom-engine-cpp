@@ -4,7 +4,7 @@ namespace Bousk
 {
 	namespace UDP
 	{
-		void AckHandler::update(uint16_t newAck, uint64_t previousAcks, bool trackLoss /*= false*/)
+		void AckHandler::update(uint16 newAck, uint64 previousAcks, bool trackLoss /*= false*/)
 		{
 			mLastAckIsNew = false;
 			if (newAck == mLastAck)
@@ -19,17 +19,17 @@ namespace Bousk
 				const auto diff = Utils::SequenceDiff(newAck, mLastAck);
 				const auto gap = diff - 1;
 				//!< Nombre de bits à décaler du masque
-				const auto bitsToShift = std::min(diff, static_cast<uint16_t>(64));
+				const auto bitsToShift = std::min(diff, static_cast<uint16>(64));
 				if (trackLoss)
 				{
-					for (uint32_t i = 0; i < bitsToShift; ++i)
+					for (uint32 i = 0; i < bitsToShift; ++i)
 					{
 						const auto packetDiffWithLastAck = 64 - i;
 						const auto bitInPreviousMask = packetDiffWithLastAck - 1;
 						if (!Utils::HasBit(mPreviousAcks, bitInPreviousMask))
 						{
 							//!< Cet identifiant n’a pas été acquitté et est maintenant hors bornes : marquer comme perdu
-							const uint16_t packetid = mLastAck - packetDiffWithLastAck;
+							const uint16 packetid = mLastAck - packetDiffWithLastAck;
 							mLoss.push_back(packetid);
 						}
 					}
@@ -43,9 +43,9 @@ namespace Bousk
 					//!< Vérifier chaque identifiant du masque pour marquer comme perdus les non-acquittés
 					if (trackLoss)
 					{
-						for (uint32_t p = 64; p < gap; ++p)
+						for (uint32 p = 64; p < gap; ++p)
 						{
-							const uint16_t packetid = mLastAck + (p - 64) + 1;
+							const uint16 packetid = mLastAck + (p - 64) + 1;
 							mLoss.push_back(packetid);
 						}
 					}
@@ -82,7 +82,7 @@ namespace Bousk
 			}
 		}
 
-		bool AckHandler::isAcked(uint16_t ack) const
+		bool AckHandler::isAcked(uint16 ack) const
 		{
 			if (ack == mLastAck)
 				return true;
@@ -91,11 +91,11 @@ namespace Bousk
 			const auto diff = Utils::SequenceDiff(mLastAck, ack);
 			if (diff > 64)
 				return false;
-			const uint8_t bitPosition = static_cast<uint8_t>(diff - 1);
+			const uint8 bitPosition = static_cast<uint8>(diff - 1);
 			return Utils::HasBit(mPreviousAcks, bitPosition);
 		}
 
-		bool AckHandler::isNewlyAcked(uint16_t ack) const
+		bool AckHandler::isNewlyAcked(uint16 ack) const
 		{
 			if (ack == mLastAck)
 				return mLastAckIsNew;
@@ -104,30 +104,30 @@ namespace Bousk
 			const auto diff = Utils::SequenceDiff(mLastAck, ack);
 			if (diff > 64)
 				return false;
-			const uint8_t bitPosition = static_cast<uint8_t>(diff - 1);
+			const uint8 bitPosition = static_cast<uint8>(diff - 1);
 			return Utils::HasBit(mNewAcks, bitPosition);
 		}
 
-		uint16_t AckHandler::lastAck() const
+		uint16 AckHandler::lastAck() const
 		{
-			return std::numeric_limits<uint16_t>::max();
+			return std::numeric_limits<uint16>::max();
 		}
 
-		uint64_t AckHandler::previousAcksMask() const
+		uint64 AckHandler::previousAcksMask() const
 		{
-			return std::numeric_limits<uint64_t>::max();
+			return std::numeric_limits<uint64>::max();
 		}
 
-		std::vector<uint16_t> AckHandler::getNewAcks() const
+		std::vector<uint16> AckHandler::getNewAcks() const
 		{
-			std::vector<uint16_t> newAcks;
+			std::vector<uint16> newAcks;
 			newAcks.reserve(65);
-			for (uint8_t i = 64; i != 0; --i)
+			for (uint8 i = 64; i != 0; --i)
 			{
-				const uint8_t bitToCheck = i - 1;
+				const uint8 bitToCheck = i - 1;
 				if (Utils::HasBit(mNewAcks, bitToCheck))
 				{
-					const uint16_t id = mLastAck - i;
+					const uint16 id = mLastAck - i;
 					newAcks.push_back(id);
 				}
 			}
@@ -136,9 +136,9 @@ namespace Bousk
 			return newAcks;
 		}
 
-		std::vector<uint16_t>&& AckHandler::loss()
+		std::vector<uint16>&& AckHandler::loss()
 		{
-			std::vector<uint16_t> result;
+			std::vector<uint16> result;
 			return std::move(result);
 		}
 	}

@@ -1,6 +1,8 @@
 #include "UDP/DistantClient.h"
 #include "UDP/Serialization/Serializer.h"
 #include "UDP/Serialization/Deserializer.h"
+#include "UDP/ClientUDP.h"
+#include "UDP/Messages.h"
 
 namespace Bousk
 {
@@ -8,8 +10,10 @@ namespace Bousk
 	{
 		namespace UDP
 		{
+			std::chrono::milliseconds DistantClient::sTimeout = BOUSKNET_DEFAULT_UDP_TIMEOUT;
+
 			// Initialisation des membres de DistantClient
-			DistantClient::DistantClient(ClientUDP& client, const Address& addr, uint64_t clientid)
+			DistantClient::DistantClient(ClientUDP& client, const Address& addr, uint64 clientid)
 				: mClient(client)
 				, mAddress(addr)
 				, mClientId(clientid)
@@ -185,7 +189,7 @@ namespace Bousk
 			}
 
 			// permet d'envoyer des données au client
-			void DistantClient::send(std::vector<uint8_t>&& data, uint32_t channelIndex)
+			void DistantClient::send(std::vector<uint8>&& data, uint32 channelIndex)
 			{
 				onConnectionSent();
 				mChannelsHandler.queue(std::move(data), channelIndex);
@@ -413,7 +417,7 @@ namespace Bousk
 			// permet de gèrer les datagrams reçus
 			void DistantClient::onDatagramReceivedLost(Datagram::ID) {}
 
-			void DistantClient::onDataReceived(const uint8_t* data, const uint16_t datasize)
+			void DistantClient::onDataReceived(const uint8* data, const uint16 datasize)
 			{
 				mChannelsHandler.onDataReceived(data, datasize);
 				auto receivedMessages = mChannelsHandler.process(isConnected());
