@@ -134,7 +134,7 @@ void RHIVulkanModule::Start()
 	// POUR RESIZE LA POOL (recopie tout pour en faire un autre)
 
 	builder = new lve::LveDescriptorPool::Builder{ *p_lveDevice };
-	builder->SetMaxSets(ListDescriptors.size() * 2)//lve::LveSwapChain::MAX_FRAMES_IN_FLIGHT)
+	builder->SetMaxSets(ListDescriptors.size() * lve::LveSwapChain::MAX_FRAMES_IN_FLIGHT)
 		.AddPoolSize(vk::DescriptorType::eUniformBuffer, lve::LveSwapChain::MAX_FRAMES_IN_FLIGHT)
 		.AddPoolSize(vk::DescriptorType::eCombinedImageSampler, lve::LveSwapChain::MAX_FRAMES_IN_FLIGHT);
 
@@ -149,7 +149,6 @@ void RHIVulkanModule::Start()
 				tex = 0;
 			}
 
-			// Bug sur le 4 eme descriptorSet
 			auto buffer_info = uboBuffers[j]->DescriptorInfo();
 			lve::LveDescriptorWriter(*global_set_layout, *globalPool)
 				.WriteBuffer(0, &buffer_info)

@@ -31,11 +31,11 @@ namespace lve {
 			// Gérer l'erreur de chargement de l'image
 		}
 
-		for (int i = 0; i < width * height * 4; i += 4) {
-			unsigned char temp = data[i];
-			data[i] = data[i + 2];
-			data[i + 3] = temp;
-		}
+		//for (int i = 0; i < width * height * 4; i += 4) {
+		//	unsigned char temp = data[i];
+		//	data[i] = data[i + 2];
+		//	data[i + 3] = temp;
+		//}
 
 		mipLevels = std::floor(std::log2(std::max(width, height))) + 1;
 
@@ -97,7 +97,7 @@ namespace lve {
 		imageViewInfo.sType = vk::StructureType::eImageViewCreateInfo;
 		imageViewInfo.viewType = vk::ImageViewType::e2D;
 		imageViewInfo.format = imageFormat;
-		imageViewInfo.components = (vk::ComponentSwizzle::eR, vk::ComponentSwizzle::eG, vk::ComponentSwizzle::eB, vk::ComponentSwizzle::eA );
+		imageViewInfo.components = vk::ComponentMapping();
 		imageViewInfo.subresourceRange.aspectMask = vk::ImageAspectFlagBits::eColor;
 		imageViewInfo.subresourceRange.baseMipLevel = 0;
 		imageViewInfo.subresourceRange.baseArrayLayer = 0;
