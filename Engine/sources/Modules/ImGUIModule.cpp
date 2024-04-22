@@ -556,7 +556,6 @@ void ImGuiModule::DeleteGameObject(GameObject* _gameObject) {
 	}
 }
 void ImGuiModule::DuplicateGameObject(GameObject* _gameObject) {
-
 }
 
 void ImGuiModule::CreateSpecificGameObject(GameObjectType _type) {
