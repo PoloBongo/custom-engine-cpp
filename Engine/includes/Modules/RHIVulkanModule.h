@@ -90,6 +90,11 @@ class RHIVulkanModule final : public RHIModule
 		lve::LveTexture* texture1;
 		lve::LveTexture* texture2;
 		lve::LveTexture* texture3;
+		lve::LveTexture* texture4;
+
+		std::vector<vk::DescriptorImageInfo> ListTextures;
+
+		std::vector<std::vector<vk::DescriptorSet>*> ListDescriptors;
 
 		lve::LveCamera* camera;
 		lve::KeyboardMovementController       cameraController{};
@@ -98,6 +103,7 @@ class RHIVulkanModule final : public RHIModule
 		std::vector<vk::DescriptorSet>               globalDescriptorSets;
 		std::vector<vk::DescriptorSet>               tex1DescriptorSets;
 		std::vector<vk::DescriptorSet>               tex2DescriptorSets;
+		std::vector<vk::DescriptorSet>               tex3DescriptorSets;
 
 		std::vector<std::unique_ptr<lve::LveBuffer>> uboBuffers;
 		std::vector<GameObject*>                gameObjects;

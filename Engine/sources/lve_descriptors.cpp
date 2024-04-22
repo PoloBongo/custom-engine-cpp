@@ -128,6 +128,7 @@ namespace lve
 		{
 			throw std::runtime_error("failed to create descriptor pool: " + std::string(e.what()));
 		}
+
 	}
 
 
@@ -167,7 +168,8 @@ namespace lve
 
 	void LveDescriptorPool::ResetPool() const
 	{
-		vkResetDescriptorPool(lveDevice.Device(), descriptorPool, 0);
+		lveDevice.Device().resetDescriptorPool(descriptorPool);
+		//vkResetDescriptorPool(lveDevice.Device(), descriptorPool, 0);
 	}
 
 	// *************** Descriptor Writer *********************
@@ -221,6 +223,7 @@ namespace lve
 		writes.push_back(write);
 		return *this;
 	}
+
 
 	bool LveDescriptorWriter::Build(vk::DescriptorSet& _set)
 	{

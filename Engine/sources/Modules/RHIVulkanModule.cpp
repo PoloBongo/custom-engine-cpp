@@ -55,8 +55,9 @@ void RHIVulkanModule::Start()
 		.Build();
 
 	texture1 = new lve::LveTexture(*p_lveDevice, "../Textures/coconut.jpg");
-	texture2 = new lve::LveTexture(*p_lveDevice, "../Textures/meme.png");
+	texture2 = new lve::LveTexture(*p_lveDevice, "../Textures/unnamed.png");
 	texture3 = new lve::LveTexture(*p_lveDevice, "../Textures/viking_room.png");
+	texture4 = new lve::LveTexture(*p_lveDevice, "../Textures/grass.jpg");
 	
 
 	vk::DescriptorImageInfo imageInfo{};
@@ -73,6 +74,11 @@ void RHIVulkanModule::Start()
 	imageInfo3.sampler = texture3->getSampler();
 	imageInfo3.imageView = texture3->getImageView();
 	imageInfo3.imageLayout = texture3->getImageLayout();
+
+	vk::DescriptorImageInfo imageInfo4{};
+	imageInfo4.sampler = texture4->getSampler();
+	imageInfo4.imageView = texture4->getImageView();
+	imageInfo4.imageLayout = texture4->getImageLayout();
 
 	globalDescriptorSets.resize(lve::LveSwapChain::MAX_FRAMES_IN_FLIGHT);
 
@@ -107,6 +113,50 @@ void RHIVulkanModule::Start()
 			.Build(tex2DescriptorSets[i]);
 	}
 
+	ListTextures.push_back(imageInfo);
+	ListTextures.push_back(imageInfo2);
+	ListTextures.push_back(imageInfo3);
+	ListTextures.push_back(imageInfo4);
+
+	tex3DescriptorSets.resize(lve::LveSwapChain::MAX_FRAMES_IN_FLIGHT);
+
+	ListDescriptors.push_back(&globalDescriptorSets);
+	ListDescriptors.push_back(&tex1DescriptorSets);
+	ListDescriptors.push_back(&tex2DescriptorSets);
+	ListDescriptors.push_back(&tex3DescriptorSets);
+
+
+
+	// **********************************************************
+	// POUR RESIZE LA POOL (recopie tout pour en faire un autre)
+
+	builder = new lve::LveDescriptorPool::Builder{ *p_lveDevice };
+	builder->SetMaxSets(ListDescriptors.size() * 2)//lve::LveSwapChain::MAX_FRAMES_IN_FLIGHT)
+		.AddPoolSize(vk::DescriptorType::eUniformBuffer, lve::LveSwapChain::MAX_FRAMES_IN_FLIGHT)
+		.AddPoolSize(vk::DescriptorType::eCombinedImageSampler, lve::LveSwapChain::MAX_FRAMES_IN_FLIGHT);
+
+	globalPool = builder->Build();
+	int i = 0;
+	for (std::vector<vk::DescriptorSet>* descriptorSet : ListDescriptors)
+	{
+		for (size_t j = 0; j < descriptorSet->size(); j++) 
+		{
+			int tex = i;
+			if (i > ListTextures.size()) {
+				tex = 0;
+			}
+
+			// Bug sur le 4 eme descriptorSet
+			auto buffer_info = uboBuffers[j]->DescriptorInfo();
+			lve::LveDescriptorWriter(*global_set_layout, *globalPool)
+				.WriteBuffer(0, &buffer_info)
+				.WriteImage(1, &ListTextures[tex])
+				.Build((*descriptorSet)[j]);
+		}
+		i++;
+	}
+	// ****************************************************
+	
 
 	simpleRenderSystem = new lve::SimpleRenderSystem{
 		*p_lveDevice, p_lveRenderer->GetSwapChainRenderPass(), global_set_layout->GetDescriptorSetLayout()
@@ -158,7 +208,7 @@ void RHIVulkanModule::PreRender()
 
 void RHIVulkanModule::Render()
 {
-	simpleRenderSystem->RenderGameObjects(gameObjects, *camera, *currentCommandBuffer, globalDescriptorSets[frameIndex], tex1DescriptorSets[frameIndex], tex2DescriptorSets[frameIndex]);      //render shadow casting objects
+	simpleRenderSystem->RenderGameObjects(gameObjects, *camera, *currentCommandBuffer, &ListDescriptors, frameIndex);      //render shadow casting objects
 	pointLightSystem->Render(gameObjects, *camera, *currentCommandBuffer, globalDescriptorSets[frameIndex]);                 //render shadow casting objects
 }
 

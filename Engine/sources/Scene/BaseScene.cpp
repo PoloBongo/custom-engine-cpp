@@ -394,7 +394,7 @@ void BaseScene::TestLoadGameObjects()
 
 	auto quad_go = lve::PlaneGameObject::Creates(*_p_lveDevice, glm::vec3{ .0f, .5f, 0.f }, glm::vec3{ 3.f, 1.f, 3.f });
 	quad_go->SetName("QuadGo");
-	quad_go->texture = 1;
+	quad_go->texture = 3;
 	rootObjects.push_back(quad_go);
 
 	lve_model = lve::LveModel::CreateModelFromFile(*_p_lveDevice, "Models\\viking_room.obj");
