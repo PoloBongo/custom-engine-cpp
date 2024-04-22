@@ -75,6 +75,8 @@ class RHIVulkanModule final : public RHIModule
 		 */
 		void Finalize() override;
 
+		void AddTextureToPool(const std::string _Filepath);
+
 	private:
 		// Autres m�thodes pour la cr�ation de la surface, des p�riph�riques logiques, etc.
 
@@ -88,9 +90,6 @@ class RHIVulkanModule final : public RHIModule
 		std::unique_ptr<lve::LveDescriptorSetLayout, std::default_delete<lve::LveDescriptorSetLayout>>* globalSetLayout;
 
 		lve::LveTexture* texture1;
-		lve::LveTexture* texture2;
-		lve::LveTexture* texture3;
-		lve::LveTexture* texture4;
 
 		std::vector<vk::DescriptorImageInfo> ListTextures;
 
@@ -101,9 +100,6 @@ class RHIVulkanModule final : public RHIModule
 		GameObject* viewerObject;
 
 		std::vector<vk::DescriptorSet>               globalDescriptorSets;
-		std::vector<vk::DescriptorSet>               tex1DescriptorSets;
-		std::vector<vk::DescriptorSet>               tex2DescriptorSets;
-		std::vector<vk::DescriptorSet>               tex3DescriptorSets;
 
 		std::vector<std::unique_ptr<lve::LveBuffer>> uboBuffers;
 		std::vector<GameObject*>                gameObjects;

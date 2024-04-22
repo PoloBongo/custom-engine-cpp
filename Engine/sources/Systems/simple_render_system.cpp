@@ -77,7 +77,6 @@ namespace lve
 		for (const auto& game_object : _gameObjects)
 		{
 			if (game_object->model == nullptr) continue;
-
 			if (game_object->texture > _DescriptorSetsAll->size()) 
 			{
 				_commandBuffer.bindDescriptorSets(
