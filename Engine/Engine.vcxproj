@@ -203,9 +203,11 @@
       </Command>
     </PreBuildEvent>
     <PostBuildEvent>
-      <Command>call $(ProjectDir)compile.bat
-xcopy /E /I /Y "$(ProjectDir)Shaders" "$(TargetDir)Shaders"
-xcopy /E /I /Y "$(ProjectDir)Models" "$(TargetDir)Models"</Command>
+      <Command>
+        call $(ProjectDir)compile.bat
+        xcopy /E /I /Y "$(ProjectDir)Shaders" "$(TargetDir)Shaders"
+        xcopy /E /I /Y "$(ProjectDir)Models" "$(TargetDir)Models"
+      </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='ServerTCP|x64'">
@@ -292,9 +294,11 @@ xcopy /E /I /Y "$(ProjectDir)Models" "$(TargetDir)Models"</Command>
       </Command>
     </PreBuildEvent>
     <PostBuildEvent>
-      <Command>call $(ProjectDir)compile.bat
-xcopy /E /I /Y "$(ProjectDir)Shaders" "$(TargetDir)Shaders"
-xcopy /E /I /Y "$(ProjectDir)Models" "$(TargetDir)Models"</Command>
+      <Command>
+        call $(ProjectDir)compile.bat
+        xcopy /E /I /Y "$(ProjectDir)Shaders" "$(TargetDir)Shaders"
+        xcopy /E /I /Y "$(ProjectDir)Models" "$(TargetDir)Models
+        "</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -439,6 +443,7 @@ xcopy /E /I /Y "$(ProjectDir)Models" "$(TargetDir)Models"</Command>
     </CopyFileToFolders>
   </ItemGroup>
   <ItemGroup>
+    <None Include="compile.bat" />
     <None Include="imgui.ini" />
     <None Include="Shaders\point_light.frag" />
     <None Include="Shaders\point_light.frag.spv" />

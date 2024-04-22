@@ -153,5 +153,6 @@
     <None Include="Models\quad.obj" />
     <None Include="Models\smooth_vase.obj" />
     <None Include="Models\viking_room.obj" />
+    <None Include="compile.bat" />
   </ItemGroup>
 </Project>
