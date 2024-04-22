@@ -1,5 +1,4 @@
-FIX : IMGUI
+FIX : &
 
-- Affichage du IMGUI de Mathias
-- Changement des noms des GameObjects
-- Récupération des Scènes et GameObjects avec le SceneManager
+- Changement de la méthode de récupération du mode pour la sauvegarde
+- Ajout d'une fonction pour changer l'icone de la fenêtre

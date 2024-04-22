@@ -2,41 +2,544 @@
 #include "Module.h"
 
 #include "lve_descriptors.h"
-#include "lve_device.h"
-#include "lve_game_object.h"
-#include "lve_renderer.h"
 #include "lve_window.h"
-
-#include "keyboard_movement_controller.h"
-#include "lve_buffer.h"
-#include "Camera/lve_camera.h"
-#include "Systems/point_light_system.h"
-#include "Systems/simple_render_system.h"
-
 //std
-#include <chrono>
 #include <iostream>
-#include <map>
-#include <memory>
+#include <stb_image.h>
 #include <string>
-#include <vector>
 
 #include "GameObject/GameObject.h"
 
+#define WINDOW_CONFIG_LOCATION "Saves\\window_config.json"
 
+namespace Inputs
+{
+	enum class KeyAction;
+	enum class MouseButton;
+	enum class KeyCode;
+}
+
+class SceneManager;
 /**
  * @brief Classe WindowModule.
  *
- * Cette classe représente le gestionnaire de fenêtres dans le système.
- * Elle hérite de la classe Module, ce qui lui permet d'être intégrée dans le système de modules.
- * Le WindowModule est responsable de la gestion et de la manipulation des fenêtres de l'application.
+ * Cette classe reprï¿½sente le gestionnaire de fenï¿½tres dans le systï¿½me.
+ * Elle hï¿½rite de la classe Module, ce qui lui permet d'ï¿½tre intï¿½grï¿½e dans le systï¿½me de modules.
+ * Le WindowModule est responsable de la gestion et de la manipulation des fenï¿½tres de l'application.
  */
+
+enum GlfwCursorType
+{
+	ARROW,
+	/**< Curseur flï¿½che. */
+	IBEAM,
+	/**< Curseur I-beam (curseur de texte). */
+	CROSSHAIR,
+	/**< Curseur croix. */
+	POINTING_HAND,
+	/**< Curseur main pointant. */
+	RESIZE_EW,
+	/**< Curseur redimensionner horizontal. */
+	RESIZE_NS,
+	/**< Curseur redimensionner vertical. */
+	RESIZE_NWSE,
+	/**< Curseur redimensionner diagonale NW-SE. */
+	RESIZE_NESW,
+	/**< Curseur redimensionner diagonale NE-SW. */
+	RESIZE_ALL,
+	/**< Curseur redimensionner dans toutes les directions. */
+	NOT_ALLOWED /**< Curseur non autorisï¿½. */
+};
+
+/**
+ * @brief Enumï¿½ration des modes de curseurs GLFW.
+ *
+ * Cette ï¿½numï¿½ration reprï¿½sente les diffï¿½rents modes de curseurs GLFW.
+ * Ces modes dï¿½finissent le comportement du curseur sur l'ï¿½cran.
+ */
+enum GlfwCursorMode
+{
+	DISABLED,
+	/**< Curseur dï¿½sactivï¿½. */
+	HIDDEN,
+	/**< Curseur cachï¿½. */
+	NORMAL,
+	/**< Curseur normal (visible). */
+	CAPTURED,
+	/**< Curseur capturï¿½ (exclusif ï¿½ la fenï¿½tre). */
+
+	_NONE
+};
+
+enum class WindowMode
+{
+	WINDOWED,
+	WINDOWED_FULLSCREEN,
+	// (aka "Borderless windowed")
+	FULLSCREEN,
+
+	_NONE
+};
+
+
+static const char* WindowModeStrings[] =
+{
+	"Windowed",
+	"Windowed Fullscreen",
+	"Fullscreen",
+
+	"NONE"
+};
+
+
 class WindowModule final : public Module
 {
 	public:
-		static constexpr int WIDTH  = 800; ///< Largeur de la fenêtre par défaut.
-		static constexpr int HEIGHT = 600; ///< Hauteur de la fenêtre par défaut.
+		/**
+				 * @brief Enumï¿½ration des types de curseurs GLFW.
+				 *
+				 * Cette ï¿½numï¿½ration reprï¿½sente les diffï¿½rents types de curseurs GLFW disponibles.
+				 * Ces types peuvent ï¿½tre utilisï¿½s pour spï¿½cifier le style du curseur ï¿½ afficher.
+				 */
 
+
+		static constexpr int WIDTH  = 800; ///< Largeur de la fenï¿½tre par dï¿½faut.
+		static constexpr int HEIGHT = 600; ///< Hauteur de la fenï¿½tre par dï¿½faut.
+
+
+		/**
+		 * @brief Constructeur de la classe WindowModule.
+		 *
+		 * Initialise une instance de WindowModule avec les dimensions spï¿½cifiï¿½es et le nom de la fenï¿½tre.
+		 *
+		 * @param _width La largeur de la fenï¿½tre.
+		 * @param _height La hauteur de la fenï¿½tre.
+		 * @param _name Le nom de la fenï¿½tre.
+		 * @return Rien.
+		 */
+		WindowModule();
+
+		/**
+		 * @brief Destructeur de la classe WindowModule.
+		 *
+		 * Dï¿½truit la fenï¿½tre GLFW.
+		 */
+		~WindowModule();
+
+		/**
+		 * @brief Constructeur de copie supprimï¿½.
+		 *
+		 * La copie d'objets de type WindowModule est explicitement interdite pour ï¿½viter les problï¿½mes de gestion
+		 * des ressources associï¿½es ï¿½ la fenï¿½tre.
+		 */
+		WindowModule(const WindowModule&) = delete;
+
+		/**
+		 * @brief Opï¿½rateur d'affectation par copie supprimï¿½.
+		 *
+		 * L'affectation par copie d'objets de type WindowModule est explicitement interdite pour ï¿½viter les problï¿½mes
+		 * de gestion des ressources associï¿½es ï¿½ la fenï¿½tre.
+		 *
+		 * @return Une rï¿½fï¿½rence vers l'objet WindowModule aprï¿½s affectation.
+		 */
+		WindowModule& operator=(const WindowModule&) = delete;
+
+		/**
+		 * @brief Obtient les dimensions de la fenï¿½tre.
+		 *
+		 * Cette fonction retourne les dimensions de la fenï¿½tre sous forme d'une structure vk::Extent2D.
+		 *
+		 * @return Les dimensions de la fenï¿½tre sous forme d'une structure vk::Extent2D.
+		 */
+		vk::Extent2D GetExtent() const { return {static_cast<uint32_t>(size.x), static_cast<uint32_t>(size.y)}; }
+
+		/**
+		 * @brief Vï¿½rifie si la fenï¿½tre a ï¿½tï¿½ redimensionnï¿½e.
+		 *
+		 * Cette fonction vï¿½rifie si la fenï¿½tre a ï¿½tï¿½ redimensionnï¿½e depuis la derniï¿½re vï¿½rification.
+		 *
+		 * @return true si la fenï¿½tre a ï¿½tï¿½ redimensionnï¿½e, sinon false.
+		 */
+
+		bool WasWindowResized() const { return bFrameBufferResize; }
+
+		/**
+		 * @brief Rï¿½initialise le drapeau de redimensionnement de la fenï¿½tre.
+		 *
+		 * Cette fonction rï¿½initialise le drapeau indiquant que la fenï¿½tre a ï¿½tï¿½ redimensionnï¿½e.
+		 */
+		void ResetWindowResizedFlag() { bFrameBufferResize = false; }
+
+		/**
+		 * @brief Crï¿½e une surface Vulkan associï¿½e ï¿½ une fenï¿½tre.
+		 *
+		 * Cette fonction crï¿½e une surface Vulkan associï¿½e ï¿½ une fenï¿½tre, permettant ï¿½ Vulkan de dessiner dans cette fenï¿½tre.
+		 *
+		 * @param _instance L'instance Vulkan utilisï¿½e pour crï¿½er la surface.
+		 * @param _surface Un pointeur vers l'objet de surface Vulkan ï¿½ crï¿½er. Ce pointeur sera mis ï¿½ jour pour contenir la surface crï¿½ï¿½e.
+		 * @throws Une exception en cas d'ï¿½chec lors de la crï¿½ation de la surface.
+		 */
+		void CreateWindowSurface(vk::Instance _instance, vk::SurfaceKHR* _surface) const;
+
+		/**
+		 * @brief Obtient un pointeur vers la fenï¿½tre GLFW.
+		 *
+		 * Cette fonction retourne un pointeur vers la fenï¿½tre GLFW associï¿½e ï¿½ l'instance actuelle.
+		 *
+		 * @return Un pointeur vers la fenï¿½tre GLFW.
+		 */
+		[[nodiscard]] GLFWwindow* GetGlfwWindow() const { return window; }
+
+		/**
+		 * @brief Rï¿½initialise le curseur de la fenï¿½tre.
+		 *
+		 * Cette fonction rï¿½initialise le curseur de la fenï¿½tre ï¿½ sa forme par dï¿½faut.
+		 */
+		void ResetCursorWindow() const { glfwSetCursor(window, nullptr); }
+
+		/**
+		 * @brief Change la forme du curseur de la fenï¿½tre en un cube colorï¿½.
+		 *
+		 * Cette fonction change la forme du curseur de la fenï¿½tre en un cube colorï¿½, avec la possibilitï¿½ de spï¿½cifier la couleur du cube.
+		 *
+		 * @param _color
+		 * @param color La couleur du cube. La valeur par dï¿½faut est 255.
+		 */
+		void CubeCursorWindow(int _color = 255) const;
+
+		/**
+		 * @brief Dï¿½finit le curseur standard de la fenï¿½tre.
+		 *
+		 * Cette fonction dï¿½finit le curseur standard de la fenï¿½tre ï¿½ un type spï¿½cifiï¿½.
+		 *
+		 * @param _cursorType
+		 * @param CursorType Le type de curseur ï¿½ dï¿½finir.
+		 */
+		void StandardCursorWindow(GlfwCursorType _cursorType) const;
+    
+		/**
+		 * @brief Dï¿½finit le mode de curseur d'entrï¿½e pour la fenï¿½tre.
+		 *
+		 * Cette fonction dï¿½finit le mode de curseur d'entrï¿½e pour la fenï¿½tre ï¿½ un mode spï¿½cifiï¿½.
+		 *
+		 * @param _mode
+		 * @param mode Le mode de curseur d'entrï¿½e ï¿½ dï¿½finir.
+		 */
+		void SetInputCursorMode(GlfwCursorMode _mode);
+
+		[[nodiscard]] bool ShouldClose() const
+		{
+			return glfwWindowShouldClose(window);
+		}
+
+		void PollEvents() { glfwPollEvents(); }
+
+		#pragma region Getter
+
+		#pragma region Size
+
+		[[nodiscard]] int       GetWidth() const { return size.x; }
+		[[nodiscard]] int       GetHeight() const { return size.y; }
+		[[nodiscard]] glm::vec2 GetSize() const { return size; }
+
+		[[nodiscard]] int       GetFrameBufferWidth() const { return frameBufferSize.x; }
+		[[nodiscard]] int       GetFrameBufferHeight() const { return frameBufferSize.y; }
+		[[nodiscard]] glm::vec2 GetFrameBufferSize() const { return frameBufferSize; }
+
+		#pragma endregion
+
+		#pragma region Position
+
+		[[nodiscard]] glm::ivec2 GetPosition() const { return position; }
+		[[nodiscard]] int        GetPositionX() const { return position.x; }
+		[[nodiscard]] int        GetPositionY() const { return position.y; }
+
+		[[nodiscard]] glm::ivec2 GetStartingPosition() const { return startingPosition; }
+		[[nodiscard]] int        GetStartingPositionX() const { return startingPosition.x; }
+		[[nodiscard]] int        GetStartingPositionY() const { return startingPosition.y; }
+
+		#pragma endregion
+
+		[[nodiscard]] bool GetFrameBufferResize() const { return bFrameBufferResize; }
+		[[nodiscard]] bool HasFocus() const { return bHasFocus; }
+
+		#pragma region Name&Title
+
+		[[nodiscard]] std::string GetName() const { return windowName; }
+		[[nodiscard]] std::string GetWindowTitle() const { return windowTitle; }
+
+		#pragma endregion
+
+		[[nodiscard]] float GetAspectRatio() const { return static_cast<float>(size.x) / static_cast<float>(size.y); }
+
+		[[nodiscard]] float GetInvAspectRatio() const
+		{
+			return static_cast<float>(size.y) / static_cast<float>(size.x);
+		}
+
+		// Autres
+		[[nodiscard]] bool           GetVSyncEnabled() const { return bVSyncEnabled; }
+		[[nodiscard]] GlfwCursorMode GetCursorMode() const { return cursorMode; }
+		[[nodiscard]] WindowMode     GetWindowMode() const { return currentWindowMode; }
+
+		const char* GetClipboardText() const
+		{
+			return glfwGetClipboardString(window);
+		}
+
+		#pragma endregion
+
+		#pragma region Setter
+
+		#pragma region Size
+
+		void SetSize(const glm::ivec2& _newSize) { size = _newSize; }
+		void SetSize(const int32_t& _newWidth, const int32_t& _newHeight) { size = glm::ivec2(_newWidth, _newHeight); }
+		void SetWidth(const int& _newWidth) { size.x = _newWidth; }
+		void SetHeight(const int& _newHeight) { size.y = _newHeight; }
+
+		void SetFrameBufferSize(const glm::vec2& _newSize) { frameBufferSize = _newSize; }
+
+		void SetFrameBufferSize(const int32_t& _newWidth, const int32_t& _newHeight)
+		{
+			frameBufferSize = glm::vec2(_newWidth, _newHeight);
+		}
+
+		void SetFrameBufferWidth(const int& _newWidth) { frameBufferSize.x = _newWidth; }
+		void SetFrameBufferHeight(const int& _newHeight) { frameBufferSize.y = _newHeight; }
+
+		#pragma endregion
+
+
+		#pragma region Position
+
+		void SetPosition(const glm::ivec2& _position)
+		{
+			if (window) glfwSetWindowPos(window, _position.x, _position.y);
+			else startingPosition = _position;
+			OnPositionChanged(_position);
+		}
+
+		void SetPosition(const int32_t& _newPositionX, const int32_t& _newPositionY)
+		{
+			if (window) glfwSetWindowPos(window, _newPositionX, _newPositionY);
+			else startingPosition = {_newPositionX, _newPositionY};
+			OnPositionChanged(_newPositionX, _newPositionY);
+		}
+
+		void SetPositionX(const int& _positionX)
+		{
+			if (window) glfwSetWindowPos(window, _positionX, position.y);
+			else startingPosition = {_positionX, position.y};
+			OnPositionChanged(_positionX, position.y);
+		}
+
+		void SetPositionY(const int& _positionY)
+		{
+			if (window) glfwSetWindowPos(window, position.x, _positionY);
+			else startingPosition = {position.x, _positionY};
+			OnPositionChanged(position.x, _positionY);
+		}
+
+		void SetMousePosition(const glm::ivec2 _mousePosition) const
+		{
+			glfwSetCursorPos(window, _mousePosition.x, _mousePosition.y);
+		}
+
+		#pragma endregion
+
+
+		#pragma region Name&Title
+
+		void SetName(const std::string& _newName) { windowName = _newName; }
+
+		void SetWindowTitle(const std::string& _windowTitle)
+		{
+			windowTitle = _windowTitle;
+			glfwSetWindowTitle(window, windowTitle.c_str());
+		}
+
+		#pragma endregion
+
+		void SetFrameBufferResize(const bool& _state) { bFrameBufferResize = _state; }
+
+		void SetUpdateWindowTitleFrequency(const float& _updateFrequencyInSeconds)
+		{
+			updateWindowTitleFrequency = _updateFrequencyInSeconds;
+		}
+
+		// Autres
+
+		void SetVSyncEnabled(const bool& _bEnabled) { bVSyncEnabled = _bEnabled; }
+
+		void SetCursorMode(const GlfwCursorMode& _mode)
+		{
+			if (cursorMode != _mode) cursorMode = _mode;
+				//g_InputManager->OnCursorModeChanged(_mode);
+		}
+
+		const char* WindowModeToStr()
+		{
+			return WindowModeStrings[static_cast<int32_t>(GetCursorMode())];
+		}
+
+
+		void SetWindowMode(const WindowMode& _mode, const bool _bForce = false)
+		{
+			if (_bForce || currentWindowMode != _mode)
+			{
+				currentWindowMode = _mode;
+
+				GLFWmonitor* monitor = glfwGetPrimaryMonitor();
+				if (!monitor)
+				{
+					std::cout << ("Failed to find primary monitor! Can't set window mode\n");
+					return;
+				}
+
+				const GLFWvidmode* video_mode = glfwGetVideoMode(monitor);
+				if (!video_mode)
+				{
+					std::cout << ("Failed to get monitor's video mode! Can't set window mode\n");
+					return;
+				}
+
+				switch (_mode)
+				{
+					case WindowMode::FULLSCREEN:
+						{
+							glfwSetWindowMonitor(window, monitor, 0, 0, video_mode->width, video_mode->height,
+							                     video_mode->refreshRate);
+						}
+						break;
+					case WindowMode::WINDOWED_FULLSCREEN:
+						{
+							glfwSetWindowMonitor(window, monitor, 0, 0, video_mode->width, video_mode->height,
+							                     video_mode->refreshRate);
+							lastNonFullscreenWindowMode = WindowMode::WINDOWED_FULLSCREEN;
+						}
+						break;
+					case WindowMode::WINDOWED:
+						{
+							//CHECK(lastWindowedSize.x != 0 && lastWindowedSize.y != 0);
+
+							if (lastWindowedPos.y == 0)
+								// When in windowed mode a y position of 0 means the title bar isn't
+								// visible. This will occur if the app launched in fullscreen since
+								// the last y position to never have been set to a valid value.
+								lastWindowedPos.y = 40;
+
+							glfwSetWindowMonitor(window, nullptr, lastWindowedPos.x, lastWindowedPos.y,
+							                     lastWindowedSize.x, lastWindowedSize.y, video_mode->refreshRate);
+							lastNonFullscreenWindowMode = WindowMode::WINDOWED;
+						}
+						break;
+					case WindowMode::_NONE:
+					default:
+						{
+							std::cout << ("Unhandled window mode: %u\n", static_cast<uint32_t>(_mode));
+						}
+						break;
+				}
+			}
+		}
+
+		void SetClipboardText(const char* _text) const
+		{
+			glfwSetClipboardString(window, _text);
+		}
+
+		void SetWindowIcon(const std::string& _fileName) const
+		{
+			int width, height, nr_channels;
+			if (unsigned char* data = stbi_load(_fileName.c_str(), &width, &height, &nr_channels, 0))
+			{
+				GLFWimage icon;
+				icon.width  = width;
+				icon.height = height;
+				icon.pixels = data;
+				glfwSetWindowIcon(window, 1, &icon);
+			}
+		}
+
+		#pragma endregion
+
+
+		void OnSizeChanged(const int32_t _width, const int32_t _height)
+		{
+			size            = glm::ivec2(_width, _height);
+			frameBufferSize = size;
+			if (currentWindowMode == WindowMode::WINDOWED) lastWindowedSize = size;
+
+			/*if (g_Renderer)
+			{
+				g_Renderer->OnWindowSizeChanged(_width, _height);
+			}*/
+		}
+
+		void OnSizeChanged(const glm::ivec2& _newPosition)
+		{
+			size            = _newPosition;
+			frameBufferSize = size;
+			if (currentWindowMode == WindowMode::WINDOWED) lastWindowedSize = size;
+
+			/*if (g_Renderer)
+			{
+				g_Renderer->OnWindowSizeChanged(_width, _height);
+			}*/
+		}
+
+		void OnPositionChanged(const int32_t _newPositionX, const int32_t _newPositionY)
+		{
+			position = glm::ivec2{_newPositionX, _newPositionY};
+
+			if (currentWindowMode == WindowMode::WINDOWED) lastWindowedPos = position;
+		}
+
+		void OnPositionChanged(const glm::ivec2& _newPosition)
+		{
+			position = _newPosition;
+
+			if (currentWindowMode == WindowMode::WINDOWED) lastWindowedPos = position;
+		}
+
+		/*void KeyCallback(Inputs::KeyCode keycode, Inputs::KeyAction action, int32_t mods){}
+		void CharCallback(uint32_t character){}
+		void MouseButtonCallback(Inputs::MouseButton mouseButton, Inputs::KeyAction action, int32_t mods){}
+		void WindowFocusCallback(int32_t focused){}
+		void CursorPosCallback(double x, double y){}
+		void ScrollCallback(double xoffset, double yoffset){}
+		void WindowSizeCallback(int32_t width, int32_t height, bool bMaximized, bool bIconified){}
+		void WindowPosCallback(int32_t newX, int32_t newY){}
+		void FrameBufferSizeCallback(int32_t width, int32_t height){}*/
+
+
+		WindowMode StrToWindowMode(const char* _modeStr);
+
+		void ToggleFullscreen(const bool _bForce = false)
+		{
+			if (currentWindowMode == WindowMode::FULLSCREEN)
+				//CHECK(lastNonFullscreenWindowMode == WindowMode::WINDOWED || lastNonFullscreenWindowMode == WindowMode::WINDOWED_FULLSCREEN);
+
+				SetWindowMode(lastNonFullscreenWindowMode, _bForce);
+			else SetWindowMode(WindowMode::FULLSCREEN, _bForce);
+		}
+
+		void Maximize() const
+		{
+			glfwMaximizeWindow(window);
+		}
+
+		void Iconify() const
+		{
+			glfwIconifyWindow(window);
+		}
+
+		/**
+		 * @brief Initialise la fenï¿½tre GLFW.
+		 *
+		 * Cette fonction initialise GLFW, configure la fenï¿½tre pour ï¿½tre non redimensionnable et crï¿½e une fenï¿½tre GLFW avec la taille et le nom spï¿½cifiï¿½s.
+		 */
 		void Init() override;
 		void Start() override;
 		void FixedUpdate() override;
@@ -48,9 +551,59 @@ class WindowModule final : public Module
 		void Release() override;
 		void Finalize() override;
 
-		lve::LveWindow*   GetWindow() const { return lveWindow; }
-
 	private:
+		/**
+			 * @brief Callback function for framebuffer resize events.
+			 *
+			 * This function is called when the framebuffer of the window is resized.
+			 *
+			 * @param _window The window that triggered the resize event.
+			 * @param _width The new width of the framebuffer.
+			 * @param _height The new height of the framebuffer.
+			 */
+		static void FrameBufferResizeCallBack(GLFWwindow* _window, int _width, int _height);
 
-		lve::LveWindow*   lveWindow; /// Fenêtre de l'application.
+		std::string GenerateWindowTitle() const;
+
+		bool InitFromConfig();
+		void SaveToConfig();
+
+		bool bFrameBufferResize = false; // Boolï¿½en indiquant si le framebuffer a ï¿½tï¿½ redimensionnï¿½.
+
+
+		SceneManager* sceneManager = nullptr;
+
+		std::string windowName;  // Nom de la fenï¿½tre
+		std::string windowTitle; // Nom de la fenï¿½tre
+		GLFWwindow* window;      // Fenï¿½tre GLFW
+
+		glm::ivec2 size             = {0, 0};
+		glm::ivec2 startingPosition = {0, 0};
+		glm::ivec2 position         = {0, 0};
+		glm::ivec2 frameBufferSize  = {0, 0};
+		bool       bHasFocus        = false;
+
+		// Whether to move the console to an additional monitor when present
+		bool bMoveConsoleToOtherMonitor = true;
+		// Whether to restore the size and position from the previous session on bootup
+		bool bAutoRestoreStateOnBootup = true;
+
+		WindowMode currentWindowMode = WindowMode::_NONE;
+
+		// Used to store previous window size and position to restore after exiting fullscreen
+		glm::ivec2 lastWindowedSize;
+		glm::ivec2 lastWindowedPos;
+		WindowMode lastNonFullscreenWindowMode = WindowMode::_NONE;
+		// Stores which mode we were in before entering fullscreen
+
+		bool bShowFPSInWindowTitle = true;
+		bool bShowMSInWindowTitle  = true;
+		bool bMaximized            = false;
+		bool bIconified            = false;
+		bool bVSyncEnabled         = true;
+
+		float updateWindowTitleFrequency = 0.0f;
+		float secondsSinceTitleUpdate    = 0.0f;
+
+		GlfwCursorMode cursorMode = NORMAL;
 };

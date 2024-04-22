@@ -203,24 +203,70 @@ public:
 	/**
 		* @brief Finalise le module.
 		*/
-	virtual void Finalize();
 
-	std::shared_ptr<lve::LveModel>            model{}; /**< Modèle de l'objet. */
-	glm::vec3          color{};     /**< Couleur de l'objet. */
+		virtual void Init();
 
-protected:
-	std::string             name = "GameObject";
-	std::vector<Component*> components;
+		/**
+		 * @brief Démarre le module.
+		 */
+		virtual void Start();
 
-	Transform* transform = nullptr;
-	//Quel est le layer du gameObject
-	LayerType layerType = LayerType::Normal;
+		/**
+		 * @brief Effectue une mise à jour fixe du module.
+		 */
+		virtual void FixedUpdate(const float& _deltaTime) const;
 
-	//Plus c'est proche de 1, plus le GameObject sera proche de l'écran
-	float depth = 0.f;
+		/**
+		 * @brief Met à jour le module.
+		 */
+		virtual void Update(const float& _deltaTime) const;
 
-	bool isActive  = true;
-	bool isVisible = true;
+		/**
+		 * @brief Fonction pré-rendu du module.
+		 */
+		virtual void PreRender();
+
+		/**
+		 * @brief Rendu du module.
+		 */
+		virtual void Render() const;
+
+		/**
+		 * @brief Rendu de l'interface graphique du module.
+		 */
+		virtual void RenderGui();
+
+		/**
+		 * @brief Fonction post-rendu du module.
+		 */
+		virtual void PostRender();
+
+		/**
+		 * @brief Libère les ressources utilisées par le module.
+		 */
+		virtual void Release();
+
+		/**
+		 * @brief Finalise le module.
+		 */
+		virtual void Finalize();
+
+		std::shared_ptr<lve::LveModel>            model{}; /**< Modèle de l'objet. */
+		glm::vec3          color{};     /**< Couleur de l'objet. */
+		int texture = 0;
+	protected:
+		std::string             name = "GameObject";
+		std::vector<Component*> components;
+
+		Transform* transform = nullptr;
+		//Quel est le layer du gameObject
+		LayerType layerType = LayerType::Normal;
+
+		//Plus c'est proche de 1, plus le GameObject sera proche de l'écran
+		float depth = 0.f;
+
+		bool isActive  = true;
+		bool isVisible = true;
 
 	id_t id; // Identifiant unique du GameObject
 };

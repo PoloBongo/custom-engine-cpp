@@ -1,12 +1,11 @@
 #include "Modules/RHIVulkanModule.h"
 
-#include "Transform.h"
 #include "ModuleManager.h"
+#include "Transform.h"
 #include "GameObject/PreGameObject/CubeGameObject.h"
 #include "GameObject/PreGameObject/LightGameObject.h"
 #include "GameObject/PreGameObject/PlaneGameObject.h"
 #include "Modules/TimeModule.h"
-#include "Modules/WindowModule.h"
 #include "Scene/SceneManager.h"
 
 RHIVulkanModule::RHIVulkanModule()
@@ -17,18 +16,19 @@ RHIVulkanModule::~RHIVulkanModule()
 {
 	Release();
 }
-void RHIVulkanModule::Init()
+void RHIVulkanModule:: Init()
 {
-	p_lveWindow = moduleManager->GetModule<WindowModule>()->GetWindow();
-	p_lveDevice = new lve::LveDevice{ *p_lveWindow };
-	p_lveRenderer = new lve::LveRenderer{ *p_lveWindow, *p_lveDevice };
+	windowModule = moduleManager->GetModule<WindowModule>();
+	p_lveDevice = new lve::LveDevice{ windowModule };
+	p_lveRenderer = new lve::LveRenderer{ windowModule, *p_lveDevice };
 }
 
 void RHIVulkanModule::Start()
 {
 	builder = new lve::LveDescriptorPool::Builder{ *p_lveDevice };
-	builder->SetMaxSets(lve::LveSwapChain::MAX_FRAMES_IN_FLIGHT)
-		.AddPoolSize(vk::DescriptorType::eUniformBuffer, lve::LveSwapChain::MAX_FRAMES_IN_FLIGHT);
+	builder->SetMaxSets(6)//lve::LveSwapChain::MAX_FRAMES_IN_FLIGHT)
+		.AddPoolSize(vk::DescriptorType::eUniformBuffer, lve::LveSwapChain::MAX_FRAMES_IN_FLIGHT)
+		.AddPoolSize(vk::DescriptorType::eCombinedImageSampler, lve::LveSwapChain::MAX_FRAMES_IN_FLIGHT);
 
 	globalPool = builder->Build();
 
@@ -50,7 +50,29 @@ void RHIVulkanModule::Start()
 	const auto global_set_layout = lve::LveDescriptorSetLayout::Builder(*p_lveDevice)
 		.AddBinding(0, vk::DescriptorType::eUniformBuffer,
 			vk::ShaderStageFlagBits::eAllGraphics)
+		.AddBinding(1, vk::DescriptorType::eCombinedImageSampler,
+			vk::ShaderStageFlagBits::eFragment)
 		.Build();
+
+	texture1 = new lve::LveTexture(*p_lveDevice, "../Textures/coconut.jpg");
+	texture2 = new lve::LveTexture(*p_lveDevice, "../Textures/meme.png");
+	texture3 = new lve::LveTexture(*p_lveDevice, "../Textures/viking_room.png");
+	
+
+	vk::DescriptorImageInfo imageInfo{};
+	imageInfo.sampler = texture1->getSampler();
+	imageInfo.imageView = texture1->getImageView();
+	imageInfo.imageLayout = texture1->getImageLayout();
+
+	vk::DescriptorImageInfo imageInfo2{};
+	imageInfo2.sampler = texture2->getSampler();
+	imageInfo2.imageView = texture2->getImageView();
+	imageInfo2.imageLayout = texture2->getImageLayout();
+
+	vk::DescriptorImageInfo imageInfo3{};
+	imageInfo3.sampler = texture3->getSampler();
+	imageInfo3.imageView = texture3->getImageView();
+	imageInfo3.imageLayout = texture3->getImageLayout();
 
 	globalDescriptorSets.resize(lve::LveSwapChain::MAX_FRAMES_IN_FLIGHT);
 
@@ -59,8 +81,32 @@ void RHIVulkanModule::Start()
 		auto buffer_info = uboBuffers[i]->DescriptorInfo();
 		lve::LveDescriptorWriter(*global_set_layout, *globalPool)
 			.WriteBuffer(0, &buffer_info)
+			.WriteImage(1, &imageInfo)
 			.Build(globalDescriptorSets[i]);
 	}
+
+	tex1DescriptorSets.resize(lve::LveSwapChain::MAX_FRAMES_IN_FLIGHT);
+
+	for (size_t i = 0; i < tex1DescriptorSets.size(); i++)
+	{
+		auto buffer_info = uboBuffers[i]->DescriptorInfo();
+		lve::LveDescriptorWriter(*global_set_layout, *globalPool)
+			.WriteBuffer(0, &buffer_info)
+			.WriteImage(1, &imageInfo2)
+			.Build(tex1DescriptorSets[i]);
+	}
+
+	tex2DescriptorSets.resize(lve::LveSwapChain::MAX_FRAMES_IN_FLIGHT);
+
+	for (size_t i = 0; i < tex2DescriptorSets.size(); i++)
+	{
+		auto buffer_info = uboBuffers[i]->DescriptorInfo();
+		lve::LveDescriptorWriter(*global_set_layout, *globalPool)
+			.WriteBuffer(0, &buffer_info)
+			.WriteImage(1, &imageInfo3)
+			.Build(tex2DescriptorSets[i]);
+	}
+
 
 	simpleRenderSystem = new lve::SimpleRenderSystem{
 		*p_lveDevice, p_lveRenderer->GetSwapChainRenderPass(), global_set_layout->GetDescriptorSetLayout()
@@ -82,7 +128,7 @@ void RHIVulkanModule::Update()
 {
 	gameObjects = moduleManager->GetModule<SceneManager>()->GetCurrentScene()->GetAllGameObject();
 
-	cameraController.MoveInPlaneXZ(p_lveWindow->GetGlfwWindow(), TimeModule::GetDeltaTime(), *viewerObject);
+	cameraController.MoveInPlaneXZ(windowModule->GetGlfwWindow(), TimeModule::GetDeltaTime(), *viewerObject);
 	camera->SetViewYXZ(viewerObject->GetPosition(), viewerObject->GetRotation());
 
 	const float aspect = p_lveRenderer->GetAspectRatio();
@@ -112,7 +158,7 @@ void RHIVulkanModule::PreRender()
 
 void RHIVulkanModule::Render()
 {
-	simpleRenderSystem->RenderGameObjects(gameObjects, *camera, *currentCommandBuffer, globalDescriptorSets[frameIndex]);      //render shadow casting objects
+	simpleRenderSystem->RenderGameObjects(gameObjects, *camera, *currentCommandBuffer, globalDescriptorSets[frameIndex], tex1DescriptorSets[frameIndex], tex2DescriptorSets[frameIndex]);      //render shadow casting objects
 	pointLightSystem->Render(gameObjects, *camera, *currentCommandBuffer, globalDescriptorSets[frameIndex]);                 //render shadow casting objects
 }
 

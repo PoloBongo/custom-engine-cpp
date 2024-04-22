@@ -398,6 +398,7 @@ void BaseScene::TestLoadGameObjects()
 	flatVaseGO->model = lve_model;
 	flatVaseGO->GetTransform()->SetPosition(glm::vec3{ -.5f, .5f, 0.f });
 	flatVaseGO->GetTransform()->SetScale(glm::vec3{ 3.f, 1.5f, 3.f });
+	flatVaseGO->texture = 1;
 	rootObjects.push_back(flatVaseGO);
 
 
@@ -412,6 +413,7 @@ void BaseScene::TestLoadGameObjects()
 
 	auto quad_go = lve::PlaneGameObject::Creates(*_p_lveDevice, glm::vec3{ .0f, .5f, 0.f }, glm::vec3{ 3.f, 1.f, 3.f });
 	quad_go->SetName("QuadGo");
+	quad_go->texture = 1;
 	rootObjects.push_back(quad_go);
 
 	lve_model = lve::LveModel::CreateModelFromFile(*_p_lveDevice, "Models\\viking_room.obj");
@@ -421,6 +423,7 @@ void BaseScene::TestLoadGameObjects()
 	viking->GetTransform()->SetPosition(glm::vec3{ 0.f, 0.f, 5.f });
 	viking->GetTransform()->SetScale(glm::vec3{ 3.f, 3.f, 3.f });
 	viking->GetTransform()->SetRotation(glm::vec3{ glm::radians(90.0f), glm::radians(90.0f), 0.0f });
+	viking->texture = 2;
 	rootObjects.push_back(viking);
 
 	auto cube = lve::CubeGameObject::Creates(*_p_lveDevice);
