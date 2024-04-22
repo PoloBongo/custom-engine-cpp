@@ -120,12 +120,15 @@ void RHIVulkanModule::Start()
 
 	tex3DescriptorSets.resize(lve::LveSwapChain::MAX_FRAMES_IN_FLIGHT);
 
+	
+
 	ListDescriptors.push_back(&globalDescriptorSets);
 	ListDescriptors.push_back(&tex1DescriptorSets);
 	ListDescriptors.push_back(&tex2DescriptorSets);
 	ListDescriptors.push_back(&tex3DescriptorSets);
 
-
+	ListDescriptors.push_back(new std::vector<vk::DescriptorSet>);
+	ListDescriptors.back()->resize(2);
 
 	// **********************************************************
 	// POUR RESIZE LA POOL (recopie tout pour en faire un autre)
@@ -142,7 +145,7 @@ void RHIVulkanModule::Start()
 		for (size_t j = 0; j < descriptorSet->size(); j++) 
 		{
 			int tex = i;
-			if (i > ListTextures.size()) {
+			if (i > ListTextures.size()-1) {
 				tex = 0;
 			}
 
