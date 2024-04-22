@@ -23,7 +23,7 @@
 using json = nlohmann::json;
 
 
-WindowModule::WindowModule(): windowName("VulkanIty"), window(nullptr), size(WIDTH, HEIGHT),
+WindowModule::WindowModule(): windowName("An-Gine"), window(nullptr), size(WIDTH, HEIGHT),
                               lastWindowedSize(glm::ivec2(0)), lastWindowedPos(glm::ivec2(0))
 {
 	lastNonFullscreenWindowMode = WindowMode::WINDOWED;
@@ -69,7 +69,7 @@ void WindowModule::CubeCursorWindow(const int _color) const
 
 void WindowModule::StandardCursorWindow(const GlfwCursorType _cursorType) const
 {
-	GLFWcursor* GLFW_cursor = glfwCreateStandardCursor(GLFW_ARROW_CURSOR);
+	GLFWcursor* glfw_cursor = glfwCreateStandardCursor(GLFW_ARROW_CURSOR);
 
 	switch (_cursorType)
 	{
@@ -104,7 +104,7 @@ void WindowModule::StandardCursorWindow(const GlfwCursorType _cursorType) const
 			glfwCreateStandardCursor(GLFW_NOT_ALLOWED_CURSOR);
 			break;
 	}
-	glfwSetCursor(window, GLFW_cursor);
+	glfwSetCursor(window, glfw_cursor);
 }
 
 void WindowModule::SetInputCursorMode(const GlfwCursorMode _mode)
@@ -113,27 +113,34 @@ void WindowModule::SetInputCursorMode(const GlfwCursorMode _mode)
 	{
 		SetCursorMode(_mode);
 
-		glm::i32 glfwCursorMode = 0;
+		glm::i32 glfw_cursor_mode = 0;
 
 		switch (_mode)
 		{
-		case GlfwCursorMode::NORMAL: glfwCursorMode = GLFW_CURSOR_NORMAL; break;
-		case GlfwCursorMode::HIDDEN: glfwCursorMode = GLFW_CURSOR_HIDDEN; break;
-		case GlfwCursorMode::DISABLED: glfwCursorMode = GLFW_CURSOR_DISABLED; break;
-		case GlfwCursorMode::_NONE:
-		default: std::cout << ("Unhandled cursor mode passed to GLFWWindowWrapper::SetCursorMode: %i\n", static_cast<glm::i32>(_mode)); break;
+			case NORMAL:
+				glfw_cursor_mode = GLFW_CURSOR_NORMAL;
+				break;
+			case HIDDEN:
+				glfw_cursor_mode = GLFW_CURSOR_HIDDEN;
+				break;
+			case DISABLED:
+				glfw_cursor_mode = GLFW_CURSOR_DISABLED;
+				break;
+			case CAPTURED:
+				glfw_cursor_mode = GLFW_CURSOR_CAPTURED;
+				break;
+			case _NONE:
+			default:
+				std::cout << ("Unhandled cursor mode passed to GLFWWindowWrapper::SetCursorMode: %i\n", static_cast<
+					              glm::i32>(_mode));
+				break;
 		}
 
-		glfwSetInputMode(window, GLFW_CURSOR, glfwCursorMode);
+		glfwSetInputMode(window, GLFW_CURSOR, glfw_cursor_mode);
 
 		// Enable raw motion when cursor disabled for smoother camera controls
-		if (glfwCursorMode == GLFW_CURSOR_DISABLED)
-		{
-			if (glfwRawMouseMotionSupported())
-			{
-				glfwSetInputMode(window, GLFW_RAW_MOUSE_MOTION, GLFW_TRUE);
-			}
-		}
+		if (glfw_cursor_mode == GLFW_CURSOR_DISABLED) if (glfwRawMouseMotionSupported()) glfwSetInputMode(
+			window, GLFW_RAW_MOUSE_MOTION, GLFW_TRUE);
 	}
 }
 
@@ -320,12 +327,12 @@ bool WindowModule::InitFromConfig()
 		}
 		catch (const std::exception& e)
 		{
-			throw std::runtime_error(
+			std::cout << (
 				std::string("Failed to parse window settings config file ") + WINDOW_CONFIG_LOCATION + "\n\terror: " + e
-				.what());
+				.what()) << std::endl;
 			return false;
 		}
-	throw std::runtime_error(std::string("Window settings config file not found: %s\n") + WINDOW_CONFIG_LOCATION);
+	std::cout << (std::string("Window settings config file not found: %s\n") + WINDOW_CONFIG_LOCATION) << std::endl;
 	return false;
 }
 
@@ -339,7 +346,7 @@ void WindowModule::SaveToConfig()
 	root_object["initial window position"]                 = {position.x, position.y};
 	root_object["initial window size"]                     = {size.x, size.y};
 	root_object["maximized"]                               = bMaximized;
-	root_object["window mode"]                             = WindowModeToStr(GetWindowMode());
+	root_object["window mode"]                             = WindowModeToStr();
 	root_object["v-sync"]                                  = bVSyncEnabled;
 
 	if (std::ofstream config_file(WINDOW_CONFIG_LOCATION); config_file.is_open())
