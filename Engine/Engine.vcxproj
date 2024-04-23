@@ -303,7 +303,9 @@
     <ClCompile Include="..\Librairies\imgui\imgui_tables.cpp" />
     <ClCompile Include="..\Librairies\imgui\imgui_widgets.cpp" />
     <ClCompile Include="sources\UDP\ErrorsUDP.cpp" />
+    <ClCompile Include="sources\UDP\Network\ConnexionTimeout\ConnexionTiemout.cpp" />
     <ClCompile Include="sources\UDP\Network\Connextion\Connexion.cpp" />
+    <ClCompile Include="sources\UDP\Network\Timeout\Timeout.cpp" />
     <ClCompile Include="sources\UDP\Test\Serialization_Test.cpp" />
     <ClCompile Include="sources\UDP\Protocol\Simulator.cpp" />
     <ClCompile Include="sources\UDP\SocketsUDP.cpp" />
