@@ -6,6 +6,9 @@
 #include "TCP/Client/TCPClientStart.h"
 #include "TCP/Server/TCPServerStart.h"
 
+#include "UDP/Network/ClientUDP/ClientUDPStart.h"
+#include "UDP/Network/ServerUDP/ServerUDPStart.h"
+
 #include <cstdlib>
 #include <iostream>
 
@@ -19,13 +22,23 @@ int main(int argc, char* argv[])
 	for (int i = 0; i < argc; i++) {
 		if (strcmp(argv[i], "clientTCP") == 0)
 		{
-			TCPClientStart client;
-			client.TCPClient();
+			TCPClientStart clientTCP;
+			clientTCP.TCPClient();
 		}
 		if (strcmp(argv[i], "serverTCP") == 0)
 		{
-			TCPServerStart server;
-			server.TCPServer();
+			TCPServerStart serverTCP;
+			serverTCP.TCPServer();
+		}
+		if (strcmp(argv[i], "clientUDP") == 0)
+		{
+			ClientUDPStart clientUDP;
+			clientUDP.ClientStartUDP();
+		}
+		if (strcmp(argv[i], "serverUDP") == 0)
+		{
+			ServerUDPStart serverUDP;
+			serverUDP.ServerStartUDP();
 		}
 	}
 

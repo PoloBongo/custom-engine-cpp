@@ -26,7 +26,7 @@ int Timeout()
 	std::thread t1([&]()
 		{
 			Bousk::Network::UDP::ClientUDP client;
-			client.registerChannel<Bousk::Network::UDP::Protocols::ReliableOrdered>();
+			//client.registerChannel<Bousk::Network::UDP::Protocols::ReliableOrdered>();
 			if (!client.init(client1.port()))
 			{
 				std::scoped_lock lock(coutMutex);
@@ -75,7 +75,7 @@ int Timeout()
 		std::thread t2([&]()
 		{
 			Bousk::Network::UDP::ClientUDP client;
-			client.registerChannel<Bousk::Network::UDP::Protocols::ReliableOrdered>();
+			//client.registerChannel<Bousk::Network::UDP::Protocols::ReliableOrdered>();
 			if (!client.init(client2.port()))
 			{
 				std::scoped_lock lock(coutMutex);

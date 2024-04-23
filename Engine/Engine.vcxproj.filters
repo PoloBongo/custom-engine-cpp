@@ -87,6 +87,8 @@
     <ClCompile Include="sources\UDP\Network\Connextion\Connexion.cpp" />
     <ClCompile Include="sources\UDP\Network\Timeout\Timeout.cpp" />
     <ClCompile Include="sources\UDP\Network\ConnexionTimeout\ConnexionTiemout.cpp" />
+    <ClCompile Include="sources\UDP\Network\ClientUDP\ClientUDPStart.cpp" />
+    <ClCompile Include="sources\UDP\Network\ServerUDP\ServerUDPStart.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BoxCollider.h" />
@@ -174,6 +176,8 @@
     <ClInclude Include="includes\UDP\Float.h" />
     <ClInclude Include="includes\UDP\Test\Serialization_Test.h" />
     <ClInclude Include="includes\UDP\ErrorsUDP.h" />
+    <ClInclude Include="includes\UDP\Network\ClientUDP\ClientUDPStart.h" />
+    <ClInclude Include="includes\UDP\Network\ServerUDP\ServerUDPStart.h" />
   </ItemGroup>
   <ItemGroup>
     <CopyFileToFolders Include="..\Librairies\FMOD\lib\fmod.dll" />
