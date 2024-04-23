@@ -1,4 +1,4 @@
-#include "Modules/ImGUIModule.h"
+﻿#include "Modules/ImGUIModule.h"
 #include "lve_renderer.h"
 #include "ModuleManager.h"
 #include "Modules/WindowModule.h"
@@ -27,8 +27,8 @@ void ImGuiModule::Init()
 	windowModule = moduleManager->GetModule<WindowModule>();
 	rhiModule = moduleManager->GetModule<RHIModule>();
 	sceneManager = moduleManager->GetModule<SceneManager>();
-	device                                             = rhiModule->GetDevice()->Device();
-	graphicsQueue                                      = rhiModule->GetDevice()->GraphicsQueue();
+	device = rhiModule->GetDevice()->Device();
+	graphicsQueue = rhiModule->GetDevice()->GraphicsQueue();
 	const lve::QueueFamilyIndices queue_family_indices = rhiModule->GetDevice()->FindPhysicalQueueFamilies();
 
 	// Création du pool de commandes
@@ -74,15 +74,15 @@ void ImGuiModule::Start()
 	};
 
 	vk::DescriptorPoolCreateInfo pool_info = {};
-	pool_info.sType                        = vk::StructureType::eDescriptorPoolCreateInfo;
-	pool_info.flags                        = vk::DescriptorPoolCreateFlagBits::eFreeDescriptorSet;
-	pool_info.maxSets                      = 1000;
-	pool_info.poolSizeCount                = static_cast<uint32_t>(std::size(pool_sizes));
-	pool_info.pPoolSizes                   = pool_sizes;
+	pool_info.sType = vk::StructureType::eDescriptorPoolCreateInfo;
+	pool_info.flags = vk::DescriptorPoolCreateFlagBits::eFreeDescriptorSet;
+	pool_info.maxSets = 1000;
+	pool_info.poolSizeCount = static_cast<uint32_t>(std::size(pool_sizes));
+	pool_info.pPoolSizes = pool_sizes;
 
 	vk::DescriptorPool im_gui_pool;
 	if (rhiModule->GetDevice()->Device().createDescriptorPool(&pool_info, nullptr, &im_gui_pool) !=
-	    vk::Result::eSuccess)
+		vk::Result::eSuccess)
 		throw std::runtime_error("Impossible de creer la pool de imgui!");
 
 	// 2: initialize imgui library
@@ -96,14 +96,14 @@ void ImGuiModule::Start()
 
 	// this initializes imgui for Vulkan
 	ImGui_ImplVulkan_InitInfo init_info = {};
-	init_info.Instance                  = rhiModule->GetDevice()->GetInstance();
-	init_info.PhysicalDevice            = rhiModule->GetDevice()->GetPhysicalDevice();
-	init_info.Device                    = device;
-	init_info.Queue                     = graphicsQueue;
-	init_info.DescriptorPool            = im_gui_pool;
-	init_info.MinImageCount             = 3;
-	init_info.ImageCount                = 3;
-	init_info.RenderPass                = rhiModule->GetRenderer()->GetSwapChainRenderPass();
+	init_info.Instance = rhiModule->GetDevice()->GetInstance();
+	init_info.PhysicalDevice = rhiModule->GetDevice()->GetPhysicalDevice();
+	init_info.Device = device;
+	init_info.Queue = graphicsQueue;
+	init_info.DescriptorPool = im_gui_pool;
+	init_info.MinImageCount = 3;
+	init_info.ImageCount = 3;
+	init_info.RenderPass = rhiModule->GetRenderer()->GetSwapChainRenderPass();
 	//init_info.UseDynamicRendering = VK_TRUE;
 	//init_info.ColorAttachmentFormat = _swapchainImageFormat;
 
@@ -208,7 +208,7 @@ void ImGuiModule::ImmediateSubmit(std::function<void(vk::CommandBuffer _cmd)>&& 
 	//  _renderFence will now block until the graphic commands finish execution
 	graphics_queue.submit2KHR(submitInfo, immFence, dispatcher);
 
-	if(device.waitForFences(immFence, VK_TRUE, 9999999999) != vk::Result::eSuccess)
+	if (device.waitForFences(immFence, VK_TRUE, 9999999999) != vk::Result::eSuccess)
 	{
 		throw std::runtime_error("Failed GUI");
 	}
