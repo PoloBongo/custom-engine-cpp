@@ -8,7 +8,7 @@
 
 bool fileExists(const std::string& filename) {
 	std::ifstream file(filename);
-	return file.good(); // Check if the file stream is in a good state (i.e., file exists)
+	return file.good();
 }
 
 namespace lve {
@@ -16,7 +16,7 @@ namespace lve {
 		int channels;
 		int bytesPerPixel;
 
-		std::string filePath = filepath; // Replace this with your file path
+		std::string filePath = filepath;
 		if (fileExists(filePath)) {
 			std::cout << "File exists at path: " << filePath << std::endl;
 		}
@@ -24,18 +24,7 @@ namespace lve {
 			std::cout << "File does not exist at path: " << filePath << std::endl;
 		}
 
-		// symbole externe non résolu stbi_load
 		stbi_uc* data = stbi_load(filepath.c_str(), &width, &height, &bytesPerPixel, 4);
-
-		if (data == nullptr) {
-			// Gérer l'erreur de chargement de l'image
-		}
-
-		//for (int i = 0; i < width * height * 4; i += 4) {
-		//	unsigned char temp = data[i];
-		//	data[i] = data[i + 2];
-		//	data[i + 3] = temp;
-		//}
 
 		mipLevels = std::floor(std::log2(std::max(width, height))) + 1;
 
@@ -48,7 +37,7 @@ namespace lve {
 		stagingBuffer.Map();
 		stagingBuffer.WriteToBuffer(data);
 
-		imageFormat = vk::Format::eR8G8B8A8Srgb;//eR8G8B8A8Srgb // eB8G8R8A8Srgb
+		imageFormat = vk::Format::eR8G8B8A8Srgb;
 
 		vk::ImageCreateInfo imageInfo{};
 		imageInfo.sType = vk::StructureType::eImageCreateInfo;
@@ -68,8 +57,6 @@ namespace lve {
 		transitionImageLayout(vk::ImageLayout::eUndefined, vk::ImageLayout::eTransferDstOptimal);
 
 		lveDevice.CopyBufferToImage(stagingBuffer.GetBuffer(), image, static_cast<uint32_t>(width), static_cast<uint32_t>(height), 1);
-
-		//transitionImageLayout(vk::ImageLayout::eTransferDstOptimal, vk::ImageLayout::eShaderReadOnlyOptimal);
 
 		generateMipmaps();
 
@@ -106,12 +93,8 @@ namespace lve {
 		imageViewInfo.image = image;
 
 		lveDevice.Device().createImageView(&imageViewInfo, nullptr, &imageView);
-		//vk::Result result = lveDevice.device().createImageView(&imageViewInfo, nullptr, &imageView);
-		//if (result != vk::Result::eSuccess) {
-		//	throw std::runtime_error("ERROR creating image view");
-		//}
 
-		stbi_image_free(data); // symbole externe non résolu stbi_image_free
+		stbi_image_free(data);
 
 	}
 
@@ -161,9 +144,6 @@ namespace lve {
 		else {
 			throw std::runtime_error("unsuppported layout transition!");
 		}
-
-		//vkCmdPipelineBarrier(commandBuffer, sourceStage, destinationStage, 0, 0, nullptr, 0, nullptr, 1, &barrier);
-		//commandBuffer.CmdpipelineBarrier(sourceStage, destinationStage, 0, 0, nullptr, 0, nullptr, 1, &barrier);
 
 		commandBuffer.pipelineBarrier(
 			sourceStage,                      // Source pipeline stage
@@ -280,35 +260,5 @@ namespace lve {
 		lveDevice.EndSingleTimeCommands(commandBuffer);
 
 	}
-
-	//void LveTexture::createTextureDescriptorSet(vk::DescriptorPool descriptorPool, vk::DescriptorSetLayout textureDescriptorSetLayout) {
-
-	//	vk::DescriptorSetAllocateInfo allocInfo{};
-	//	allocInfo.sType = vk::StructureType::eDescriptorSetAllocateInfo;
-	//	allocInfo.descriptorPool = descriptorPool;
-	//	allocInfo.descriptorSetCount = 1;
-	//	allocInfo.pSetLayouts = &textureDescriptorSetLayout;
-	//	
-	//	if (lveDevice.Device().allocateDescriptorSets(&allocInfo, &descriptorSet) != vk::Result::eSuccess) {
-	//		throw std::runtime_error("failed to allocate descriptor sets !");
-	//	}
-
-	//	vk::DescriptorImageInfo imageInfo{};
-	//	imageInfo.sampler = getSampler();
-	//	imageInfo.imageView = getImageView();
-	//	imageInfo.imageLayout = getImageLayout();
-
-	//	vk::WriteDescriptorSet descriptorWrite = {};
-	//	descriptorWrite.sType = vk::StructureType::eWriteDescriptorSet;
-	//	descriptorWrite.dstSet = descriptorSet; 
-	//	descriptorWrite.dstBinding = 1;
-	//	descriptorWrite.dstArrayElement = 0;
-	//	descriptorWrite.descriptorType = vk::DescriptorType::eCombinedImageSampler;
-	//	descriptorWrite.descriptorCount = 1;
-	//	descriptorWrite.pImageInfo = &imageInfo;
-
-	//	lveDevice.Device().updateDescriptorSets(1,&descriptorWrite, 0, nullptr);
-
-	//}
 
 }
