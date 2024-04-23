@@ -30,7 +30,7 @@ void RHIVulkanModule::AddTextureToPool(const std::string _filepath) {
 
 	
 	std::ifstream file(_filepath);
-	if (!file.good()) { std::cout << "Failed to add texture, file path does not exist: " << _filepath << std::endl;  return; }
+	if (!file.good()) { std::cout << "Failed to add texture, file path does not exist: " << _filepath << std::endl; }// return; }
 
 	const auto global_set_layout = lve::LveDescriptorSetLayout::Builder(*p_lveDevice)
 		.AddBinding(0, vk::DescriptorType::eUniformBuffer,
@@ -39,8 +39,9 @@ void RHIVulkanModule::AddTextureToPool(const std::string _filepath) {
 			vk::ShaderStageFlagBits::eFragment)
 		.Build();
 
-
-	lve::LveTexture* NewTexture = new lve::LveTexture(*p_lveDevice, _filepath);
+	lve::LveTexture* NewTexture;
+	if (!file.good()) { NewTexture = new lve::LveTexture(*p_lveDevice, "../Textures/bugtexture.png"); }// return; }
+	else { NewTexture = new lve::LveTexture(*p_lveDevice, _filepath); }
 
 	ListTextures.push_back(vk::DescriptorImageInfo());
 	ListTextures.back().sampler = NewTexture->getSampler();
@@ -135,7 +136,7 @@ void RHIVulkanModule::Start()
 	AddTextureToPool("../Textures/unnamed.png");
 	AddTextureToPool("../Textures/viking_room.png");
 	AddTextureToPool("../Textures/grass.jpg");
-	AddTextureToPool("../Textures/gras.jpg"); // TEST	
+	AddTextureToPool("../Textures/gras.truc"); // TEST	
 
 	simpleRenderSystem = new lve::SimpleRenderSystem{
 		*p_lveDevice, p_lveRenderer->GetSwapChainRenderPass(), global_set_layout->GetDescriptorSetLayout()
