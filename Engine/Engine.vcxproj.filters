@@ -84,6 +84,7 @@
     <ClCompile Include="sources\UDP\Protocol\Simulator.cpp" />
     <ClCompile Include="sources\UDP\Test\Serialization_Test.cpp" />
     <ClCompile Include="sources\UDP\ErrorsUDP.cpp" />
+    <ClCompile Include="sources\UDP\Network\Connextion\Connexion.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BoxCollider.h" />
