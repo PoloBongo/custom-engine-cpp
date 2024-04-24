@@ -7,7 +7,10 @@
 class BaseScene
 {
 	public:
-		explicit BaseScene(const std::string& _fileName);
+		explicit BaseScene(const std::string& _fileName) : name(_fileName)
+		{
+			
+		}
 		~BaseScene() = default;
 
 		BaseScene(const BaseScene&)            = delete;
@@ -19,29 +22,29 @@ class BaseScene
 		virtual void Init();
 
 		/**
-		 * @brief Démarre le module.
+		 * @brief Dï¿½marre le module.
 		 */
 		virtual void Start();
 
 		/**
-		 * @brief Effectue une mise à jour fixe du module.
+		 * @brief Effectue une mise ï¿½ jour fixe du module.
 		 */
-		virtual void FixedUpdate(const float& _deltaTime);
+		virtual void FixedUpdate();
 
 		/**
-		 * @brief Met à jour le module.
+		 * @brief Met ï¿½ jour le module.
 		 */
-		virtual void Update(const float& _deltaTime);
+		virtual void Update();
 
 		/**
-		 * @brief Fonction pré-rendu du module.
+		 * @brief Fonction prï¿½-rendu du module.
 		 */
 		virtual void PreRender();
 
 		/**
 		 * @brief Rendu du module.
 		 */
-		virtual void Render(lve::LveWindow* _lveWindow);
+		virtual void Render();
 
 		/**
 		 * @brief Rendu de l'interface graphique du module.
@@ -54,7 +57,7 @@ class BaseScene
 		virtual void PostRender();
 
 		/**
-		 * @brief Libère les ressources utilisées par le module.
+		 * @brief Libï¿½re les ressources utilisï¿½es par le module.
 		 */
 		virtual void Release();
 
@@ -67,7 +70,7 @@ class BaseScene
 		GameObject*              CreateGameObject();
 		void                     DestroyGameObject(const GameObject* _gameObject);
 		GameObject*              GetGameObjectById(const GameObject::id_t& _gameObjectId) const;
-		std::vector<GameObject*> FindGameObjectsByName(const std::string& _name) const;
+		std::vector<GameObject*> FindGameObjectsByName(const std::string& _name);
 
 
 		bool IsInitialized() const;
@@ -109,6 +112,25 @@ class BaseScene
 
 		GameObject::id_t FirstObjectWithTag(const std::string& _tag);
 
+		void TestLoadGameObjects();
+
+
+		std::vector<GameObject*> GetAllGameObject() {
+			std::vector<GameObject*> allGameObject;
+			for (const auto& gameObject : rootObjects) {
+				AddGameObjectInVector(allGameObject, gameObject);
+			}
+			return allGameObject;
+		}
+
+
+		void AddGameObjectInVector(std::vector<GameObject*>& _gameObjects, GameObject* _gameObject) {
+			_gameObjects.push_back(_gameObject);
+			for (auto& gameObject : _gameObject->GetChildren()) {
+				AddGameObjectInVector(_gameObjects, gameObject);
+			}
+		}
+
 		std::string name;
 		std::string fileName;
 
@@ -122,4 +144,8 @@ class BaseScene
 
 		bool bInitialized = false;
 		bool bLoaded      = false;
+
+		GameObject* CreateCubeGameObject();
+		GameObject* CreateLightGameObject();
+		GameObject* CreatePlaneGameObject();
 };

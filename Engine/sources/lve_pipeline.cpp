@@ -9,7 +9,7 @@
 #include <stdexcept>
 
 #ifndef ENGINE_DIR
-#define ENGINE_DIR "../"
+#define ENGINE_DIR ""
 #endif
 
 namespace lve

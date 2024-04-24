@@ -1,3 +1,4 @@
-END: Fin cleaning
+FIX : &
 
-- Nettoyage de la plus grande partie du code cpp et h
+- Changement de la méthode de récupération du mode pour la sauvegarde
+- Ajout d'une fonction pour changer l'icone de la fenêtre

@@ -4,7 +4,7 @@
 
 #include "lve_device.h"
 #include "lve_swap_chain.h"
-#include "lve_window.h"
+#include "Modules/WindowModule.h"
 
 // std
 #include <cassert>
@@ -20,7 +20,7 @@ namespace lve
 			 *  @param _window Référence à l'objet LveWindow associé au renderer.
 			 *  @param _device Référence à l'objet LveDevice associé au renderer.
 			 */
-			LveRenderer(LveWindow& _window, LveDevice& _device);
+			LveRenderer(WindowModule* _windowModule, LveDevice& _device);
 
 			/** Destructeur de LveRenderer. */
 			~LveRenderer();
@@ -162,7 +162,7 @@ namespace lve
 			 */
 			void RecreateSwapChain();
 
-			LveWindow&                     lveWindow;      /**< Référence à l'objet LveWindow associé au renderer. */
+			WindowModule*                  windowModule;      /**< Référence à l'objet LveWindow associé au renderer. */
 			LveDevice&                     lveDevice;      /**< Référence à l'objet LveDevice associé au renderer. */
 			std::unique_ptr<LveSwapChain>  lveSwapChain;   /**< Pointeur unique vers l'objet LveSwapChain. */
 			std::vector<vk::CommandBuffer> commandBuffers; /**< Vecteur de command buffers Vulkan. */

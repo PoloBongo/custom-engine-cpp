@@ -10,6 +10,8 @@
 #include <memory>
 #include <vector>
 
+class GameObject;
+
 namespace lve
 {
 	struct PointLightPushConstants
@@ -40,11 +42,11 @@ namespace lve
 			 * Elle lie également les ensembles de descripteurs globaux nécessaires pour le rendu.
 			 * Enfin, elle utilise une commande de dessin pour rendre les lumières ponctuelles.
 			 *
-			 * @param _frameInfo Informations sur le frame actuel, contenant notamment le tampon de commandes.
+			 * @param _gameObjects
 			 * @param _ubo
 			 */
-			void Update(FrameInfo& _frameInfo, GlobalUbo& _ubo);
-			void Render(FrameInfo& _frameInfo);
+			void Update(const std::vector<GameObject*>& _gameObjects, GlobalUbo& _ubo);
+			void Render(std::vector<GameObject*>& _gameObjects, const LveCamera& _camera, const vk::CommandBuffer _commandBuffer,const vk::DescriptorSet _globalDescriptorSet) const;
 
 		private:
 			/**

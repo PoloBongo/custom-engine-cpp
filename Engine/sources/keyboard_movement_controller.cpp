@@ -1,9 +1,13 @@
 #include "keyboard_movement_controller.h"
 
+#include "Transform.h"
+
+class GameObject;
+
 namespace lve
 {
 	void KeyboardMovementController::MoveInPlaneXZ(GLFWwindow*    _window, float _deltaTime,
-	                                               LveGameObject& _gameObject) const
+	                                               GameObject& _gameObject) const
 	{
 		glm::vec3 rotate{0.f};
 		if (glfwGetKey(_window, keys.lookRight) == GLFW_PRESS) rotate.y += 1.f;
@@ -13,11 +17,11 @@ namespace lve
 
 		if (dot(rotate, rotate) > std::numeric_limits<
 			    float>::epsilon())
-			_gameObject.transform.rotation += lookSpeed * _deltaTime * normalize(rotate);
-		_gameObject.transform.rotation.x = glm::clamp(_gameObject.transform.rotation.x, -1.5f, 1.5f);
-		_gameObject.transform.rotation.y = glm::mod(_gameObject.transform.rotation.y, glm::two_pi<float>());
+			_gameObject.GetTransform()->SetRotation(_gameObject.GetTransform()->GetRotation() + (lookSpeed * _deltaTime * normalize(rotate)));
+		_gameObject.GetTransform()->SetRotation({ glm::clamp(_gameObject.GetRotation().x, -1.5f, 1.5f), _gameObject.GetTransform()->GetRotation().y, _gameObject.GetTransform()->GetRotation().z });
+		_gameObject.GetTransform()->SetRotation({_gameObject.GetRotation().x, glm::mod(_gameObject.GetRotation().y, glm::two_pi<float>()), _gameObject.GetTransform()->GetRotation().z}) ;
 
-		float               yaw = _gameObject.transform.rotation.y;
+		float               yaw = _gameObject.GetRotation().y;
 		const glm::vec3     forward_dir{sin(yaw), 0.f, cos(yaw)};
 		const glm::vec3     right_dir{forward_dir.z, 0.f, -forward_dir.x};
 		constexpr glm::vec3 up_dir{0.f, -1.f, 0.f};
@@ -32,6 +36,6 @@ namespace lve
 
 		if (dot(move_dir, move_dir) > std::numeric_limits<
 			    float>::epsilon())
-			_gameObject.transform.translation += moveSpeed * _deltaTime * normalize(move_dir);
+			_gameObject.GetTransform()->SetPosition(_gameObject.GetTransform()->GetPosition() + (moveSpeed * _deltaTime * normalize(move_dir)));
 	}
 } // namespace lve

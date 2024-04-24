@@ -11,14 +11,16 @@ class Component
 		explicit Component(GameObject* _owner);
 		virtual  ~Component() = default;
 
+		virtual void Init();
 		virtual void Start();
-		virtual void Physics(const float& _delta);
-		virtual void Update(const float& _delta);
-
-		//Render Methods
-		virtual void Render(lve::LveWindow* _window);
-		virtual void RenderGui(lve::LveWindow* _window);
-		virtual void RenderBackground(lve::LveWindow* _window);
+		virtual void FixedUpdate();
+		virtual void Update() ;
+		virtual void PreRender();
+		virtual void Render();
+		virtual void RenderGui();
+		virtual void PostRender();
+		virtual void Release();
+		virtual void Finalize();
 
 		GameObject* GetOwner() const { return owner; }
 		void        SetOwner(GameObject* _owner) { owner = _owner; }

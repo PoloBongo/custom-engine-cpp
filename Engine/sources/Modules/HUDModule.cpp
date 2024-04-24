@@ -122,7 +122,6 @@ void HUDModule::RemoveComponent()
 {
 }
 
-// TODO : demander à Adrien c'est quoi le mieux entre rester sur component ou passer sur la struct
 
 // Méthode pour nettoyer les composants HUD
 void HUDModule::CleanupComponents()

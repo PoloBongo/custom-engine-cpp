@@ -208,6 +208,8 @@ namespace lve
 			 */
 			void ResetPool() const;
 
+			vk::DescriptorPool GetDescriptorPool() { return descriptorPool; }
+
 		private:
 			LveDevice&         lveDevice;      /**< Référence vers l'appareil logique associé. */
 			vk::DescriptorPool descriptorPool; /**< Pool de descripteurs Vulkan. */

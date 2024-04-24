@@ -8,6 +8,8 @@
 #include <string>
 #include <vector>
 
+class WindowModule;
+
 namespace lve
 {
 	// Structure pour stocker les détails de support de la chaîne d'échange
@@ -46,9 +48,9 @@ namespace lve
 			*
 			* Initialise un périphérique Vulkan en prenant une référence à une fenêtre Vulkan LveWindow en tant que paramètre.
 			*
-			* @param _window Une référence à la fenêtre Vulkan utilisée pour initialiser le périphérique.
+			* @param _windowModule
 			*/
-			explicit LveDevice(LveWindow& _window);
+			explicit LveDevice(WindowModule* _windowModule);
 
 			/**
 			 * @brief Destructeur de la classe LveDevice.
@@ -147,7 +149,7 @@ namespace lve
 			 *
 			 * @return Les familles de files de commandes physiques disponibles sur le périphérique.
 			 */
-			QueueFamilyIndices FindPhysicalQueueFamilies() { return FindQueueFamilies(physicalDevice); }
+			QueueFamilyIndices FindPhysicalQueueFamilies() const { return FindQueueFamilies(physicalDevice); }
 
 			/**
 			 * @brief Trouve un format d'image supporté par le périphérique.
@@ -256,6 +258,7 @@ namespace lve
 			* Cette fonction configure un gestionnaire de débogage Vulkan pour recevoir les messages de validation et de débogage de l'API Vulkan.
 			*/
 			vk::DebugUtilsMessengerEXT SetupDebugMessenger();
+			vk::DebugUtilsMessengerEXT GetDebugMessenger() const { return debugMessenger; }
 
 		private:
 			/**
@@ -371,7 +374,7 @@ namespace lve
 			vk::PhysicalDevice physicalDevice = VK_NULL_HANDLE;
 			/**< Le périphérique physique Vulkan utilisé par l'application, initialisé à VK_NULL_HANDLE par défaut. */
 
-			LveWindow& window; /**< Une référence à la fenêtre Vulkan utilisée par l'application. */
+			WindowModule* windowModule = nullptr; /**< Une référence à la fenêtre Vulkan utilisée par l'application. */
 
 			vk::CommandPool commandPool;
 			/**< Le pool de commandes Vulkan utilisé pour allouer les tampons de commandes. */

@@ -20,7 +20,7 @@ class RigidBody : public Component
 		*/
 		RigidBody(btDiscreteDynamicsWorld* _dynamicsWorld, btCollisionShape* _shape, float _mass, glm::vec3& _position);
 
-		void Update(const float& _deltaTime) override;
+		void Update() override;
 		/**
 		* @brief Ajoute une force au corps rigide.
 		*

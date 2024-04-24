@@ -309,7 +309,11 @@
       </Command>
     </PreBuildEvent>
     <PostBuildEvent>
-      <Command>$(SolutionDir)compile.bat</Command>
+      <Command>
+        call $(ProjectDir)compile.bat
+        xcopy /E /I /Y "$(ProjectDir)Shaders" "$(TargetDir)Shaders"
+        xcopy /E /I /Y "$(ProjectDir)Models" "$(TargetDir)Models"
+      </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='ClientUDP|x64'">
@@ -425,7 +429,11 @@
       </Command>
     </PreBuildEvent>
     <PostBuildEvent>
-      <Command>$(SolutionDir)compile.bat</Command>
+      <Command>
+        call $(ProjectDir)compile.bat
+        xcopy /E /I /Y "$(ProjectDir)Shaders" "$(TargetDir)Shaders"
+        xcopy /E /I /Y "$(ProjectDir)Models" "$(TargetDir)Models
+        "</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -460,8 +468,15 @@
     <ClCompile Include="sources\UDP\ClientUDP.cpp" />
     <ClCompile Include="sources\UDP\Test\AckHandler_Test.cpp" />
     <ClCompile Include="BoxCollider.cpp" />
+    <ClCompile Include="FileManager.cpp" />
+    <ClCompile Include="InputKeyCode.cpp" />
+    <ClCompile Include="ImGUIInterface.cpp" />
     <ClCompile Include="sources\TCP\Client\Client.cpp" />
     <ClCompile Include="Convertisseur.cpp" />
+    <ClCompile Include="lve_texture.cpp" />
+    <ClCompile Include="sources\GameObject\Components\Mesh.cpp" />
+    <ClCompile Include="sources\Modules\DisplayModule.cpp" />
+    <ClCompile Include="Light.cpp" />
     <ClCompile Include="sources\TCP\Errors.cpp" />
     <ClCompile Include="rhi.cpp" />
     <ClCompile Include="sources\TCP\Server\Server.cpp" />
@@ -474,7 +489,6 @@
     <ClCompile Include="sources\Camera\CameraManager.cpp" />
     <ClCompile Include="functionHelpers.cpp" />
     <ClCompile Include="lve_constants.cpp" />
-    <ClCompile Include="lve_image.cpp" />
     <ClCompile Include="sources\Camera\BaseCamera.cpp" />
     <ClCompile Include="sources\CoreEngine.cpp" />
     <ClCompile Include="sources\Modules\HUDModule.cpp" />
@@ -488,6 +502,7 @@
     <ClCompile Include="sources\Modules\SoundSystemModule.cpp" />
     <ClCompile Include="sources\UDP\AckHandler.cpp" />
     <ClCompile Include="SphereCollider.cpp" />
+    <ClCompile Include="sources\Modules\TimeModule.cpp" />
     <ClCompile Include="sources\TCP\Client\TCPClientStart.cpp" />
     <ClCompile Include="sources\TCP\Server\TCPServerStart.cpp" />
     <ClCompile Include="sources\UDP\Tester.cpp" />
@@ -513,8 +528,10 @@
     <ClInclude Include="includes\UDP\ClientUDP.h" />
     <ClInclude Include="includes\UDP\Test\AckHandler_Test.h" />
     <ClInclude Include="BoxCollider.h" />
+    <ClInclude Include="FileManager.h" />
     <ClInclude Include="includes\TCP\Client\Client.h" />
     <ClInclude Include="Convertisseur.h" />
+    <ClInclude Include="includes\Modules\DisplayModule.h" />
     <ClInclude Include="includes\TCP\Errors.h" />
     <ClInclude Include="includes\GameObject\PreGameObject\CubeGameObject.h" />
     <ClInclude Include="includes\Camera\CameraManager.h" />
@@ -530,7 +547,6 @@
     <ClInclude Include="Component.h" />
     <ClInclude Include="EngineTestCode.h" />
     <ClInclude Include="includes\Modules\SoundSystemModule.h" />
-    <ClCompile Include="first_app.cpp" />
     <ClCompile Include="sources\GameObject\GameObject.cpp" />
     <ClCompile Include="sources\keyboard_movement_controller.cpp" />
     <ClCompile Include="sources\lve_buffer.cpp" />
@@ -552,6 +568,9 @@
     <ClCompile Include="sources\Systems\point_light_system.cpp" />
     <ClCompile Include="sources\Systems\simple_render_system.cpp" />
     <ClInclude Include="includes\GameObject\PreGameObject\LightGameObject.h" />
+    <ClInclude Include="InputKeyCode.h" />
+    <ClInclude Include="ImGUIInterface.h" />
+    <ClInclude Include="Light.h" />
     <ClInclude Include="includes\TCP\Messages.h" />
     <ClInclude Include="includes\TCP\Utils.h" />
     <ClInclude Include="includes\UDP\AckHandler.h" />
@@ -561,11 +580,12 @@
     <ClInclude Include="includes\UDP\Settings.h" />
     <ClInclude Include="includes\UDP\Types.h" />
     <ClInclude Include="lve_constants.h" />
-    <ClInclude Include="lve_image.h" />
     <ClInclude Include="includes\GameObject\PreGameObject\PlaneGameObject.h" />
     <ClInclude Include="includes\UDP\Packet.h" />
     <ClInclude Include="includes\UDP\Protocol\ReliableOrdered.h" />
     <ClInclude Include="includes\UDP\Test\PacketHandling_Test.h" />
+    <ClInclude Include="lve_texture.h" />
+    <ClInclude Include="includes\GameObject\Components\Mesh.h" />
     <ClInclude Include="rhi.h" />
     <ClInclude Include="includes\Modules\RHIVulkanModule.h" />
     <ClInclude Include="RigidBody.h" />
@@ -577,6 +597,7 @@
     <ClInclude Include="includes\UDP\Protocol\Simulator.h" />
     <ClInclude Include="includes\UDP\Test\Serialization_Test.h" />
     <ClInclude Include="SphereCollider.h" />
+    <ClInclude Include="includes\Modules\TimeModule.h" />
     <ClInclude Include="includes\TCP\Client\TCPClientStart.h" />
     <ClInclude Include="includes\TCP\Server\TCPServerStart.h" />
     <ClInclude Include="includes\UDP\Tester.h" />
@@ -587,7 +608,6 @@
     <ClInclude Include="VulkanHooks.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="first_app.h" />
     <ClInclude Include="includes\GameObject\GameObject.h" />
     <ClInclude Include="includes\keyboard_movement_controller.h" />
     <ClInclude Include="includes\lve_buffer.h" />
@@ -618,7 +638,38 @@
     </CopyFileToFolders>
   </ItemGroup>
   <ItemGroup>
+    <None Include="compile.bat" />
     <None Include="imgui.ini" />
+    <None Include="Shaders\point_light.frag" />
+    <None Include="Shaders\point_light.frag.spv" />
+    <None Include="Shaders\point_light.spv" />
+    <None Include="Shaders\point_light.vert" />
+    <None Include="Shaders\point_light.vert.spv" />
+    <None Include="Shaders\simple_shader.frag" />
+    <None Include="Shaders\simple_shader.frag.spv" />
+    <None Include="Shaders\simple_shader.spv" />
+    <None Include="Shaders\simple_shader.vert" />
+    <None Include="Shaders\simple_shader.vert.spv" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Models\colored_cube.obj">
+      <FileType>Document</FileType>
+    </None>
+    <None Include="Models\cube.obj">
+      <FileType>Document</FileType>
+    </None>
+    <None Include="Models\flat_vase.obj">
+      <FileType>Document</FileType>
+    </None>
+    <None Include="Models\quad.obj">
+      <FileType>Document</FileType>
+    </None>
+    <None Include="Models\smooth_vase.obj">
+      <FileType>Document</FileType>
+    </None>
+    <None Include="Models\viking_room.obj">
+      <FileType>Document</FileType>
+    </None>
     <None Include="includes\UDP\Serialization\Deserializer.inl" />
     <None Include="includes\UDP\Serialization\Serializer.inl" />
     <None Include="includes\UDP\Utils\Utils.inl" />
