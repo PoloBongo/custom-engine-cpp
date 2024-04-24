@@ -279,6 +279,7 @@ void ImGuiModule::DrawInspectorWindow() {
 		ImGui::SameLine();
 		ImGui::SetWindowFontScale(1.2f);
 		ImGui::TextColored(ImVec4(1.0f, 0.5f, 0.0f, 1.0f), selectedGameObject->GetName().c_str());
+		
 		ImGui::SetWindowFontScale(1.0f);
 
 		// Bouton pour afficher la popup de renommage
@@ -290,6 +291,18 @@ void ImGuiModule::DrawInspectorWindow() {
 			ImGui::OpenPopup("Rename Entity");
 		}
 		ShowRenamePopup();
+
+		if (ImGui::CollapsingHeader("Texture")) {
+			int texture = selectedGameObject->texture;
+			if (ImGui::InputInt("Texture", &texture)) { 
+				selectedGameObject->texture = texture;
+			}
+			//float textureMulti = ;
+			//if (ImGui::InputFloat("Texture Multiplier", &textureMulti)) {
+			//	selectedGameObject->texture = texture;
+			//}
+		}
+
 
 		// Affichage des propriétés de transformation
 		if (ImGui::CollapsingHeader("Transform")) {

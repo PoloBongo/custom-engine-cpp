@@ -77,7 +77,7 @@ namespace lve
 		for (const auto& game_object : _gameObjects)
 		{
 			if (game_object->model == nullptr) continue;
-			if (game_object->texture > _DescriptorSetsAll->size()) 
+			if (game_object->texture > _DescriptorSetsAll->size()-1) 
 			{
 				_commandBuffer.bindDescriptorSets(
 					vk::PipelineBindPoint::eGraphics,

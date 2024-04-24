@@ -19,6 +19,7 @@ namespace lve
 	class LveModel
 	{
 		public:
+
 			/**
 			 * @brief Structure représentant un vertex dans l'espace 3D.
 			 */
@@ -28,6 +29,7 @@ namespace lve
 				glm::vec3 color{};    /**< Couleur du vertex. */
 				glm::vec3 normal{};   /**< Normale du vertex. */
 				glm::vec2 uv{};       /**< Coordonnées de texture du vertex. */
+				unsigned int texMultiplier = 1;
 
 				/**
 				 * @brief Obtient les descriptions de liaison des entrées de vertex.

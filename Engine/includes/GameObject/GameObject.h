@@ -213,6 +213,8 @@ protected:
 	std::string             name = "GameObject";
 	std::vector<Component*> components;
 
+	std::string             fileModel;
+
 	Transform* transform = nullptr;
 	//Quel est le layer du gameObject
 	LayerType layerType = LayerType::Normal;
