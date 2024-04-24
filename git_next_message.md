@@ -1,4 +1,4 @@
-NEW : Documentation
+FIX : Merge
 
-- Ajout de documentation doxygen
-- Ajout de Setter et Getter
+- Ajout des fonctions manquantes
+- TODO : fix le code de mathias pour la création de gameobject

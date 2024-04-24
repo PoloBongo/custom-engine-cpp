@@ -333,3 +333,26 @@ void BaseScene::TestLoadGameObjects()
 	sun->SetName("Sun");
 	rootObjects.push_back(sun);
 }
+
+GameObject* BaseScene::CreateCubeGameObject() {
+	lve::LveDevice* device = Engine::GetInstance()->GetModuleManager()->GetModule<RHIModule>()->GetDevice();
+	return lve::CubeGameObject::Create(*device);
+}
+
+GameObject* BaseScene::CreateLightGameObject() {
+	float intensity = 10.0f;  // Exemple d'intensité pour la lumière
+	float radius = 1.0f;      // Rayon de la lumière
+	glm::vec3 position = glm::vec3(0.0f, 0.0f, 0.0f);  // Position initiale
+	glm::vec3 rotation = glm::vec3(0.0f, 0.0f, 0.0f);  // Rotation initiale
+	glm::vec3 color = glm::vec3(1.0f, 1.0f, 1.0f);     // Couleur de la lumière (blanche)
+
+	// Crée un GameObject représentant une lumière avec les paramètres spécifiés
+	return lve::LightGameObject::Create(intensity, radius, position, rotation, color);
+}
+
+
+
+GameObject* BaseScene::CreatePlaneGameObject() {
+	lve::LveDevice* device = Engine::GetInstance()->GetModuleManager()->GetModule<RHIModule>()->GetDevice();
+	return lve::PlaneGameObject::Create(*device);
+}

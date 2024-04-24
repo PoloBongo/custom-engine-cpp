@@ -10,6 +10,7 @@
 #include <imgui_impl_glfw.h>
 #include <imgui_impl_vulkan.h>
 
+#include "Light.h"
 #include "rhi.h"
 
 #include "GameObject/PreGameObject/LightGameObject.h"
@@ -306,9 +307,9 @@ void ImGuiModule::DrawInspectorWindow() {
 			}
 
 			// Couleur de la lumiere
-			glm::vec3 color = selectedGameObject->color;
+			glm::vec3 color = selectedGameObject->GetColor();
 			if (ImGui::ColorEdit3("Color", glm::value_ptr(color))) {
-				selectedGameObject->color = color;
+				selectedGameObject->GetColor() = color;
 			}
 		}
 

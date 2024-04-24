@@ -48,6 +48,8 @@ class RHIVulkanModule final : public RHIModule
 		 */
 		[[nodiscard]] vk::CommandBuffer* GetCurrentCommandBuffer() const { return currentCommandBuffer.get(); }
 
+		void AddTextureToPool(const std::string& _filepath);
+		
 #pragma region Event
 
 		/**
@@ -183,5 +185,9 @@ class RHIVulkanModule final : public RHIModule
 
 		/**< Écrivain de descripteurs LVE. */
 		lve::LveDescriptorWriter* p_lveDescriptorWriter;
+
+		std::vector<vk::DescriptorImageInfo> ListTextures;
+
+		std::vector<std::vector<vk::DescriptorSet>*> ListDescriptors;
 
 };

@@ -6,6 +6,13 @@
 #include "Component.h"
 #include "lve_game_object.h"
 
+enum class GameObjectType {
+	Cube,
+	Light,
+	Plane
+	// TODO: Ajouter plus de types d'objets
+};
+
 enum class LayerType
 {
 	Normal,
