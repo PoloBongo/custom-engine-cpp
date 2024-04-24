@@ -288,6 +288,7 @@ void BaseScene::TestLoadGameObjects()
 	const auto flat_vase_go = GameObject::CreatePGameObject();
 	flat_vase_go->SetName("FlatVase");
 	flat_vase_go->SetModel(lve_model);
+	flat_vase_go->SetFileModel("Models\\flat_vase.obj");
 	flat_vase_go->GetTransform()->SetPosition(glm::vec3{ -.5f, .5f, 0.f });
 	flat_vase_go->GetTransform()->SetScale(glm::vec3{ 3.f, 1.5f, 3.f });
 	flat_vase_go->SetTexture(1);

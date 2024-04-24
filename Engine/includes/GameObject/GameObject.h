@@ -328,20 +328,10 @@ class GameObject
 
 	void SetTexMultiplier(float _newTexMultiplier) { texMultiplier = _newTexMultiplier; }
 	void SetFileModel(std::string _newFileModel) { fileModel = _newFileModel; }
-
-	std::shared_ptr<lve::LveModel>            model{}; /**< Modèle de l'objet. */
-	glm::vec3          color{};     /**< Couleur de l'objet. */
-	int texture = 0;
 		#pragma endregion
 
 		#pragma region Transform
 
-	float						texMultiplier = 1;
-	std::string             fileModel;
-
-	Transform* transform = nullptr;
-	//Quel est le layer du gameObject
-	LayerType layerType = LayerType::Normal;
 		/**
 		 * @brief Définit la position de l'objet.
 		 *
@@ -632,6 +622,10 @@ class GameObject
 		#pragma endregion
 
 	protected:
+
+		float						texMultiplier = 1;
+		std::string             fileModel;
+
 		std::string name = "GameObject"; /**< Le nom de l'objet GameObject. */
 
 		id_t id; /**< L'identifiant unique de l'objet GameObject. */

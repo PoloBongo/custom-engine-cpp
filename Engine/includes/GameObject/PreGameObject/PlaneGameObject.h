@@ -26,17 +26,6 @@ namespace lve
 			 * @return Un pointeur vers le nouvel objet plan cr��.
 			 */
 			static GameObject* Create(LveDevice& _lveDevice, glm::vec3 _position = VEC3_ZERO,
-			                          glm::vec3  _scale = VEC3_ONE, glm::vec3 _rotation = VEC3_ZERO)
-				{
-		const std::shared_ptr<LveModel> lve_model = LveModel::CreateModelFromFile(_lveDevice, "Models\\quad.obj");
-
-		GameObject* game_object = GameObject::CreatePGameObject();
-		game_object->SetModel(lve_model);
-		game_object->GetTransform()->SetPosition(_position);
-		game_object->GetTransform()->SetScale(_scale);
-		game_object->GetTransform()->SetRotation(_rotation);
-
-		return game_object;
-	}
+				glm::vec3  _scale = VEC3_ONE, glm::vec3 _rotation = VEC3_ZERO);
 	};
 }

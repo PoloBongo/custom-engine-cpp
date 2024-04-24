@@ -12,6 +12,7 @@ namespace lve
 		game_object->GetTransform()->SetPosition(_position);
 		game_object->GetTransform()->SetScale(_scale);
 		game_object->GetTransform()->SetRotation(_rotation);
+		game_object->SetFileModel("Models\\cube.obj");
 
 		return game_object;
 	}
@@ -27,6 +28,7 @@ namespace lve
 		game_object->GetTransform()->SetPosition(_position);
 		game_object->GetTransform()->SetScale(_scale);
 		game_object->GetTransform()->SetRotation(_rotation);
+		game_object->SetFileModel("Models\\colored_cube.obj");
 
 		return game_object;
 	}

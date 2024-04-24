@@ -4,6 +4,8 @@
 #include "Modules/WindowModule.h"
 #include "Modules/ImGUIModule.h"
 
+#include <CoreEngine.h>
+
 #include "ImGUIInterface.h"
 
 #include <imgui.h>
@@ -242,6 +244,12 @@ void ImGuiModule::GetGui()
 	DrawInspectorWindow();
 	ImGui::End();
 
+	ImGui::SetNextWindowSize(ImVec2(170, 79), ImGuiCond_Always); // Hauteur fixe et non-redimensionnable
+	ImGui::SetNextWindowPos(ImVec2(mainWindowSize.x / 2 - 200 / 2, 0), ImGuiCond_Always); // Ancrage en haut à droite
+	ImGui::Begin("Modes", nullptr, window_flags);
+	DrawModesWindow();
+	ImGui::End();
+
 	DrawSettingsWindow();
 }
 
@@ -301,9 +309,8 @@ void ImGuiModule::DrawInspectorWindow() {
 			DisplayTransform(selectedGameObject->GetTransform());
 		}
 
-
 		if (ImGui::CollapsingHeader("Texture")) {
-			int texture = selectedGameObject->texture;
+			int texture = selectedGameObject->GetTexture();
 			if (ImGui::InputInt("Texture", &texture)) {
 
 				if (texture < 0) {
@@ -313,7 +320,7 @@ void ImGuiModule::DrawInspectorWindow() {
 					texture -= 1;
 				}
 				else {
-					selectedGameObject->texture = texture;
+					selectedGameObject->SetTexture(texture);
 				}
 			}
 			float textureMulti = selectedGameObject->GetTexMultiplier();
@@ -323,7 +330,7 @@ void ImGuiModule::DrawInspectorWindow() {
 					std::cout << "File good";
 					selectedGameObject->SetTexMultiplier(textureMulti);
 					std::shared_ptr<lve::LveModel> lve_model = lve::LveModel::CreateModelFromFile(*rhiModule->GetDevice(), selectedGameObject->GetFileModel(), selectedGameObject->GetTexMultiplier());
-					selectedGameObject->model = lve_model;
+					selectedGameObject->GetModel() = lve_model;
 				}
 				else {
 					std::cout << "File not good :" + selectedGameObject->GetFileModel();
@@ -336,7 +343,7 @@ void ImGuiModule::DrawInspectorWindow() {
 					std::cout << "File good";
 					selectedGameObject->SetTexMultiplier(1.0f);
 					std::shared_ptr<lve::LveModel> lve_model = lve::LveModel::CreateModelFromFile(*rhiModule->GetDevice(), selectedGameObject->GetFileModel(), selectedGameObject->GetTexMultiplier());
-					selectedGameObject->model = lve_model;
+					selectedGameObject->GetModel() = lve_model;
 				}
 				else {
 					std::cout << "File not good :" + selectedGameObject->GetFileModel();
@@ -351,11 +358,11 @@ void ImGuiModule::DrawInspectorWindow() {
 				int sizeDescList = moduleManager->GetModule<RHIVulkanModule>()->GetListDescriptors().size();
 
 				// Vulkan crie, parce que ce sont les descriptors d'un autre pool et d'une autre pipeline
-				if (selectedGameObject->texture > sizeDescList - 1) {
+				if (selectedGameObject->GetTexture() > sizeDescList - 1) {
 					ImGui::Image(moduleManager->GetModule<RHIVulkanModule>()->GetListDescriptors()[0]->at(0), ImVec2(200, 200));
 				}
 				else {
-					ImGui::Image(moduleManager->GetModule<RHIVulkanModule>()->GetListDescriptors()[selectedGameObject->texture]->at(0), ImVec2(200, 200));
+					ImGui::Image(moduleManager->GetModule<RHIVulkanModule>()->GetListDescriptors()[selectedGameObject->GetTexture()]->at(0), ImVec2(200, 200));
 
 				}
 			}
@@ -523,6 +530,34 @@ void ImGuiModule::DrawHierarchyWindow() {
 		ImGui::PopID();  // Restaure l'ID précédent pour les scènes
 	}
 }
+
+void ImGuiModule::DrawModesWindow() {
+
+	//std::cout << Engine::GetInstance()->GetEngineMode() << std::endl;
+
+	if (ImGui::Button("Play Button", ImVec2(150, 20))) {
+		if (Engine::GetInstance()->GetEngineMode() == EngineMode::Editor) {
+			Engine::GetInstance()->PlayEngineMode();
+			std::cout << Engine::GetInstance()->GetEngineMode() << std::endl;
+		}
+		else {
+			Engine::GetInstance()->EditorEngineMode();
+			std::cout << Engine::GetInstance()->GetEngineMode() << std::endl;
+		}
+	}
+
+	if (ImGui::Button("Pause Button", ImVec2(150, 20))) {
+		if (Engine::GetInstance()->GetEngineMode() == EngineMode::Play) {
+			Engine::GetInstance()->PauseEngineMode();
+			std::cout << Engine::GetInstance()->GetEngineMode() << std::endl;
+		}
+		else if (Engine::GetInstance()->GetEngineMode() == EngineMode::Pause) {
+			Engine::GetInstance()->PlayEngineMode();
+			std::cout << Engine::GetInstance()->GetEngineMode() << std::endl;
+		}
+	}
+}
+
 
 void ImGuiModule::DrawSettingsWindow() {
 	if (ImGui::Begin("Settings")) {

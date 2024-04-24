@@ -112,6 +112,8 @@ public:
 	 */
 	void DisplayTransform(Transform* _transform);
 
+	void DrawModesWindow();
+
 	/**
 	 * @brief Dessine les paramètres de l'interface utilisateur du moteur de jeu.
 	 */
