@@ -58,7 +58,7 @@ void GameObject::Start()
 	}
 }
 
-void GameObject::FixedUpdate(const float& _deltaTime) const
+void GameObject::FixedUpdate() const
 {
 	if (this->isActive)
 		for (size_t i = 0; i < components.size(); i++)
@@ -67,12 +67,21 @@ void GameObject::FixedUpdate(const float& _deltaTime) const
 		}
 }
 
-void GameObject::Update(const float& _deltaTime) const
+void GameObject::Update() const
 {
 	if (this->isActive)
 		for (size_t i = 0; i < components.size(); i++)
 		{
 			if (components[i]->GetActive()) components[i]->Update();
+		}
+}
+
+void GameObject::UpdateEditor() const
+{
+	if (this->isActive)
+		for (size_t i = 0; i < components.size(); i++)
+		{
+			if (components[i]->GetActive()) components[i]->UpdateEditor();
 		}
 }
 

@@ -575,12 +575,14 @@ class GameObject
 		/**
 		 * @brief Effectue une mise à jour fixe du module.
 		 */
-		virtual void FixedUpdate(const float& _deltaTime) const;
+		virtual void FixedUpdate() const;
 
 		/**
 		 * @brief Met à jour le module.
 		 */
-		virtual void Update(const float& _deltaTime) const;
+		virtual void Update() const;
+
+		virtual void UpdateEditor() const;
 
 		/**
 		 * @brief Fonction pré-rendu du module.

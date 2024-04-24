@@ -16,6 +16,7 @@ class Component
 		virtual void Start();
 		virtual void FixedUpdate();
 		virtual void Update() ;
+		virtual void UpdateEditor() ;
 		virtual void PreRender();
 		virtual void Render();
 		virtual void RenderGui();

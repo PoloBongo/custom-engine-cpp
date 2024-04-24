@@ -24,6 +24,10 @@ void Component::Update()
 {
 }
 
+void Component::UpdateEditor()
+{
+}
+
 void Component::PreRender()
 {
 }

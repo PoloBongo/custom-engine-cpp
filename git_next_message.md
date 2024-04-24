@@ -1,3 +1,3 @@
-FIX : Merge
+NEW : EngineMode
 
-- changement de la couleur rétabli
+- Ajout de mode pour l'update des scènes dans l'Engine
