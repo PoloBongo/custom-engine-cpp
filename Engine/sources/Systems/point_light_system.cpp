@@ -83,7 +83,7 @@ namespace lve
 
 			// copy light to ubo
 			_ubo.pointLights[light_index].position = glm::vec4(game_object->GetTransform()->GetPosition(), 1.f);
-			_ubo.pointLights[light_index].color    = glm::vec4(game_object->color, light_component->lightIntensity);
+			_ubo.pointLights[light_index].color    = glm::vec4(game_object->GetColor(), light_component->lightIntensity);
 
 			light_index ++;
 		}
@@ -119,7 +119,7 @@ namespace lve
 			if (light_component == nullptr) continue;
 			PointLightPushConstants push{};
 			push.position = glm::vec4(game_object->GetTransform()->GetPosition(), 1.f);
-			push.color    = glm::vec4(game_object->color, game_object->GetComponent<Light>()->lightIntensity);
+			push.color    = glm::vec4(game_object->GetColor(), game_object->GetComponent<Light>()->lightIntensity);
 			push.radius   = game_object->GetTransform()->GetScale().x;
 
 			// Mise à jour des push constants
