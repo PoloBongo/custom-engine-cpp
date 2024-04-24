@@ -1,4 +1,5 @@
 #include "TCP/Errors.h"
+#include <iostream>
 
 namespace Network
 {
@@ -6,6 +7,7 @@ namespace Network
 	{
 		int Get()
 		{
+			//std::cout << "function get" << std::endl;
 #ifdef _WIN32
 			return WSAGetLastError();
 #else

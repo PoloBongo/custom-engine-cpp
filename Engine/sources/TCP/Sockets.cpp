@@ -1,5 +1,6 @@
 #include "TCP/Sockets.h"
 #include "TCP/Utils.h"
+#include <iostream>
 
 namespace Network
 {
@@ -58,6 +59,7 @@ namespace Network
 	}
 	unsigned short GetPort(const sockaddr_in& addr)
 	{
+		std::cout << &addr << std::endl;
 		return ntohs(addr.sin_port);
 	}
 }
