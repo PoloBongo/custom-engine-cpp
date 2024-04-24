@@ -444,6 +444,10 @@
     <ClCompile Include="..\Librairies\imgui\imgui_impl_vulkan.cpp" />
     <ClCompile Include="..\Librairies\imgui\imgui_tables.cpp" />
     <ClCompile Include="..\Librairies\imgui\imgui_widgets.cpp" />
+    <ClCompile Include="includes\Script.h" />
+    <ClCompile Include="sources\GameObjectScript.cpp" />
+    <ClCompile Include="sources\Modules\ScriptModule.cpp" />
+    <ClCompile Include="sources\Script.cpp" />
     <ClCompile Include="sources\UDP\ErrorsUDP.cpp" />
     <ClCompile Include="sources\UDP\Network\ConnexionTimeout\ConnexionTiemout.cpp" />
     <ClCompile Include="sources\UDP\Network\Connextion\Connexion.cpp" />
@@ -513,6 +517,9 @@
     <ClCompile Include="VulkanHooks.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="includes\GameObjectScript.h" />
+    <ClInclude Include="includes\IScript.h" />
+    <ClInclude Include="includes\Modules\ScriptModule.h" />
     <ClInclude Include="includes\UDP\ErrorsUDP.h" />
     <ClInclude Include="includes\UDP\Float.h" />
     <ClInclude Include="includes\UDP\Network\ServerUDP\ServerUDPStart.h" />
