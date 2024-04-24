@@ -4,6 +4,7 @@
 #include "Module.h"
 #include "Modules/WindowModule.h"
 #include "Scene/SceneManager.h"
+#include "RHIVulkanModule.h"
 
 class RHIModule;
 
@@ -175,6 +176,8 @@ protected:
 	glm::vec3 scaleEdit; ///< Stocke l'échelle actuelle pour l'édition.
 
 	std::vector<bool> isOpen; ///< Vecteur pour suivre l'état ouvert/fermé des différents panneaux de l'interface utilisateur.
+
+	bool textureView = false;
 
 	/**
 	 * @brief Destructeur par défaut.

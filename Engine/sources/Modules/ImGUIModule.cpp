@@ -295,10 +295,25 @@ void ImGuiModule::DrawInspectorWindow() {
 		}
 		ShowRenamePopup();
 
+		// Affichage des propriétés de transformation
+		if (ImGui::CollapsingHeader("Transform")) {
+			DisplayTransform(selectedGameObject->GetTransform());
+		}
+
+
 		if (ImGui::CollapsingHeader("Texture")) {
 			int texture = selectedGameObject->texture;
-			if (ImGui::InputInt("Texture", &texture)) { 
-				selectedGameObject->texture = texture;
+			if (ImGui::InputInt("Texture", &texture)) {
+
+				if (texture < 0) {
+					texture = 0;
+				}
+				else if (texture > moduleManager->GetModule<RHIVulkanModule>()->GetListDescriptors().size() - 1) {
+					texture -= 1;
+				}
+				else {
+					selectedGameObject->texture = texture;
+				}
 			}
 			float textureMulti = selectedGameObject->GetTexMultiplier();
 			if (ImGui::DragFloat("Texture Multiplier", &textureMulti, 1, 0.0, 100.0)) {
@@ -313,13 +328,39 @@ void ImGuiModule::DrawInspectorWindow() {
 					std::cout << "File not good :" + selectedGameObject->GetFileModel();
 				}
 			}
+			//ImGui::SameLine();
+			if (ImGui::Button("Reset Multiplier", ImVec2(150, 20))) {
+				std::ifstream file(selectedGameObject->GetFileModel());
+				if (file.good()) {
+					std::cout << "File good";
+					selectedGameObject->SetTexMultiplier(1.0f);
+					std::shared_ptr<lve::LveModel> lve_model = lve::LveModel::CreateModelFromFile(*rhiModule->GetDevice(), selectedGameObject->GetFileModel(), selectedGameObject->GetTexMultiplier());
+					selectedGameObject->model = lve_model;
+				}
+				else {
+					std::cout << "File not good :" + selectedGameObject->GetFileModel();
+				}
+			}
+
+			if (ImGui::Checkbox("Texture Viewer (0.3v)", &textureView)) {
+				!textureView;
+			}
+
+			if (textureView) {
+				int sizeDescList = moduleManager->GetModule<RHIVulkanModule>()->GetListDescriptors().size();
+
+				// Vulkan crie, parce que ce sont les descriptors d'un autre pool et d'une autre pipeline
+				if (selectedGameObject->texture > sizeDescList - 1) {
+					ImGui::Image(moduleManager->GetModule<RHIVulkanModule>()->GetListDescriptors()[0]->at(0), ImVec2(200, 200));
+				}
+				else {
+					ImGui::Image(moduleManager->GetModule<RHIVulkanModule>()->GetListDescriptors()[selectedGameObject->texture]->at(0), ImVec2(200, 200));
+
+				}
+			}
 		}
 
 
-		// Affichage des propriétés de transformation
-		if (ImGui::CollapsingHeader("Transform")) {
-			DisplayTransform(selectedGameObject->GetTransform());
-		}
 
 		// Detection de Light et affichage des proprietes de la lumiere
 		Light* lightComponent = selectedGameObject->GetComponent<Light>();

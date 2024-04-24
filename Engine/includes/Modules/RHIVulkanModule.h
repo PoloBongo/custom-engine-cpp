@@ -77,6 +77,8 @@ class RHIVulkanModule final : public RHIModule
 
 		void AddTextureToPool(const std::string _Filepath);
 
+		std::vector<std::vector<vk::DescriptorSet>*> GetListDescriptors() { return ListDescriptors; }
+
 	private:
 		// Autres m�thodes pour la cr�ation de la surface, des p�riph�riques logiques, etc.
 
