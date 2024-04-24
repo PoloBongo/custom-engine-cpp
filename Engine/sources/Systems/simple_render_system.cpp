@@ -76,9 +76,9 @@ namespace lve
 
 		for (const auto& game_object : _gameObjects)
 		{
-			if (game_object->model == nullptr) continue;
+			if (game_object->GetModel() == nullptr) continue;
 
-			switch (game_object->texture) {
+			switch (game_object->GetTexture()) {
 			case 0:
 				_commandBuffer.bindDescriptorSets(
 					vk::PipelineBindPoint::eGraphics,
@@ -120,8 +120,8 @@ namespace lve
 				push);
 
 			// Liaison du mod�le et dessin
-			game_object->model->Bind(_commandBuffer);
-			game_object->model->Draw(_commandBuffer);
+			game_object->GetModel()->Bind(_commandBuffer);
+			game_object->GetModel()->Draw(_commandBuffer);
 		}
 	}
 } // namespace lve

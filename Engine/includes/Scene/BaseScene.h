@@ -3,22 +3,34 @@
 #include <string>
 #include "lve_window.h"
 #include "GameObject/GameObject.h"
-
+/**
+ * @brief Interface de base pour les scènes du jeu.
+ *
+ * Cette classe définit une interface abstraite pour les scènes du jeu.
+ * Les classes dérivées sont responsables de définir le comportement spécifique
+ * de chaque scène
+ */
 class BaseScene
 {
 	public:
-		explicit BaseScene(const std::string& _fileName) : name(_fileName)
-		{
-			
-		}
+		/**
+		 * @brief Constructeur explicite de la classe BaseScene.
+		 *
+		 * Initialise une nouvelle instance de la classe BaseScene avec le nom spécifié.
+		 *
+		 * @param _fileName Le nom de la scène.
+		 */
+		explicit BaseScene(const std::string& _fileName) : name(_fileName){}
 		~BaseScene() = default;
 
 		BaseScene(const BaseScene&)            = delete;
 		BaseScene& operator=(const BaseScene&) = delete;
 
+#pragma region Event
+
 		/**
-				* @brief Initialise le module.
-				*/
+		 * @brief Initialise le module.
+		 */
 		virtual void Init();
 
 		/**
@@ -66,19 +78,33 @@ class BaseScene
 		 */
 		virtual void Finalize();
 
+#pragma endregion
 
-		GameObject*              CreateGameObject();
+#pragma region Getter
+		GameObject* GetGameObjectById(const GameObject::id_t& _gameObjectId) const;
+
+		std::vector<GameObject*> FindGameObjectsByName(const std::string& _name) const;
+		std::string GetName() const;
+		std::string GetDefaultRelativeFilePath() const;
+#pragma endregion
+#pragma region Setter
+		void        SetName(const std::string& _name);
+
+		bool        SetFileName(const std::string& _fileName, bool _bDeletePreviousFiles) const;
+
+#pragma endregion
+#pragma region Create
+		GameObject* CreateGameObject();
+#pragma endregion
+#pragma region Destroy
 		void                     DestroyGameObject(const GameObject* _gameObject);
-		GameObject*              GetGameObjectById(const GameObject::id_t& _gameObjectId) const;
-		std::vector<GameObject*> FindGameObjectsByName(const std::string& _name);
+#pragma endregion
+
+
 
 
 		bool IsInitialized() const;
 
-		void        SetName(const std::string& _name);
-		std::string GetName() const;
-		std::string GetDefaultRelativeFilePath() const;
-		bool        SetFileName(const std::string& _fileName, bool _bDeletePreviousFiles) const;
 		bool        FileExists(const std::string& _filePath);
 		bool        IsUsingSaveFile() const;
 

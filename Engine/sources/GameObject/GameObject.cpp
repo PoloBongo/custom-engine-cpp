@@ -2,17 +2,15 @@
 #include "Transform.h"
 
 
-
-
-GameObject::GameObject()
+GameObject::GameObject(): id(0)
 {
-	this->isActive = true;
+	this->isActive  = true;
 	this->transform = new Transform();
 }
 
-GameObject::GameObject(id_t _id) : id(_id)
+GameObject::GameObject(const id_t _id) : id(_id)
 {
-	this->isActive = true;
+	this->isActive  = true;
 	this->transform = new Transform();
 }
 
@@ -20,7 +18,7 @@ GameObject::~GameObject()
 {
 	for (const Component* component : components)
 	{
-		if (component) delete component;
+		delete component;
 	}
 	components.clear();
 }
@@ -34,7 +32,7 @@ glm::vec3 GameObject::GetScale() const { return transform->GetScale(); }
 void      GameObject::SetScale(const glm::vec3 _newScale) const { transform->SetScale(_newScale); }
 
 glm::vec3 GameObject::GetRotation() const { return transform->GetRotation(); }
-void  GameObject::SetRotation(const float _newRotation) const { transform->SetRotation(_newRotation); }
+void      GameObject::SetRotation(const float _newRotation) const { transform->SetRotation(_newRotation); }
 
 void GameObject::AddComponent(Component* _component)
 {
@@ -84,16 +82,11 @@ void GameObject::PreRender()
 
 void GameObject::Render() const
 {
-	/*if (this->isVisible)
+	if (this->isVisible)
 		for (const auto component : components)
 		{
-			if (component->GetVisible())
-			{
-				if (layerType == LayerType::Normal) component->Render(_window);
-				else if (layerType == LayerType::HUD) component->RenderGui(_window);
-				else if (layerType == LayerType::Background) component->RenderBackground(_window);
-			}
-		}*/
+			if (component->GetVisible()) component->Render();
+		}
 }
 
 void GameObject::RenderGui()
@@ -113,7 +106,7 @@ void GameObject::Finalize()
 }
 
 
-std::vector<GameObject*> GameObject::FindChildrenByName(const std::string& _name) 
+std::vector<GameObject*> GameObject::FindChildrenByName(const std::string& _name) const
 {
 	std::vector<GameObject*> found_objects;
 
@@ -133,41 +126,36 @@ std::vector<GameObject*> GameObject::FindChildrenByName(const std::string& _name
 	return found_objects;
 }
 
-void GameObject::SetParent(GameObject* _parent) {
-	parent = _parent;
+
+void GameObject::AddChildObject(GameObject* _child)
+{
+	children.push_back(_child);
+	_child->SetParent(this);
+
+	const glm::vec3 parent_position   = this->GetPosition();
+	const glm::vec3 child_position    = _child->GetPosition();
+	const glm::vec3 relative_position = child_position - parent_position;
+	_child->SetPosition(relative_position);
 }
 
-void GameObject::AddChildObject(GameObject* child) {
-	children.push_back(child);
-	child->SetParent(this);  
 
-	glm::vec3 parentPosition = this->GetPosition();
-	glm::vec3 childPosition = child->GetPosition();
-	glm::vec3 relativePosition = childPosition - parentPosition;
-	child->SetPosition(relativePosition);
-}
-
-
-Component* GameObject::GetComponentRecursive(const std::string& componentName) {
+Component* GameObject::GetComponentRecursive(const std::string& _componentName) const
+{
 	// V�rifier si le GameObject a le composant sp�cifi�
-	for (Component* component : components) {
-		if (component->GetName() == componentName) {
-			return component;
-		}
+	for (Component* component : components)
+	{
+		if (component->GetName() == _componentName) return component;
 	}
 
 	// Recherche r�cursive dans les enfants
-	for (GameObject* child : children) {
-		Component* foundComponent = child->GetComponentRecursive(componentName);
-		if (foundComponent != nullptr) {
-			return foundComponent;
-		}
+	for (GameObject* child : children)
+	{
+		Component* foundComponent = child->GetComponentRecursive(_componentName);
+		if (foundComponent != nullptr) return foundComponent;
 	}
 
 	// Recherche r�cursive dans le parent
-	if (parent != nullptr) {
-		return parent->GetComponentRecursive(componentName);
-	}
+	if (parent != nullptr) return parent->GetComponentRecursive(_componentName);
 
 	// Le composant n'a pas �t� trouv� dans ce GameObject ou ses enfants
 	return nullptr;
