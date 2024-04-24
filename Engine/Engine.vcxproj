@@ -9,6 +9,14 @@
       <Configuration>ClientTCP</Configuration>
       <Platform>x64</Platform>
     </ProjectConfiguration>
+    <ProjectConfiguration Include="ClientUDP|Win32">
+      <Configuration>ClientUDP</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="ClientUDP|x64">
+      <Configuration>ClientUDP</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
     <ProjectConfiguration Include="Debug|Win32">
       <Configuration>Debug</Configuration>
       <Platform>Win32</Platform>
@@ -33,6 +41,14 @@
       <Configuration>ServerTCP</Configuration>
       <Platform>x64</Platform>
     </ProjectConfiguration>
+    <ProjectConfiguration Include="ServerUDP|Win32">
+      <Configuration>ServerUDP</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="ServerUDP|x64">
+      <Configuration>ServerUDP</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
@@ -43,6 +59,18 @@
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ServerUDP|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ClientUDP|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
@@ -68,6 +96,18 @@
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ServerUDP|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ClientUDP|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
@@ -100,6 +140,12 @@
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='ServerUDP|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='ClientUDP|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='ServerTCP|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
@@ -110,6 +156,12 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='ServerUDP|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='ClientUDP|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='ServerTCP|x64'" Label="PropertySheets">
@@ -123,6 +175,32 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>;$(SolutionDir)Librairies/imgui</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='ServerUDP|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>;$(SolutionDir)Librairies/imgui</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='ClientUDP|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
@@ -182,7 +260,7 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_DEBUG;_CONSOLE;WIN32_LEAN_AND_MEAN;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(SolutionDir)Librairies\stb_lib;$(SolutionDir)Librairies\glm;$(SolutionDir)Librairies\tinyObjLoader;$(SolutionDir)Librairies\glfw-3.4.bin.WIN64\include;$(SolutionDir)Librairies\VulkanSDK\Include;$(SolutionDir)Librairies\FMOD\inc;$(SolutionDir)\Engine;$(SolutionDir)\Engine\includes;$(SolutionDir)Librairies\bullet3_x64-windows\include\bullet;$(SolutionDir)\Engine;$(SolutionDir)\Engine\includes;$(SolutionDir)Librairies\stb_lib;$(SolutionDir)Librairies\Json/include;%(AdditionalIncludeDirectories);$(SolutionDir)Librairies/imgui</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
@@ -203,16 +281,74 @@
       </Command>
     </PreBuildEvent>
     <PostBuildEvent>
-      <Command>call $(ProjectDir)compile.bat
-xcopy /E /I /Y "$(ProjectDir)Shaders" "$(TargetDir)Shaders"
-xcopy /E /I /Y "$(ProjectDir)Models" "$(TargetDir)Models"</Command>
+      <Command>$(SolutionDir)compile.bat</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='ServerUDP|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>_DEBUG;_CONSOLE;WIN32_LEAN_AND_MEAN;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>$(SolutionDir)Librairies\stb_lib;$(SolutionDir)Librairies\glm;$(SolutionDir)Librairies\tinyObjLoader;$(SolutionDir)Librairies\glfw-3.4.bin.WIN64\include;$(SolutionDir)Librairies\VulkanSDK\Include;$(SolutionDir)Librairies\FMOD\inc;$(SolutionDir)\Engine;$(SolutionDir)\Engine\includes;$(SolutionDir)Librairies\bullet3_x64-windows\include\bullet;$(SolutionDir)\Engine;$(SolutionDir)\Engine\includes;$(SolutionDir)Librairies\stb_lib;$(SolutionDir)Librairies\Json/include;%(AdditionalIncludeDirectories);$(SolutionDir)Librairies/imgui</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>$(SolutionDir)Librairies\glfw-3.4.bin.WIN64\lib-vc2022;$(SolutionDir)Librairies\FMOD\lib;$(SolutionDir)Librairies\VulkanSDK\Lib;$(SolutionDir)Librairies\bullet3_x64-windows\lib</AdditionalLibraryDirectories>
+      <AdditionalDependencies>fmod_vc.lib;vulkan-1.lib;glfw3.lib;Ws2_32.lib;BulletCollision_Debug.lib;BulletDynamics_Debug.lib;LinearMath_Debug.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+    <CustomBuildStep>
+      <Command>
+      </Command>
+    </CustomBuildStep>
+    <PreBuildEvent>
+      <Command>
+      </Command>
+    </PreBuildEvent>
+    <PostBuildEvent>
+      <Command>
+        call $(ProjectDir)compile.bat
+        xcopy /E /I /Y "$(ProjectDir)Shaders" "$(TargetDir)Shaders"
+        xcopy /E /I /Y "$(ProjectDir)Models" "$(TargetDir)Models"
+      </Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='ClientUDP|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>_DEBUG;_CONSOLE;WIN32_LEAN_AND_MEAN;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>$(SolutionDir)Librairies\stb_lib;$(SolutionDir)Librairies\glm;$(SolutionDir)Librairies\tinyObjLoader;$(SolutionDir)Librairies\glfw-3.4.bin.WIN64\include;$(SolutionDir)Librairies\VulkanSDK\Include;$(SolutionDir)Librairies\FMOD\inc;$(SolutionDir)\Engine;$(SolutionDir)\Engine\includes;$(SolutionDir)Librairies\bullet3_x64-windows\include\bullet;$(SolutionDir)\Engine;$(SolutionDir)\Engine\includes;$(SolutionDir)Librairies\stb_lib;$(SolutionDir)Librairies\Json/include;%(AdditionalIncludeDirectories);$(SolutionDir)Librairies/imgui</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>$(SolutionDir)Librairies\glfw-3.4.bin.WIN64\lib-vc2022;$(SolutionDir)Librairies\FMOD\lib;$(SolutionDir)Librairies\VulkanSDK\Lib;$(SolutionDir)Librairies\bullet3_x64-windows\lib</AdditionalLibraryDirectories>
+      <AdditionalDependencies>fmod_vc.lib;vulkan-1.lib;glfw3.lib;Ws2_32.lib;BulletCollision_Debug.lib;BulletDynamics_Debug.lib;LinearMath_Debug.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+    <CustomBuildStep>
+      <Command>
+      </Command>
+    </CustomBuildStep>
+    <PreBuildEvent>
+      <Command>
+      </Command>
+    </PreBuildEvent>
+    <PostBuildEvent>
+      <Command>$(SolutionDir)compile.bat</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='ServerTCP|x64'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_DEBUG;_CONSOLE;WIN32_LEAN_AND_MEAN;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(SolutionDir)Librairies\stb_lib;$(SolutionDir)Librairies\glm;$(SolutionDir)Librairies\tinyObjLoader;$(SolutionDir)Librairies\glfw-3.4.bin.WIN64\include;$(SolutionDir)Librairies\VulkanSDK\Include;$(SolutionDir)Librairies\FMOD\inc;$(SolutionDir)\Engine;$(SolutionDir)\Engine\includes;$(SolutionDir)Librairies\bullet3_x64-windows\include\bullet;$(SolutionDir)\Engine;$(SolutionDir)\Engine\includes;$(SolutionDir)Librairies\stb_lib;$(SolutionDir)Librairies\Json/include;%(AdditionalIncludeDirectories);$(SolutionDir)Librairies/imgui</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
@@ -240,11 +376,12 @@ xcopy /E /I /Y "$(ProjectDir)Models" "$(TargetDir)Models"</Command>
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_DEBUG;_CONSOLE;WIN32_LEAN_AND_MEAN;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(SolutionDir)Librairies\stb_lib;$(SolutionDir)Librairies\glm;$(SolutionDir)Librairies\tinyObjLoader;$(SolutionDir)Librairies\glfw-3.4.bin.WIN64\include;$(SolutionDir)Librairies\VulkanSDK\Include;$(SolutionDir)Librairies\FMOD\inc;$(SolutionDir)\Engine;$(SolutionDir)\Engine\includes;$(SolutionDir)Librairies\bullet3_x64-windows\include\bullet;$(SolutionDir)\Engine;$(SolutionDir)\Engine\includes;$(SolutionDir)Librairies\stb_lib;$(SolutionDir)Librairies\Json/include;%(AdditionalIncludeDirectories);$(SolutionDir)Librairies/imgui</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <UndefinePreprocessorDefinitions>%(UndefinePreprocessorDefinitions)</UndefinePreprocessorDefinitions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -270,7 +407,7 @@ xcopy /E /I /Y "$(ProjectDir)Models" "$(TargetDir)Models"</Command>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NDEBUG;_CONSOLE;WIN32_LEAN_AND_MEAN;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(SolutionDir)Librairies\Stb_image;$(SolutionDir)Librairies\FMOD\inc;$(SolutionDir)Librairies\glm;$(SolutionDir)Librairies\tinyObjLoader;$(SolutionDir)Librairies\glfw-3.4.bin.WIN64\include;$(SolutionDir)Librairies\VulkanSDK\Include;%(AdditionalIncludeDirectories);$(SolutionDir)Librairies/imgui;$(SolutionDir)Librairies\bullet3_x64-windows\include\bullet;$(SolutionDir)\Engine;$(SolutionDir)\Engine\includes;$(SolutionDir)Librairies\stb_lib</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
@@ -292,9 +429,11 @@ xcopy /E /I /Y "$(ProjectDir)Models" "$(TargetDir)Models"</Command>
       </Command>
     </PreBuildEvent>
     <PostBuildEvent>
-      <Command>call $(ProjectDir)compile.bat
-xcopy /E /I /Y "$(ProjectDir)Shaders" "$(TargetDir)Shaders"
-xcopy /E /I /Y "$(ProjectDir)Models" "$(TargetDir)Models"</Command>
+      <Command>
+        call $(ProjectDir)compile.bat
+        xcopy /E /I /Y "$(ProjectDir)Shaders" "$(TargetDir)Shaders"
+        xcopy /E /I /Y "$(ProjectDir)Models" "$(TargetDir)Models
+        "</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -305,6 +444,29 @@ xcopy /E /I /Y "$(ProjectDir)Models" "$(TargetDir)Models"</Command>
     <ClCompile Include="..\Librairies\imgui\imgui_impl_vulkan.cpp" />
     <ClCompile Include="..\Librairies\imgui\imgui_tables.cpp" />
     <ClCompile Include="..\Librairies\imgui\imgui_widgets.cpp" />
+    <ClCompile Include="sources\UDP\ErrorsUDP.cpp" />
+    <ClCompile Include="sources\UDP\Network\ConnexionTimeout\ConnexionTiemout.cpp" />
+    <ClCompile Include="sources\UDP\Network\Connextion\Connexion.cpp" />
+    <ClCompile Include="sources\UDP\Network\ServerUDP\ServerUDPStart.cpp" />
+    <ClCompile Include="sources\UDP\Network\ClientUDP\ClientUDPStart.cpp" />
+    <ClCompile Include="sources\UDP\Network\Timeout\Timeout.cpp" />
+    <ClCompile Include="sources\UDP\Test\Serialization_Test.cpp" />
+    <ClCompile Include="sources\UDP\Protocol\Simulator.cpp" />
+    <ClCompile Include="sources\UDP\SocketsUDP.cpp" />
+    <ClCompile Include="sources\UDP\Serialization\Deserializer.cpp" />
+    <ClCompile Include="sources\UDP\Serialization\Serialization.cpp" />
+    <ClCompile Include="sources\UDP\Serialization\Serializer.cpp" />
+    <ClCompile Include="sources\UDP\Serialization\Convert.cpp" />
+    <ClCompile Include="sources\UDP\ChannelsHandler.cpp" />
+    <ClCompile Include="sources\UDP\Datagram.cpp" />
+    <ClCompile Include="sources\UDP\Test\PacketHandling_Test.cpp" />
+    <ClCompile Include="sources\UDP\Protocol\ReliableOrdered.cpp" />
+    <ClCompile Include="sources\UDP\Packet.cpp" />
+    <ClCompile Include="sources\UDP\Test\DistanceClient_Test.cpp" />
+    <ClCompile Include="sources\UDP\Address.cpp" />
+    <ClCompile Include="sources\UDP\DistantClient.cpp" />
+    <ClCompile Include="sources\UDP\ClientUDP.cpp" />
+    <ClCompile Include="sources\UDP\Test\AckHandler_Test.cpp" />
     <ClCompile Include="BoxCollider.cpp" />
     <ClCompile Include="FileManager.cpp" />
     <ClCompile Include="InputKeyCode.cpp" />
@@ -338,14 +500,33 @@ xcopy /E /I /Y "$(ProjectDir)Models" "$(TargetDir)Models"</Command>
     <ClCompile Include="Engine.cpp" />
     <ClCompile Include="EngineTestCode.cpp" />
     <ClCompile Include="sources\Modules\SoundSystemModule.cpp" />
+    <ClCompile Include="sources\UDP\AckHandler.cpp" />
     <ClCompile Include="SphereCollider.cpp" />
     <ClCompile Include="sources\Modules\TimeModule.cpp" />
     <ClCompile Include="sources\TCP\Client\TCPClientStart.cpp" />
     <ClCompile Include="sources\TCP\Server\TCPServerStart.cpp" />
+    <ClCompile Include="sources\UDP\Tester.cpp" />
     <ClCompile Include="Transform.cpp" />
+    <ClCompile Include="sources\UDP\Utils\Utils.cpp" />
+    <ClCompile Include="sources\UDP\Test\Utils_Test.cpp" />
+    <ClCompile Include="sources\UDP\Protocol\UnreliableOrdered.cpp" />
     <ClCompile Include="VulkanHooks.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="includes\UDP\ErrorsUDP.h" />
+    <ClInclude Include="includes\UDP\Float.h" />
+    <ClInclude Include="includes\UDP\Network\ServerUDP\ServerUDPStart.h" />
+    <ClInclude Include="includes\UDP\Network\ClientUDP\ClientUDPStart.h" />
+    <ClInclude Include="includes\UDP\RangedInteger.h" />
+    <ClInclude Include="includes\UDP\Serialization\Deserializer.h" />
+    <ClInclude Include="includes\UDP\Serialization\Convert.h" />
+    <ClInclude Include="includes\UDP\ChannelHeader.h" />
+    <ClInclude Include="includes\UDP\ChannelsHandler.h" />
+    <ClInclude Include="includes\UDP\Test\DistantClient_Test.h" />
+    <ClInclude Include="includes\UDP\Address.h" />
+    <ClInclude Include="includes\UDP\DistantClient.h" />
+    <ClInclude Include="includes\UDP\ClientUDP.h" />
+    <ClInclude Include="includes\UDP\Test\AckHandler_Test.h" />
     <ClInclude Include="BoxCollider.h" />
     <ClInclude Include="FileManager.h" />
     <ClInclude Include="includes\TCP\Client\Client.h" />
@@ -392,8 +573,17 @@ xcopy /E /I /Y "$(ProjectDir)Models" "$(TargetDir)Models"</Command>
     <ClInclude Include="Light.h" />
     <ClInclude Include="includes\TCP\Messages.h" />
     <ClInclude Include="includes\TCP\Utils.h" />
+    <ClInclude Include="includes\UDP\AckHandler.h" />
+    <ClInclude Include="includes\UDP\Datagram.h" />
+    <ClInclude Include="includes\UDP\Messages.h" />
+    <ClInclude Include="includes\UDP\Protocol\ProtocolInterface.h" />
+    <ClInclude Include="includes\UDP\Settings.h" />
+    <ClInclude Include="includes\UDP\Types.h" />
     <ClInclude Include="lve_constants.h" />
     <ClInclude Include="includes\GameObject\PreGameObject\PlaneGameObject.h" />
+    <ClInclude Include="includes\UDP\Packet.h" />
+    <ClInclude Include="includes\UDP\Protocol\ReliableOrdered.h" />
+    <ClInclude Include="includes\UDP\Test\PacketHandling_Test.h" />
     <ClInclude Include="lve_texture.h" />
     <ClInclude Include="includes\GameObject\Components\Mesh.h" />
     <ClInclude Include="rhi.h" />
@@ -401,11 +591,20 @@ xcopy /E /I /Y "$(ProjectDir)Models" "$(TargetDir)Models"</Command>
     <ClInclude Include="RigidBody.h" />
     <ClInclude Include="includes\TCP\Server\Server.h" />
     <ClInclude Include="includes\TCP\Sockets.h" />
+    <ClInclude Include="includes\UDP\Serialization\Serializer.h" />
+    <ClInclude Include="includes\UDP\Serialization\Serialization.h" />
+    <ClInclude Include="includes\UDP\SocketsUDP.h" />
+    <ClInclude Include="includes\UDP\Protocol\Simulator.h" />
+    <ClInclude Include="includes\UDP\Test\Serialization_Test.h" />
     <ClInclude Include="SphereCollider.h" />
     <ClInclude Include="includes\Modules\TimeModule.h" />
     <ClInclude Include="includes\TCP\Client\TCPClientStart.h" />
     <ClInclude Include="includes\TCP\Server\TCPServerStart.h" />
+    <ClInclude Include="includes\UDP\Tester.h" />
     <ClInclude Include="Transform.h" />
+    <ClInclude Include="includes\UDP\Utils\Utils.h" />
+    <ClInclude Include="includes\UDP\Test\Utils_Test.h" />
+    <ClInclude Include="includes\UDP\Protocol\UnreliableOrdered.h" />
     <ClInclude Include="VulkanHooks.h" />
   </ItemGroup>
   <ItemGroup>
@@ -439,6 +638,7 @@ xcopy /E /I /Y "$(ProjectDir)Models" "$(TargetDir)Models"</Command>
     </CopyFileToFolders>
   </ItemGroup>
   <ItemGroup>
+    <None Include="compile.bat" />
     <None Include="imgui.ini" />
     <None Include="Shaders\point_light.frag" />
     <None Include="Shaders\point_light.frag.spv" />
@@ -470,6 +670,9 @@ xcopy /E /I /Y "$(ProjectDir)Models" "$(TargetDir)Models"</Command>
     <None Include="Models\viking_room.obj">
       <FileType>Document</FileType>
     </None>
+    <None Include="includes\UDP\Serialization\Deserializer.inl" />
+    <None Include="includes\UDP\Serialization\Serializer.inl" />
+    <None Include="includes\UDP\Utils\Utils.inl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

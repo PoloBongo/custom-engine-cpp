@@ -1,3 +1,4 @@
-ENH : WindowModule Update
+FIX : &
 
-- Ajout de la sauvegarde et Lecture de fichier
+- Changement de la méthode de récupération du mode pour la sauvegarde
+- Ajout d'une fonction pour changer l'icone de la fenêtre

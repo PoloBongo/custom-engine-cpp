@@ -8,6 +8,7 @@
 #include "GameObject/PreGameObject/CubeGameObject.h"
 #include "GameObject/PreGameObject/LightGameObject.h"
 #include "GameObject/PreGameObject/PlaneGameObject.h"
+
 #include "Modules/TimeModule.h"
 
 
@@ -24,6 +25,7 @@ GameObject* BaseScene::AddRootObject(GameObject* _gameObject)
 
 	return _gameObject;
 }
+
 
 /**
  * @brief Supprime tous les objets de la sc�ne � la fin du frame.
@@ -188,6 +190,9 @@ void BaseScene::RemoveObject(const GameObject::id_t& _gameObjectId, bool _bDestr
 	}
 }
 
+
+
+
 /**
  * @brief Supprime un objet de jeu de la sc�ne.
  * @param _gameObject Pointeur vers l'objet de jeu � supprimer.
@@ -195,6 +200,15 @@ void BaseScene::RemoveObject(const GameObject::id_t& _gameObjectId, bool _bDestr
  */
 void BaseScene::RemoveObject(const GameObject* _gameObject, const bool _bDestroy)
 {
+	if (_gameObject) {
+		auto it = std::find(rootObjects.begin(), rootObjects.end(), _gameObject);
+		if (it != rootObjects.end()) {
+			rootObjects.erase(it);
+			//if (_bDestroy) {
+			//	delete _gameObject;
+			//}
+		}
+	}
 	RemoveObject(_gameObject->GetId(), _bDestroy);
 }
 
@@ -238,7 +252,6 @@ void BaseScene::RemoveObjects(const std::vector<GameObject*>& _gameObjects, bool
 		}
 	}
 }
-
 
 /**
  * @brief Cr�e un nouvel objet de jeu.
@@ -309,6 +322,12 @@ void BaseScene::FixedUpdate()
  */
 void BaseScene::Update()
 {
+	// Ajoutez tous les objets en attente à la liste principale des objets de la scène
+	for (auto* obj : pendingAddObjects) {
+		rootObjects.push_back(obj);
+	}
+	pendingAddObjects.clear();
+
 	// Mettez � jour chaque objet de la sc�ne avec le delta time
 	for (const GameObject* root_object : rootObjects)
 	{
@@ -440,4 +459,27 @@ void BaseScene::TestLoadGameObjects()
 	auto sun = lve::LightGameObject::Creates(1000000.f, 2.0f, glm::vec3{ 0.f, -1000.f, 0.f });
 	sun->SetName("Sun");
 	rootObjects.push_back(sun);
+}
+
+GameObject* BaseScene::CreateCubeGameObject() {
+	lve::LveDevice* device = Engine::GetInstance()->GetModuleManager()->GetModule<RHIModule>()->GetDevice();
+	return lve::CubeGameObject::Creates(*device);
+}
+
+GameObject* BaseScene::CreateLightGameObject() {
+	float intensity = 10.0f;  // Exemple d'intensité pour la lumière
+	float radius = 1.0f;      // Rayon de la lumière
+	glm::vec3 position = glm::vec3(0.0f, 0.0f, 0.0f);  // Position initiale
+	glm::vec3 rotation = glm::vec3(0.0f, 0.0f, 0.0f);  // Rotation initiale
+	glm::vec3 color = glm::vec3(1.0f, 1.0f, 1.0f);     // Couleur de la lumière (blanche)
+
+	// Crée un GameObject représentant une lumière avec les paramètres spécifiés
+	return lve::LightGameObject::Creates(intensity, radius, position, rotation, color);
+}
+
+
+
+GameObject* BaseScene::CreatePlaneGameObject() {
+	lve::LveDevice* device = Engine::GetInstance()->GetModuleManager()->GetModule<RHIModule>()->GetDevice();
+	return lve::PlaneGameObject::Creates(*device);
 }

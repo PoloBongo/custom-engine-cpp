@@ -18,7 +18,7 @@ namespace Network
 			if (mSocket == INVALID_SOCKET)
 				return false;
 
-			if (!SetReuseAddr(mSocket) || !SetNonBlocking(mSocket))
+			if (!Network::SetReuseAddr(mSocket) || !Network::SetNonBlocking(mSocket))
 			{
 				stop();
 				return false;
@@ -46,7 +46,7 @@ namespace Network
 				client.second.disconnect();
 			mClients.clear();
 			if (mSocket != INVALID_SOCKET)
-				CloseSocket(mSocket);
+				Network::CloseSocket(mSocket);
 			mSocket = INVALID_SOCKET;
 		}
 		void ServerImpl::update()
@@ -132,7 +132,7 @@ namespace Network
 			return *this;
 		}
 
-		// permet de d�marrer le serveur
+		// permet de d�marrer le port du serveur
 		bool Server::start(unsigned short _port)
 		{
 			if (!mImpl)

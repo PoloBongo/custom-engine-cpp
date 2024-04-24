@@ -1,4 +1,4 @@
-#include "Modules/ImGUIModule.h"
+﻿#include "Modules/ImGUIModule.h"
 #include "lve_renderer.h"
 #include "ModuleManager.h"
 #include "Modules/WindowModule.h"
@@ -12,11 +12,13 @@
 
 #include "rhi.h"
 
+#include "GameObject/PreGameObject/LightGameObject.h"
 #include "Transform.h"
 #include "Scene/SceneManager.h"
 #include "TCP/Errors.h"
 
 class BaseScene;
+// ----------========== IMGUI SETTINGS ==========---------- //
 
 void ImGuiModule::Init()
 {
@@ -25,8 +27,8 @@ void ImGuiModule::Init()
 	windowModule = moduleManager->GetModule<WindowModule>();
 	rhiModule = moduleManager->GetModule<RHIModule>();
 	sceneManager = moduleManager->GetModule<SceneManager>();
-	device                                             = rhiModule->GetDevice()->Device();
-	graphicsQueue                                      = rhiModule->GetDevice()->GraphicsQueue();
+	device = rhiModule->GetDevice()->Device();
+	graphicsQueue = rhiModule->GetDevice()->GraphicsQueue();
 	const lve::QueueFamilyIndices queue_family_indices = rhiModule->GetDevice()->FindPhysicalQueueFamilies();
 
 	// Création du pool de commandes
@@ -72,15 +74,15 @@ void ImGuiModule::Start()
 	};
 
 	vk::DescriptorPoolCreateInfo pool_info = {};
-	pool_info.sType                        = vk::StructureType::eDescriptorPoolCreateInfo;
-	pool_info.flags                        = vk::DescriptorPoolCreateFlagBits::eFreeDescriptorSet;
-	pool_info.maxSets                      = 1000;
-	pool_info.poolSizeCount                = static_cast<uint32_t>(std::size(pool_sizes));
-	pool_info.pPoolSizes                   = pool_sizes;
+	pool_info.sType = vk::StructureType::eDescriptorPoolCreateInfo;
+	pool_info.flags = vk::DescriptorPoolCreateFlagBits::eFreeDescriptorSet;
+	pool_info.maxSets = 1000;
+	pool_info.poolSizeCount = static_cast<uint32_t>(std::size(pool_sizes));
+	pool_info.pPoolSizes = pool_sizes;
 
 	vk::DescriptorPool im_gui_pool;
 	if (rhiModule->GetDevice()->Device().createDescriptorPool(&pool_info, nullptr, &im_gui_pool) !=
-	    vk::Result::eSuccess)
+		vk::Result::eSuccess)
 		throw std::runtime_error("Impossible de creer la pool de imgui!");
 
 	// 2: initialize imgui library
@@ -94,14 +96,14 @@ void ImGuiModule::Start()
 
 	// this initializes imgui for Vulkan
 	ImGui_ImplVulkan_InitInfo init_info = {};
-	init_info.Instance                  = rhiModule->GetDevice()->GetInstance();
-	init_info.PhysicalDevice            = rhiModule->GetDevice()->GetPhysicalDevice();
-	init_info.Device                    = device;
-	init_info.Queue                     = graphicsQueue;
-	init_info.DescriptorPool            = im_gui_pool;
-	init_info.MinImageCount             = 3;
-	init_info.ImageCount                = 3;
-	init_info.RenderPass                = rhiModule->GetRenderer()->GetSwapChainRenderPass();
+	init_info.Instance = rhiModule->GetDevice()->GetInstance();
+	init_info.PhysicalDevice = rhiModule->GetDevice()->GetPhysicalDevice();
+	init_info.Device = device;
+	init_info.Queue = graphicsQueue;
+	init_info.DescriptorPool = im_gui_pool;
+	init_info.MinImageCount = 3;
+	init_info.ImageCount = 3;
+	init_info.RenderPass = rhiModule->GetRenderer()->GetSwapChainRenderPass();
 	//init_info.UseDynamicRendering = VK_TRUE;
 	//init_info.ColorAttachmentFormat = _swapchainImageFormat;
 
@@ -206,12 +208,14 @@ void ImGuiModule::ImmediateSubmit(std::function<void(vk::CommandBuffer _cmd)>&& 
 	//  _renderFence will now block until the graphic commands finish execution
 	graphics_queue.submit2KHR(submitInfo, immFence, dispatcher);
 
-	if(device.waitForFences(immFence, VK_TRUE, 9999999999) != vk::Result::eSuccess)
+	if (device.waitForFences(immFence, VK_TRUE, 9999999999) != vk::Result::eSuccess)
 	{
 		throw std::runtime_error("Failed GUI");
 	}
 }
 
+
+// ----------========== IMGUI SHOWN ==========---------- //
 
 void ImGuiModule::GetGui()
 {
@@ -224,17 +228,17 @@ void ImGuiModule::GetGui()
 	ImGui::SetNextWindowSize(ImVec2(300, mainWindowSize.y), ImGuiCond_Always); // Hauteur fixe et non-redimensionnable
 	ImGui::SetNextWindowPos(ImVec2(0, 0), ImGuiCond_Always); // Ancrage en haut à gauche
 	ImGui::Begin("Hierarchy", nullptr, window_flags);
-	DrawHierarchy();
+	DrawHierarchyWindow();
 	ImGui::End();
 
 	// Dessin de la fenêtre "Inspector" - Droite
 	ImGui::SetNextWindowSize(ImVec2(300, mainWindowSize.y), ImGuiCond_Always); // Hauteur fixe et non-redimensionnable
 	ImGui::SetNextWindowPos(ImVec2(mainWindowSize.x - 300, 0), ImGuiCond_Always); // Ancrage en haut à droite
 	ImGui::Begin("Inspector", nullptr, window_flags);
-	DrawInspector();
+	DrawInspectorWindow();
 	ImGui::End();
 
-	DrawEngineGUISettings();
+	DrawSettingsWindow();
 }
 
 void ImGuiModule::AnchorWindow(const std::string& _windowName)
@@ -264,7 +268,10 @@ void ImGuiModule::AnchorWindow(const std::string& _windowName)
 	}
 }
 
-void ImGuiModule::DrawInspector() {
+
+// ----------========== DRAW WINDOWS ==========---------- //
+
+void ImGuiModule::DrawInspectorWindow() {
 	// Vérifier si un GameObject est sélectionné
 	if (selectedGameObject) {
 		// Affichage du nom du GameObject
@@ -289,9 +296,35 @@ void ImGuiModule::DrawInspector() {
 			DisplayTransform(selectedGameObject->GetTransform());
 		}
 
-		// Bouton pour ajouter un composant (logique d'ajout à implémenter)
+		// Detection de Light et affichage des proprietes de la lumiere
+		Light* lightComponent = selectedGameObject->GetComponent<Light>();
+		if (lightComponent) {
+			// Intensite de la lumiere
+			float intensity = lightComponent->lightIntensity;
+			if (ImGui::DragFloat("Light Intensity", &intensity, 0.1f, 0.0f, 100.0f)) {
+				lightComponent->lightIntensity = intensity;
+			}
+
+			// Couleur de la lumiere
+			glm::vec3 color = selectedGameObject->color;
+			if (ImGui::ColorEdit3("Color", glm::value_ptr(color))) {
+				selectedGameObject->color = color;
+			}
+		}
+
+		// Bouton pour ajouter un composant
 		if (ImGui::Button("Add Component")) {
-			// TODO: Logique d'ajout de composant
+			ImGui::OpenPopup("AddComponentPopup");
+		}
+
+		// Popup pour l'ajout de composant
+		if (ImGui::BeginPopup("AddComponentPopup")) {
+			if (ImGui::MenuItem("Add Light")) {
+				Light* newLight = selectedGameObject->CreateComponent<Light>();
+				newLight->lightIntensity = 1.0;  // Intensit� initiale standard
+				ImGui::CloseCurrentPopup();
+			}
+			ImGui::EndPopup();
 		}
 	}
 	else {
@@ -299,44 +332,33 @@ void ImGuiModule::DrawInspector() {
 	}
 }
 
-void ImGuiModule::DisplayTransform(Transform* _transform) {
-	if (!_transform) return;
-
-	// Position
-	glm::vec3 position = _transform->GetPosition();
-	if (ImGui::DragFloat3("Position", &position[0])) {
-		_transform->SetPosition(position);
-	}
-
-	// Rotation
-	glm::vec3 rotation = _transform->GetRotation();
-	if (ImGui::DragFloat3("Rotation", &rotation[0])) {
-		_transform->SetRotation(rotation);
-	}
-
-	// Scale
-	glm::vec3 scale = _transform->GetScale();
-	if (ImGui::DragFloat3("Scale", &scale[0])) {
-		_transform->SetScale(scale);
-	}
-}
-
-void ImGuiModule::DrawHierarchy() {
+void ImGuiModule::DrawHierarchyWindow() {
 	// Bouton pour créer un nouveau GameObject
 	if (ImGui::Button("New GameObject")) {
-		BaseScene* currentScene = sceneManager->GetCurrentScene();
-		if (currentScene) {
-			currentScene->CreateGameObject();  // Ajoute un GameObject à la scène actuelle
-			std::cout << "Added new GameObject to current scene." << std::endl;
-		}
-		else {
-			std::cout << "No active scene found." << std::endl;
-		}
+		ImGui::OpenPopup("CreateGameObjectPopup");
 	}
 	ImGui::SameLine();
 	// Bouton pour ajouter une nouvelle scène
 	if (ImGui::Button("Add New Scene")) {
 		sceneManager->CreateScene("New Scene", false);
+	}
+	if (ImGui::BeginPopup("CreateGameObjectPopup")) {
+		if (ImGui::MenuItem("Cube")) {
+			CreateSpecificGameObject(GameObjectType::Cube);
+			std::cout << "Added new GameObject-Cube to current scene." << std::endl;
+
+		}
+		if (ImGui::MenuItem("Light")) {
+			CreateSpecificGameObject(GameObjectType::Light);
+			std::cout << "Added new GameObject-Light to current scene." << std::endl;
+
+		}
+		if (ImGui::MenuItem("Plane")) {
+			CreateSpecificGameObject(GameObjectType::Plane);
+			std::cout << "Added new GameObject-Plane to current scene." << std::endl;
+
+		}
+		ImGui::EndPopup();
 	}
 
 	// Barre de recherche
@@ -354,8 +376,33 @@ void ImGuiModule::DrawHierarchy() {
 
 		ImGui::PushID(i); // Identifiant unique pour chaque scène
 
+		auto SceneTree = ImGui::TreeNode(scene->GetName().c_str());
+
+		// Menu contextuel pour chaque scène
+		if (ImGui::BeginPopupContextItem("Scene Menu")) {
+			if (ImGui::MenuItem("Set Active")) {
+				sceneManager->SetCurrentScene(static_cast<int>(i)); // Définit la scène courante
+			}
+
+			ImGui::Separator();
+
+			if (ImGui::MenuItem("Rename")) {
+				sceneToRename = i;
+				strncpy_s(renameSceneBuffer, scene->GetName().c_str(), sizeof(renameSceneBuffer));
+				renameSceneBuffer[sizeof(renameSceneBuffer) - 1] = '\0';
+				ImGui::OpenPopup("Rename Scene");
+			}
+
+			ImGui::Separator();
+
+			if (ImGui::MenuItem("Delete")) {
+				sceneManager->DestroyScene(scene->GetName()); // Supprime la scène
+			}
+			ImGui::EndPopup();
+		}
+
 		// Affichage du nom de la scène avec un bouton "Set Active" si nécessaire
-		if (ImGui::TreeNode(scene->GetName().c_str())) {
+		if (SceneTree) {
 			// Bouton pour définir la scène active
 			if (!isCurrentScene) {
 				ImGui::SameLine(ImGui::GetWindowWidth() - 100); // Décalage à droite
@@ -397,7 +444,7 @@ void ImGuiModule::DrawHierarchy() {
 						if (ImGui::MenuItem("Delete")) { DeleteGameObject(selectedGameObject); }
 
 						ImGui::Separator();
-						if (ImGui::MenuItem("Duplicate")) { DuplicateGameObject(j); }
+						if (ImGui::MenuItem("Duplicate")) {}
 
 						ImGui::EndPopup();
 					}
@@ -406,37 +453,11 @@ void ImGuiModule::DrawHierarchy() {
 			}
 			ImGui::TreePop();
 		}
-
-
-
-		// Menu contextuel pour chaque scène
-		if (ImGui::BeginPopupContextItem("Scene Menu")) {
-			if (ImGui::MenuItem("Set Active")) {
-				sceneManager->SetCurrentScene(static_cast<int>(i)); // Définit la scène courante
-			}
-
-			ImGui::Separator();
-
-			if (ImGui::MenuItem("Rename")) {
-				sceneToRename = i;
-				strncpy_s(renameSceneBuffer, scene->GetName().c_str(), sizeof(renameSceneBuffer));
-				renameSceneBuffer[sizeof(renameSceneBuffer) - 1] = '\0';
-				ImGui::OpenPopup("Rename Scene");
-			}
-
-			ImGui::Separator();
-
-			if (ImGui::MenuItem("Delete")) {
-				sceneManager->DestroyScene(scene->GetName()); // Supprime la scène
-			}
-
-			ImGui::EndPopup();
-		}
 		ImGui::PopID();  // Restaure l'ID précédent pour les scènes
 	}
 }
 
-void ImGuiModule::DrawEngineGUISettings() {
+void ImGuiModule::DrawSettingsWindow() {
 	if (ImGui::Begin("Settings")) {
 		ImGUIInterface::EditTheme();
 		if (ImGui::CollapsingHeader("Input")) {
@@ -454,6 +475,30 @@ void ImGuiModule::DrawEngineGUISettings() {
 	}
 	ImGui::End();
 }
+
+void ImGuiModule::DisplayTransform(Transform* _transform) {
+	if (!_transform) return;
+
+	// Position
+	glm::vec3 position = _transform->GetPosition();
+	if (ImGui::DragFloat3("Position", &position[0])) {
+		_transform->SetPosition(position);
+	}
+
+	// Rotation
+	glm::vec3 rotationDegrees = _transform->GetRotationDegrees();
+	if (ImGui::DragFloat3("Rotation", &rotationDegrees[0])) {
+		_transform->SetRotationDegrees(rotationDegrees);
+	}
+
+	// Scale
+	glm::vec3 scale = _transform->GetScale();
+	if (ImGui::DragFloat3("Scale", &scale[0])) {
+		_transform->SetScale(scale);
+	}
+}
+
+// ----------========== POPUPS ==========---------- //
 
 void ImGuiModule::ShowRenamePopup() {
 	// Gestion de la fenêtre popup pour renommer un gameobject
@@ -494,43 +539,43 @@ void ImGuiModule::ShowRenamePopup() {
 	}
 }
 
+// ----------========== RENAME / DELETE / DUPLICATE ==========---------- //
+
 void ImGuiModule::RenameGameObject(GameObject* _gameObject, const std::string& _newName) {
 	if (_gameObject) {
 		std::cout << "Renamed GameObject: " << _gameObject->GetName() << " to " << _newName << std::endl;
 		_gameObject->SetName(_newName);
 	}
 }
-
 void ImGuiModule::DeleteGameObject(GameObject* _gameObject) {
-	//if (_gameObject) {
-	//	// Récupération de la scène active
-	//	BaseScene* currentScene = sceneManager->GetCurrentScene();
-	//	if (currentScene) {
-	//		// Trouve l'index du GameObject dans la scène active
-	//		auto& gameObjects = currentScene->GetRootObjects();
-	//		auto it = std::find(gameObjects.begin(), gameObjects.end(), _gameObject);
-	//		if (it != gameObjects.end()) {
-	//			// Supprime le GameObject et libère la mémoire
-	//			delete* it;
-	//			gameObjects.erase(it);
-
-	//			// Réinitialiser la sélection si c'était l'objet sélectionné
-	//			if (selectedGameObject == _gameObject) {
-	//				selectedGameObject = nullptr;
-	//			}
-	//			std::cout << "Deleted GameObject: " << _gameObject->GetName() << std::endl;
-	//		}
-	//	}
-	//}
+	if (_gameObject) {
+		BaseScene* currentScene = sceneManager->GetCurrentScene();
+		if (currentScene) {
+			currentScene->RemoveObject(_gameObject, true); // Suppression de l'objet
+		}
+	}
+}
+void ImGuiModule::DuplicateGameObject(GameObject* _gameObject) {
 }
 
-void ImGuiModule::DuplicateGameObject(int _index) {
-	//auto& gameObjects = sceneManager->GetMainScene()->GetRootObjects();
-	//if (_index < gameObjects.size()) {
-	//	GameObject* original = gameObjects[_index];
-	//	GameObject* clone = original->Clone();
-	//	
-	//	// Ajoute le clone à la scène
-	//	sceneManager->GetMainScene()->AddRootObject(clone);
-	//}
+void ImGuiModule::CreateSpecificGameObject(GameObjectType _type) {
+	BaseScene* currentScene = sceneManager->GetCurrentScene();
+	if (currentScene) {
+		GameObject* newGameObject = nullptr;
+		switch (_type) {
+		case GameObjectType::Cube:
+			newGameObject = currentScene->CreateCubeGameObject();
+			break;
+		case GameObjectType::Light:
+			newGameObject = currentScene->CreateLightGameObject();
+			break;
+		case GameObjectType::Plane:
+			newGameObject = currentScene->CreatePlaneGameObject();
+			break;
+		}
+
+		if (newGameObject) {
+			currentScene->AddRootObject(newGameObject);
+		}
+	}
 }

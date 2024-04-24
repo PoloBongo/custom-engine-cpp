@@ -3,7 +3,7 @@
 #ifdef _WIN32
 #define NOMINMAX
 #include <winSock2.h>
-#include <WS2tcpip.h>
+#include <ws2tcpip.h>
 using nfds_t = unsigned long;
 inline int poll(pollfd fdarray[], nfds_t nfds, int timeout) { return WSAPoll(fdarray, nfds, timeout); }
 #endif

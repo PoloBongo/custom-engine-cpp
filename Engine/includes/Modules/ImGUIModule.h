@@ -19,6 +19,9 @@ public:
 	vk::CommandBuffer immCommandBuffer;
 	vk::CommandPool   immCommandPool;
 
+
+	// ----------========== IMGUI SETTINGS ==========---------- //
+
 	/**
 	 * @brief Initialise le module ImGui, préparant les ressources nécessaires pour son fonctionnement.
 	 */
@@ -70,25 +73,37 @@ public:
 	void Finalize() override;
 
 	/**
-	 * @brief Construit les composants de l'interface utilisateur à être affichés.
-	 */
-	void GetGui();
-
-	/**
 	 * @brief Soumet une commande graphique immédiate à exécuter.
 	 * @param _function La fonction qui contient les commandes graphiques à exécuter.
 	 */
 	void ImmediateSubmit(std::function<void(vk::CommandBuffer _cmd)>&& _function) const;
 
+
+	// ----------========== IMGUI SHOWN ==========---------- //
+
+	/**
+	 * @brief Construit les éléments de l'interface utilisateur à afficher, incluant les fenêtres "Hierarchy" et "Inspector".
+	 */
+	void GetGui();
+
+	/**
+	 * @brief Fixe la fenêtre de l'interface utilisateur à une position spécifique.
+	 * @param _windowName Nom de la fenêtre à ancrer.
+	 */
+	void AnchorWindow(const std::string& _windowName);
+
+
+	// ----------========== DRAW WINDOWS ==========---------- //
+
 	/**
 	 * @brief Dessine la hiérarchie des objets de la scène dans l'interface utilisateur.
 	 */
-	void DrawHierarchy();
+	void DrawHierarchyWindow();
 
 	/**
 	 * @brief Dessine l'inspecteur des propriétés pour l'objet sélectionné.
 	 */
-	void DrawInspector();
+	void DrawInspectorWindow();
 
 	/**
 	 * @brief Affiche et permet l'édition des propriétés de transformation d'un objet.
@@ -97,20 +112,20 @@ public:
 	void DisplayTransform(Transform* _transform);
 
 	/**
-	 * @brief Fixe la fenêtre de l'interface utilisateur à une position spécifique.
-	 * @param _windowName Nom de la fenêtre à ancrer.
-	 */
-	void AnchorWindow(const std::string& _windowName);
-
-	/**
 	 * @brief Dessine les paramètres de l'interface utilisateur du moteur de jeu.
 	 */
-	void DrawEngineGUISettings();
+	void DrawSettingsWindow();
+
+
+	// ----------========== POPUPS ==========---------- //
 
 	/**
 	 * @brief Affiche la popup de renommage pour l'entité sélectionnée.
 	 */
 	void ShowRenamePopup();
+
+
+	// ----------========== OBJECT OPERATIONS ==========---------- //
 
 	/**
 	 * @brief Renomme l'objet de jeu sélectionné.
@@ -127,9 +142,15 @@ public:
 
 	/**
 	 * @brief Duplique l'objet de jeu situé à l'index spécifié.
-	 * @param _index Index de l'objet de jeu à dupliquer.
+	 * @param _gameObject Pointeur vers l'objet de jeu à à dupliquer.
 	 */
-	void DuplicateGameObject(int _index);
+	void DuplicateGameObject(GameObject* _gameObject);
+
+	/**
+	 * @brief Crée un nouveau GameObject du type spécifié et l'ajoute à la scène active.
+	 * @param _type Type de GameObject à créer, comme Cube, Light ou Plane.
+	 */
+	void CreateSpecificGameObject(GameObjectType _type);
 
 protected:
 	vk::Device device; ///< Périphérique utilisé pour le rendu avec Vulkan.

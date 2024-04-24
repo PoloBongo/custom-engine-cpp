@@ -9,12 +9,15 @@ int TCPClientStart::TCPClient()
 	}
 
 	Network::TCP::Client client;
+	std::string ipAdress;
+	std::cout << "Adresse IPv4 ? ";
+	std::cin >> ipAdress;
 	int port;
 	std::cout << "Port du serveur ? ";
 	std::cin >> port;
-	if (!client.connect("127.0.0.1", port))
+	if (!client.connect(ipAdress, port))
 	{
-		std::cout << "Impossible de se connecter au serveur [127.0.0.1:" << port << "] : " << Network::Errors::Get() << std::endl;
+		std::cout << "Impossible de se connecter au serveur [" << "ipAdress:" << port << "] : " << Network::Errors::Get() << std::endl;
 	}
 	else
 	{

@@ -64,9 +64,40 @@
     <ClCompile Include="sources\TCP\Server\Server.cpp" />
     <ClCompile Include="sources\TCP\Client\TCPClientStart.cpp" />
     <ClCompile Include="sources\TCP\Server\TCPServerStart.cpp" />
+<<<<<<< HEAD
+    <ClCompile Include="sources\UDP\AckHandler.cpp" />
+    <ClCompile Include="sources\UDP\Utils\Utils.cpp" />
+    <ClCompile Include="sources\UDP\Tester.cpp" />
+    <ClCompile Include="sources\UDP\Test\Utils_Test.cpp" />
+    <ClCompile Include="sources\UDP\Test\AckHandler_Test.cpp" />
+    <ClCompile Include="sources\UDP\ClientUDP.cpp" />
+    <ClCompile Include="sources\UDP\DistantClient.cpp" />
+    <ClCompile Include="sources\UDP\Address.cpp" />
+    <ClCompile Include="sources\UDP\Test\DistanceClient_Test.cpp" />
+    <ClCompile Include="sources\UDP\Packet.cpp" />
+    <ClCompile Include="sources\UDP\Datagram.cpp" />
+    <ClCompile Include="sources\UDP\Protocol\ReliableOrdered.cpp" />
+    <ClCompile Include="sources\UDP\Test\PacketHandling_Test.cpp" />
+    <ClCompile Include="sources\UDP\ChannelsHandler.cpp" />
+    <ClCompile Include="sources\UDP\Protocol\UnreliableOrdered.cpp" />
+    <ClCompile Include="sources\UDP\Serialization\Convert.cpp" />
+    <ClCompile Include="sources\UDP\Serialization\Serializer.cpp" />
+    <ClCompile Include="sources\UDP\Serialization\Serialization.cpp" />
+    <ClCompile Include="sources\UDP\Serialization\Deserializer.cpp" />
+    <ClCompile Include="sources\UDP\SocketsUDP.cpp" />
+    <ClCompile Include="sources\UDP\Protocol\Simulator.cpp" />
+    <ClCompile Include="sources\UDP\Test\Serialization_Test.cpp" />
+    <ClCompile Include="sources\UDP\ErrorsUDP.cpp" />
+    <ClCompile Include="sources\UDP\Network\Connextion\Connexion.cpp" />
+    <ClCompile Include="sources\UDP\Network\Timeout\Timeout.cpp" />
+    <ClCompile Include="sources\UDP\Network\ConnexionTimeout\ConnexionTiemout.cpp" />
+    <ClCompile Include="sources\UDP\Network\ClientUDP\ClientUDPStart.cpp" />
+    <ClCompile Include="sources\UDP\Network\ServerUDP\ServerUDPStart.cpp" />
+=======
     <ClCompile Include="InputKeyCode.cpp" />
     <ClCompile Include="FileManager.cpp" />
     <ClCompile Include="ImGUIInterface.cpp" />
+>>>>>>> 94bb7dca4525fdd6045f255effce1a5aad1a3d30
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BoxCollider.h" />
@@ -127,9 +158,44 @@
     <ClInclude Include="includes\TCP\Server\Server.h" />
     <ClInclude Include="includes\TCP\Client\TCPClientStart.h" />
     <ClInclude Include="includes\TCP\Server\TCPServerStart.h" />
+<<<<<<< HEAD
+    <ClInclude Include="includes\UDP\Datagram.h" />
+    <ClInclude Include="includes\UDP\AckHandler.h" />
+    <ClInclude Include="includes\UDP\Utils\Utils.h" />
+    <ClInclude Include="includes\UDP\Tester.h" />
+    <ClInclude Include="includes\UDP\Test\Utils_Test.h" />
+    <ClInclude Include="includes\UDP\Test\AckHandler_Test.h" />
+    <ClInclude Include="includes\UDP\ClientUDP.h" />
+    <ClInclude Include="includes\UDP\DistantClient.h" />
+    <ClInclude Include="includes\UDP\Address.h" />
+    <ClInclude Include="includes\UDP\Test\DistantClient_Test.h" />
+    <ClInclude Include="includes\UDP\Packet.h" />
+    <ClInclude Include="includes\UDP\Protocol\ReliableOrdered.h" />
+    <ClInclude Include="includes\UDP\Test\PacketHandling_Test.h" />
+    <ClInclude Include="includes\UDP\Settings.h" />
+    <ClInclude Include="includes\UDP\Protocol\ProtocolInterface.h" />
+    <ClInclude Include="includes\UDP\ChannelsHandler.h" />
+    <ClInclude Include="includes\UDP\Protocol\UnreliableOrdered.h" />
+    <ClInclude Include="includes\UDP\ChannelHeader.h" />
+    <ClInclude Include="includes\UDP\Types.h" />
+    <ClInclude Include="includes\UDP\Messages.h" />
+    <ClInclude Include="includes\UDP\Serialization\Convert.h" />
+    <ClInclude Include="includes\UDP\Serialization\Serializer.h" />
+    <ClInclude Include="includes\UDP\Serialization\Serialization.h" />
+    <ClInclude Include="includes\UDP\Serialization\Deserializer.h" />
+    <ClInclude Include="includes\UDP\SocketsUDP.h" />
+    <ClInclude Include="includes\UDP\RangedInteger.h" />
+    <ClInclude Include="includes\UDP\Protocol\Simulator.h" />
+    <ClInclude Include="includes\UDP\Float.h" />
+    <ClInclude Include="includes\UDP\Test\Serialization_Test.h" />
+    <ClInclude Include="includes\UDP\ErrorsUDP.h" />
+    <ClInclude Include="includes\UDP\Network\ClientUDP\ClientUDPStart.h" />
+    <ClInclude Include="includes\UDP\Network\ServerUDP\ServerUDPStart.h" />
+=======
     <ClInclude Include="InputKeyCode.h" />
     <ClInclude Include="FileManager.h" />
     <ClInclude Include="ImGUIInterface.h" />
+>>>>>>> 94bb7dca4525fdd6045f255effce1a5aad1a3d30
   </ItemGroup>
   <ItemGroup>
     <CopyFileToFolders Include="..\Librairies\FMOD\lib\fmod.dll" />
@@ -137,6 +203,11 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="imgui.ini" />
+<<<<<<< HEAD
+    <None Include="includes\UDP\Utils\Utils.inl" />
+    <None Include="includes\UDP\Serialization\Serializer.inl" />
+    <None Include="includes\UDP\Serialization\Deserializer.inl" />
+=======
     <None Include="Shaders\point_light.frag" />
     <None Include="Shaders\point_light.frag.spv" />
     <None Include="Shaders\point_light.spv" />
@@ -153,5 +224,7 @@
     <None Include="Models\quad.obj" />
     <None Include="Models\smooth_vase.obj" />
     <None Include="Models\viking_room.obj" />
+    <None Include="compile.bat" />
+>>>>>>> 94bb7dca4525fdd6045f255effce1a5aad1a3d30
   </ItemGroup>
 </Project>
