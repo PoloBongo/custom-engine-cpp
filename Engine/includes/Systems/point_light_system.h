@@ -46,7 +46,7 @@ namespace lve
 			 * @param _ubo
 			 */
 			void Update(const std::vector<GameObject*>& _gameObjects, GlobalUbo& _ubo);
-			void Render(std::vector<GameObject*>& _gameObjects, const LveCamera& _camera, const vk::CommandBuffer _commandBuffer,const vk::DescriptorSet _globalDescriptorSet) const;
+			void Render(const std::vector<GameObject*>& _gameObjects, const LveCamera& _camera, const vk::CommandBuffer _commandBuffer,const vk::DescriptorSet _globalDescriptorSet) const;
 
 		private:
 			/**

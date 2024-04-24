@@ -48,6 +48,8 @@ class BaseScene
 		 */
 		virtual void Update();
 
+		virtual void UpdateEditor();
+
 		/**
 		 * @brief Fonction pr�-rendu du module.
 		 */
