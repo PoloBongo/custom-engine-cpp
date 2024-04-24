@@ -19,6 +19,9 @@ namespace lve
 				game_object.transform.translation = _position;
 				game_object.transform.scale       = _scale;
 				game_object.transform.rotation    = _rotation;
+				game_object.fileModel			  = "Models\\cube.obj";
+				//game_object.
+				
 
 				return game_object;
 			};
@@ -33,6 +36,7 @@ namespace lve
 				game_object->GetTransform()->SetPosition(_position);
 				game_object->GetTransform()->SetScale(_scale);
 				game_object->GetTransform()->SetRotation(_rotation);
+				game_object->SetFileModel("Models\\cube.obj");
 
 				return game_object;
 			};
@@ -48,6 +52,7 @@ namespace lve
 				game_object.transform.translation = _position;
 				game_object.transform.scale       = _scale;
 				game_object.transform.rotation    = _rotation;
+				game_object.fileModel			  = "Models\\colored_cube.obj";
 
 				return game_object;
 			};
@@ -63,6 +68,7 @@ namespace lve
 				game_object->GetTransform()->SetPosition(_position);
 				game_object->GetTransform()->SetScale(_scale);
 				game_object->GetTransform()->SetRotation(_rotation);
+				game_object->SetFileModel("Models\\colored_cube.obj");
 
 				return game_object;
 			};

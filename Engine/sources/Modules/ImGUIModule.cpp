@@ -17,6 +17,9 @@
 #include "Scene/SceneManager.h"
 #include "TCP/Errors.h"
 
+#include <iostream>
+#include <fstream>
+
 class BaseScene;
 // ----------========== IMGUI SETTINGS ==========---------- //
 
@@ -297,10 +300,19 @@ void ImGuiModule::DrawInspectorWindow() {
 			if (ImGui::InputInt("Texture", &texture)) { 
 				selectedGameObject->texture = texture;
 			}
-			//float textureMulti = ;
-			//if (ImGui::InputFloat("Texture Multiplier", &textureMulti)) {
-			//	selectedGameObject->texture = texture;
-			//}
+			float textureMulti = selectedGameObject->GetTexMultiplier();
+			if (ImGui::DragFloat("Texture Multiplier", &textureMulti, 1, 0.0, 100.0)) {
+				std::ifstream file(selectedGameObject->GetFileModel());
+				if (file.good()) {
+					std::cout << "File good";
+					selectedGameObject->SetTexMultiplier(textureMulti);
+					std::shared_ptr<lve::LveModel> lve_model = lve::LveModel::CreateModelFromFile(*rhiModule->GetDevice(), selectedGameObject->GetFileModel(), selectedGameObject->GetTexMultiplier());
+					selectedGameObject->model = lve_model;
+				}
+				else {
+					std::cout << "File not good :" + selectedGameObject->GetFileModel();
+				}
+			}
 		}
 
 

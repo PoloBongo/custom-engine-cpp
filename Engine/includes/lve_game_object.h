@@ -104,6 +104,12 @@ namespace lve
 			/**< Composant de lumière ponctuelle de l'objet, s'il y en a un. */
 			unsigned int texture = 0;
 
+			void SetTexMultiplier(float _newTexMultiplier) { texMultiplier = _newTexMultiplier; }
+			void SetFileModel(std::string _newFileModel) { fileModel = _newFileModel; }
+
+			float					texMultiplier = 1.0f;
+			std::string             fileModel;
+
 		private:
 			id_t id; /**< Identifiant de l'objet. */
 

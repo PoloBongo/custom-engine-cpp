@@ -205,6 +205,12 @@ public:
 	*/
 	virtual void Finalize();
 
+	std::string GetFileModel() { return fileModel; }
+	float GetTexMultiplier() { return texMultiplier; }
+
+	void SetTexMultiplier(float _newTexMultiplier) { texMultiplier = _newTexMultiplier; }
+	void SetFileModel(std::string _newFileModel) { fileModel = _newFileModel; }
+
 	std::shared_ptr<lve::LveModel>            model{}; /**< Modèle de l'objet. */
 	glm::vec3          color{};     /**< Couleur de l'objet. */
 	int texture = 0;
@@ -213,6 +219,7 @@ protected:
 	std::string             name = "GameObject";
 	std::vector<Component*> components;
 
+	float						texMultiplier = 1;
 	std::string             fileModel;
 
 	Transform* transform = nullptr;

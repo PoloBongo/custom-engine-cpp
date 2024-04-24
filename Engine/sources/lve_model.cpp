@@ -53,10 +53,10 @@ namespace lve
 	}
 
 
-	std::unique_ptr<LveModel> LveModel::CreateModelFromFile(LveDevice& _device, const std::string& _filepath)
+	std::unique_ptr<LveModel> LveModel::CreateModelFromFile(LveDevice& _device, const std::string& _filepath, float _texMultiplier)
 	{
 		Builder builder{};
-		builder.LoadModel(ENGINE_DIR + _filepath);
+		builder.LoadModel(ENGINE_DIR + _filepath, _texMultiplier);
 		std::cout << "Vertex Count" << builder.vertices.size() << std::endl;
 
 		return std::make_unique<LveModel>(_device, builder);
@@ -218,7 +218,7 @@ namespace lve
 		return attribute_descriptions;
 	}
 
-	void LveModel::Builder::LoadModel(const std::string& _filepath)
+	void LveModel::Builder::LoadModel(const std::string& _filepath, float _texMultiplier = 1)
 	{
 		tinyobj::attrib_t                attrib;
 		std::vector<tinyobj::shape_t>    shapes;
@@ -263,8 +263,8 @@ namespace lve
 
 				if (index.texcoord_index >= 0)
 					vertex.uv = {
-						attrib.texcoords[2 * index.texcoord_index + 0] * vertex.texMultiplier,
-						1.0f - attrib.texcoords[2 * index.texcoord_index + 1] * vertex.texMultiplier,
+						attrib.texcoords[2 * index.texcoord_index + 0] * _texMultiplier,
+						1.0f - attrib.texcoords[2 * index.texcoord_index + 1] * _texMultiplier,
 					};
 
 				if (!unique_vertices.contains(vertex))

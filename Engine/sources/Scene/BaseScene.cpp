@@ -396,6 +396,7 @@ void BaseScene::TestLoadGameObjects()
 	auto flatVaseGO = GameObject::CreatePGameObject();
 	flatVaseGO->SetName("FlatVase");
 	flatVaseGO->model = lve_model;
+	flatVaseGO->SetFileModel("Models\\flat_vase.obj");
 	flatVaseGO->GetTransform()->SetPosition(glm::vec3{ -.5f, .5f, 0.f });
 	flatVaseGO->GetTransform()->SetScale(glm::vec3{ 3.f, 1.5f, 3.f });
 	flatVaseGO->texture = 1;
@@ -407,6 +408,7 @@ void BaseScene::TestLoadGameObjects()
 	auto smooth_vase_go = GameObject::CreatePGameObject();
 	smooth_vase_go->SetName("SmoothVase");
 	smooth_vase_go->model = lve_model;
+	smooth_vase_go->SetFileModel("Models\\smooth_vase.obj");
 	smooth_vase_go->GetTransform()->SetPosition(glm::vec3{ .5f, .5f, 0.f });
 	smooth_vase_go->GetTransform()->SetScale(glm::vec3{ 3.f, 1.5f, 3.f });
 	rootObjects.push_back(smooth_vase_go);
@@ -420,6 +422,7 @@ void BaseScene::TestLoadGameObjects()
 	auto viking = GameObject::CreatePGameObject();
 	viking->SetName("Viking");
 	viking->model = lve_model;
+	viking->SetFileModel("Models\\viking_room.obj");
 	viking->GetTransform()->SetPosition(glm::vec3{ 0.f, 0.f, 5.f });
 	viking->GetTransform()->SetScale(glm::vec3{ 3.f, 3.f, 3.f });
 	viking->GetTransform()->SetRotation(glm::vec3{ glm::radians(90.0f), glm::radians(90.0f), 0.0f });
