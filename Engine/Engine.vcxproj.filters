@@ -82,7 +82,6 @@
     <ClCompile Include="sources\lve_descriptors.cpp" />
     <ClCompile Include="sources\lve_device.cpp" />
     <ClCompile Include="sources\lve_frame_info.cpp" />
-    <ClCompile Include="sources\lve_game_object.cpp" />
     <ClCompile Include="sources\lve_model.cpp" />
     <ClCompile Include="sources\lve_pipeline.cpp" />
     <ClCompile Include="sources\lve_renderer.cpp" />
@@ -181,7 +180,6 @@
     <ClInclude Include="includes\lve_descriptors.h" />
     <ClInclude Include="includes\lve_device.h" />
     <ClInclude Include="includes\lve_frame_info.h" />
-    <ClInclude Include="includes\lve_game_object.h" />
     <ClInclude Include="includes\lve_model.h" />
     <ClInclude Include="includes\lve_pipeline.h" />
     <ClInclude Include="includes\lve_renderer.h" />

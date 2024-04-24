@@ -1,3 +1,4 @@
-NEW : EngineMode
+NEW : Doc
 
-- Ajout de mode pour l'update des scènes dans l'Engine
+- Documentation ajouté
+- Todo: ranger les fichiers

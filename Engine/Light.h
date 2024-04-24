@@ -1,6 +1,9 @@
 #pragma once
 #include "Component.h"
 
+/**
+ * @brief Classe représentant une lumière.
+ */
 class Light final : public Component
 {
 public:
@@ -9,18 +12,10 @@ public:
 		name = "Light";
 	}
 
-	/*void Start() overrideoverride ;
-	void Physics(const float& _delta) overrideoverride ;
-	void Update(const float& _delta) overrideoverride ;
-
-	//Render Methods
-	void Render(lve::LveWindow* _window) overrideoverride ;
-	void RenderGui(lve::LveWindow* _window) overrideoverride ;
-	void RenderBackground(lve::LveWindow* _window) overrideoverride ;
-	*/
+#pragma region Event
 	/**
-					* @brief Initialise le module.
-					*/
+	* @brief Initialise le module.
+	*/
 	void Init() override;
 
 	/**
@@ -67,5 +62,8 @@ public:
 	 * @brief Finalise le module.
 	 */
 	void Finalize() override;
+
+#pragma endregion
+
 	float lightIntensity = 1.0f;
 } ;

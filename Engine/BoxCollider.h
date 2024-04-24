@@ -10,7 +10,12 @@
 #include <BulletCollision/CollisionShapes/btBoxShape.h>
 #include <BulletDynamics/Dynamics/btDiscreteDynamicsWorld.h>
 
-
+/**
+ * @brief Représente un composant de collision de type boîte.
+ *
+ * Cette classe hérite de la classe Component et contient des fonctionnalités spécifiques
+ * aux boîtes de collision dans un environnement physique.
+ */
 class BoxCollider : public Component
 {
 	public:
@@ -52,7 +57,7 @@ class BoxCollider : public Component
 		~BoxCollider() override;
 
 	private:
-		btBoxShape*    collisionShape;
-		btGhostObject* ghostObject;
-		btRigidBody*   rigidBody;
+		btBoxShape* collisionShape = nullptr; /**< La forme de collision de la boîte. */
+		btGhostObject* ghostObject = nullptr; /**< L'objet fantôme associé à la boîte. */
+		btRigidBody* rigidBody = nullptr;     /**< Le corps rigide associé à la boîte. */
 };

@@ -4,7 +4,7 @@
 #include <string>
 #include <vector>
 #include "Component.h"
-#include "lve_game_object.h"
+#include "lve_model.h"
 
 enum class GameObjectType {
 	Cube,

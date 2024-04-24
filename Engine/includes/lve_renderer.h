@@ -13,6 +13,9 @@
 
 namespace lve
 {
+	/**
+	 * @brief Classe représentant un renderer Vulkan.
+	 */
 	class LveRenderer
 	{
 		public:

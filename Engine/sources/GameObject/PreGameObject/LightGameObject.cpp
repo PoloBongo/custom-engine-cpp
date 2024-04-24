@@ -9,6 +9,7 @@ namespace lve
 		const glm::vec3 _rotate, const glm::vec3 _color)
 	{
 		GameObject* game_object = GameObject::CreatePGameObject();
+		game_object->SetName("Light");
 		game_object->SetColor(_color);
 		game_object->GetTransform()->SetPosition(_position);
 		game_object->GetTransform()->SetScale(_radius, game_object->GetTransform()->GetScale().y, game_object->GetTransform()->GetScale().z);

@@ -42,7 +42,9 @@ namespace lve
 		uint32_t                           subpass        = 0; /**< Index de la sous-passe du pipeline. */
 	};
 
-
+	/**
+	 * @brief Classe représentant un pipeline Vulkan.
+	 */
 	class LvePipeline
 	{
 		public:

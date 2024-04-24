@@ -11,6 +11,9 @@
 
 namespace lve
 {
+	/**
+	 * @brief Classe représentant un agencement de jeu de descripteurs Vulkan.
+	 */
 	class LveDescriptorSetLayout
 	{
 		public:

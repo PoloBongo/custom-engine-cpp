@@ -15,27 +15,100 @@ class ModuleManager
 		ModuleManager() = default;
 		~ModuleManager();
 
+		/**
+		 * @brief Crée les modules par défaut.
+		 */
 		void CreateDefaultModules();
 
-		void Init() const;
-		void Start() const;
-		void FixedUpdate() const;
-		void Update() const;
-		void PreRender() const;
-		void Render() const;
-		void RenderGui() const;
-		void PostRender() const;
-		void Release() const;
-		void Finalize() const;
+#pragma region Event
+		/**
+		 * @brief Initialise le module.
+		 */
+		void Init()
+		{
+		}
 
+		/**
+		 * @brief Démarre le module.
+		 */
+		void Start()
+		{
+		}
+
+		/**
+		 * @brief Effectue une mise à jour fixe du module.
+		 */
+		void FixedUpdate()
+		{
+		}
+
+		/**
+		 * @brief Met à jour le module.
+		 */
+		void Update()
+		{
+		}
+
+		/**
+		 * @brief Fonction pré-rendu du module.
+		 */
+		void PreRender()
+		{
+		}
+
+		/**
+		 * @brief Rendu du module.
+		 */
+		void Render()
+		{
+		}
+
+		/**
+		 * @brief Rendu de l'interface graphique du module.
+		 */
+		void RenderGui()
+		{
+		}
+
+		/**
+		 * @brief Fonction post-rendu du module.
+		 */
+		void PostRender()
+		{
+		}
+
+		/**
+		 * @brief Libère les ressources utilisées par le module.
+		 */
+		void Release()
+		{
+		}
+
+		/**
+		 * @brief Finalise le module.
+		 */
+		void Finalize()
+		{
+		}
+
+#pragma endregion
+
+		/**
+		 * @brief Crée une instance du module de type T.
+		 * @return Un pointeur vers le module créé.
+		 */
 		template <class T>
 		T* CreateModule();
 
+		/**
+		 * @brief Obtient une instance du module de type T.
+		 * @return Un pointeur vers le module obtenu, ou nullptr si le module n'existe pas.
+		 */
 		template <class T>
 		T* GetModule();
 
 	private:
-		std::vector<Module*> modules;
+		std::vector<Module*> modules; /**< Vecteur contenant des pointeurs vers les modules. */
 };
 
 template <class T>

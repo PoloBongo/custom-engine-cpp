@@ -1,9 +1,6 @@
 #pragma once
 #include "lve_device.h"
-#include "lve_buffer.h"
 #include <string>
-
-#include <stdexcept>
 
 namespace lve {
 	class LveTexture

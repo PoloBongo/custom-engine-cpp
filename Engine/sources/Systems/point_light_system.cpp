@@ -49,7 +49,7 @@ namespace lve
 			throw std::runtime_error("failed to create pipeline layout!");
 	}
 
-	void PointLightSystem::CreatePipeline(vk::RenderPass _renderPass)
+	void PointLightSystem::	CreatePipeline(vk::RenderPass _renderPass)
 	{
 		assert(pipelineLayout != nullptr && "Cannot create pipeline before pipeline layout");
 

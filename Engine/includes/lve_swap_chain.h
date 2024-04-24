@@ -12,6 +12,9 @@
 
 namespace lve
 {
+	/**
+	* @brief Classe représentant une chaîne d'échange Vulkan.
+	*/
 	class LveSwapChain
 	{
 		public:

@@ -16,6 +16,9 @@
 
 namespace lve
 {
+	/**
+	 * @brief Classe représentant un modèle Vulkan.
+	 */
 	class LveModel
 	{
 		public:

@@ -34,6 +34,9 @@ namespace lve
 		bool IsComplete() const { return graphicsFamilyHasValue && presentFamilyHasValue; }
 	};
 
+	/**
+	 * @brief Classe représentant un périphérique Vulkan.
+	 */
 	class LveDevice
 	{
 		public:

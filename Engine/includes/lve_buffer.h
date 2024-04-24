@@ -5,6 +5,9 @@
 
 namespace lve
 {
+	/**
+	 * @brief Classe représentant un tampon Vulkan.
+	 */
 	class LveBuffer
 	{
 		public:

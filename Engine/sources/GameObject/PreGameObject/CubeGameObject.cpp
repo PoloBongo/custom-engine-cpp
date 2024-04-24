@@ -8,6 +8,7 @@ namespace lve
 		const std::shared_ptr<LveModel> lve_model = LveModel::CreateModelFromFile(_lveDevice, "Models\\cube.obj");
 
 		const auto game_object = GameObject::CreatePGameObject();
+		game_object->SetName("Cube");
 		game_object->SetModel(lve_model);
 		game_object->GetTransform()->SetPosition(_position);
 		game_object->GetTransform()->SetScale(_scale);
@@ -23,6 +24,7 @@ namespace lve
 			_lveDevice, "Models\\colored_cube.obj");
 
 		const auto game_object = GameObject::CreatePGameObject();
+		game_object->SetName("CubeColor");
 		game_object->SetModel(lve_model);
 		game_object->GetTransform()->SetPosition(_position);
 		game_object->GetTransform()->SetScale(_scale);

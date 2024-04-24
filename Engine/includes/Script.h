@@ -52,8 +52,9 @@ public:
     InputModule* GetInputModule() const;
 
 private:
-    TimeModule* timeModuleReference = nullptr;
-    WindowModule* windowModuleReference = nullptr;
-    RHIModule* renderInterfaceModuleReference = nullptr;
-    InputModule* inputModuleReference = nullptr;
+
+    TimeModule* timeModuleReference = nullptr; /**< Référence au module de gestion du temps. */
+    WindowModule* windowModuleReference = nullptr; /**< Référence au module de fenêtre. */
+    RHIModule* renderInterfaceModuleReference = nullptr; /**< Référence au module d'interface de rendu. */
+    InputModule* inputModuleReference = nullptr; /**< Référence au module d'entrée. */
 };
