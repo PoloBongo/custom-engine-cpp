@@ -106,6 +106,11 @@ public:
 	void DrawInspectorWindow();
 
 	/**
+	 * @brief Dessine la fenêtre de chat.
+	 */
+	void DrawTchatWindow();
+
+	/**
 	 * @brief Affiche et permet l'édition des propriétés de transformation d'un objet.
 	 * @param _transform Pointeur vers l'objet Transform à afficher et éditer.
 	 */
@@ -175,6 +180,12 @@ protected:
 	glm::vec3 scaleEdit; ///< Stocke l'échelle actuelle pour l'édition.
 
 	std::vector<bool> isOpen; ///< Vecteur pour suivre l'état ouvert/fermé des différents panneaux de l'interface utilisateur.
+
+	char ipBuffer[64] = "";  // Buffer pour l'adresse IP
+	char portBuffer[6] = ""; // Buffer pour le port, suffisant pour contenir des nombres jusqu'à 65535
+	char messageBuffer[256] = ""; // Buffer pour le message à envoyer
+	std::vector<std::string> messageLogs; // Liste des messages reçus
+
 
 	/**
 	 * @brief Destructeur par défaut.
