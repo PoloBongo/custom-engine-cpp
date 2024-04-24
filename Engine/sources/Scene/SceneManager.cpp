@@ -1,6 +1,8 @@
 #include "Scene/SceneManager.h"
 #include <fstream>
 #include <sstream>
+
+#include "CoreEngine.h"
 #include "ModuleManager.h"
 #include "Modules/WindowModule.h"
 
@@ -287,7 +289,11 @@ void SceneManager::FixedUpdate()
 void SceneManager::Update()
 {
 	Module::Update();
-	if (mainScene) mainScene->Update();
+	if(mainScene)
+	{
+		if(Engine::GetInstance()->GetEngineMode() == EngineMode::Editor) mainScene->UpdateEditor();
+		else if(Engine::GetInstance()->GetEngineMode() == EngineMode::Play) mainScene->Update();
+	}
 }
 
 void SceneManager::PreRender()

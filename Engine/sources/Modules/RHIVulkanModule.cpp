@@ -26,7 +26,7 @@ void RHIVulkanModule:: Init()
 	p_lveRenderer = new lve::LveRenderer{ windowModule, *p_lveDevice };
 }
 
-void RHIVulkanModule::AddTextureToPool(const std::string _filepath) {
+void RHIVulkanModule::AddTextureToPool(const std::string& _filepath) {
 
 	
 	std::ifstream file(_filepath);
@@ -188,7 +188,7 @@ void RHIVulkanModule::PreRender()
 
 void RHIVulkanModule::Render()
 {
-	simpleRenderSystem->RenderGameObjects(gameObjects, *camera, *currentCommandBuffer, &ListDescriptors, frameIndex);      //render shadow casting objects
+	simpleRenderSystem->RenderGameObjects(gameObjects, *camera, *currentCommandBuffer, &ListDescriptors, frameIndex);       //render shadow casting objects
 	pointLightSystem->Render(gameObjects, *camera, *currentCommandBuffer, globalDescriptorSets[frameIndex]);                 //render shadow casting objects
 }
 

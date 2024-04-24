@@ -1,6 +1,7 @@
 #pragma once
 #include <string>
 #include "lve_window.h"
+#include "GameObject/GameObject.h"
 
 class GameObject;
 
@@ -15,6 +16,7 @@ class Component
 		virtual void Start();
 		virtual void FixedUpdate();
 		virtual void Update() ;
+		virtual void UpdateEditor() ;
 		virtual void PreRender();
 		virtual void Render();
 		virtual void RenderGui();
@@ -39,6 +41,7 @@ class Component
 			isVisible = _state;
 			isActive  = _state;
 		}
+
 
 	protected:
 		GameObject* owner     = nullptr;

@@ -78,30 +78,17 @@ namespace lve
 
 			assert(light_index < MAX_LIGHTS && "Point lights exceed maximum specified");
 
-			// update light position
-			game_object->GetTransform()->SetPosition(glm::vec3(rotate_light * glm::vec4(game_object->GetTransform()->GetPosition(), 1.f)));
-
 			// copy light to ubo
 			_ubo.pointLights[light_index].position = glm::vec4(game_object->GetTransform()->GetPosition(), 1.f);
-			_ubo.pointLights[light_index].color    = glm::vec4(game_object->color, light_component->lightIntensity);
+			_ubo.pointLights[light_index].color    = glm::vec4(game_object->GetColor(), light_component->lightIntensity);
 
 			light_index ++;
 		}
 		_ubo.numLights = light_index;
 	}
 
-	void PointLightSystem::Render(std::vector<GameObject*>& _gameObjects, const LveCamera& _camera, const vk::CommandBuffer _commandBuffer, const vk::DescriptorSet _globalDescriptorSet) const
+	void PointLightSystem::Render(const std::vector<GameObject*>& _gameObjects, const LveCamera& _camera, const vk::CommandBuffer _commandBuffer, const vk::DescriptorSet _globalDescriptorSet) const
 	{
-		// Tri des lumières
-		for (auto& game_object : _gameObjects)
-		{
-			const auto light_component = game_object->GetComponent<Light>();
-			if (light_component == nullptr) continue;
-
-			// Calcul de la distance 
-			auto  offset            = _camera.GetPosition() - game_object->GetTransform()->GetPosition();
-			float distance_squared   = dot(offset, offset);
-		}
 		lvePipeline->Bind(_commandBuffer);
 
 		// Liaison de l'ensemble de descripteurs global
@@ -113,13 +100,12 @@ namespace lve
 			nullptr);
 
 		// Itération à travers les lumières triées
-		for (auto& game_object : _gameObjects)
+		for (const auto& game_object : _gameObjects)
 		{
-			const auto light_component = game_object->GetComponent<Light>();
-			if (light_component == nullptr) continue;
+			if (const auto light_component = game_object->GetComponent<Light>(); light_component == nullptr) continue;
 			PointLightPushConstants push{};
 			push.position = glm::vec4(game_object->GetTransform()->GetPosition(), 1.f);
-			push.color    = glm::vec4(game_object->color, game_object->GetComponent<Light>()->lightIntensity);
+			push.color    = glm::vec4(game_object->GetColor(), game_object->GetComponent<Light>()->lightIntensity);
 			push.radius   = game_object->GetTransform()->GetScale().x;
 
 			// Mise à jour des push constants

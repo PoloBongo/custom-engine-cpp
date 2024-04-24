@@ -1,4 +1,3 @@
-FIX : &
+NEW : EngineMode
 
-- Changement de la méthode de récupération du mode pour la sauvegarde
-- Ajout d'une fonction pour changer l'icone de la fenêtre
+- Ajout de mode pour l'update des scènes dans l'Engine

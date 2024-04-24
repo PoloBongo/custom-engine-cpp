@@ -61,7 +61,7 @@ namespace lve
 			pipelineConfig);
 	}
 
-	void SimpleRenderSystem::RenderGameObjects(const std::vector<GameObject*>& _gameObjects, const LveCamera& _camera, const vk::CommandBuffer _commandBuffer, std::vector<std::vector<vk::DescriptorSet>*>* _DescriptorSetsAll, int _frameIndex) const
+	void SimpleRenderSystem::RenderGameObjects(const std::vector<GameObject*>& _gameObjects, const LveCamera& _camera, const vk::CommandBuffer _commandBuffer, std::vector<std::vector<vk::DescriptorSet>*>* _DescriptorSetsAll, int _frameIndex)  const
 	{
 		// Liaison du pipeline
 		lvePipeline->Bind(_commandBuffer);
@@ -76,8 +76,9 @@ namespace lve
 
 		for (const auto& game_object : _gameObjects)
 		{
-			if (game_object->model == nullptr) continue;
-			if (game_object->texture > _DescriptorSetsAll->size()-1) 
+			if (game_object->GetModel() == nullptr) continue;
+
+			if (game_object->GetTexture() > _DescriptorSetsAll->size() - 1)
 			{
 				_commandBuffer.bindDescriptorSets(
 					vk::PipelineBindPoint::eGraphics,
@@ -86,15 +87,17 @@ namespace lve
 					(*_DescriptorSetsAll)[0]->at(_frameIndex),
 					nullptr);
 			}
-			else 
+			else
 			{
 				_commandBuffer.bindDescriptorSets(
 					vk::PipelineBindPoint::eGraphics,
 					pipelineLayout,
 					0,
-					(*_DescriptorSetsAll)[game_object->texture]->at(_frameIndex),
+					(*_DescriptorSetsAll)[game_object->GetTexture()]->at(_frameIndex),
 					nullptr);
 			}
+
+
 
 			SimplePushConstantData push{};
 			push.modelMatrix  = game_object->GetTransform()->Mat4();
@@ -108,8 +111,8 @@ namespace lve
 				push);
 
 			// Liaison du mod�le et dessin
-			game_object->model->Bind(_commandBuffer);
-			game_object->model->Draw(_commandBuffer);
+			game_object->GetModel()->Bind(_commandBuffer);
+			game_object->GetModel()->Draw(_commandBuffer);
 		}
 	}
 } // namespace lve
