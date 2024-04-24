@@ -309,7 +309,7 @@ void ImGuiModule::DrawInspectorWindow() {
 			// Couleur de la lumiere
 			glm::vec3 color = selectedGameObject->GetColor();
 			if (ImGui::ColorEdit3("Color", glm::value_ptr(color))) {
-				selectedGameObject->GetColor() = color;
+				selectedGameObject->SetColor(color);
 			}
 		}
 

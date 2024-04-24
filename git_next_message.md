@@ -1,3 +1,3 @@
 FIX : Merge
 
-- code de mathias pour la création de gameobject
+- changement de la couleur rétabli
