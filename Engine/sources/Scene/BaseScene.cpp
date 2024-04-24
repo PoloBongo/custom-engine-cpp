@@ -211,6 +211,11 @@ void BaseScene::FixedUpdate()
 void BaseScene::Update()
 {
 	// Mettez � jour chaque objet de la sc�ne avec le delta time
+	for (auto* obj : pendingAddObjects) {
+		rootObjects.push_back(obj);
+	}
+	pendingAddObjects.clear();
+
 	for (const GameObject* root_object : rootObjects)
 	{
 		root_object->Update(TimeModule::GetDeltaTime()); // Mettez � jour chaque objet avec le delta time
