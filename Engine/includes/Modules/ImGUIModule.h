@@ -5,6 +5,7 @@
 #include "Modules/WindowModule.h"
 #include "Scene/SceneManager.h"
 #include "RHIVulkanModule.h"
+#include <cstdarg>
 
 class RHIModule;
 
@@ -119,6 +120,8 @@ public:
 	 */
 	void DrawSettingsWindow();
 
+	void DrawConsoleWindow();
+
 
 	// ----------========== POPUPS ==========---------- //
 
@@ -155,6 +158,9 @@ public:
 	 */
 	void CreateSpecificGameObject(GameObjectType _type, int _otherType = 0);
 
+	void AddLog(std::string _newText) { logs.push_back(_newText); }
+	void ClearLog() { logs.clear(); }
+
 protected:
 	vk::Device device; ///< Périphérique utilisé pour le rendu avec Vulkan.
 	vk::Queue graphicsQueue; ///< File d'attente graphique pour la soumission des commandes Vulkan.
@@ -181,6 +187,8 @@ protected:
 
 	bool textureView = false;
 	bool changeScaleLinked = false;
+
+	std::vector<std::string> logs;
 
 	/**
 	 * @brief Destructeur par défaut.

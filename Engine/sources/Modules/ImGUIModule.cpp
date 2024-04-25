@@ -22,6 +22,9 @@
 
 #include <iostream>
 #include <fstream>
+#include <cstring>
+#include <imgui_internal.h>
+#include <random>
 
 class BaseScene;
 // ----------========== IMGUI SETTINGS ==========---------- //
@@ -244,11 +247,17 @@ void ImGuiModule::GetGui()
 	DrawInspectorWindow();
 	ImGui::End();
 
-	ImGui::SetNextWindowSize(ImVec2(170, 79), ImGuiCond_Always); // Hauteur fixe et non-redimensionnable
-	ImGui::SetNextWindowPos(ImVec2(mainWindowSize.x / 2 - 200 / 2, 0), ImGuiCond_Always); // Ancrage en haut à droite
+	ImGui::SetNextWindowSize(ImVec2(300, 72), ImGuiCond_Always); // Hauteur fixe et non-redimensionnable
+	ImGui::SetNextWindowPos(ImVec2(mainWindowSize.x / 2 - 300 / 2, 0), ImGuiCond_Always); // Ancrage en haut à droite
 	ImGui::Begin("Modes", nullptr, window_flags);
 	DrawModesWindow();
 	ImGui::End();
+
+	//ImGui::SetNextWindowSize(ImVec2(500, 400), ImGuiCond_FirstUseEver);
+	//ImGui::Begin("Console", nullptr, window_flags);
+	DrawConsoleWindow();
+	//ImGui::End();
+
 
 	DrawSettingsWindow();
 }
@@ -389,9 +398,31 @@ void ImGuiModule::DrawInspectorWindow() {
 		if (ImGui::CollapsingHeader("Color")) {
 			if (ImGui::ColorEdit3("Color", glm::value_ptr(color))) {
 				selectedGameObject->SetColor(color);
+				std::ifstream file(selectedGameObject->GetFileModel());
+				if (file.good()) {
+					std::cout << "File good";
+					AddLog("Model file good");
+					std::shared_ptr<lve::LveModel> lve_model = lve::LveModel::CreateModelFromFile(*rhiModule->GetDevice(), selectedGameObject->GetFileModel(), selectedGameObject->GetTexMultiplier(), selectedGameObject->GetColor());
+					selectedGameObject->SetModel(lve_model);
+				}
+				else {
+					std::cout << "File not good :" + selectedGameObject->GetFileModel();
+					AddLog("Warning : Model file not good");
+				}
 			}
 			if (ImGui::Button("Reset Color", ImVec2(115, 20))) {
 				selectedGameObject->SetColor(glm::vec3(1,1,1));
+				std::ifstream file(selectedGameObject->GetFileModel());
+				if (file.good()) {
+					std::cout << "File good";
+					AddLog("Model file good");
+					std::shared_ptr<lve::LveModel> lve_model = lve::LveModel::CreateModelFromFile(*rhiModule->GetDevice(), selectedGameObject->GetFileModel(), selectedGameObject->GetTexMultiplier(), selectedGameObject->GetColor());
+					selectedGameObject->SetModel(lve_model);
+				}
+				else {
+					std::cout << "File not good :" + selectedGameObject->GetFileModel();
+					AddLog("Warning : model file not good");
+				}
 			}
 		}
 
@@ -400,13 +431,22 @@ void ImGuiModule::DrawInspectorWindow() {
 		// Detection de Light et affichage des proprietes de la lumiere
 		Light* lightComponent = selectedGameObject->GetComponent<Light>();
 		if (lightComponent) {
-			// Intensite de la lumiere
-			float intensity = lightComponent->lightIntensity;
-			if (ImGui::DragFloat("Light Intensity", &intensity, 0.1f, 0.0f, 100.0f)) {
-				lightComponent->lightIntensity = intensity;
+			if (ImGui::CollapsingHeader("Light")) 
+			{
+				// Intensite de la lumiere
+				float intensity = lightComponent->lightIntensity;
+				if (ImGui::DragFloat("Light Intensity", &intensity, 0.1f, 0.0f, 100.0f)) {
+					lightComponent->lightIntensity = intensity;
+				}
+				//ImGui::SameLine();
+				if (ImGui::Button("X", ImVec2(20, 20))) {
+					selectedGameObject->RemoveComponent(lightComponent);
+				}
 			}
 		}
 
+		ImGui::Spacing();
+		ImGui::Separator();
 		// Bouton pour ajouter un composant
 		if (ImGui::Button("Add Component")) {
 			ImGui::OpenPopup("AddComponentPopup");
@@ -421,6 +461,16 @@ void ImGuiModule::DrawInspectorWindow() {
 			}
 			ImGui::EndPopup();
 		}
+		ImGui::Spacing();
+		ImGui::Separator();
+
+		char* charBuffer = new char[300];
+		strcpy_s(charBuffer, 300, selectedGameObject->GetDesc().c_str());
+		ImGui::Text("Description");
+		if (ImGui::InputTextMultiline("-", charBuffer, 300)) {
+			selectedGameObject->SetDesc(charBuffer);
+		}
+		delete[] charBuffer;
 	}
 	else {
 		ImGui::Text("No GameObject selected");
@@ -488,6 +538,7 @@ void ImGuiModule::DrawHierarchyWindow() {
 		if (ImGui::MenuItem("Triangle")) {
 			CreateSpecificGameObject(GameObjectType::Multiple,1);
 			std::cout << "Added new GameObject-Plane to current scene." << std::endl;
+			logs.push_back("Added new GameObject-Plane to current scene.");
 		}
 
 		if (ImGui::MenuItem("Capsule")) {
@@ -615,7 +666,7 @@ void ImGuiModule::DrawModesWindow() {
 
 	//std::cout << Engine::GetInstance()->GetEngineMode() << std::endl;
 
-	if (ImGui::Button("Play Button", ImVec2(150, 20))) {
+	if (ImGui::Button("Play Button", ImVec2(110, 20))) {
 		if (Engine::GetInstance()->GetEngineMode() == EngineMode::Editor) {
 			Engine::GetInstance()->PlayEngineMode();
 			std::cout << Engine::GetInstance()->GetEngineMode() << std::endl;
@@ -626,7 +677,9 @@ void ImGuiModule::DrawModesWindow() {
 		}
 	}
 
-	if (ImGui::Button("Pause Button", ImVec2(150, 20))) {
+	ImGui::SameLine();
+
+	if (ImGui::Button("Pause Button", ImVec2(110, 20))) {
 		if (Engine::GetInstance()->GetEngineMode() == EngineMode::Play) {
 			Engine::GetInstance()->PauseEngineMode();
 			std::cout << Engine::GetInstance()->GetEngineMode() << std::endl;
@@ -636,6 +689,24 @@ void ImGuiModule::DrawModesWindow() {
 			std::cout << Engine::GetInstance()->GetEngineMode() << std::endl;
 		}
 	}
+
+	//ImGui::SameLine();
+
+	std::string str = "Mode : ";
+	switch (Engine::GetInstance()->GetEngineMode()) {
+	case EngineMode::Editor:
+		str += "Editor";
+		break;
+	case EngineMode::Play:
+		str += "Play";
+		break;
+	case EngineMode::Pause:
+		str += "Pause";
+		break;
+	default:
+		break;
+	}
+	ImGui::TextColored(ImVec4(1.0f, 0.5f, 0.5f, 1.0f), str.c_str());
 }
 
 
@@ -656,6 +727,47 @@ void ImGuiModule::DrawSettingsWindow() {
 		}
 	}
 	ImGui::End();
+}
+
+void ImGuiModule::DrawConsoleWindow() 
+{
+	if (ImGui::Begin("Console")) {
+		if (ImGui::Button("Clear")) {
+			ClearLog();
+		}
+		//ImGui::SameLine();
+		//if (ImGui::Button("Add")) {
+		//	std::random_device rd;
+		//	std::mt19937 gen(rd());
+		//	std::uniform_int_distribution<> dis(1, 100);
+		//	int randomNumber = dis(gen);
+		//	//AddLog("This is a log message!" + std::to_string(randomNumber));
+		//	//AddLog("Warning : This is a log message!" + std::to_string(randomNumber));
+		//	//AddLog("Error : This is a log message!" + std::to_string(randomNumber));
+		//}
+		ImGui::Separator();
+
+		float scrollHeight = ImGui::GetWindowSize().y - 70;
+
+		ImGui::BeginChild("ScrollingRegion", ImVec2(0, scrollHeight), true, ImGuiWindowFlags_HorizontalScrollbar);
+
+		for (const auto& msg : logs) {
+			if (msg.find("Error") != std::string::npos) {
+				ImGui::TextColored(ImVec4(1.0f, 0.0f, 0.0f, 1.0f), "%s", msg.c_str());
+			}
+			else if (msg.find("Warning") != std::string::npos) {
+				ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), "%s", msg.c_str());
+			}
+			else {
+				ImGui::TextUnformatted(msg.c_str());
+			}
+		}
+		ImGui::EndChild();
+	}
+	ImGui::End();
+	//ImGui::SetWindowSize("Console", ImVec2(400, 265));
+
+
 }
 
 void ImGuiModule::DisplayTransform(Transform* _transform) {

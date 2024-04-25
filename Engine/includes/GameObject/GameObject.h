@@ -153,6 +153,8 @@ class GameObject
 		 */
 		[[nodiscard]] bool GetVisible() const { return isVisible; }
 
+		std::string GetDesc() const { return desc; }
+
 		#pragma endregion
 
 		#pragma region Layer
@@ -400,6 +402,8 @@ class GameObject
 			isVisible = _state;
 		}
 
+		void SetDesc(std::string _newDesc) { desc = _newDesc; }
+
 		#pragma endregion
 
 		#pragma region Layer
@@ -633,6 +637,8 @@ class GameObject
 		std::string             fileModel;
 
 		std::string name = "GameObject"; /**< Le nom de l'objet GameObject. */
+
+		std::string desc = "";
 
 		id_t id; /**< L'identifiant unique de l'objet GameObject. */
 
