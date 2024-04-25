@@ -383,7 +383,7 @@ class BaseScene
 		 *
 		 * @return Un pointeur vers le GameObject créé.
 		 */
-		GameObject* CreateCubeGameObject();
+		GameObject* CreateCubeGameObject(int _type);
 
 		/**
 		 * @brief Crée un nouvel GameObject représentant une lumière.
@@ -398,6 +398,9 @@ class BaseScene
 		 * @return Un pointeur vers le GameObject créé.
 		 */
 		GameObject* CreatePlaneGameObject();
+
+		GameObject* CreateVaseGameObject(int _type);
+
 
 		std::string name; /**< Le nom de la scène. */
 		std::string fileName; /**< Le nom du fichier de la scène. */

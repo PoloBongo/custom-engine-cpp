@@ -1,5 +1,7 @@
 #include "GameObject/PreGameObject/VaseGameObject.h"
 
+#include "GameObject/Components/Transform.h"
+
 
 namespace lve
 {

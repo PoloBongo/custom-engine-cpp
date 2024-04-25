@@ -262,7 +262,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;WIN32_LEAN_AND_MEAN;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)Librairies\stb_lib;$(SolutionDir)Librairies\glm;$(SolutionDir)Librairies\tinyObjLoader;$(SolutionDir)Librairies\glfw-3.4.bin.WIN64\include;$(SolutionDir)Librairies\VulkanSDK\Include;$(SolutionDir)Librairies\FMOD\inc;$(SolutionDir)\Engine;$(SolutionDir)\Engine\includes;$(SolutionDir)Librairies\bullet3_x64-windows\include\bullet;$(SolutionDir)\Engine;$(SolutionDir)\Engine\includes;$(SolutionDir)Librairies\stb_lib;$(SolutionDir)Librairies\Json/include;%(AdditionalIncludeDirectories);$(SolutionDir)Librairies/imgui</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Librairies\stb_lib;$(SolutionDir)Librairies\glm;$(SolutionDir)Librairies\tinyObjLoader;$(SolutionDir)Librairies\glfw-3.4.bin.WIN64\include;$(SolutionDir)Librairies\VulkanSDK\Include;$(SolutionDir)Librairies\FMOD\inc;$(SolutionDir)\Engine;$(SolutionDir)\Engine\includes;$(SolutionDir)Librairies\bullet3_x64-windows\include\bullet;$(SolutionDir)Librairies\Json\include;%(AdditionalIncludeDirectories);$(SolutionDir)Librairies/imgui</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
     </ClCompile>
@@ -281,7 +281,10 @@
       </Command>
     </PreBuildEvent>
     <PostBuildEvent>
-      <Command>$(SolutionDir)\Engine\compile.bat</Command>
+      <Command>call "$(ProjectDir)compile.bat"
+xcopy /E /I /Y "$(ProjectDir)Shaders" "$(TargetDir)Shaders"
+xcopy /E /I /Y "$(ProjectDir)Models" "$(TargetDir)Models"
+xcopy /E /I /Y "$(ProjectDir)Textures" "$(TargetDir)Textures"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='ServerUDP|x64'">
@@ -309,11 +312,10 @@
       </Command>
     </PreBuildEvent>
     <PostBuildEvent>
-      <Command>
-        call $(ProjectDir)compile.bat
-        xcopy /E /I /Y "$(ProjectDir)Shaders" "$(TargetDir)Shaders"
-        xcopy /E /I /Y "$(ProjectDir)Models" "$(TargetDir)Models"
-      </Command>
+      <Command>call "$(ProjectDir)compile.bat"
+xcopy /E /I /Y "$(ProjectDir)Shaders" "$(TargetDir)Shaders"
+xcopy /E /I /Y "$(ProjectDir)Models" "$(TargetDir)Models"
+xcopy /E /I /Y "$(ProjectDir)Textures" "$(TargetDir)Textures"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='ClientUDP|x64'">
@@ -341,7 +343,10 @@
       </Command>
     </PreBuildEvent>
     <PostBuildEvent>
-      <Command>$(SolutionDir)compile.bat</Command>
+      <Command>call "$(ProjectDir)compile.bat"
+xcopy /E /I /Y "$(ProjectDir)Shaders" "$(TargetDir)Shaders"
+xcopy /E /I /Y "$(ProjectDir)Models" "$(TargetDir)Models"
+xcopy /E /I /Y "$(ProjectDir)Textures" "$(TargetDir)Textures"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='ServerTCP|x64'">
@@ -369,7 +374,10 @@
       </Command>
     </PreBuildEvent>
     <PostBuildEvent>
-      <Command>$(SolutionDir)compile.bat</Command>
+      <Command>call "$(ProjectDir)compile.bat"
+xcopy /E /I /Y "$(ProjectDir)Shaders" "$(TargetDir)Shaders"
+xcopy /E /I /Y "$(ProjectDir)Models" "$(TargetDir)Models"
+xcopy /E /I /Y "$(ProjectDir)Textures" "$(TargetDir)Textures"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='ClientTCP|x64'">
@@ -398,7 +406,10 @@
       </Command>
     </PreBuildEvent>
     <PostBuildEvent>
-      <Command>$(SolutionDir)compile.bat</Command>
+      <Command>call "$(ProjectDir)compile.bat"
+xcopy /E /I /Y "$(ProjectDir)Shaders" "$(TargetDir)Shaders"
+xcopy /E /I /Y "$(ProjectDir)Models" "$(TargetDir)Models"
+xcopy /E /I /Y "$(ProjectDir)Textures" "$(TargetDir)Textures"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -409,7 +420,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;WIN32_LEAN_AND_MEAN;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)Librairies\Stb_image;$(SolutionDir)Librairies\FMOD\inc;$(SolutionDir)Librairies\glm;$(SolutionDir)Librairies\tinyObjLoader;$(SolutionDir)Librairies\glfw-3.4.bin.WIN64\include;$(SolutionDir)Librairies\VulkanSDK\Include;%(AdditionalIncludeDirectories);$(SolutionDir)Librairies/imgui;$(SolutionDir)Librairies\bullet3_x64-windows\include\bullet;$(SolutionDir)\Engine;$(SolutionDir)\Engine\includes;$(SolutionDir)Librairies\stb_lib</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Librairies\Stb_image;$(SolutionDir)Librairies\FMOD\inc;$(SolutionDir)Librairies\glm;$(SolutionDir)Librairies\tinyObjLoader;$(SolutionDir)Librairies\glfw-3.4.bin.WIN64\include;$(SolutionDir)Librairies\VulkanSDK\Include;%(AdditionalIncludeDirectories);$(SolutionDir)Librairies/imgui;$(SolutionDir)Librairies\bullet3_x64-windows\include\bullet;$(SolutionDir)\Engine;$(SolutionDir)\Engine\includes;$(SolutionDir)Librairies\stb_lib;$(SolutionDir)Librairies\Json\include</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
@@ -429,11 +440,10 @@
       </Command>
     </PreBuildEvent>
     <PostBuildEvent>
-      <Command>
-        call $(ProjectDir)compile.bat
-        xcopy /E /I /Y "$(ProjectDir)Shaders" "$(TargetDir)Shaders"
-        xcopy /E /I /Y "$(ProjectDir)Models" "$(TargetDir)Models
-        "</Command>
+      <Command>call "$(ProjectDir)compile.bat"
+xcopy /E /I /Y "$(ProjectDir)Shaders" "$(TargetDir)Shaders"
+xcopy /E /I /Y "$(ProjectDir)Models" "$(TargetDir)Models"
+xcopy /E /I /Y "$(ProjectDir)Textures" "$(TargetDir)Textures"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -445,6 +455,7 @@
     <ClCompile Include="..\Librairies\imgui\imgui_tables.cpp" />
     <ClCompile Include="..\Librairies\imgui\imgui_widgets.cpp" />
     <ClCompile Include="includes\Script\Script.h" />
+    <ClCompile Include="sources\GameObject\PreGameObject\VaseGameObject.cpp" />
     <ClCompile Include="sources\Script\GameObjectScript.cpp" />
     <ClCompile Include="sources\Modules\ScriptModule.cpp" />
     <ClCompile Include="sources\Script\Script.cpp" />
@@ -516,6 +527,7 @@
     <ClCompile Include="sources\UDP\Protocol\UnreliableOrdered.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="includes\GameObject\PreGameObject\VaseGameObject.h" />
     <ClInclude Include="includes\Script\GameObjectScript.h" />
     <ClInclude Include="includes\Script\IScript.h" />
     <ClInclude Include="includes\Modules\ScriptModule.h" />

@@ -358,7 +358,7 @@ void BaseScene::TestLoadGameObjects()
 	rootObjects.push_back(sun);
 }
 
-GameObject* BaseScene::CreateCubeGameObject(int _type) {
+GameObject* BaseScene::CreateCubeGameObject(const int _type) {
 
 	if (_type == 0) {
 		lve::LveDevice* device = Engine::GetInstance()->GetModuleManager()->GetModule<RHIModule>()->GetDevice();
@@ -368,6 +368,7 @@ GameObject* BaseScene::CreateCubeGameObject(int _type) {
 		lve::LveDevice* device = Engine::GetInstance()->GetModuleManager()->GetModule<RHIModule>()->GetDevice();
 		return lve::CubeGameObject::CreateColor(*device);
 	}
+	return nullptr;
 }
 
 GameObject* BaseScene::CreateLightGameObject() {
@@ -388,14 +389,15 @@ GameObject* BaseScene::CreatePlaneGameObject() {
 	return lve::PlaneGameObject::Create(*device);
 }
 
-GameObject* BaseScene::CreateVaseGameObject(int type) {
+GameObject* BaseScene::CreateVaseGameObject(const int _type) {
 
-	if (type == 0) {
+	if (_type == 0) {
 		lve::LveDevice* device = Engine::GetInstance()->GetModuleManager()->GetModule<RHIModule>()->GetDevice();
 		return lve::VaseGameObject::CreateFlat(*device);
 	}
-	else if (type == 1) {
+	else if (_type == 1) {
 		lve::LveDevice* device = Engine::GetInstance()->GetModuleManager()->GetModule<RHIModule>()->GetDevice();
 		return lve::VaseGameObject::CreateSmooth(*device);
 	}
+	return nullptr;
 }

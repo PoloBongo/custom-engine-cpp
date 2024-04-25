@@ -3,9 +3,19 @@
 
 #include <iostream>
 
+#include "Engine/CoreEngine.h"
 int main()
 {
-    std::cout << "Hello World!\n";
+	Engine* engine = Engine::GetInstance();
+	engine->Initialize(_h_instance);
+
+	//engine->AddScript<RedCube>();
+	engine->AddScript<SimpleScene>();
+	engine->AddScript<Axis>();
+
+	engine->AddScript<CameraScript>();
+
+	engine->Start();
 }
 
 // Run program: Ctrl + F5 or Debug > Start Without Debugging menu

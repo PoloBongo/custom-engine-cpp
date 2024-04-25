@@ -1,4 +1,5 @@
-ENH : final Doc
+FIX : .exe
 
-- fin de l'ajout de documentation
-- nettoyage des dossiers
+- .exe marche
+- déplacement des textures dans l'engine
+- ajout de la copy des textures après le build
