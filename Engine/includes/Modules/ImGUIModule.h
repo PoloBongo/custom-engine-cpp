@@ -1,9 +1,27 @@
 #pragma once
 
+#include <imgui.h>
+#include <imgui_impl_glfw.h>
+#include <imgui_impl_vulkan.h>
+
+#include "lve_renderer.h"
+#include "rhi.h"
+
 #include <functional>
+
 #include "Module.h"
+#include "ModuleManager.h"
 #include "Modules/WindowModule.h"
+#include "Modules/SoundSystemModule.h"
+#include "Modules/WindowModule.h"
+
+#include "ImGUIInterface.h"
+#include "ImGUIAudio.h"
+
+#include "GameObject/PreGameObject/LightGameObject.h"
+#include "Transform.h"
 #include "Scene/SceneManager.h"
+#include "TCP/Errors.h"
 
 class RHIModule;
 
@@ -186,6 +204,8 @@ protected:
 	char messageBuffer[256] = ""; // Buffer pour le message à envoyer
 	std::vector<std::string> messageLogs; // Liste des messages reçus
 
+	ImGUIAudio* imGuiAudio; ///< Interface utilisateur pour les contrôles audio.
+	SoundSystemModule* soundModule; ///< Module de gestion du système audio.
 
 	/**
 	 * @brief Destructeur par défaut.

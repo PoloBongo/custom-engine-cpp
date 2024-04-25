@@ -19,6 +19,7 @@ void ModuleManager::CreateDefaultModules()
 	CreateModule<RHIVulkanModule>();
 	CreateModule<TimeModule>();
 	CreateModule<ImGuiModule>();
+	CreateModule<SoundSystemModule>();
 }
 
 void ModuleManager::Init() const

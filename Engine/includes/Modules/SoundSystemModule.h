@@ -108,6 +108,43 @@ class SoundSystemModule final : public Module
 		 */
 		static int GetLoopCount(SoundClass _pSound, int* p_loopCount);
 
+
+		/**
+		* @brief Obtient le volume principal du système audio
+		* @return Le volume principal du système audio
+		*/
+		float GetMasterVolume() const;
+
+		/**
+		* @brief Définit le volume principal du système audio
+		* @param _volume Volume principal à définir
+		*/
+		void SetMasterVolume(float _volume);
+
+		/**
+		* @brief Joue un son spécifié
+		* @param _filePath Chemin du fichier audio à jouer
+		*/
+		bool IsPlaying() const;
+
+		/*
+		* @brief Joue un son spécifié ou met en pause le son actuel
+		*/
+		void TogglePlayPause();
+
+		/*
+		* @brief Arrête le son actuellement joué
+		*/
+		void StopSound();
+
+		/**
+		* @brief Charge et joue un fichier audio spécifié
+		* @param _filePath Chemin du fichier audio à charger et jouer
+		*/
+		void loadAndPlaySound(const char* _filePath);
+
+		std::string GetCurrentTrackName() const; // Obtenir le nom de la piste actuelle
+
 		/**
 		 * @brief Attache un groupe de canaux à un port spécifié pour le rendu audio
 		 * @param _portType Type de port auquel attacher le groupe de canaux
@@ -144,9 +181,15 @@ class SoundSystemModule final : public Module
 
 
 		/**
-		    * @brief Initialise le module.
-		    */
+		* @brief Initialise le module.
+		*/
 		void Init() override;
+
+		/**
+		* @brief Vérifie si le module est initialisé.
+		* @return Vrai si le module est initialisé, sinon faux.
+		*/
+		bool IsInitialized() const { return isInitialized; }
 
 		/**
 		 * @brief Démarre le module.
@@ -196,6 +239,13 @@ class SoundSystemModule final : public Module
 	private:
 		FMOD::System*       system;       // Pointeur vers l'objet système FMOD
 		FMOD::ChannelGroup* channelGroup; // Pointeur vers le groupe de canaux utilisé
+		FMOD::Channel* mainChannel; // Canal principal
+		FMOD::Channel* currentChannel = nullptr; // Canal actuel
+		SoundClass currentSound = nullptr; // Actuellement son joué
+		float masterVolume; // Volume principal
+		bool isPlaying = false; // Indique si un son est actuellement joué
+		std::string currentTrackName; // Nom de la piste actuelle
+		bool isInitialized; // Indique si le module est initialisé
 
 		// Variables pour la distance minimum et maximum d'un son 3D
 		float min;

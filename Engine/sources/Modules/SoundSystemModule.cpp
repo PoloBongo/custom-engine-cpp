@@ -2,25 +2,27 @@
 #include <fmod_errors.h>
 #include <string>
 
-SoundSystemModule::SoundSystemModule()
-{
-	if (System_Create(&system) != FMOD_OK)
-	{
-		std::cout << "une erreur s'est produit lors de la création du Système de FMOD" << std::endl;
-		return;
+SoundSystemModule::SoundSystemModule() : isInitialized(false) {
+	FMOD_RESULT result = System_Create(&system);
+	if (result != FMOD_OK) {
+		std::cerr << "Erreur lors de la création du système FMOD: " << FMOD_ErrorString(result) << std::endl;
+		return;  // Important pour éviter d'exécuter les étapes suivantes si le système n'est pas créé
 	}
 
 	int driverCount = 0;
 	system->getNumDrivers(&driverCount);
-
-	if (driverCount == 0)
-	{
-		std::cout << "FMOD n'a pas trouvé de sortie de son" << std::endl;
+	if (driverCount == 0) {
+		std::cerr << "FMOD n'a pas trouvé de sortie de son." << std::endl;
 		return;
 	}
 
-	// Permet d'init le nombre de musique joué simultanément
-	system->init(36, FMOD_LOOP_OFF, nullptr);
+	result = system->init(36, FMOD_INIT_NORMAL, nullptr);
+	if (result != FMOD_OK) {
+		std::cerr << "Erreur lors de l'initialisation de FMOD: " << FMOD_ErrorString(result) << std::endl;
+		return;
+	}
+
+	std::cout << "SoundSystemModule initialisé avec succès." << std::endl;
 }
 
 // Permet la création du son avec son chemin d'accès //
@@ -69,6 +71,14 @@ void SoundSystemModule::PlaySound(const SoundClass _pSound, const bool _isPlay, 
 	*p_channelPtr = channel;
 }
 
+void SoundSystemModule::StopSound() {
+	if (mainChannel) {
+		mainChannel->stop();
+		mainChannel = nullptr;	// Réinitialisez le canal principal après l'arrêt
+		isPlaying = false;
+	}
+}
+
 // Permet de libérer la mémoire et de couper le son. //
 void SoundSystemModule::ReleaseSound(const SoundClass _pSound)
 {
@@ -91,6 +101,60 @@ void SoundSystemModule::CreateChannelGroup(FMOD::ChannelGroup** channelGroup) co
 void SoundSystemModule::AddSoundToGroup(const SoundClass _pSound, FMOD::ChannelGroup* p_channelGroup) const
 {
 	system->playSound(_pSound, p_channelGroup, false, nullptr);
+}
+
+float SoundSystemModule::GetMasterVolume() const {
+	float volume;
+	if (mainChannel) {
+		mainChannel->getVolume(&volume);
+	}
+	else {
+		volume = 0.0f; // Aucun canal actif, retourne 0 ou un état de volume inactif
+	}
+	return volume;
+}
+
+void SoundSystemModule::SetMasterVolume(float _volume) {
+	if (mainChannel) {  
+		mainChannel->setVolume(_volume);
+	}
+}
+
+bool SoundSystemModule::IsPlaying() const {
+	return isPlaying;
+}
+
+void SoundSystemModule::TogglePlayPause() {
+	if (mainChannel) {
+		bool currentlyPaused;
+		mainChannel->getPaused(&currentlyPaused);
+		mainChannel->setPaused(!currentlyPaused);
+		isPlaying = !currentlyPaused;
+	}
+}
+
+std::string SoundSystemModule::GetCurrentTrackName() const {
+	return currentTrackName;
+}
+
+void SoundSystemModule::loadAndPlaySound(const char* filePath) {
+	if (!isPlaying || currentTrackName != filePath) {  // Vérifier si le son n'est pas déjà en cours de lecture ou si un nouveau fichier est choisi
+		if (mainChannel) {
+			mainChannel->stop();  // Arrêtez le son actuel s'il y en a un
+		}
+
+		FMOD::Sound* newSound;
+		FMOD_RESULT result = system->createSound(filePath, FMOD_DEFAULT, nullptr, &newSound);
+		if (result == FMOD_OK) {
+			system->playSound(newSound, nullptr, false, &mainChannel);
+			currentSound = newSound;
+			currentTrackName = filePath;
+			isPlaying = true;
+		}
+		else {
+			std::cerr << "Failed to load sound: " << FMOD_ErrorString(result) << std::endl;
+		}
+	}
 }
 
 // Implémentation des fonctions pour le routing vers les ports et la gestion de la réverbération //
@@ -118,12 +182,39 @@ FMOD_RESULT SoundSystemModule::GetReverbProperties(const int _instance, FMOD_REV
 
 void SoundSystemModule::Init()
 {
+	if (FMOD::System_Create(&system) != FMOD_OK) {
+		std::cerr << "Erreur lors de la création du système FMOD." << std::endl;
+		isInitialized = false;
+		return;
+	}
+
+	int driverCount = 0;
+	system->getNumDrivers(&driverCount);
+	if (driverCount == 0) {
+		std::cerr << "FMOD n'a pas trouvé de sortie de son." << std::endl;
+		isInitialized = false;
+		return;
+	}
+
+	if (system->init(36, FMOD_INIT_NORMAL, nullptr) != FMOD_OK) {
+		std::cerr << "Échec de l'initialisation de FMOD." << std::endl;
+		isInitialized = false;
+		return;
+	}
+
+	isInitialized = true;
+
 	Module::Init();
 }
 
 void SoundSystemModule::Start()
 {
+	if (!isInitialized) {
+		std::cerr << "Tentative de démarrage d'un module non initialisé." << std::endl;
+		return;
+	}
 	Module::Start();
+	std::cout << "SoundSystemModule::Start appelé." << std::endl;
 }
 
 void SoundSystemModule::FixedUpdate()
@@ -133,6 +224,9 @@ void SoundSystemModule::FixedUpdate()
 
 void SoundSystemModule::Update()
 {
+	if (system) {
+		system->update();
+	}
 	Module::Update();
 }
 

@@ -1,21 +1,4 @@
 ﻿#include "Modules/ImGUIModule.h"
-#include "lve_renderer.h"
-#include "ModuleManager.h"
-#include "Modules/WindowModule.h"
-#include "Modules/ImGUIModule.h"
-
-#include "ImGUIInterface.h"
-
-#include <imgui.h>
-#include <imgui_impl_glfw.h>
-#include <imgui_impl_vulkan.h>
-
-#include "rhi.h"
-
-#include "GameObject/PreGameObject/LightGameObject.h"
-#include "Transform.h"
-#include "Scene/SceneManager.h"
-#include "TCP/Errors.h"
 
 class BaseScene;
 // ----------========== IMGUI SETTINGS ==========---------- //
@@ -50,6 +33,15 @@ void ImGuiModule::Init()
 	//_mainDeletionQueue.push_back([=]() {
 	//	device.destroyCommandPool(_immCommandPool);
 	//});
+
+	soundModule = new SoundSystemModule();
+	soundModule->Init();
+	if (!soundModule->IsInitialized()) {
+		std::cerr << "Erreur: Initialisation de SoundSystemModule a échoué." << std::endl;
+		return;
+	}
+
+	imGuiAudio = new ImGUIAudio(soundModule);
 }
 
 void ImGuiModule::Start()
@@ -465,7 +457,9 @@ void ImGuiModule::DrawHierarchyWindow() {
 
 void ImGuiModule::DrawSettingsWindow() {
 	if (ImGui::Begin("Settings")) {
-		ImGUIInterface::EditTheme();
+		if (ImGui::CollapsingHeader("Interface")) {
+			ImGUIInterface::EditTheme();
+		}
 		if (ImGui::CollapsingHeader("Input")) {
 			// Input settings
 		}
@@ -474,6 +468,7 @@ void ImGuiModule::DrawSettingsWindow() {
 		}
 		if (ImGui::CollapsingHeader("Audio")) {
 			// Audio settings
+			imGuiAudio->DrawAudioControls(); //Pointeur vers la fonction DrawAudioControls
 		}
 		if (ImGui::CollapsingHeader("Network")) {
 			//Network settings
