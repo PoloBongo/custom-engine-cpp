@@ -304,6 +304,23 @@ void ImGuiModule::DrawInspectorWindow() {
 		}
 		ShowRenamePopup();
 
+		bool visibility = selectedGameObject->GetVisible();
+		if (ImGui::Checkbox("Visible", &visibility)) {
+			selectedGameObject->SetVisible(visibility);
+		}
+
+		for (size_t j = 0; j < selectedGameObject->GetChildren().size(); ++j) {
+			const auto& gameObject = selectedGameObject->GetChildren()[j];
+
+			ImGui::PushID(j); // Identifiant unique pour chaque GameObject
+
+			std::string name = gameObject->GetName();
+			const char* namePtr = name.c_str();
+			if (ImGui::Button(namePtr, ImVec2(50,50))) {
+				selectedGameObject = gameObject;
+			}
+		}
+
 		// Affichage des propriétés de transformation
 		if (ImGui::CollapsingHeader("Transform")) {
 			DisplayTransform(selectedGameObject->GetTransform());
@@ -368,6 +385,16 @@ void ImGuiModule::DrawInspectorWindow() {
 			}
 		}
 
+		glm::vec3 color = selectedGameObject->GetColor();
+		if (ImGui::CollapsingHeader("Color")) {
+			if (ImGui::ColorEdit3("Color", glm::value_ptr(color))) {
+				selectedGameObject->SetColor(color);
+			}
+			if (ImGui::Button("Reset Color", ImVec2(115, 20))) {
+				selectedGameObject->SetColor(glm::vec3(1,1,1));
+			}
+		}
+
 
 
 		// Detection de Light et affichage des proprietes de la lumiere
@@ -377,12 +404,6 @@ void ImGuiModule::DrawInspectorWindow() {
 			float intensity = lightComponent->lightIntensity;
 			if (ImGui::DragFloat("Light Intensity", &intensity, 0.1f, 0.0f, 100.0f)) {
 				lightComponent->lightIntensity = intensity;
-			}
-
-			// Couleur de la lumiere
-			glm::vec3 color = selectedGameObject->GetColor();
-			if (ImGui::ColorEdit3("Color", glm::value_ptr(color))) {
-				selectedGameObject->SetColor(color);
 			}
 		}
 
@@ -642,21 +663,52 @@ void ImGuiModule::DisplayTransform(Transform* _transform) {
 
 	// Position
 	glm::vec3 position = _transform->GetPosition();
-	if (ImGui::DragFloat3("Position", &position[0])) {
+	if (ImGui::DragFloat3("Position", &position[0], 0.1f, 0.0f, 0.0f, "%.2f")) {
 		_transform->SetPosition(position);
+	}
+	if (ImGui::Button("Position Reset", ImVec2(110, 25))) {
+		_transform->SetPosition(glm::vec3(0, 0, 0));
 	}
 
 	// Rotation
 	glm::vec3 rotationDegrees = _transform->GetRotationDegrees();
-	if (ImGui::DragFloat3("Rotation", &rotationDegrees[0])) {
+	if (ImGui::DragFloat3("Rotation", &rotationDegrees[0], 0.1f, 0.0f, 0.0f, "%.2f")) {
 		_transform->SetRotationDegrees(rotationDegrees);
+	}
+	if (ImGui::Button("Rotation Reset", ImVec2(110,25))) {
+		_transform->SetRotationDegrees(glm::vec3(0,0,0));
 	}
 
 	// Scale
 	glm::vec3 scale = _transform->GetScale();
-	if (ImGui::DragFloat3("Scale", &scale[0])) {
+	glm::vec3 scale_buff = _transform->GetScale();
+	if (ImGui::DragFloat3("Scale", &scale[0],0.1f,0.0f,0.0f,"%.2f")) {
+		if (changeScaleLinked) {
+			if (scale.x - scale_buff.x != 0) {
+				scale.y += scale.x - scale_buff.x;
+				scale.z += scale.x - scale_buff.x;
+			}
+			else if (scale.y - scale_buff.y != 0) {
+				scale.x += scale.y - scale_buff.y;
+				scale.z += scale.y - scale_buff.y;
+			}
+			else if (scale.z - scale_buff.z != 0) {
+				scale.x += scale.z - scale_buff.z;
+				scale.y += scale.y - scale_buff.y;
+			}
+		}
 		_transform->SetScale(scale);
 	}
+
+
+	if (ImGui::Button("Scale Reset", ImVec2(110, 25))) {
+		_transform->SetScale(glm::vec3(1, 1, 1));
+	}
+
+	if (ImGui::Checkbox("Linked Change", &changeScaleLinked)) {
+
+	}
+
 }
 
 // ----------========== POPUPS ==========---------- //

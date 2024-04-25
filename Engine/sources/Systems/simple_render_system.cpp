@@ -76,7 +76,7 @@ namespace lve
 
 		for (const auto& game_object : _gameObjects)
 		{
-			if (game_object->GetModel() == nullptr) continue;
+			if (game_object->GetModel() == nullptr || !game_object->GetVisible()) continue;
 
 			if (game_object->GetTexture() > _DescriptorSetsAll->size() - 1)
 			{

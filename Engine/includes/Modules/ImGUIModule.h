@@ -180,6 +180,7 @@ protected:
 	std::vector<bool> isOpen; ///< Vecteur pour suivre l'état ouvert/fermé des différents panneaux de l'interface utilisateur.
 
 	bool textureView = false;
+	bool changeScaleLinked = false;
 
 	/**
 	 * @brief Destructeur par défaut.

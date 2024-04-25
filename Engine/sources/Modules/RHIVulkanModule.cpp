@@ -139,6 +139,8 @@ void RHIVulkanModule::Start()
 	AddTextureToPool("../Textures/gras.truc"); // TEST	
 	AddTextureToPool("../Textures/noobtex.png");	
 	AddTextureToPool("../Textures/sand1.png");
+	AddTextureToPool("../Textures/sand2.png");
+	AddTextureToPool("../Textures/sand3.png");
 
 	simpleRenderSystem = new lve::SimpleRenderSystem{
 		*p_lveDevice, p_lveRenderer->GetSwapChainRenderPass(), global_set_layout->GetDescriptorSetLayout()
