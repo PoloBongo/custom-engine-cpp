@@ -354,12 +354,14 @@ void ImGuiModule::DrawInspectorWindow() {
 				std::ifstream file(selectedGameObject->GetFileModel());
 				if (file.good()) {
 					std::cout << "File good";
+					AddLog("Model file good");
 					selectedGameObject->SetTexMultiplier(textureMulti);
 					std::shared_ptr<lve::LveModel> lve_model = lve::LveModel::CreateModelFromFile(*rhiModule->GetDevice(), selectedGameObject->GetFileModel(), selectedGameObject->GetTexMultiplier());
 					selectedGameObject->SetModel(lve_model);
 				}
 				else {
 					std::cout << "File not good :" + selectedGameObject->GetFileModel();
+					AddLog("Warning : Model file not good");
 				}
 			}
 			//ImGui::SameLine();
@@ -367,12 +369,14 @@ void ImGuiModule::DrawInspectorWindow() {
 				std::ifstream file(selectedGameObject->GetFileModel());
 				if (file.good()) {
 					std::cout << "File good";
+					AddLog("Model file good");
 					selectedGameObject->SetTexMultiplier(1.0f);
 					std::shared_ptr<lve::LveModel> lve_model = lve::LveModel::CreateModelFromFile(*rhiModule->GetDevice(), selectedGameObject->GetFileModel(), selectedGameObject->GetTexMultiplier());
 					selectedGameObject->SetModel(lve_model);
 				}
 				else {
 					std::cout << "File not good :" + selectedGameObject->GetFileModel();
+					AddLog("Warning : Model file not good");
 				}
 			}
 
@@ -491,75 +495,90 @@ void ImGuiModule::DrawHierarchyWindow() {
 		if (ImGui::MenuItem("Cube")) {
 			CreateSpecificGameObject(GameObjectType::Cube);
 			std::cout << "Added new GameObject-Cube to current scene." << std::endl;
+			AddLog("Added new GameObject-Cube to current scene.");
 		}
 		if (ImGui::MenuItem("Colored Cube")) {
 			CreateSpecificGameObject(GameObjectType::Cube,1);
 			std::cout << "Added new GameObject-Cube to current scene." << std::endl;
+			AddLog("Added new GameObject-Cube to current scene.");
 		}
 		if (ImGui::MenuItem("Light")) {
 			CreateSpecificGameObject(GameObjectType::Light);
 			std::cout << "Added new GameObject-Light to current scene." << std::endl;
+			AddLog("Added new GameObject-Light to current scene.");
 
 		}
 		if (ImGui::MenuItem("Plane")) {
 			CreateSpecificGameObject(GameObjectType::Plane);
 			std::cout << "Added new GameObject-Plane to current scene." << std::endl;
+			AddLog("Added new GameObject-Plane to current scene.");
 
 		}
 		if (ImGui::MenuItem("Vase Flat")) {
 			CreateSpecificGameObject(GameObjectType::Vase);
-			std::cout << "Added new GameObject-Plane to current scene." << std::endl;
+			std::cout << "Added new GameObject-Vase Flat to current scene." << std::endl;
+			AddLog("Added new GameObject-Vase Flat to current scene.");
 		}
 		if (ImGui::MenuItem("Vase Smooth")) {
 			CreateSpecificGameObject(GameObjectType::Vase,1);
-			std::cout << "Added new GameObject-Plane to current scene." << std::endl;
+			std::cout << "Added new GameObject-Vase Smooth to current scene." << std::endl;
+			AddLog("Added new GameObject-Vase Smooth to current scene.");
 		}
 
 		if (ImGui::MenuItem("Girl")) {
 			CreateSpecificGameObject(GameObjectType::Girl);
-			std::cout << "Added new GameObject-Plane to current scene." << std::endl;
+			std::cout << "Added new GameObject-Girl to current scene." << std::endl;
+			AddLog("Added new GameObject-Girl to current scene.");
 		}
 
 		if (ImGui::MenuItem("Noob")) {
 			CreateSpecificGameObject(GameObjectType::Noob);
-			std::cout << "Added new GameObject-Plane to current scene." << std::endl;
+			std::cout << "Added new GameObject-Noob to current scene." << std::endl;
+			AddLog("Added new GameObject-Noob to current scene.");
 		}
 
 		if (ImGui::MenuItem("Sphere")) {
 			CreateSpecificGameObject(GameObjectType::Sphere);
-			std::cout << "Added new GameObject-Plane to current scene." << std::endl;
+			std::cout << "Added new GameObject-Sphere to current scene." << std::endl;
+			AddLog("Added new GameObject-Sphere to current scene.");
 		}
 
 		if (ImGui::MenuItem("Cone")) {
 			CreateSpecificGameObject(GameObjectType::Multiple,0);
-			std::cout << "Added new GameObject-Plane to current scene." << std::endl;
+			std::cout << "Added new GameObject-Cone to current scene." << std::endl;
+			AddLog("Added new GameObject-Cone to current scene.");
 		}
 
 		if (ImGui::MenuItem("Triangle")) {
 			CreateSpecificGameObject(GameObjectType::Multiple,1);
-			std::cout << "Added new GameObject-Plane to current scene." << std::endl;
-			logs.push_back("Added new GameObject-Plane to current scene.");
+			std::cout << "Added new GameObject-Triangle to current scene." << std::endl;
+			AddLog("Added new GameObject-Triangle to current scene.");
 		}
 
 		if (ImGui::MenuItem("Capsule")) {
 			CreateSpecificGameObject(GameObjectType::Multiple, 2);
-			std::cout << "Added new GameObject-Plane to current scene." << std::endl;
+			std::cout << "Added new GameObject-Capsule to current scene." << std::endl;
+			AddLog("Added new GameObject-Capsule to current scene.");
 		}
 		if (ImGui::MenuItem("Tube")) {
 			CreateSpecificGameObject(GameObjectType::Multiple, 3);
-			std::cout << "Added new GameObject-Plane to current scene." << std::endl;
+			std::cout << "Added new GameObject-Tube to current scene." << std::endl;
+			AddLog("Added new GameObject-Tube to current scene.");
 		}
 		if (ImGui::MenuItem("Anneau")) {
 			CreateSpecificGameObject(GameObjectType::Multiple, 4);
-			std::cout << "Added new GameObject-Plane to current scene." << std::endl;
+			std::cout << "Added new GameObject-Anneau to current scene." << std::endl;
+			AddLog("Added new GameObject-Anneau to current scene.");
 		}
 		if (ImGui::MenuItem("Cylindre")) {
 			CreateSpecificGameObject(GameObjectType::Multiple, 5);
-			std::cout << "Added new GameObject-Plane to current scene." << std::endl;
+			std::cout << "Added new GameObject-Cylindre to current scene." << std::endl;
+			AddLog("Added new GameObject-Cylindre to current scene.");
 		}
 		if (ImGui::MenuItem("Cylindre Coupe")) {
 			CreateSpecificGameObject(GameObjectType::Multiple, 6);
-			std::cout << "Added new GameObject-Plane to current scene." << std::endl;
+			std::cout << "Added new GameObject-Cylindre Coupe to current scene." << std::endl;
+			AddLog("Added new GameObject-Cylindre Coupe to current scene.");
 		}
 
 
@@ -735,38 +754,37 @@ void ImGuiModule::DrawConsoleWindow()
 		if (ImGui::Button("Clear")) {
 			ClearLog();
 		}
-		//ImGui::SameLine();
-		//if (ImGui::Button("Add")) {
-		//	std::random_device rd;
-		//	std::mt19937 gen(rd());
-		//	std::uniform_int_distribution<> dis(1, 100);
-		//	int randomNumber = dis(gen);
-		//	//AddLog("This is a log message!" + std::to_string(randomNumber));
-		//	//AddLog("Warning : This is a log message!" + std::to_string(randomNumber));
-		//	//AddLog("Error : This is a log message!" + std::to_string(randomNumber));
-		//}
+
+		bool filterError = GetFilterError();
+		bool filterSimple = GetFilterSimple();
+		bool filterWarning = GetFilterWarning();
+
+		ImGui::SameLine();
+		if (ImGui::Checkbox("Error", &filterError)) { SetFilterError(filterError); }
+		ImGui::SameLine();
+		if (ImGui::Checkbox("Warning", &filterWarning)) { SetFilterWarning(filterWarning); }
+		ImGui::SameLine();
+		if (ImGui::Checkbox("Simple", &filterSimple)) { SetFilterSimple(filterSimple); }
 		ImGui::Separator();
 
 		float scrollHeight = ImGui::GetWindowSize().y - 70;
 
 		ImGui::BeginChild("ScrollingRegion", ImVec2(0, scrollHeight), true, ImGuiWindowFlags_HorizontalScrollbar);
 
-		for (const auto& msg : logs) {
-			if (msg.find("Error") != std::string::npos) {
-				ImGui::TextColored(ImVec4(1.0f, 0.0f, 0.0f, 1.0f), "%s", msg.c_str());
+		for (const auto& msg : (*logs)) {
+			if (GetFilterError() && msg.find("Error") != std::string::npos) {
+				ImGui::TextColored(ImVec4(1.0f, 0.0f, 0.0f, 1.0f), msg.c_str());
 			}
-			else if (msg.find("Warning") != std::string::npos) {
-				ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), "%s", msg.c_str());
+			else if (GetFilterWarning() && msg.find("Warning") != std::string::npos) {
+				ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), msg.c_str());
 			}
-			else {
+			else if (GetFilterSimple()){
 				ImGui::TextUnformatted(msg.c_str());
 			}
 		}
 		ImGui::EndChild();
 	}
 	ImGui::End();
-	//ImGui::SetWindowSize("Console", ImVec2(400, 265));
-
 
 }
 

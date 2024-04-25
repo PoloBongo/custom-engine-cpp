@@ -158,8 +158,16 @@ public:
 	 */
 	void CreateSpecificGameObject(GameObjectType _type, int _otherType = 0);
 
-	void AddLog(std::string _newText) { logs.push_back(_newText); }
-	void ClearLog() { logs.clear(); }
+	void AddLog(std::string _newText) { logs->push_back(_newText); }
+	void ClearLog() { logs->clear(); }
+
+	bool GetFilterWarning() { return filterWarning; }
+	bool GetFilterError() { return filterError; }
+	bool GetFilterSimple() { return filterSimple; }
+
+	void SetFilterWarning(bool _newState) { filterWarning = _newState; }
+	void SetFilterError(bool _newState) { filterError = _newState; }
+	void SetFilterSimple(bool _newState) { filterSimple = _newState; }
 
 protected:
 	vk::Device device; ///< Périphérique utilisé pour le rendu avec Vulkan.
@@ -187,8 +195,11 @@ protected:
 
 	bool textureView = false;
 	bool changeScaleLinked = false;
+	bool filterSimple = true;
+	bool filterError = true;
+	bool filterWarning = true;
 
-	std::vector<std::string> logs;
+	std::vector<std::string>* logs = new std::vector<std::string>();
 
 	/**
 	 * @brief Destructeur par défaut.
