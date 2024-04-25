@@ -9,6 +9,10 @@
 #include "GameObject/PreGameObject/LightGameObject.h"
 #include "GameObject/PreGameObject/PlaneGameObject.h"
 #include "GameObject/PreGameObject/VaseGameObject.h"
+#include "GameObject/PreGameObject/GirlGameObject.h"
+#include "GameObject/PreGameObject/NoobGameObject.h"
+#include "GameObject/PreGameObject/SphereGameObject.h"
+#include "GameObject/PreGameObject/MultipleGameObject.h"
 #include "Modules/TimeModule.h"
 
 
@@ -396,5 +400,50 @@ GameObject* BaseScene::CreateVaseGameObject(int type) {
 	else if (type == 1) {
 		lve::LveDevice* device = Engine::GetInstance()->GetModuleManager()->GetModule<RHIModule>()->GetDevice();
 		return lve::VaseGameObject::CreateSmooth(*device);
+	}
+}
+
+GameObject* BaseScene::CreateGirlGameObject() {
+	lve::LveDevice* device = Engine::GetInstance()->GetModuleManager()->GetModule<RHIModule>()->GetDevice();
+	return lve::GirlGameObject::Create(*device);
+}
+
+GameObject* BaseScene::CreateNoobGameObject() {
+	lve::LveDevice* device = Engine::GetInstance()->GetModuleManager()->GetModule<RHIModule>()->GetDevice();
+	return lve::NoobGameObject::Create(*device);
+}
+
+GameObject* BaseScene::CreateSphereGameObject() {
+	lve::LveDevice* device = Engine::GetInstance()->GetModuleManager()->GetModule<RHIModule>()->GetDevice();
+	return lve::SphereGameObject::Create(*device);
+}
+
+GameObject* BaseScene::CreateMultipleGameObject(int _type) {
+	lve::LveDevice* device = Engine::GetInstance()->GetModuleManager()->GetModule<RHIModule>()->GetDevice();
+	switch (_type)
+	{
+	case 0:
+		return lve::MultipleGameObject::CreateCone(*device);
+		break;
+	case 1:
+		return lve::MultipleGameObject::CreateTriangle(*device);
+		break;
+	case 2:
+		return lve::MultipleGameObject::CreateCapsule(*device);
+		break;
+	case 3:
+		return lve::MultipleGameObject::CreateTube(*device);
+		break;
+	case 4:
+		return lve::MultipleGameObject::CreateAnneau(*device);
+		break;
+	case 5:
+		return lve::MultipleGameObject::CreateCylindre(*device);
+		break;
+	case 6:
+		return lve::MultipleGameObject::CreateCylindreCoupe(*device);
+		break;
+	default:
+		break;
 	}
 }

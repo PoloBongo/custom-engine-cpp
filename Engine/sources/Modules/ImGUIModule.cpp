@@ -443,6 +443,54 @@ void ImGuiModule::DrawHierarchyWindow() {
 			CreateSpecificGameObject(GameObjectType::Vase,1);
 			std::cout << "Added new GameObject-Plane to current scene." << std::endl;
 		}
+
+		if (ImGui::MenuItem("Girl")) {
+			CreateSpecificGameObject(GameObjectType::Girl);
+			std::cout << "Added new GameObject-Plane to current scene." << std::endl;
+		}
+
+		if (ImGui::MenuItem("Noob")) {
+			CreateSpecificGameObject(GameObjectType::Noob);
+			std::cout << "Added new GameObject-Plane to current scene." << std::endl;
+		}
+
+		if (ImGui::MenuItem("Sphere")) {
+			CreateSpecificGameObject(GameObjectType::Sphere);
+			std::cout << "Added new GameObject-Plane to current scene." << std::endl;
+		}
+
+		if (ImGui::MenuItem("Cone")) {
+			CreateSpecificGameObject(GameObjectType::Multiple,0);
+			std::cout << "Added new GameObject-Plane to current scene." << std::endl;
+		}
+
+		if (ImGui::MenuItem("Triangle")) {
+			CreateSpecificGameObject(GameObjectType::Multiple,1);
+			std::cout << "Added new GameObject-Plane to current scene." << std::endl;
+		}
+
+		if (ImGui::MenuItem("Capsule")) {
+			CreateSpecificGameObject(GameObjectType::Multiple, 2);
+			std::cout << "Added new GameObject-Plane to current scene." << std::endl;
+		}
+		if (ImGui::MenuItem("Tube")) {
+			CreateSpecificGameObject(GameObjectType::Multiple, 3);
+			std::cout << "Added new GameObject-Plane to current scene." << std::endl;
+		}
+		if (ImGui::MenuItem("Anneau")) {
+			CreateSpecificGameObject(GameObjectType::Multiple, 4);
+			std::cout << "Added new GameObject-Plane to current scene." << std::endl;
+		}
+		if (ImGui::MenuItem("Cylindre")) {
+			CreateSpecificGameObject(GameObjectType::Multiple, 5);
+			std::cout << "Added new GameObject-Plane to current scene." << std::endl;
+		}
+		if (ImGui::MenuItem("Cylindre Coupe")) {
+			CreateSpecificGameObject(GameObjectType::Multiple, 6);
+			std::cout << "Added new GameObject-Plane to current scene." << std::endl;
+		}
+
+
 		ImGui::EndPopup();
 	}
 
@@ -688,6 +736,19 @@ void ImGuiModule::CreateSpecificGameObject(GameObjectType _type, int _otherType)
 		case GameObjectType::Vase:
 			newGameObject = currentScene->CreateVaseGameObject(_otherType);
 			break;
+		case GameObjectType::Girl:
+			newGameObject = currentScene->CreateGirlGameObject();
+			break;
+		case GameObjectType::Noob:
+			newGameObject = currentScene->CreateNoobGameObject();
+			break;
+		case GameObjectType::Sphere:
+			newGameObject = currentScene->CreateSphereGameObject();
+			break;
+		case GameObjectType::Multiple:
+			newGameObject = currentScene->CreateMultipleGameObject(_otherType);
+			break;
+
 		}
 
 		if (newGameObject) {

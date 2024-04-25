@@ -177,4 +177,8 @@ class BaseScene
 		GameObject* CreateLightGameObject();
 		GameObject* CreatePlaneGameObject();
 		GameObject* CreateVaseGameObject(int _type = 0);
+		GameObject* CreateGirlGameObject();
+		GameObject* CreateNoobGameObject();
+		GameObject* CreateSphereGameObject();
+		GameObject* CreateMultipleGameObject(int _type = 0);
 };
