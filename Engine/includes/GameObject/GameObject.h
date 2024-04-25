@@ -1,4 +1,9 @@
 #pragma once
+#ifdef ENGINECORE_EXPORTS
+#define ENGINEDLL_API __declspec(dllexport)
+#else
+#define ENGINEDLL_API __declspec(dllimport)
+#endif
 
 #include <glm.hpp>
 #include <string>
@@ -35,7 +40,8 @@ struct PointLightComponent;
  * Cette classe représente un objet générique dans le jeu. Un objet peut être un cube, un plan, une lumière, etc.
  * Elle sert de base pour d'autres types d'objets spécifiques.
  */
-class GameObject
+//class ENGINEDLL_API GameObject
+class  GameObject
 {
 	public:
 		using id_t = unsigned int;
@@ -565,7 +571,7 @@ class GameObject
 		 *
 		 * @param _component Un pointeur vers le composant à supprimer.
 		 */
-		void RemoveComponent(Component* _component);
+		void RemoveComponent(const Component* _component);
 
 		#pragma region Event
 		/**

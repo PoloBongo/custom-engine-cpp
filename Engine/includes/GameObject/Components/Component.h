@@ -2,6 +2,12 @@
 #include <string>
 #include "GameObject/GameObject.h"
 
+#ifdef ENGINECORE_EXPORTS
+#define ENGINEDLL_API __declspec(dllexport)
+#else
+#define ENGINEDLL_API __declspec(dllimport)
+#endif
+
 class GameObject;
 
 /**
@@ -10,7 +16,8 @@ class GameObject;
  * Les composants sont des entités modulaires qui ajoutent des fonctionnalités spécifiques
  * à un GameObject, telles que la transformation, la physique, le rendu, etc.
  */
-class Component
+//class ENGINEDLL_API Component
+class  Component
 {
 	public:
 		Component() = default;

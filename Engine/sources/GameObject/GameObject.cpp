@@ -1,6 +1,6 @@
 #include "GameObject/GameObject.h"
 #include "GameObject/Components/Transform.h"
-
+ 
 
 GameObject::GameObject(): id(0)
 {
@@ -40,10 +40,13 @@ void GameObject::AddComponent(Component* _component)
 	components.push_back(_component);
 }
 
-void GameObject::RemoveComponent(Component* _component)
+void GameObject::RemoveComponent(const Component* _component)
 {
-	std::erase(components, _component);
-	delete _component;
+	const auto it = std::find(components.begin(), components.end(), _component);
+	if (it != components.end()) {
+		components.erase(it); // Supprimer l'élément du vecteur
+		delete _component; // Supprimer l'objet pointé par _component
+	}
 }
 
 void GameObject::Init()

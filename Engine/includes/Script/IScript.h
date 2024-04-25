@@ -14,6 +14,12 @@
 		void SetDefaultScriptName() override { scriptName = name; } \
 		void SetDefaultScriptType() override { id = subtype; }
 
+#ifdef ENGINECORE_EXPORTS
+#define ENGINEDLL_API __declspec(dllexport)
+#else
+#define ENGINEDLL_API __declspec(dllimport)
+#endif
+
  /**
   * @brief Interface de base pour les scripts.
   *
@@ -21,7 +27,8 @@
   * Les scripts peuvent être initialisés, démarrés, mis à jour et détruits.
   * Ils peuvent également avoir un nom et un type par défaut.
   */
-class IScript
+//class ENGINEDLL_API IScript
+class  IScript
 {
 public:
     /**

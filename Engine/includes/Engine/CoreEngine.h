@@ -2,6 +2,12 @@
 
 #include "Modules/ModuleManager.h"
 
+#ifdef ENGINECORE_EXPORTS
+#define ENGINEDLL_API __declspec(dllexport)
+#else
+#define ENGINEDLL_API __declspec(dllimport)
+#endif
+
 enum EngineMode
 {
 	Editor,
@@ -9,7 +15,7 @@ enum EngineMode
 	Pause
 };
 
-class Engine
+class ENGINEDLL_API Engine
 {
 	public:
 

@@ -1,5 +1,11 @@
 #pragma once
 
+#ifdef ENGINECORE_EXPORTS
+#define ENGINEDLL_API __declspec(dllexport)
+#else
+#define ENGINEDLL_API __declspec(dllimport)
+#endif
+
 class ModuleManager;
 
 /**
@@ -8,7 +14,8 @@ class ModuleManager;
  * Cette classe représente un module de l'application.
  * Les modules peuvent être initialisés, démarrés, mis à jour et libérés de manière contrôlée par le ModuleManager.
  */
-class Module
+//class ENGINEDLL_API Module
+class  Module
 {
 	friend class ModuleManager;
 
