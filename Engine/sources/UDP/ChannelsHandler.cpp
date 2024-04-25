@@ -124,12 +124,6 @@ namespace Bousk
 				}
 				return messages;
 			}
-
-			template<class T>
-			void ChannelsHandler::registerChannel(uint8 channelId)
-			{
-				mChannels.push_back(std::make_unique<T>(channelId));
-			}
 		}
 	}
 }

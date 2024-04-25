@@ -10,5 +10,13 @@
 class TCPClientStart
 {
 public:
-	int TCPClient();
+	void TCPClient(std::string ipAdress, int port, bool messageSend = false, std::string data = "");
+	void clientThreadFunction(Network::TCP::Client& client, bool messageSend = false, std::string data = "");
+
+	const Network::TCP::Client& getClient() const {
+		return client;
+	}
+
+private:
+	Network::TCP::Client client;
 };

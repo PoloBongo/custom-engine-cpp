@@ -17,6 +17,12 @@
 #include "Scene/SceneManager.h"
 #include "TCP/Errors.h"
 
+//#include "UDP/Network/ClientUDP/ClientUDPStart.h"
+//#include "UDP/Network/ServerUDP/ServerUDPStart.h"
+#include "TCP/Client/TCPClientStart.h"
+#include "TCP/Server/TCPServerStart.h"
+#include <thread>
+
 class BaseScene;
 // ----------========== IMGUI SETTINGS ==========---------- //
 
@@ -482,7 +488,74 @@ void ImGuiModule::DrawSettingsWindow() {
 	ImGui::End();
 }
 
+//void ImGuiModule::DrawTchatWindow() {
+//	ClientUDPStart clientUDP;
+//	ServerUDPStart serverUDP;
+//	if (ImGui::Begin("Tchat")) {
+//		ImGui::Spacing();
+//
+//		ImGui::SetWindowFontScale(1.5f);  // Taille du texte modifié
+//		ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), "Informations:");
+//		ImGui::SetWindowFontScale(1.0f);  // Taille du texte par défaut
+//
+//		ImGui::InputText("IP Address", ipBuffer, sizeof(ipBuffer));
+//		ImGui::InputText("Port", portBuffer, sizeof(portBuffer));
+//		if (ImGui::Button("Connexion")) {
+//			unsigned long port = std::stoul(portBuffer, nullptr, 0);
+//			if (std::string(ipBuffer) == "" && std::string(portBuffer) != "")
+//			{
+//				std::cout << "server";
+//				serverUDP.CreateSocketServer(port);
+//			}
+//			else {
+//				clientUDP.CreateSocketClient();
+//			}
+//		}
+//		ImGui::Spacing();
+//		ImGui::Separator();
+//
+//		ImGui::SetWindowFontScale(1.5f);  // Taille du texte modifié
+//		ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), "Logs:");
+//		ImGui::SetWindowFontScale(1.0f);  // Taille du texte par défaut
+//
+//		// Zone pour afficher les messages
+//		if (ImGui::BeginChild("Logs", ImVec2(0, 200), true)) {
+//			for (const auto& msg : messageLogs) {
+//				ImGui::TextWrapped("%s", msg.c_str());
+//			}
+//			if (ImGui::GetScrollY() >= ImGui::GetScrollMaxY()) {
+//				ImGui::SetScrollHereY(1.0f); // Auto-scroll to the bottom
+//			}
+//		}
+//		ImGui::EndChild();
+//
+//		ImGui::Spacing();
+//		ImGui::Separator();
+//
+//		// Champ pour entrer le message
+//		ImGui::InputTextMultiline("Message", messageBuffer, sizeof(messageBuffer), ImVec2(-FLT_MIN, ImGui::GetTextLineHeight() * 4));
+//
+//
+//		// Envoi du message
+//		if (ImGui::Button("Send")) {
+//			unsigned long port = std::stoul(portBuffer, nullptr, 0);
+//			std::string fullMessage = "Ready to send message to " + std::string(ipBuffer) + ":" + std::string(portBuffer) + "\nMessage: " + std::string(messageBuffer);
+//			messageLogs.push_back(fullMessage); // Ajouter le message à la liste des logs
+//			std::cout << fullMessage << std::endl;
+//			clientUDP.ClientStartUDP(port, ipBuffer, std::string(messageBuffer));
+//			serverUDP.ServerStartUDP(port, ipBuffer);
+//			memset(messageBuffer, 0, sizeof(messageBuffer));  // Effacer le buffer de message après "l'envoi"
+//		}
+//
+//		ImGui::End();
+//	}
+//}
+
 void ImGuiModule::DrawTchatWindow() {
+	//ClientUDPStart clientUDP;
+	//ServerUDPStart serverUDP;
+	TCPClientStart clientTCP;
+	TCPServerStart serverTCP;
 	if (ImGui::Begin("Tchat")) {
 		ImGui::Spacing();
 
@@ -493,7 +566,15 @@ void ImGuiModule::DrawTchatWindow() {
 		ImGui::InputText("IP Address", ipBuffer, sizeof(ipBuffer));
 		ImGui::InputText("Port", portBuffer, sizeof(portBuffer));
 		if (ImGui::Button("Connexion")) {
-			std::cout << "Ready to connect to " << ipBuffer << ":" << portBuffer << std::endl;
+			unsigned long port = std::stoul(portBuffer, nullptr, 0);
+			if (std::string(ipBuffer) == "" && std::string(portBuffer) != "")
+			{
+				std::cout << "server" << std::endl;
+				serverTCP.TCPServer(port, ipBuffer);
+			}
+			else {
+				clientTCP.TCPClient(ipBuffer, port);
+			}
 		}
 		ImGui::Spacing();
 		ImGui::Separator();
@@ -522,9 +603,12 @@ void ImGuiModule::DrawTchatWindow() {
 
 		// Envoi du message
 		if (ImGui::Button("Send")) {
+			unsigned long port = std::stoul(portBuffer, nullptr, 0);
 			std::string fullMessage = "Ready to send message to " + std::string(ipBuffer) + ":" + std::string(portBuffer) + "\nMessage: " + std::string(messageBuffer);
 			messageLogs.push_back(fullMessage); // Ajouter le message à la liste des logs
 			std::cout << fullMessage << std::endl;
+			clientTCP.TCPClient(ipBuffer, port, true, fullMessage);
+			//std::thread clientThread(&TCPServerStart::clientThreadFunction, std::ref(serverTCP.getClient()), std::ref(active));
 			memset(messageBuffer, 0, sizeof(messageBuffer));  // Effacer le buffer de message après "l'envoi"
 		}
 
