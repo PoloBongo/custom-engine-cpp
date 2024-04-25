@@ -1,20 +1,14 @@
 ﻿#include "Modules/ImGUIModule.h"
-#include "lve_renderer.h"
-#include "ModuleManager.h"
-#include "Modules/WindowModule.h"
-#include "Modules/ImGUIModule.h"
-
-#include "ImGUIInterface.h"
-
 #include <imgui.h>
 #include <imgui_impl_glfw.h>
 #include <imgui_impl_vulkan.h>
-
-#include "Light.h"
-#include "rhi.h"
-
-#include "GameObject/PreGameObject/LightGameObject.h"
-#include "Transform.h"
+#include "ImGUIInterface.h"
+#include "GameObject/Components/Light.h"
+#include "GameObject/Components/Transform.h"
+#include "LveEngine/lve_renderer.h"
+#include "Modules/ModuleManager.h"
+#include "Modules/rhi.h"
+#include "Modules/WindowModule.h"
 #include "Scene/SceneManager.h"
 #include "TCP/Errors.h"
 

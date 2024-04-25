@@ -1,5 +1,7 @@
 #include "GameObject/PreGameObject/PlaneGameObject.h"
 
+#include "GameObject/Components/Transform.h"
+
 namespace lve
 {
 	GameObject* PlaneGameObject::Create(LveDevice& _lveDevice, const glm::vec3 _position,

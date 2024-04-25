@@ -3,8 +3,9 @@
 #include <iostream>
 #include <string>
 
-#include "CoreEngine.h"
-#include "rhi.h"
+#include "Engine/CoreEngine.h"
+#include "GameObject/Components/Transform.h"
+#include "Modules/rhi.h"
 #include "GameObject/PreGameObject/CubeGameObject.h"
 #include "GameObject/PreGameObject/LightGameObject.h"
 #include "GameObject/PreGameObject/PlaneGameObject.h"

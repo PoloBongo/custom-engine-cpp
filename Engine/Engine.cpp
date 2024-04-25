@@ -1,5 +1,3 @@
-#include "CoreEngine.h"
-#include "EngineTestCode.h"
 
 #include "TCP/Client/TCPClientStart.h"
 #include "TCP/Server/TCPServerStart.h"
@@ -9,6 +7,9 @@
 
 #include <cstdlib>
 #include <iostream>
+
+#include "Engine/CoreEngine.h"
+#include "Engine/EngineTestCode.h"
 
 int main(int argc, char* argv[])
 {

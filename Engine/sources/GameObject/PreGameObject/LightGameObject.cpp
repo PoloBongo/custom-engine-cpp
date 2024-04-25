@@ -1,7 +1,6 @@
 #include "GameObject/PreGameObject/LightGameObject.h"
-
-#include "Light.h"
-#include "GameObject/GameObject.h"
+#include "GameObject/Components/Light.h"
+#include "GameObject/Components/Transform.h"
 
 namespace lve
 {

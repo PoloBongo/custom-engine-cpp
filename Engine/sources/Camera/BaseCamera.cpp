@@ -1,5 +1,6 @@
 #include "Camera/BaseCamera.h"
 
+#include "Tools/functionHelpers.h"
 #include <stdexcept>
 
 namespace lve

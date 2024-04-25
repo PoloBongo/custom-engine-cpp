@@ -1,4 +1,4 @@
-NEW : Doc
+ENH : final Doc
 
-- Documentation ajouté
-- Todo: ranger les fichiers
+- fin de l'ajout de documentation
+- nettoyage des dossiers

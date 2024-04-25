@@ -13,10 +13,11 @@
 #include <map>
 #include <stdexcept>
 
-#include "Light.h"
-#include "Transform.h"
 #include "GameObject/GameObject.h"
+#include "GameObject/Components/Light.h"
+#include "GameObject/Components/Transform.h"
 #include "Modules/TimeModule.h"
+
 
 namespace lve
 {

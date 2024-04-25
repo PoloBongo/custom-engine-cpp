@@ -1,5 +1,7 @@
 #include "GameObject/PreGameObject/CubeGameObject.h"
 
+#include "GameObject/Components/Transform.h"
+
 namespace lve
 {
 	GameObject* CubeGameObject::Create(LveDevice&      _lveDevice, const glm::vec3 _position,
