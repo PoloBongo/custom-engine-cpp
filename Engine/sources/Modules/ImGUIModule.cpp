@@ -330,7 +330,7 @@ void ImGuiModule::DrawInspectorWindow() {
 					std::cout << "File good";
 					selectedGameObject->SetTexMultiplier(textureMulti);
 					std::shared_ptr<lve::LveModel> lve_model = lve::LveModel::CreateModelFromFile(*rhiModule->GetDevice(), selectedGameObject->GetFileModel(), selectedGameObject->GetTexMultiplier());
-					selectedGameObject->GetModel() = lve_model;
+					selectedGameObject->SetModel(lve_model);
 				}
 				else {
 					std::cout << "File not good :" + selectedGameObject->GetFileModel();
@@ -343,7 +343,7 @@ void ImGuiModule::DrawInspectorWindow() {
 					std::cout << "File good";
 					selectedGameObject->SetTexMultiplier(1.0f);
 					std::shared_ptr<lve::LveModel> lve_model = lve::LveModel::CreateModelFromFile(*rhiModule->GetDevice(), selectedGameObject->GetFileModel(), selectedGameObject->GetTexMultiplier());
-					selectedGameObject->GetModel() = lve_model;
+					selectedGameObject->SetModel(lve_model);
 				}
 				else {
 					std::cout << "File not good :" + selectedGameObject->GetFileModel();
