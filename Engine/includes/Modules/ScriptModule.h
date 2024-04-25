@@ -1,9 +1,10 @@
 #pragma once
 
-#include <vector>
 #include <queue>
-#include <string> 
-#include "IScript.h"
+#include <string>
+#include <vector>
+
+#include "Script/IScript.h"
 
 /**
  * @brief Classe ScriptModule.

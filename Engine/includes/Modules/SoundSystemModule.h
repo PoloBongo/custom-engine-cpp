@@ -1,7 +1,7 @@
 #pragma once
 
 #include <fmod.hpp>
-#include "Module.h"
+#include "Modules/Module.h"
 
 /**
  * @brief Classe SoundClass : Gère le système Sound utilisant la bibliothèque FMOD

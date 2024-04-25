@@ -1,5 +1,5 @@
 #include "GameObject/GameObject.h"
-#include "Transform.h"
+#include "GameObject/Components/Transform.h"
 
 
 GameObject::GameObject(): id(0)

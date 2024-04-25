@@ -1,27 +1,16 @@
 ﻿#include "Modules/ImGUIModule.h"
-#include "lve_renderer.h"
-#include "ModuleManager.h"
-#include "Modules/WindowModule.h"
-#include "Modules/ImGUIModule.h"
-
-#include <CoreEngine.h>
-
-#include "ImGUIInterface.h"
-
 #include <imgui.h>
 #include <imgui_impl_glfw.h>
 #include <imgui_impl_vulkan.h>
-
-#include "Light.h"
-#include "rhi.h"
-
-#include "GameObject/PreGameObject/LightGameObject.h"
-#include "Transform.h"
+#include "ImGUIInterface.h"
+#include "GameObject/Components/Light.h"
+#include "GameObject/Components/Transform.h"
+#include "LveEngine/lve_renderer.h"
+#include "Modules/ModuleManager.h"
+#include "Modules/rhi.h"
+#include "Modules/WindowModule.h"
 #include "Scene/SceneManager.h"
 #include "TCP/Errors.h"
-
-#include <iostream>
-#include <fstream>
 
 class BaseScene;
 // ----------========== IMGUI SETTINGS ==========---------- //
@@ -244,12 +233,6 @@ void ImGuiModule::GetGui()
 	DrawInspectorWindow();
 	ImGui::End();
 
-	ImGui::SetNextWindowSize(ImVec2(170, 79), ImGuiCond_Always); // Hauteur fixe et non-redimensionnable
-	ImGui::SetNextWindowPos(ImVec2(mainWindowSize.x / 2 - 200 / 2, 0), ImGuiCond_Always); // Ancrage en haut à droite
-	ImGui::Begin("Modes", nullptr, window_flags);
-	DrawModesWindow();
-	ImGui::End();
-
 	DrawSettingsWindow();
 }
 
@@ -291,7 +274,6 @@ void ImGuiModule::DrawInspectorWindow() {
 		ImGui::SameLine();
 		ImGui::SetWindowFontScale(1.2f);
 		ImGui::TextColored(ImVec4(1.0f, 0.5f, 0.0f, 1.0f), selectedGameObject->GetName().c_str());
-		
 		ImGui::SetWindowFontScale(1.0f);
 
 		// Bouton pour afficher la popup de renommage
@@ -308,67 +290,6 @@ void ImGuiModule::DrawInspectorWindow() {
 		if (ImGui::CollapsingHeader("Transform")) {
 			DisplayTransform(selectedGameObject->GetTransform());
 		}
-
-		if (ImGui::CollapsingHeader("Texture")) {
-			int texture = selectedGameObject->GetTexture();
-			if (ImGui::InputInt("Texture", &texture)) {
-
-				if (texture < 0) {
-					texture = 0;
-				}
-				else if (texture > moduleManager->GetModule<RHIVulkanModule>()->GetListDescriptors().size() - 1) {
-					texture -= 1;
-				}
-				else {
-					selectedGameObject->SetTexture(texture);
-				}
-			}
-			float textureMulti = selectedGameObject->GetTexMultiplier();
-			if (ImGui::DragFloat("Texture Multiplier", &textureMulti, 1, 0.0, 100.0)) {
-				std::ifstream file(selectedGameObject->GetFileModel());
-				if (file.good()) {
-					std::cout << "File good";
-					selectedGameObject->SetTexMultiplier(textureMulti);
-					std::shared_ptr<lve::LveModel> lve_model = lve::LveModel::CreateModelFromFile(*rhiModule->GetDevice(), selectedGameObject->GetFileModel(), selectedGameObject->GetTexMultiplier());
-					selectedGameObject->SetModel(lve_model);
-				}
-				else {
-					std::cout << "File not good :" + selectedGameObject->GetFileModel();
-				}
-			}
-			//ImGui::SameLine();
-			if (ImGui::Button("Reset Multiplier", ImVec2(150, 20))) {
-				std::ifstream file(selectedGameObject->GetFileModel());
-				if (file.good()) {
-					std::cout << "File good";
-					selectedGameObject->SetTexMultiplier(1.0f);
-					std::shared_ptr<lve::LveModel> lve_model = lve::LveModel::CreateModelFromFile(*rhiModule->GetDevice(), selectedGameObject->GetFileModel(), selectedGameObject->GetTexMultiplier());
-					selectedGameObject->SetModel(lve_model);
-				}
-				else {
-					std::cout << "File not good :" + selectedGameObject->GetFileModel();
-				}
-			}
-
-			if (ImGui::Checkbox("Texture Viewer (0.3v)", &textureView)) {
-				!textureView;
-			}
-
-			if (textureView) {
-				int sizeDescList = moduleManager->GetModule<RHIVulkanModule>()->GetListDescriptors().size();
-
-				// Vulkan crie, parce que ce sont les descriptors d'un autre pool et d'une autre pipeline
-				if (selectedGameObject->GetTexture() > sizeDescList - 1) {
-					ImGui::Image(moduleManager->GetModule<RHIVulkanModule>()->GetListDescriptors()[0]->at(0), ImVec2(200, 200));
-				}
-				else {
-					ImGui::Image(moduleManager->GetModule<RHIVulkanModule>()->GetListDescriptors()[selectedGameObject->GetTexture()]->at(0), ImVec2(200, 200));
-
-				}
-			}
-		}
-
-
 
 		// Detection de Light et affichage des proprietes de la lumiere
 		Light* lightComponent = selectedGameObject->GetComponent<Light>();
@@ -420,10 +341,7 @@ void ImGuiModule::DrawHierarchyWindow() {
 		if (ImGui::MenuItem("Cube")) {
 			CreateSpecificGameObject(GameObjectType::Cube);
 			std::cout << "Added new GameObject-Cube to current scene." << std::endl;
-		}
-		if (ImGui::MenuItem("Colored Cube")) {
-			CreateSpecificGameObject(GameObjectType::Cube,1);
-			std::cout << "Added new GameObject-Cube to current scene." << std::endl;
+
 		}
 		if (ImGui::MenuItem("Light")) {
 			CreateSpecificGameObject(GameObjectType::Light);
@@ -434,14 +352,6 @@ void ImGuiModule::DrawHierarchyWindow() {
 			CreateSpecificGameObject(GameObjectType::Plane);
 			std::cout << "Added new GameObject-Plane to current scene." << std::endl;
 
-		}
-		if (ImGui::MenuItem("Vase Flat")) {
-			CreateSpecificGameObject(GameObjectType::Vase);
-			std::cout << "Added new GameObject-Plane to current scene." << std::endl;
-		}
-		if (ImGui::MenuItem("Vase Smooth")) {
-			CreateSpecificGameObject(GameObjectType::Vase,1);
-			std::cout << "Added new GameObject-Plane to current scene." << std::endl;
 		}
 		ImGui::EndPopup();
 	}
@@ -541,34 +451,6 @@ void ImGuiModule::DrawHierarchyWindow() {
 		ImGui::PopID();  // Restaure l'ID précédent pour les scènes
 	}
 }
-
-void ImGuiModule::DrawModesWindow() {
-
-	//std::cout << Engine::GetInstance()->GetEngineMode() << std::endl;
-
-	if (ImGui::Button("Play Button", ImVec2(150, 20))) {
-		if (Engine::GetInstance()->GetEngineMode() == EngineMode::Editor) {
-			Engine::GetInstance()->PlayEngineMode();
-			std::cout << Engine::GetInstance()->GetEngineMode() << std::endl;
-		}
-		else {
-			Engine::GetInstance()->EditorEngineMode();
-			std::cout << Engine::GetInstance()->GetEngineMode() << std::endl;
-		}
-	}
-
-	if (ImGui::Button("Pause Button", ImVec2(150, 20))) {
-		if (Engine::GetInstance()->GetEngineMode() == EngineMode::Play) {
-			Engine::GetInstance()->PauseEngineMode();
-			std::cout << Engine::GetInstance()->GetEngineMode() << std::endl;
-		}
-		else if (Engine::GetInstance()->GetEngineMode() == EngineMode::Pause) {
-			Engine::GetInstance()->PlayEngineMode();
-			std::cout << Engine::GetInstance()->GetEngineMode() << std::endl;
-		}
-	}
-}
-
 
 void ImGuiModule::DrawSettingsWindow() {
 	if (ImGui::Begin("Settings")) {
@@ -671,22 +553,19 @@ void ImGuiModule::DeleteGameObject(GameObject* _gameObject) {
 void ImGuiModule::DuplicateGameObject(GameObject* _gameObject) {
 }
 
-void ImGuiModule::CreateSpecificGameObject(GameObjectType _type, int _otherType) {
+void ImGuiModule::CreateSpecificGameObject(GameObjectType _type) {
 	BaseScene* currentScene = sceneManager->GetCurrentScene();
 	if (currentScene) {
 		GameObject* newGameObject = nullptr;
 		switch (_type) {
 		case GameObjectType::Cube:
-			newGameObject = currentScene->CreateCubeGameObject(_otherType);
+			newGameObject = currentScene->CreateCubeGameObject();
 			break;
 		case GameObjectType::Light:
 			newGameObject = currentScene->CreateLightGameObject();
 			break;
 		case GameObjectType::Plane:
 			newGameObject = currentScene->CreatePlaneGameObject();
-			break;
-		case GameObjectType::Vase:
-			newGameObject = currentScene->CreateVaseGameObject(_otherType);
 			break;
 		}
 

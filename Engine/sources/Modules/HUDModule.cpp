@@ -1,9 +1,7 @@
 #include "Modules/HUDModule.h"
-#include <algorithm>
 #include <fstream>
 #include <iostream>
 #include <stdexcept>
-#include "stb_image.h"
 
 
 // Fonction utilitaire pour charger une image depuis un fichier sur le disque

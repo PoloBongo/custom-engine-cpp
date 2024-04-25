@@ -1,3 +1,4 @@
-NEW : EngineMode
+ENH : final Doc
 
-- Ajout de mode pour l'update des scènes dans l'Engine
+- fin de l'ajout de documentation
+- nettoyage des dossiers

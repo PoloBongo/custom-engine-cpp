@@ -1,15 +1,13 @@
 #include "Modules/RHIVulkanModule.h"
 
-#include "ModuleManager.h"
-#include "Transform.h"
+#include <fstream>
+#include <iostream>
+#include "GameObject/Components/Transform.h"
 #include "GameObject/PreGameObject/CubeGameObject.h"
 #include "GameObject/PreGameObject/LightGameObject.h"
-#include "GameObject/PreGameObject/PlaneGameObject.h"
+#include "Modules/ModuleManager.h"
 #include "Modules/TimeModule.h"
 #include "Scene/SceneManager.h"
-
-#include <iostream>
-#include <fstream>
 
 RHIVulkanModule::RHIVulkanModule()
 {

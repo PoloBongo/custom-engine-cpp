@@ -1,8 +1,8 @@
 #pragma once
-#include "Module.h"
+#include "Modules/Module.h"
 
-#include "lve_descriptors.h"
-#include "lve_window.h"
+#include "LveEngine/lve_descriptors.h"
+#include "LveEngine/lve_window.h"
 //std
 #include <iostream>
 #include <stb_image.h>

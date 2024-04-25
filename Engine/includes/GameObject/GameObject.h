@@ -3,8 +3,8 @@
 #include <glm.hpp>
 #include <string>
 #include <vector>
-#include "Component.h"
-#include "lve_game_object.h"
+#include "Components/Component.h"
+#include "LveEngine/lve_model.h"
 
 enum class GameObjectType {
 	Cube,

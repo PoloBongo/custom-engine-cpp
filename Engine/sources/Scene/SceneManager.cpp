@@ -2,8 +2,8 @@
 #include <fstream>
 #include <sstream>
 
-#include "CoreEngine.h"
-#include "ModuleManager.h"
+#include "Engine/CoreEngine.h"
+#include "Modules/ModuleManager.h"
 #include "Modules/WindowModule.h"
 
 

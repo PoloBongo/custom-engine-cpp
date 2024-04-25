@@ -21,6 +21,8 @@ class Module
 		~Module() = default;
 
 	public:
+
+#pragma region Event
 		/**
 		 * @brief Initialise le module.
 		 */
@@ -91,6 +93,7 @@ class Module
 		{
 		}
 
+#pragma endregion
 	protected:
 		ModuleManager* moduleManager = nullptr; /**< Pointeur vers le gestionnaire de modules. */
 };

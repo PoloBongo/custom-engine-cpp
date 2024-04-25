@@ -1,5 +1,5 @@
 #include "Modules/WindowModule.h"
-#include "CoreEngine.h"
+#include "Engine/CoreEngine.h"
 
 //libs
 #define GLM_FORCE_RADIANS
@@ -13,12 +13,11 @@
 #include <stdexcept>
 
 #include <nlohmann/json.hpp>
-#include "functionHelpers.h"
+#include "Modules/FileManager.h"
 #include "Modules/RHIVulkanModule.h"
 #include "Modules/TimeModule.h"
 #include "Scene/SceneManager.h"
-
-#include "FileManager.h"
+#include "Tools/functionHelpers.h"
 
 using json = nlohmann::json;
 

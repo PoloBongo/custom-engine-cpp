@@ -1,6 +1,6 @@
 #pragma once
-#include "lve_constants.h"
-#include "Transform.h"
+#include "GameObject/GameObject.h"
+#include "LveEngine/lve_constants.h"
 
 namespace lve
 {
