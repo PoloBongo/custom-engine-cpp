@@ -4,6 +4,8 @@
 #include "Modules/WindowModule.h"
 #include "Modules/ImGUIModule.h"
 
+#include "FilesDirs.h"
+
 #include <CoreEngine.h>
 
 #include "ImGUIInterface.h"
@@ -25,6 +27,9 @@
 #include <cstring>
 #include <imgui_internal.h>
 #include <random>
+#include <windows.h>
+#include <locale>
+#include <codecvt>
 
 class BaseScene;
 // ----------========== IMGUI SETTINGS ==========---------- //
@@ -258,6 +263,7 @@ void ImGuiModule::GetGui()
 	DrawConsoleWindow();
 	//ImGui::End();
 
+	DrawFilesExplorerWindow();
 
 	DrawSettingsWindow();
 }
@@ -445,6 +451,7 @@ void ImGuiModule::DrawInspectorWindow() {
 				//ImGui::SameLine();
 				if (ImGui::Button("X", ImVec2(20, 20))) {
 					selectedGameObject->RemoveComponent(lightComponent);
+					AddLog("Removed Component Light from : " + selectedGameObject->GetName());
 				}
 			}
 		}
@@ -460,6 +467,7 @@ void ImGuiModule::DrawInspectorWindow() {
 		if (ImGui::BeginPopup("AddComponentPopup")) {
 			if (ImGui::MenuItem("Add Light")) {
 				Light* newLight = selectedGameObject->CreateComponent<Light>();
+				AddLog("Created Component Light to : " + selectedGameObject->GetName());
 				newLight->lightIntensity = 1.0;  // Intensit� initiale standard
 				ImGui::CloseCurrentPopup();
 			}
@@ -787,6 +795,24 @@ void ImGuiModule::DrawConsoleWindow()
 	ImGui::End();
 
 }
+
+void ImGuiModule::DrawFilesExplorerWindow() {
+	if (ImGui::Begin("Files Explorer")) 
+	{
+		FilesDirs filesdirs;
+		AddLog("Files found in ../Textures : " + std::to_string(filesdirs.FilesInDir("../Textures")));
+		std::string str;
+		std::vector<std::wstring> filenames = filesdirs.GetFilesInDir(filesdirs.ConvertStringToWideString("../Textures"));
+		for (const auto& filenames_wide : filenames) {
+			str += filesdirs.ConvertWideStringToString(filenames_wide) + ", ";
+		}
+		AddLog("Find files in ../Textures :" + str);
+
+		// Auto add textures to pool ?
+	}
+	ImGui::End();
+}
+
 
 void ImGuiModule::DisplayTransform(Transform* _transform) {
 	if (!_transform) return;

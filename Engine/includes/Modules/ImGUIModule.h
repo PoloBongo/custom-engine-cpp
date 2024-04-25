@@ -122,6 +122,9 @@ public:
 
 	void DrawConsoleWindow();
 
+	void DrawFilesExplorerWindow();
+
+
 
 	// ----------========== POPUPS ==========---------- //
 

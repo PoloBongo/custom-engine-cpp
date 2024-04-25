@@ -444,6 +444,7 @@
     <ClCompile Include="..\Librairies\imgui\imgui_impl_vulkan.cpp" />
     <ClCompile Include="..\Librairies\imgui\imgui_tables.cpp" />
     <ClCompile Include="..\Librairies\imgui\imgui_widgets.cpp" />
+    <ClCompile Include="sources\FilesDirs.cpp" />
     <ClCompile Include="sources\GameObject\PreGameObject\NoobGameObject.cpp" />
     <ClCompile Include="sources\GameObject\PreGameObject\GirlGameObject.cpp" />
     <ClCompile Include="includes\Script.h" />
@@ -522,6 +523,7 @@
     <ClCompile Include="VulkanHooks.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="includes\FilesDirs.h" />
     <ClInclude Include="includes\GameObject\PreGameObject\GirlGameObject.h" />
     <ClInclude Include="includes\GameObjectScript.h" />
     <ClInclude Include="includes\IScript.h" />

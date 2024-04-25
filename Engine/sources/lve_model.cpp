@@ -261,6 +261,7 @@ namespace lve
 
 				if (index.normal_index >= 0)
 					vertex.normal = {
+						
 						attrib.normals[3 * index.normal_index + 0],
 						attrib.normals[3 * index.normal_index + 1],
 						attrib.normals[3 * index.normal_index + 2],
