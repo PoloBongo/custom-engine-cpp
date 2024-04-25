@@ -1,7 +1,7 @@
 #include "TCP/Client/TCPClientStart.h"
 #include <thread>
 
-void TCPClientStart::clientThreadFunction(Network::TCP::Client& client, bool messageSend, std::string data) {
+void TCPClientStart::clientThreadFunction(Network::TCP::Client& client, bool messageSend, std::string data) {	
 	while (true)
 	{
 		while (auto msg = client.poll())
@@ -16,6 +16,7 @@ void TCPClientStart::clientThreadFunction(Network::TCP::Client& client, bool mes
 					if (messageSend)
 					{
 						std::string phrase = data;
+						
 						//std::getline(std::cin, phrase);
 						if (!client.send(reinterpret_cast<const unsigned char*>(phrase.c_str()), static_cast<unsigned int>(phrase.length())))
 						{

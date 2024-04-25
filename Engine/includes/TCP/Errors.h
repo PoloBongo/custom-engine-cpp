@@ -14,19 +14,19 @@ namespace Network
     namespace Errors
     {
         /**
-         * @brief R�cup�re le code d'erreur du dernier appel r�seau.
-         * @return Le code d'erreur du dernier appel r�seau.
+         * @brief Récupère le code d'erreur du dernier appel réseau.
+         * @return Le code d'erreur du dernier appel réseau.
          */
         int Get();
 
         /**
-         * @brief Enum�ration des codes d'erreur r�seau courants.
+         * @brief Énumération des codes d'erreur réseau courants.
          */
         enum {
-            AGAIN = WSATRY_AGAIN, /**< Ressayer l'op�ration. */
-            WOULDBLOCK = WSAEWOULDBLOCK, /**< L'op�ration bloquerait le socket. */
-            INPROGRESS = WSAEINPROGRESS, /**< L'op�ration est en cours. */
-            INTR = WSAEINTR, /**< L'appel syst�me a �t� interrompu avant qu'il ne se termine. */
+            AGAIN = WSATRY_AGAIN, /**< Ressayer l'opération. */
+            WOULDBLOCK = WSAEWOULDBLOCK, /**< L'opération bloquerait le socket. */
+            INPROGRESS = WSAEINPROGRESS, /**< L'opération est en cours. */
+            INTR = WSAEINTR, /**< L'appel système a été interrompu avant qu'il ne se termine. */
         };
     }
 }

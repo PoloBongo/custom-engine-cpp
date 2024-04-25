@@ -10,8 +10,8 @@
 class TCPClientStart
 {
 public:
-	void TCPClient(std::string ipAdress, int port, bool messageSend = false, std::string data = "");
-	void clientThreadFunction(Network::TCP::Client& client, bool messageSend = false, std::string data = "");
+	void TCPClient(std::string _ipAdress, int _port, bool _messageSend = false, std::string _data = "");
+	void clientThreadFunction(Network::TCP::Client& _client, bool _messageSend = false, std::string _data = "");
 
 	const Network::TCP::Client& getClient() const {
 		return client;

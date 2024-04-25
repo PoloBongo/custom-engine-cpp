@@ -75,7 +75,7 @@ namespace Network
              * @param addr Adresse � associer au client.
              * @return true si l'initialisation r�ussit, sinon false.
              */
-            bool init(SOCKET&& sckt, const sockaddr_in& addr);
+            bool init(SOCKET&& _sckt, const sockaddr_in& _addr);
 
             /**
              * @brief �tablit une connexion avec le serveur � l'adresse et au port sp�cifi�s.
@@ -83,7 +83,7 @@ namespace Network
              * @param port Port du serveur.
              * @return true si la connexion r�ussit, sinon false.
              */
-            bool connect(const std::string& ipaddress, unsigned short port);
+            bool connect(const std::string& _ipaddress, unsigned short _port);
 
             /**
              * @brief Ferme la connexion avec le serveur.
@@ -96,7 +96,7 @@ namespace Network
              * @param len Longueur des donn�es � envoyer.
              * @return true si l'envoi r�ussit, sinon false.
              */
-            bool send(const unsigned char* data, unsigned int len);
+            bool send(const unsigned char* _data, unsigned int _len);
 
             /**
              * @brief R�cup�re les messages entrants du serveur.
@@ -133,7 +133,7 @@ namespace Network
              * @param port Port du serveur.
              * @return true si la connexion r�ussit, sinon false.
              */
-            bool connect(SOCKET sckt, const std::string& address, unsigned short port);
+            bool connect(SOCKET _sckt, const std::string& _address, unsigned short _port);
 
             /**
              * @brief R�cup�re les messages de connexion.
@@ -167,7 +167,7 @@ namespace Network
              * @brief Initialise le gestionnaire de r�ception avec le socket sp�cifi�.
              * @param sckt Socket � utiliser pour la r�ception.
              */
-            void init(SOCKET sckt);
+            void init(SOCKET _sckt);
 
             /**
              * @brief Re�oit les messages entrants.
@@ -203,7 +203,7 @@ namespace Network
              * @param expectedDataLength Longueur attendue des donn�es.
              * @param newState Nouvel �tat de la r�ception.
              */
-            void startReception(unsigned int expectedDataLength, State newState);
+            void startReception(unsigned int _expectedDataLength, State _newState);
 
         private:
             std::vector<unsigned char> mBuffer; /**< Tampon de r�ception des donn�es. */
@@ -227,7 +227,7 @@ namespace Network
              * @brief Initialise le gestionnaire d'envoi avec le socket sp�cifi�.
              * @param sckt Socket � utiliser pour l'envoi.
              */
-            void init(SOCKET sckt);
+            void init(SOCKET _sckt);
 
             /**
              * @brief Envoie des donn�es au serveur.
@@ -235,7 +235,7 @@ namespace Network
              * @param datalen Longueur des donn�es � envoyer.
              * @return true si l'envoi r�ussit, sinon false.
              */
-            bool send(const unsigned char* data, unsigned int datalen);
+            bool send(const unsigned char* _data, unsigned int _datalen);
 
             /**
              * @brief Met � jour le gestionnaire d'envoi.
@@ -291,7 +291,7 @@ namespace Network
              * @param addr Adresse � associer au client.
              * @return true si l'initialisation r�ussit, sinon false.
              */
-            bool init(SOCKET&& sckt, const sockaddr_in& addr);
+            bool init(SOCKET&& _sckt, const sockaddr_in& _addr);
 
             /**
              * @brief �tablit une connexion avec le serveur � l'adresse et au port sp�cifi�s.
@@ -299,7 +299,7 @@ namespace Network
              * @param port Port du serveur.
              * @return true si la connexion r�ussit, sinon false.
              */
-            bool connect(const std::string& ipaddress, unsigned short port);
+            bool connect(const std::string& _ipaddress, unsigned short _port);
 
             /**
              * @brief Ferme la connexion avec le serveur.
@@ -312,12 +312,12 @@ namespace Network
              * @param len Longueur des donn�es � envoyer.
              * @return true si l'envoi r�ussit, sinon false.
              */
-            bool send(const unsigned char* data, unsigned int len);
+            bool send(const unsigned char* _data, unsigned int _len);
 
             /**
-             * @brief R�cup�re les messages entrants du serveur.
-             * @return Un pointeur unique vers le message re�u.
-             */
+            * @brief Retrieves incoming messages from the server.
+            * @return A unique pointer to the received message.
+            */
             std::unique_ptr<Messages::Base> poll();
 
             /**
@@ -337,7 +337,7 @@ namespace Network
              * @brief Callback appel� lorsqu'une connexion est �tablie avec succ�s.
              * @param addr Adresse du serveur connect�.
              */
-            void onConnected(const sockaddr_in& addr);
+            void onConnected(const sockaddr_in& _addr);
 
         private:
             ConnectionHandler mConnectionHandler;

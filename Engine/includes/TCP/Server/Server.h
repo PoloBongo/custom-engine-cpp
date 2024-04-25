@@ -81,7 +81,7 @@ namespace Network
              * @param len Longueur des donn�es � envoyer.
              * @return true si l'envoi r�ussit, sinon false.
              */
-            bool sendTo(uint64_t clientid, const unsigned char* data, unsigned int len);
+            bool sendTo(uint64_t _clientid, const unsigned char* _data, unsigned int _len);
 
             /**
              * @brief Envoie des donn�es � tous les clients connect�s.
@@ -89,7 +89,7 @@ namespace Network
              * @param len Longueur des donn�es � envoyer.
              * @return true si l'envoi r�ussit, sinon false.
              */
-            bool sendToAll(const unsigned char* data, unsigned int len);
+            bool sendToAll(const unsigned char* _data, unsigned int _len);
 
             /**
              * @brief R�cup�re les messages entrants du serveur.
@@ -131,7 +131,7 @@ namespace Network
              * @param len Longueur des donn�es � envoyer.
              * @return true si l'envoi r�ussit, sinon false.
              */
-            bool sendTo(uint64_t clientid, const unsigned char* data, unsigned int len);
+            bool sendTo(uint64_t _clientid, const unsigned char* _data, unsigned int _len);
 
             /**
              * @brief Envoie des donn�es � tous les clients connect�s.
@@ -139,7 +139,7 @@ namespace Network
              * @param len Longueur des donn�es � envoyer.
              * @return true si l'envoi r�ussit, sinon false.
              */
-            bool sendToAll(const unsigned char* data, unsigned int len);
+            bool sendToAll(const unsigned char* _data, unsigned int _len);
 
             /**
              * @brief R�cup�re les messages entrants.

@@ -1,7 +1,7 @@
 #pragma once
 
-#include "../Packet.h" 
-#include "../Datagram.h"
+#include "UDP/Packet.h" 
+#include "UDP/Datagram.h"
 #include "ProtocolInterface.h"
 
 #include <vector>
@@ -25,22 +25,22 @@ namespace Bousk
 					using IProtocol::IProtocol;
 					~ReliableOrdered() override = default;
 
-					void queue(std::vector<uint8>&& msgData) override { mMultiplexer.queue(std::move(msgData)); }
-					uint16 serialize(uint8* buffer, const uint16 buffersize, const Datagram::ID datagramId
+					void queue(std::vector<uint8>&& _msgData) override { mMultiplexer.queue(std::move(_msgData)); }
+					uint16 serialize(uint8* _buffer, const uint16 _buffersize, const Datagram::ID _datagramId
 					#if BOUSKNET_ALLOW_NETWORK_INTERRUPTION == BOUSKNET_SETTINGS_ENABLED
-											, const bool connectionInterrupted
+											, const bool _connectionInterrupted
 					#endif // BOUSKNET_ALLOW_NETWORK_INTERRUPTION == BOUSKNET_SETTINGS_ENABLED
 										) override {
-											return mMultiplexer.serialize(buffer, buffersize, datagramId
+											return mMultiplexer.serialize(_buffer, _buffersize, _datagramId
 					#if BOUSKNET_ALLOW_NETWORK_INTERRUPTION == BOUSKNET_SETTINGS_ENABLED
-												, connectionInterrupted
+												, _connectionInterrupted
 					#endif // BOUSKNET_ALLOW_NETWORK_INTERRUPTION == BOUSKNET_SETTINGS_ENABLED
 					);}
 
-					void onDatagramAcked(const Datagram::ID datagramId) override { mMultiplexer.onDatagramAcked(datagramId); }
-					void onDatagramLost(const Datagram::ID datagramId) override { mMultiplexer.onDatagramLost(datagramId); }
+					void onDatagramAcked(const Datagram::ID _datagramId) override { mMultiplexer.onDatagramAcked(_datagramId); }
+					void onDatagramLost(const Datagram::ID _datagramId) override { mMultiplexer.onDatagramLost(_datagramId); }
 
-					void onDataReceived(const uint8* data, const uint16 datasize) override { mDemultiplexer.onDataReceived(data, datasize); }
+					void onDataReceived(const uint8* _data, const uint16 _datasize) override { mDemultiplexer.onDataReceived(_data, _datasize); }
 					std::vector<std::vector<uint8>> process() override { return mDemultiplexer.process(); }
 
 					virtual bool isReliable() const { return true; }
@@ -53,15 +53,15 @@ namespace Bousk
 						Multiplexer() = default;
 						~Multiplexer() = default;
 
-						void queue(std::vector<uint8>&& msgData);
-						uint16 serialize(uint8* buffer, const uint16 buffersize, const Datagram::ID datagramId
+						void queue(std::vector<uint8>&& _msgData);
+						uint16 serialize(uint8* _buffer, const uint16 _buffersize, const Datagram::ID _datagramId
 						#if BOUSKNET_ALLOW_NETWORK_INTERRUPTION == BOUSKNET_SETTINGS_ENABLED
-													, bool connectionInterrupted
+													, bool _connectionInterrupted
 						#endif // BOUSKNET_ALLOW_NETWORK_INTERRUPTION == BOUSKNET_SETTINGS_ENABLED
 						);
 
-						void onDatagramAcked(const Datagram::ID datagramId);
-						void onDatagramLost(const Datagram::ID datagramId);
+						void onDatagramAcked(const Datagram::ID _datagramId);
+						void onDatagramLost(const Datagram::ID _datagramId);
 
 					private:
 						class ReliablePacket
@@ -72,8 +72,8 @@ namespace Bousk
 
 							bool shouldSend() const { return mShouldSend; }
 							void resend() { mShouldSend = true; }
-							void onSent(const Datagram::ID datagramId) { mDatagramsIncluding.insert(datagramId); mShouldSend = false; }
-							bool isIncludedIn(const Datagram::ID datagramId) const { return mDatagramsIncluding.find(datagramId) != mDatagramsIncluding.cend(); }
+							void onSent(const Datagram::ID _datagramId) { mDatagramsIncluding.insert(_datagramId); mShouldSend = false; }
+							bool isIncludedIn(const Datagram::ID _datagramId) const { return mDatagramsIncluding.find(_datagramId) != mDatagramsIncluding.cend(); }
 
 						private:
 							Packet mPacket;
@@ -93,11 +93,11 @@ namespace Bousk
 						Demultiplexer() = default;
 						~Demultiplexer() = default;
 
-						void onDataReceived(const uint8* data, const uint16 datasize);
+						void onDataReceived(const uint8* _data, const uint16 _datasize);
 						std::vector<std::vector<uint8>> process();
 
 					private:
-						void onPacketReceived(const Packet* pckt);
+						void onPacketReceived(const Packet* _pckt);
 
 					private:
 						std::array<Packet, QueueSize> mPendingQueue;

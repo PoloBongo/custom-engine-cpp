@@ -16,47 +16,47 @@ namespace Bousk
     {
         /**
          * @brief Initialise les sockets.
-         * @return true si l'initialisation r�ussit, sinon false.
+         * @return true si l'initialisation réussit, sinon false.
          */
         bool Start();
 
         /**
-         * @brief Lib�re les ressources associ�es aux sockets.
+         * @brief Libère les ressources associées aux sockets.
          */
         void Release();
 
         /**
          * @brief Configure un socket en mode non bloquant.
-         * @param socket Socket � configurer.
-         * @return true si la configuration r�ussit, sinon false.
+         * @param socket Socket à configurer.
+         * @return true si la configuration réussit, sinon false.
          */
-        bool SetNonBlocking(SOCKET socket);
+        bool SetNonBlocking(SOCKET _socket);
 
         /**
-         * @brief Configure un socket pour r�utiliser l'adresse.
-         * @param socket Socket � configurer.
-         * @return true si la configuration r�ussit, sinon false.
+         * @brief Configure un socket pour réutiliser l'adresse.
+         * @param socket Socket à configurer.
+         * @return true si la configuration réussit, sinon false.
          */
-        bool SetReuseAddr(SOCKET socket);
+        bool SetReuseAddr(SOCKET _socket);
 
         /**
          * @brief Ferme un socket.
-         * @param socket Socket � fermer.
+         * @param socket Socket à fermer.
          */
-        void CloseSocket(SOCKET socket);
+        void CloseSocket(SOCKET _socket);
 
         /**
-         * @brief R�cup�re l'adresse IP d'une structure sockaddr_in.
+         * @brief Récupère l'adresse IP d'une structure sockaddr_in.
          * @param addr Structure sockaddr_in contenant l'adresse.
-         * @return L'adresse IP sous forme de cha�ne de caract�res.
+         * @return L'adresse IP sous forme de chaîne de caractères.
          */
-        std::string GetAddress(const sockaddr_in& addr);
+        std::string GetAddress(const sockaddr_in& _addr);
 
         /**
-         * @brief R�cup�re le port d'une structure sockaddr_in.
+         * @brief Récupère le port d'une structure sockaddr_in.
          * @param addr Structure sockaddr_in contenant le port.
-         * @return Le port sous forme d'entier non sign�.
+         * @return Le port sous forme d'entier non signé.
          */
-        unsigned short GetPort(const sockaddr_in& addr);
+        unsigned short GetPort(const sockaddr_in& _addr);
     }
 }

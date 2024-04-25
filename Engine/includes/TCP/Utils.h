@@ -1,7 +1,7 @@
 ﻿#pragma once
 
 /**
- * @brief Macro utilis�e pour indiquer qu'un param�tre est non utilis� dans une fonction.
- * @param x Param�tre non utilis�.
+ * @brief Macro utilisée pour indiquer qu'un paramètre est non utilisé dans une fonction.
+ * @param x Paramètre non utilisé.
  */
 #define UNUSED(x) (void)(x)

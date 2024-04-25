@@ -45,7 +45,6 @@ void TCPServerStart::TCPServer(unsigned short _port, std::string ipAdress, bool 
 		std::cout << "initialisation du serveur" << std::endl;
 		// Démarre le thread
 		std::thread serverThread(&TCPServerStart::serverThreadFunction, this, std::ref(server));
-		// btn deconnexion
 		//serverThread.join();
 	}
 }

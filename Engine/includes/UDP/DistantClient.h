@@ -47,14 +47,14 @@ namespace Bousk
 					Lost,
 				};
 			public:
-				DistantClient(ClientUDP& client, const Address& addr, uint64 clientid);
+				DistantClient(ClientUDP& _client, const Address& _addr, uint64 _clientid);
 				DistantClient(const DistantClient&) = delete;
 				DistantClient(DistantClient&&) = delete;
 				DistantClient& operator=(const DistantClient&) = delete;
 				DistantClient& operator=(DistantClient&&) = delete;
 				~DistantClient() = default;
 
-				static void SetTimeout(std::chrono::milliseconds timeout) { sTimeout = timeout; }
+				static void SetTimeout(std::chrono::milliseconds _timeout) { sTimeout = _timeout; }
 				static std::chrono::milliseconds GetTimeout() { return sTimeout; }
 
 				inline bool isConnecting() const { return mState == State::ConnectionSent || mState == State::ConnectionReceived; }
@@ -67,21 +67,21 @@ namespace Bousk
 				#endif // BOUSKNET_ALLOW_NETWORK_INTERRUPTION == BOUSKNET_SETTINGS_ENABLED
 
 				template<class T>
-				void registerChannel(uint8 channelId = 0);
+				void registerChannel(uint8 _channelId = 0);
 
 				void connect();
 				void disconnect();
 
-				void send(std::vector<uint8>&& data, uint32 channelIndex);
-				void processSend(uint8 maxDatagrams = 0);
-				void onDatagramReceived(Datagram&& datagram);
+				void send(std::vector<uint8>&& _data, uint32 _channelIndex);
+				void processSend(uint8 _maxDatagrams = 0);
+				void onDatagramReceived(Datagram&& _datagram);
 
 				inline const Address& address() const { return mAddress; }
 				inline uint64 id() const { return mClientId; }
 
 			private:
 				#if BOUSKNET_ALLOW_NETWORK_INTERRUPTION == BOUSKNET_SETTINGS_ENABLED
-					void maintainConnection(bool distantNetworkInterrupted = false);
+					void maintainConnection(bool _distantNetworkInterrupted = false);
 				#else
 					void maintainConnection();
 				#endif // BOUSKNET_ALLOW_NETWORK_INTERRUPTION == BOUSKNET_SETTINGS_ENABLED
@@ -103,17 +103,17 @@ namespace Bousk
 				void onConnectionRefused();
 				void onConnectionTimedOut();
 
-				void onDatagramSentAcked(Datagram::ID datagramId);
-				void onDatagramSentLost(Datagram::ID datagramId);
-				void onDatagramReceivedLost(Datagram::ID datagramId);
-				void onDataReceived(const uint8* data, uint16 datasize);
-				void onMessageReady(std::unique_ptr<Messages::Base>&& msg);
+				void onDatagramSentAcked(Datagram::ID _datagramId);
+				void onDatagramSentLost(Datagram::ID _datagramId);
+				void onDatagramReceivedLost(Datagram::ID _datagramId);
+				void onDataReceived(const uint8* _data, uint16 _datasize);
+				void onMessageReady(std::unique_ptr<Messages::Base>&& _msg);
 
-				void fillKeepAlive(Datagram& dgram);
-				void handleKeepAlive(const uint8* data, const uint16 datasize);
+				void fillKeepAlive(Datagram& _dgram);
+				void handleKeepAlive(const uint8* _data, const uint16 _datasize);
 
-				void fillDatagramHeader(Datagram& dgram, Datagram::Type type);
-				void send(const Datagram& dgram);
+				void fillDatagramHeader(Datagram& _dgram, Datagram::Type _type);
+				void send(const Datagram& _dgram);
 
 			private:
 				Address mAddress;
