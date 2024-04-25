@@ -1,4 +1,3 @@
-NEW : dll
+NEW : Documentation files
 
-- début de la création du DLL
-- problème WIN32
+- Ajout de la documentation en html
