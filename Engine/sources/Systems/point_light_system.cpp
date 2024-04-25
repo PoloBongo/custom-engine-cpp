@@ -13,10 +13,11 @@
 #include <map>
 #include <stdexcept>
 
-#include "Light.h"
-#include "Transform.h"
 #include "GameObject/GameObject.h"
+#include "GameObject/Components/Light.h"
+#include "GameObject/Components/Transform.h"
 #include "Modules/TimeModule.h"
+
 
 namespace lve
 {
@@ -49,7 +50,7 @@ namespace lve
 			throw std::runtime_error("failed to create pipeline layout!");
 	}
 
-	void PointLightSystem::CreatePipeline(vk::RenderPass _renderPass)
+	void PointLightSystem::	CreatePipeline(vk::RenderPass _renderPass)
 	{
 		assert(pipelineLayout != nullptr && "Cannot create pipeline before pipeline layout");
 

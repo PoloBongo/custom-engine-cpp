@@ -6,7 +6,7 @@
 #include <vector>
 #include <vulkan/vulkan.h>
 
-#include "Module.h"
+#include "Modules/Module.h"
 
 // TODO : Vérifier si c pertinent
 struct HUDComponent

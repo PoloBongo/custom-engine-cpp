@@ -1,3 +1,4 @@
-NEW : EngineMode
+NEW : dll
 
-- Ajout de mode pour l'update des scènes dans l'Engine
+- début de la création du DLL
+- problème WIN32

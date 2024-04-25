@@ -1,5 +1,15 @@
-#include "CoreEngine.h"
-#include "EngineTestCode.h"
+#ifdef ENGINECORE_EXPORTS
+/**
+ * \brief If ENGINECORE_EXPORTS defined, export the symbol
+ */
+#define ENGINEDLL_API __declspec(dllexport)
+#else
+/**
+ * \brief If ENGINECORE_EXPORTS is not defined, import the symbol
+ */
+#define ENGINEDLL_API __declspec(dllimport)
+#endif
+
 
 #include "TCP/Client/TCPClientStart.h"
 #include "TCP/Server/TCPServerStart.h"
@@ -9,6 +19,9 @@
 
 #include <cstdlib>
 #include <iostream>
+
+#include "Engine/CoreEngine.h"
+#include "Engine/EngineTestCode.h"
 
 int main(int argc, char* argv[])
 {

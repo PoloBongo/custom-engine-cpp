@@ -4,14 +4,16 @@
 
 #include <vulkan/vulkan.hpp>
 
-#include "keyboard_movement_controller.h"
+#include "Inputs/keyboard_movement_controller.h"
 #include "rhi.h"
 
-#include "lve_descriptors.h"
-#include "lve_model.h"
-#include "lve_pipeline.h"
-#include "lve_renderer.h"
+#include "LveEngine/lve_descriptors.h"
+#include "LveEngine/lve_model.h"
+#include "LveEngine/lve_pipeline.h"
+#include "LveEngine/lve_renderer.h"
+#include "LveEngine/lve_texture.h"
 #include "Modules/WindowModule.h"
+
 #include "Systems/point_light_system.h"
 #include "Systems/simple_render_system.h"
 

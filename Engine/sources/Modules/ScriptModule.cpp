@@ -1,6 +1,6 @@
 #include "Modules/ScriptModule.h"
 #include "Modules/TimeModule.h"
-#include "CoreEngine.h"
+#include "Engine/CoreEngine.h"
 
 bool ScriptModule::StartScripts()
 {

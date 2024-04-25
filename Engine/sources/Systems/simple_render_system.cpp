@@ -1,6 +1,6 @@
 #include "Systems/simple_render_system.h"
 
-#include "lve_descriptors.h"
+#include "LveEngine/lve_descriptors.h"
 
 //libs
 #define GLM_FORCE_RADIANS
@@ -11,7 +11,7 @@
 // std
 #include <cassert>
 #include <stdexcept>
-#include "Transform.h"
+#include "GameObject/Components/Transform.h"
 #include "GameObject/GameObject.h"
 
 namespace lve

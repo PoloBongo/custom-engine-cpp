@@ -2,10 +2,8 @@
 
 #include <vulkan/vulkan.hpp>
 
-#include "lve_device.h"
-#include "lve_frame_info.h"
-#include "lve_game_object.h"
-#include "lve_pipeline.h"
+#include "LveEngine/lve_device.h"
+#include "LveEngine/lve_pipeline.h"
 #include "Camera/lve_camera.h"
 
 //std

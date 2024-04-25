@@ -1,16 +1,18 @@
 #pragma once
 
-#include <vector>
 #include <queue>
-#include <string> 
-#include "IScript.h"
+#include <string>
+#include <vector>
+
+#include "Module.h"
+#include "Script/IScript.h"
 
 /**
  * @brief Classe ScriptModule.
  *
  * Cette classe gère l'ajout, le démarrage et la mise à jour des scripts dans le moteur de jeu.
  */
-class ScriptModule {
+class ScriptModule : public Module {
 public:
     /**
      * @brief Constructeur par défaut.
@@ -40,6 +42,16 @@ public:
 
         return true;
     }
+
+#pragma region Event
+
+    void Update() override
+    {
+        UpdateScripts();
+    }
+
+
+#pragma endregion
 
     /**
      * @brief Démarre tous les scripts en attente.

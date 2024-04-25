@@ -1,7 +1,7 @@
 #pragma once
 
 #include <functional>
-#include "Module.h"
+#include "Modules/Module.h"
 #include "Modules/WindowModule.h"
 #include "Scene/SceneManager.h"
 #include "RHIVulkanModule.h"
@@ -152,6 +152,7 @@ public:
 	/**
 	 * @brief Crée un nouveau GameObject du type spécifié et l'ajoute à la scène active.
 	 * @param _type Type de GameObject à créer, comme Cube, Light ou Plane.
+	 * @param _otherType
 	 */
 	void CreateSpecificGameObject(GameObjectType _type, int _otherType = 0);
 
