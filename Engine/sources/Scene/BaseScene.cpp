@@ -8,6 +8,7 @@
 #include "GameObject/PreGameObject/CubeGameObject.h"
 #include "GameObject/PreGameObject/LightGameObject.h"
 #include "GameObject/PreGameObject/PlaneGameObject.h"
+#include "GameObject/PreGameObject/VaseGameObject.h"
 #include "Modules/TimeModule.h"
 
 
@@ -356,9 +357,16 @@ void BaseScene::TestLoadGameObjects()
 	rootObjects.push_back(sun);
 }
 
-GameObject* BaseScene::CreateCubeGameObject() {
-	lve::LveDevice* device = Engine::GetInstance()->GetModuleManager()->GetModule<RHIModule>()->GetDevice();
-	return lve::CubeGameObject::Create(*device);
+GameObject* BaseScene::CreateCubeGameObject(int _type) {
+
+	if (_type == 0) {
+		lve::LveDevice* device = Engine::GetInstance()->GetModuleManager()->GetModule<RHIModule>()->GetDevice();
+		return lve::CubeGameObject::Create(*device);
+	}
+	else if (_type == 1) {
+		lve::LveDevice* device = Engine::GetInstance()->GetModuleManager()->GetModule<RHIModule>()->GetDevice();
+		return lve::CubeGameObject::CreateColor(*device);
+	}
 }
 
 GameObject* BaseScene::CreateLightGameObject() {
@@ -377,4 +385,16 @@ GameObject* BaseScene::CreateLightGameObject() {
 GameObject* BaseScene::CreatePlaneGameObject() {
 	lve::LveDevice* device = Engine::GetInstance()->GetModuleManager()->GetModule<RHIModule>()->GetDevice();
 	return lve::PlaneGameObject::Create(*device);
+}
+
+GameObject* BaseScene::CreateVaseGameObject(int type) {
+
+	if (type == 0) {
+		lve::LveDevice* device = Engine::GetInstance()->GetModuleManager()->GetModule<RHIModule>()->GetDevice();
+		return lve::VaseGameObject::CreateFlat(*device);
+	}
+	else if (type == 1) {
+		lve::LveDevice* device = Engine::GetInstance()->GetModuleManager()->GetModule<RHIModule>()->GetDevice();
+		return lve::VaseGameObject::CreateSmooth(*device);
+	}
 }

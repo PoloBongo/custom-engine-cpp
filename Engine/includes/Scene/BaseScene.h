@@ -173,7 +173,8 @@ class BaseScene
 		bool bInitialized = false;
 		bool bLoaded      = false;
 
-		GameObject* CreateCubeGameObject();
+		GameObject* CreateCubeGameObject(int _type = 0);
 		GameObject* CreateLightGameObject();
 		GameObject* CreatePlaneGameObject();
+		GameObject* CreateVaseGameObject(int _type = 0);
 };

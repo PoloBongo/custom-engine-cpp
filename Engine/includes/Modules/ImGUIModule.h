@@ -153,7 +153,7 @@ public:
 	 * @brief Crée un nouveau GameObject du type spécifié et l'ajoute à la scène active.
 	 * @param _type Type de GameObject à créer, comme Cube, Light ou Plane.
 	 */
-	void CreateSpecificGameObject(GameObjectType _type);
+	void CreateSpecificGameObject(GameObjectType _type, int _otherType = 0);
 
 protected:
 	vk::Device device; ///< Périphérique utilisé pour le rendu avec Vulkan.

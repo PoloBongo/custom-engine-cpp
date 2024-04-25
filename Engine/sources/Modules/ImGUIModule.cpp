@@ -420,7 +420,10 @@ void ImGuiModule::DrawHierarchyWindow() {
 		if (ImGui::MenuItem("Cube")) {
 			CreateSpecificGameObject(GameObjectType::Cube);
 			std::cout << "Added new GameObject-Cube to current scene." << std::endl;
-
+		}
+		if (ImGui::MenuItem("Colored Cube")) {
+			CreateSpecificGameObject(GameObjectType::Cube,1);
+			std::cout << "Added new GameObject-Cube to current scene." << std::endl;
 		}
 		if (ImGui::MenuItem("Light")) {
 			CreateSpecificGameObject(GameObjectType::Light);
@@ -431,6 +434,14 @@ void ImGuiModule::DrawHierarchyWindow() {
 			CreateSpecificGameObject(GameObjectType::Plane);
 			std::cout << "Added new GameObject-Plane to current scene." << std::endl;
 
+		}
+		if (ImGui::MenuItem("Vase Flat")) {
+			CreateSpecificGameObject(GameObjectType::Vase);
+			std::cout << "Added new GameObject-Plane to current scene." << std::endl;
+		}
+		if (ImGui::MenuItem("Vase Smooth")) {
+			CreateSpecificGameObject(GameObjectType::Vase,1);
+			std::cout << "Added new GameObject-Plane to current scene." << std::endl;
 		}
 		ImGui::EndPopup();
 	}
@@ -660,19 +671,22 @@ void ImGuiModule::DeleteGameObject(GameObject* _gameObject) {
 void ImGuiModule::DuplicateGameObject(GameObject* _gameObject) {
 }
 
-void ImGuiModule::CreateSpecificGameObject(GameObjectType _type) {
+void ImGuiModule::CreateSpecificGameObject(GameObjectType _type, int _otherType) {
 	BaseScene* currentScene = sceneManager->GetCurrentScene();
 	if (currentScene) {
 		GameObject* newGameObject = nullptr;
 		switch (_type) {
 		case GameObjectType::Cube:
-			newGameObject = currentScene->CreateCubeGameObject();
+			newGameObject = currentScene->CreateCubeGameObject(_otherType);
 			break;
 		case GameObjectType::Light:
 			newGameObject = currentScene->CreateLightGameObject();
 			break;
 		case GameObjectType::Plane:
 			newGameObject = currentScene->CreatePlaneGameObject();
+			break;
+		case GameObjectType::Vase:
+			newGameObject = currentScene->CreateVaseGameObject(_otherType);
 			break;
 		}
 

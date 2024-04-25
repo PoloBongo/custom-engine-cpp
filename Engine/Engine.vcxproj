@@ -514,6 +514,7 @@
     <ClCompile Include="sources\UDP\Utils\Utils.cpp" />
     <ClCompile Include="sources\UDP\Test\Utils_Test.cpp" />
     <ClCompile Include="sources\UDP\Protocol\UnreliableOrdered.cpp" />
+    <ClCompile Include="sources\GameObject\PreGameObject\VaseGameObject.cpp" />
     <ClCompile Include="VulkanHooks.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -612,6 +613,7 @@
     <ClInclude Include="includes\UDP\Utils\Utils.h" />
     <ClInclude Include="includes\UDP\Test\Utils_Test.h" />
     <ClInclude Include="includes\UDP\Protocol\UnreliableOrdered.h" />
+    <ClInclude Include="includes\GameObject\PreGameObject\VaseGameObject.h" />
     <ClInclude Include="VulkanHooks.h" />
   </ItemGroup>
   <ItemGroup>
