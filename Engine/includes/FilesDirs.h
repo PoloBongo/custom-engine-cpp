@@ -30,5 +30,7 @@ class FilesDirs
 		std::string ConvertWideStringToString(const std::wstring& wide_string);
 
 		void ExtractFilenameAndExtension(const std::string& filePath, std::string& filename, std::string& extension);
+
+		bool ContainsSubstring(const std::string& main_string, const std::string& substring);
 };
 

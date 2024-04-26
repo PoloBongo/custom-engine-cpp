@@ -859,11 +859,15 @@ void ImGuiModule::DrawConsoleWindow()
 }
 
 void ImGuiModule::DrawFilesExplorerWindow() {
-	if (ImGui::Begin("Files Explorer")) 
+
+	// File research
+	// Type filtrer
+
+	if (ImGui::Begin("Files Explorer (0.7v)")) 
 	{
 		FilesDirs filesdirs;
 
-
+		ImGui::SetNextItemWidth(250);
 		char* charBuffer1 = new char[100];
 		strcpy_s(charBuffer1, 100, GetCurrentDir().c_str());
 		if (ImGui::InputText("Change Dir", charBuffer1, 100)) { SetCurrentDir(charBuffer1); }
@@ -902,6 +906,7 @@ void ImGuiModule::DrawFilesExplorerWindow() {
 		}
 
 		ImGui::SameLine();
+		ImGui::SetNextItemWidth(200);
 		char* charBuffer = new char[100];
 		strcpy_s(charBuffer, 100, GetFileToLook().c_str());
 		if (ImGui::InputText("-", charBuffer, 100)) { SetFileToLook(charBuffer); }
@@ -916,44 +921,120 @@ void ImGuiModule::DrawFilesExplorerWindow() {
 			std::ifstream file(GetFileToLook());
 			filesdirs.ExtractFilenameAndExtension(GetFileToLook(), filename, ext);
 
-			if (ext == "png" || ext == "jpg" || ext == "gif" || ext == "tga" || ext == "bmp" || ext == "psd" || ext == "hdr" || ext == "pic")
-			{
-				moduleManager->GetModule<RHIVulkanModule>()->AddTextureToPool(fileToLook);
-				// Décomposer la string pour garder ce qu'il y a après le dernier /
-				moduleManager->GetModule<RHIVulkanModule>()->AddListTexturesNames(fileToLook);
-				AddLog("Texture has been added : " + fileToLook);
-				SetFileToLook("");
-			}	
+			if (file.good()) {
+				if (ext == "png" || ext == "jpg" || ext == "gif" || ext == "tga" || ext == "bmp" || ext == "psd" || ext == "hdr" || ext == "pic")
+				{
+					moduleManager->GetModule<RHIVulkanModule>()->AddTextureToPool(fileToLook);
+					// Décomposer la string pour garder ce qu'il y a après le dernier /
+					moduleManager->GetModule<RHIVulkanModule>()->AddListTexturesNames(fileToLook);
+					AddLog("Texture has been added : " + fileToLook);
+					SetFileToLook("");
+				}
+			}
+			else {
+				AddLog("Warning : Filepath incorrect : " + fileToLook);
+			}
 		}
 
 		ImGui::Separator();
 
-		std::vector<std::wstring> filenames = filesdirs.GetFilesInDir(filesdirs.ConvertStringToWideString(GetCurrentDir()));
+		float scrollHeight = ImGui::GetWindowSize().y - 110;
 
-		float scrollHeight = ImGui::GetWindowSize().y - 90;
+		ImGui::Checkbox("obj", &filterObj);
+		ImGui::SameLine();
+		ImGui::Checkbox("image", &filterSupportedImages);
+		ImGui::SameLine();
+		ImGui::Checkbox("other", &filterOther);
+		ImGui::SameLine();
+
+		char* charBuffer2 = new char[30];
+		strcpy_s(charBuffer2, 30, GetFileSearch().c_str());
+		ImGui::SetNextItemWidth(200);
+		if (ImGui::InputText("Search", charBuffer2, 30)) { SetFileSearch(charBuffer2); }
 
 		ImGui::BeginChild("ScrollingRegion", ImVec2(0, scrollHeight), true, ImGuiWindowFlags_HorizontalScrollbar);
-
-		for (const auto& filenames_wide : filenames) 
-		{
-			ImGui::Text(filesdirs.ConvertWideStringToString(filenames_wide).c_str());
-			std::string ext;
-			std::string filename;
-			std::ifstream file(filenames_wide);
-			
-			filesdirs.ExtractFilenameAndExtension(currentDir+"/"+filesdirs.ConvertWideStringToString(filenames_wide), filename, ext);
-
-			if (ext == "png" || ext == "jpg" || ext == "gif" || ext == "tga" || ext == "bmp" || ext == "psd" || ext == "hdr" || ext == "pic")
+		// A opti (baisse de perf monstrueuse quand gros dossiers
+		// Fait à chaque frame ducoup énormé désastre de performance 
+		
+		// Refresh pas les files
+		if (refreshFileExplorer) {
+			fileNames = filesdirs.GetFilesInDir(filesdirs.ConvertStringToWideString(GetCurrentDir()));
+			for (const auto& filenames_wide : fileNames)
 			{
-				ImGui::SameLine();
-				if (ImGui::Button("Add", ImVec2(35, 25))) {
-					moduleManager->GetModule<RHIVulkanModule>()->AddTextureToPool(GetCurrentDir() + fileToLook);
-					// Décomposer la string pour garder ce qu'il y a après le dernier /
-					moduleManager->GetModule<RHIVulkanModule>()->AddListTexturesNames(filename);
-					AddLog("Texture has been added : " + filename);
+				std::string ext;
+				std::string filename;
+				std::ifstream file(filenames_wide);
+
+				filesdirs.ExtractFilenameAndExtension(currentDir + "/" + filesdirs.ConvertWideStringToString(filenames_wide), filename, ext);
+
+				if (filesdirs.ContainsSubstring(filename, GetFileSearch())) {
+					if (ext == "obj")
+					{
+						if (filterObj)
+						{
+							ImGui::Text(filesdirs.ConvertWideStringToString(filenames_wide).c_str());
+						}
+					}
+					else if (ext == "png" || ext == "jpg" || ext == "gif" || ext == "tga" || ext == "bmp" || ext == "psd" || ext == "hdr" || ext == "pic")
+					{
+						if (filterSupportedImages)
+						{
+							ImGui::Text(filesdirs.ConvertWideStringToString(filenames_wide).c_str());
+							ImGui::SameLine();
+							if (ImGui::Button("Add", ImVec2(35, 25))) {
+								moduleManager->GetModule<RHIVulkanModule>()->AddTextureToPool(GetCurrentDir() + "/" + filesdirs.ConvertWideStringToString(filenames_wide));
+								// Décomposer la string pour garder ce qu'il y a après le dernier /
+								moduleManager->GetModule<RHIVulkanModule>()->AddListTexturesNames(filesdirs.ConvertWideStringToString(filenames_wide));
+								AddLog("Texture has been added : " + filesdirs.ConvertWideStringToString(filenames_wide));
+							}
+						}
+					}
+					else if (filterOther)
+					{
+						ImGui::Text(filesdirs.ConvertWideStringToString(filenames_wide).c_str());
+					}
 				}
 			}
+			//refreshFileExplorer = false;
 		}
+		//else {
+		//	for (const auto& filenames_wide : fileNames)
+		//	{
+		//		std::string ext;
+		//		std::string filename;
+		//		std::ifstream file(filenames_wide);
+
+		//		filesdirs.ExtractFilenameAndExtension(currentDir + "/" + filesdirs.ConvertWideStringToString(filenames_wide), filename, ext);
+
+		//		if (filesdirs.ContainsSubstring(filename, GetFileSearch())) {
+		//			if (ext == "obj")
+		//			{
+		//				if (filterObj)
+		//				{
+		//					ImGui::Text(filesdirs.ConvertWideStringToString(filenames_wide).c_str());
+		//				}
+		//			}
+		//			else if (ext == "png" || ext == "jpg" || ext == "gif" || ext == "tga" || ext == "bmp" || ext == "psd" || ext == "hdr" || ext == "pic")
+		//			{
+		//				if (filterSupportedImages)
+		//				{
+		//					ImGui::Text(filesdirs.ConvertWideStringToString(filenames_wide).c_str());
+		//					ImGui::SameLine();
+		//					if (ImGui::Button("Add", ImVec2(35, 25))) {
+		//						moduleManager->GetModule<RHIVulkanModule>()->AddTextureToPool(GetCurrentDir() + "/" + filesdirs.ConvertWideStringToString(filenames_wide));
+		//						// Décomposer la string pour garder ce qu'il y a après le dernier /
+		//						moduleManager->GetModule<RHIVulkanModule>()->AddListTexturesNames(filesdirs.ConvertWideStringToString(filenames_wide));
+		//						AddLog("Texture has been added : " + filesdirs.ConvertWideStringToString(filenames_wide));
+		//					}
+		//				}
+		//			}
+		//			else if (filterOther)
+		//			{
+		//				ImGui::Text(filesdirs.ConvertWideStringToString(filenames_wide).c_str());
+		//			}
+		//		}
+		//	}
+		//}
 
 		ImGui::EndChild();
 

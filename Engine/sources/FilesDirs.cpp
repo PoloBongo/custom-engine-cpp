@@ -81,3 +81,7 @@ void FilesDirs::ExtractFilenameAndExtension(const std::string& filePath, std::st
     // Extract the extension from the filename
     extension = (lastDotPos != std::string::npos) ? filename.substr(lastDotPos + 1) : "";
 }
+
+bool FilesDirs::ContainsSubstring(const std::string& main_string, const std::string& substring) {
+    return main_string.find(substring) != std::string::npos;
+}

@@ -202,6 +202,9 @@ public:
 	std::string GetCurrentDir() { return currentDir; }
 	void SetCurrentDir(std::string _newDir) { currentDir = _newDir; }
 
+	std::string GetFileSearch() { return fileSearch; }
+	void SetFileSearch(std::string _newFileSearch) { fileSearch = _newFileSearch; }
+
 protected:
 	vk::Device device; ///< P�riph�rique utilis� pour le rendu avec Vulkan.
 	vk::Queue graphicsQueue; ///< File d'attente graphique pour la soumission des commandes Vulkan.
@@ -232,8 +235,19 @@ protected:
 	bool filterError = true;
 	bool filterWarning = true;
 
+	bool filterSupportedImages = true;
+	bool filterObj = true;
+	bool filterOther = true;
+
+	bool refreshFileExplorer = true;
+
+	std::vector<std::wstring> fileNames;
+
+	std::string fileSearch;
+
+
 	std::string fileToLook;
-	std::string currentDir = "../Textures";
+	std::string currentDir = "./Textures";
 
 	std::vector<std::string>* logs = new std::vector<std::string>();
 
