@@ -15,7 +15,12 @@ enum class GameObjectType {
 	Cube,
 	Light,
 	Plane,
-	Vase
+	Vase,
+	Girl,
+	Noob,
+	Sphere,
+	Triangle,
+	Multiple
 	// TODO: Ajouter plus de types d'objets
 };
 

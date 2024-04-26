@@ -204,6 +204,7 @@ protected:
 	std::vector<bool> isOpen; ///< Vecteur pour suivre l'�tat ouvert/ferm� des diff�rents panneaux de l'interface utilisateur.
 
 	bool textureView = false;
+	bool changeScaleLinked = false;
 
 	char ipBuffer[64] = "";  // Buffer pour l'adresse IP
 	char portBuffer[6] = ""; // Buffer pour le port, suffisant pour contenir des nombres jusqu'� 65535

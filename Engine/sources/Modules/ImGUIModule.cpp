@@ -301,10 +301,98 @@ void ImGuiModule::DrawInspectorWindow() {
 		}
 		ShowRenamePopup();
 
+		bool visibility = selectedGameObject->GetVisible();
+		if (ImGui::Checkbox("Visible", &visibility)) {
+			selectedGameObject->SetVisible(visibility);
+		}
+
+		for (size_t j = 0; j < selectedGameObject->GetChildren().size(); ++j) {
+			const auto& gameObject = selectedGameObject->GetChildren()[j];
+
+			ImGui::PushID(j); // Identifiant unique pour chaque GameObject
+
+			std::string name = gameObject->GetName();
+			const char* namePtr = name.c_str();
+			if (ImGui::Button(namePtr, ImVec2(50,50))) {
+				selectedGameObject = gameObject;
+			}
+		}
+
 		// Affichage des propriétés de transformation
 		if (ImGui::CollapsingHeader("Transform")) {
 			DisplayTransform(selectedGameObject->GetTransform());
 		}
+
+		if (ImGui::CollapsingHeader("Texture")) {
+			int texture = selectedGameObject->GetTexture();
+			if (ImGui::InputInt("Texture", &texture)) {
+
+				if (texture < 0) {
+					texture = 0;
+				}
+				else if (texture > moduleManager->GetModule<RHIVulkanModule>()->GetListDescriptors().size() - 1) {
+					texture -= 1;
+				}
+				else {
+					selectedGameObject->SetTexture(texture);
+				}
+			}
+			float textureMulti = selectedGameObject->GetTexMultiplier();
+			if (ImGui::DragFloat("Texture Multiplier", &textureMulti, 1, 0.0, 100.0)) {
+				std::ifstream file(selectedGameObject->GetFileModel());
+				if (file.good()) {
+					std::cout << "File good";
+					selectedGameObject->SetTexMultiplier(textureMulti);
+					std::shared_ptr<lve::LveModel> lve_model = lve::LveModel::CreateModelFromFile(*rhiModule->GetDevice(), selectedGameObject->GetFileModel(), selectedGameObject->GetTexMultiplier());
+					selectedGameObject->SetModel(lve_model);
+				}
+				else {
+					std::cout << "File not good :" + selectedGameObject->GetFileModel();
+				}
+			}
+			//ImGui::SameLine();
+			if (ImGui::Button("Reset Multiplier", ImVec2(150, 20))) {
+				std::ifstream file(selectedGameObject->GetFileModel());
+				if (file.good()) {
+					std::cout << "File good";
+					selectedGameObject->SetTexMultiplier(1.0f);
+					std::shared_ptr<lve::LveModel> lve_model = lve::LveModel::CreateModelFromFile(*rhiModule->GetDevice(), selectedGameObject->GetFileModel(), selectedGameObject->GetTexMultiplier());
+					selectedGameObject->SetModel(lve_model);
+				}
+				else {
+					std::cout << "File not good :" + selectedGameObject->GetFileModel();
+				}
+			}
+
+			if (ImGui::Checkbox("Texture Viewer (0.3v)", &textureView)) {
+				!textureView;
+			}
+
+			if (textureView) {
+				int sizeDescList = moduleManager->GetModule<RHIVulkanModule>()->GetListDescriptors().size();
+
+				// Vulkan crie, parce que ce sont les descriptors d'un autre pool et d'une autre pipeline
+				if (selectedGameObject->GetTexture() > sizeDescList - 1) {
+					ImGui::Image(moduleManager->GetModule<RHIVulkanModule>()->GetListDescriptors()[0]->at(0), ImVec2(200, 200));
+				}
+				else {
+					ImGui::Image(moduleManager->GetModule<RHIVulkanModule>()->GetListDescriptors()[selectedGameObject->GetTexture()]->at(0), ImVec2(200, 200));
+
+				}
+			}
+		}
+
+		glm::vec3 color = selectedGameObject->GetColor();
+		if (ImGui::CollapsingHeader("Color")) {
+			if (ImGui::ColorEdit3("Color", glm::value_ptr(color))) {
+				selectedGameObject->SetColor(color);
+			}
+			if (ImGui::Button("Reset Color", ImVec2(115, 20))) {
+				selectedGameObject->SetColor(glm::vec3(1,1,1));
+			}
+		}
+
+
 
 		// Detection de Light et affichage des proprietes de la lumiere
 		Light* lightComponent = selectedGameObject->GetComponent<Light>();
@@ -313,12 +401,6 @@ void ImGuiModule::DrawInspectorWindow() {
 			float intensity = lightComponent->lightIntensity;
 			if (ImGui::DragFloat("Light Intensity", &intensity, 0.1f, 0.0f, 100.0f)) {
 				lightComponent->lightIntensity = intensity;
-			}
-
-			// Couleur de la lumiere
-			glm::vec3 color = selectedGameObject->GetColor();
-			if (ImGui::ColorEdit3("Color", glm::value_ptr(color))) {
-				selectedGameObject->SetColor(color);
 			}
 		}
 
@@ -376,6 +458,54 @@ void ImGuiModule::DrawHierarchyWindow() {
 			CreateSpecificGameObject(GameObjectType::Vase, 1);
 			std::cout << "Added new GameObject-Plane to current scene." << std::endl;
 		}
+
+		if (ImGui::MenuItem("Girl")) {
+			CreateSpecificGameObject(GameObjectType::Girl);
+			std::cout << "Added new GameObject-Plane to current scene." << std::endl;
+		}
+
+		if (ImGui::MenuItem("Noob")) {
+			CreateSpecificGameObject(GameObjectType::Noob);
+			std::cout << "Added new GameObject-Plane to current scene." << std::endl;
+		}
+
+		if (ImGui::MenuItem("Sphere")) {
+			CreateSpecificGameObject(GameObjectType::Sphere);
+			std::cout << "Added new GameObject-Plane to current scene." << std::endl;
+		}
+
+		if (ImGui::MenuItem("Cone")) {
+			CreateSpecificGameObject(GameObjectType::Multiple,0);
+			std::cout << "Added new GameObject-Plane to current scene." << std::endl;
+		}
+
+		if (ImGui::MenuItem("Triangle")) {
+			CreateSpecificGameObject(GameObjectType::Multiple,1);
+			std::cout << "Added new GameObject-Plane to current scene." << std::endl;
+		}
+
+		if (ImGui::MenuItem("Capsule")) {
+			CreateSpecificGameObject(GameObjectType::Multiple, 2);
+			std::cout << "Added new GameObject-Plane to current scene." << std::endl;
+		}
+		if (ImGui::MenuItem("Tube")) {
+			CreateSpecificGameObject(GameObjectType::Multiple, 3);
+			std::cout << "Added new GameObject-Plane to current scene." << std::endl;
+		}
+		if (ImGui::MenuItem("Anneau")) {
+			CreateSpecificGameObject(GameObjectType::Multiple, 4);
+			std::cout << "Added new GameObject-Plane to current scene." << std::endl;
+		}
+		if (ImGui::MenuItem("Cylindre")) {
+			CreateSpecificGameObject(GameObjectType::Multiple, 5);
+			std::cout << "Added new GameObject-Plane to current scene." << std::endl;
+		}
+		if (ImGui::MenuItem("Cylindre Coupe")) {
+			CreateSpecificGameObject(GameObjectType::Multiple, 6);
+			std::cout << "Added new GameObject-Plane to current scene." << std::endl;
+		}
+
+
 		ImGui::EndPopup();
 	}
 
@@ -552,21 +682,52 @@ void ImGuiModule::DisplayTransform(Transform* _transform) {
 
 	// Position
 	glm::vec3 position = _transform->GetPosition();
-	if (ImGui::DragFloat3("Position", &position[0])) {
+	if (ImGui::DragFloat3("Position", &position[0], 0.1f, 0.0f, 0.0f, "%.2f")) {
 		_transform->SetPosition(position);
+	}
+	if (ImGui::Button("Position Reset", ImVec2(110, 25))) {
+		_transform->SetPosition(glm::vec3(0, 0, 0));
 	}
 
 	// Rotation
 	glm::vec3 rotationDegrees = _transform->GetRotationDegrees();
-	if (ImGui::DragFloat3("Rotation", &rotationDegrees[0])) {
+	if (ImGui::DragFloat3("Rotation", &rotationDegrees[0], 0.1f, 0.0f, 0.0f, "%.2f")) {
 		_transform->SetRotationDegrees(rotationDegrees);
+	}
+	if (ImGui::Button("Rotation Reset", ImVec2(110,25))) {
+		_transform->SetRotationDegrees(glm::vec3(0,0,0));
 	}
 
 	// Scale
 	glm::vec3 scale = _transform->GetScale();
-	if (ImGui::DragFloat3("Scale", &scale[0])) {
+	glm::vec3 scale_buff = _transform->GetScale();
+	if (ImGui::DragFloat3("Scale", &scale[0],0.1f,0.0f,0.0f,"%.2f")) {
+		if (changeScaleLinked) {
+			if (scale.x - scale_buff.x != 0) {
+				scale.y += scale.x - scale_buff.x;
+				scale.z += scale.x - scale_buff.x;
+			}
+			else if (scale.y - scale_buff.y != 0) {
+				scale.x += scale.y - scale_buff.y;
+				scale.z += scale.y - scale_buff.y;
+			}
+			else if (scale.z - scale_buff.z != 0) {
+				scale.x += scale.z - scale_buff.z;
+				scale.y += scale.y - scale_buff.y;
+			}
+		}
 		_transform->SetScale(scale);
 	}
+
+
+	if (ImGui::Button("Scale Reset", ImVec2(110, 25))) {
+		_transform->SetScale(glm::vec3(1, 1, 1));
+	}
+
+	if (ImGui::Checkbox("Linked Change", &changeScaleLinked)) {
+
+	}
+
 }
 
 // ----------========== POPUPS ==========---------- //
@@ -645,6 +806,19 @@ void               ImGuiModule::CreateSpecificGameObject(const GameObjectType _t
 		case GameObjectType::Vase:
 			new_game_object = current_scene->CreateVaseGameObject(_otherType);
 			break;
+		case GameObjectType::Girl:
+			newGameObject = currentScene->CreateGirlGameObject();
+			break;
+		case GameObjectType::Noob:
+			newGameObject = currentScene->CreateNoobGameObject();
+			break;
+		case GameObjectType::Sphere:
+			newGameObject = currentScene->CreateSphereGameObject();
+			break;
+		case GameObjectType::Multiple:
+			newGameObject = currentScene->CreateMultipleGameObject(_otherType);
+			break;
+
 		}
 
 		if (new_game_object) {

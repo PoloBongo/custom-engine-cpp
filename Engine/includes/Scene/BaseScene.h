@@ -399,9 +399,6 @@ class BaseScene
 		 */
 		GameObject* CreatePlaneGameObject();
 
-		GameObject* CreateVaseGameObject(int _type);
-
-
 		std::string name; /**< Le nom de la scène. */
 		std::string fileName; /**< Le nom du fichier de la scène. */
 
@@ -414,4 +411,9 @@ class BaseScene
 
 		bool bInitialized = false; /**< Indique si la scène est initialisée. */
 		bool bLoaded = false; /**< Indique si la scène est chargée. */
+		GameObject* CreateVaseGameObject(int _type = 0);
+		GameObject* CreateGirlGameObject();
+		GameObject* CreateNoobGameObject();
+		GameObject* CreateSphereGameObject();
+		GameObject* CreateMultipleGameObject(int _type = 0);
 };
