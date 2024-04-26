@@ -479,7 +479,7 @@ xcopy /E /I /Y "$(ProjectDir)Textures" "$(TargetDir)Textures"</Command>
     <ClCompile Include="..\Librairies\imgui\imgui_tables.cpp" />
     <ClCompile Include="..\Librairies\imgui\imgui_widgets.cpp" />
     <ClCompile Include="includes\Script\Script.h" />
-    <ClCompile Include="sources\GameObject\PreGameObject\GirlGameObject.cpp" />
+    <ClCompile Include="sources\FilesDirs.cpp" />
     <ClCompile Include="sources\GameObject\PreGameObject\MultipleGameObject.cpp" />
     <ClCompile Include="sources\GameObject\PreGameObject\NoobGameObject.cpp" />
     <ClCompile Include="sources\GameObject\PreGameObject\SphereGameObject.cpp" />
@@ -556,6 +556,7 @@ xcopy /E /I /Y "$(ProjectDir)Textures" "$(TargetDir)Textures"</Command>
     <ClCompile Include="sources\UDP\Protocol\UnreliableOrdered.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="includes\FilesDirs.h" />
     <ClInclude Include="includes\GameObject\PreGameObject\GirlGameObject.h" />
     <ClInclude Include="includes\GameObject\PreGameObject\MultipleGameObject.h" />
     <ClInclude Include="includes\GameObject\PreGameObject\NoobGameObject.h" />

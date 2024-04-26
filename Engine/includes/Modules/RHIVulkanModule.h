@@ -108,6 +108,10 @@ class RHIVulkanModule final : public RHIModule
 
 		std::vector<std::vector<vk::DescriptorSet>*> GetListDescriptors() { return ListDescriptors; }
 
+		std::vector<std::string>* GetListTexturesNames() { return ListTexturesNames; }
+
+		void AddListTexturesNames(std::string _newFile) { ListTexturesNames->push_back(_newFile); }
+
 	private:
 		/**< Tampon de commandes Vulkan actuellement utilisé. */
 		std::unique_ptr<vk::CommandBuffer> currentCommandBuffer;
@@ -193,5 +197,7 @@ class RHIVulkanModule final : public RHIModule
 		std::vector<vk::DescriptorImageInfo> ListTextures;
 
 		std::vector<std::vector<vk::DescriptorSet>*> ListDescriptors;
+
+		std::vector<std::string>* ListTexturesNames = new std::vector<std::string>();
 
 };

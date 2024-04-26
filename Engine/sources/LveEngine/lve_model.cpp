@@ -53,10 +53,10 @@ namespace lve
 	}
 
 
-	std::unique_ptr<LveModel> LveModel::CreateModelFromFile(LveDevice& _device, const std::string& _filepath, float _texMultiplier)
+	std::unique_ptr<LveModel> LveModel::CreateModelFromFile(LveDevice& _device, const std::string& _filepath, float _texMultiplier, glm::vec3 _color)
 	{
 		Builder builder{};
-		builder.LoadModel(ENGINE_DIR + _filepath, _texMultiplier);
+		builder.LoadModel(ENGINE_DIR + _filepath, _texMultiplier, _color);
 		std::cout << "Vertex Count" << builder.vertices.size() << std::endl;
 
 		return std::make_unique<LveModel>(_device, builder);
@@ -218,7 +218,7 @@ namespace lve
 		return attribute_descriptions;
 	}
 
-	void LveModel::Builder::LoadModel(const std::string& _filepath, float _texMultiplier = 1)
+	void LveModel::Builder::LoadModel(const std::string& _filepath, float _texMultiplier = 1, glm::vec3 _color)
 	{
 		tinyobj::attrib_t                attrib;
 		std::vector<tinyobj::shape_t>    shapes;
@@ -246,16 +246,22 @@ namespace lve
 						attrib.vertices[3 * index.vertex_index + 1],
 						attrib.vertices[3 * index.vertex_index + 2],
 					};
-
-					vertex.color = {
-						attrib.colors[3 * index.vertex_index + 0],
-						attrib.colors[3 * index.vertex_index + 1],
-						attrib.colors[3 * index.vertex_index + 2],
-					};
+					
+					if (_color.r == -1 && _color.g == -1 && _color.b == -1) {
+						vertex.color = {
+							attrib.colors[3 * index.vertex_index + 0],
+							attrib.colors[3 * index.vertex_index + 1],
+							attrib.colors[3 * index.vertex_index + 2],
+						};
+					}
+					else {
+						vertex.color = _color;
+					}
 				}
 
 				if (index.normal_index >= 0)
 					vertex.normal = {
+						
 						attrib.normals[3 * index.normal_index + 0],
 						attrib.normals[3 * index.normal_index + 1],
 						attrib.normals[3 * index.normal_index + 2],

@@ -23,6 +23,7 @@
 #include "Scene/SceneManager.h"
 #include "RHIVulkanModule.h"
 #include "TCP/Errors.h"
+#include <cstdarg>
 
 class RHIModule;
 
@@ -142,6 +143,11 @@ public:
 	 */
 	void DrawSettingsWindow();
 
+	void DrawConsoleWindow();
+
+	void DrawFilesExplorerWindow();
+
+
 
 	// ----------========== POPUPS ==========---------- //
 
@@ -179,6 +185,23 @@ public:
 	 */
 	void CreateSpecificGameObject(GameObjectType _type, int _otherType = 0);
 
+	void AddLog(std::string _newText) { logs->push_back(_newText); }
+	void ClearLog() { logs->clear(); }
+
+	bool GetFilterWarning() { return filterWarning; }
+	bool GetFilterError() { return filterError; }
+	bool GetFilterSimple() { return filterSimple; }
+
+	void SetFilterWarning(bool _newState) { filterWarning = _newState; }
+	void SetFilterError(bool _newState) { filterError = _newState; }
+	void SetFilterSimple(bool _newState) { filterSimple = _newState; }
+
+	std::string GetFileToLook() { return fileToLook; }
+	void SetFileToLook(std::string _newFileToLook) { fileToLook = _newFileToLook; }
+
+	std::string GetCurrentDir() { return currentDir; }
+	void SetCurrentDir(std::string _newDir) { currentDir = _newDir; }
+
 protected:
 	vk::Device device; ///< P�riph�rique utilis� pour le rendu avec Vulkan.
 	vk::Queue graphicsQueue; ///< File d'attente graphique pour la soumission des commandes Vulkan.
@@ -205,6 +228,14 @@ protected:
 
 	bool textureView = false;
 	bool changeScaleLinked = false;
+	bool filterSimple = true;
+	bool filterError = true;
+	bool filterWarning = true;
+
+	std::string fileToLook;
+	std::string currentDir = "../Textures";
+
+	std::vector<std::string>* logs = new std::vector<std::string>();
 
 	char ipBuffer[64] = "";  // Buffer pour l'adresse IP
 	char portBuffer[6] = ""; // Buffer pour le port, suffisant pour contenir des nombres jusqu'� 65535
