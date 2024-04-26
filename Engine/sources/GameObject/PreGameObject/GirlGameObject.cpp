@@ -1,5 +1,5 @@
 #include "GameObject/PreGameObject/GirlGameObject.h"
-
+#include "GameObject/Components/Transform.h"
 namespace lve
 {
 	GameObject* GirlGameObject::Create(LveDevice& _lveDevice, const glm::vec3 _position,

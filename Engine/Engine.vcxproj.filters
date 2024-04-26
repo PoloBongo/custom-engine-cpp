@@ -99,9 +99,9 @@
     <ClCompile Include="sources\GameObject\PreGameObject\VaseGameObject.cpp" />
     <ClCompile Include="ImGUIAudio.cpp" />
     <ClCompile Include="sources\GameObject\PreGameObject\GirlGameObject.cpp" />
+    <ClCompile Include="sources\GameObject\PreGameObject\MultipleGameObject.cpp" />
     <ClCompile Include="sources\GameObject\PreGameObject\NoobGameObject.cpp" />
     <ClCompile Include="sources\GameObject\PreGameObject\SphereGameObject.cpp" />
-    <ClCompile Include="sources\GameObject\PreGameObject\MultipleGameObject.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="includes\UDP\ErrorsUDP.h" />
@@ -200,9 +200,9 @@
     <ClInclude Include="includes\GameObject\PreGameObject\VaseGameObject.h" />
     <ClInclude Include="ImGUIAudio.h" />
     <ClInclude Include="includes\GameObject\PreGameObject\GirlGameObject.h" />
+    <ClInclude Include="includes\GameObject\PreGameObject\MultipleGameObject.h" />
     <ClInclude Include="includes\GameObject\PreGameObject\NoobGameObject.h" />
     <ClInclude Include="includes\GameObject\PreGameObject\SphereGameObject.h" />
-    <ClInclude Include="includes\GameObject\PreGameObject\MultipleGameObject.h" />
   </ItemGroup>
   <ItemGroup>
     <CopyFileToFolders Include="..\Librairies\FMOD\lib\fmod.dll" />

@@ -12,6 +12,8 @@
 #include "Scene/SceneManager.h"
 #include "TCP/Errors.h"
 
+#include <fstream>
+
 class BaseScene;
 // ----------========== IMGUI SETTINGS ==========---------- //
 
@@ -807,16 +809,16 @@ void               ImGuiModule::CreateSpecificGameObject(const GameObjectType _t
 			new_game_object = current_scene->CreateVaseGameObject(_otherType);
 			break;
 		case GameObjectType::Girl:
-			newGameObject = currentScene->CreateGirlGameObject();
+			new_game_object = current_scene->CreateGirlGameObject();
 			break;
 		case GameObjectType::Noob:
-			newGameObject = currentScene->CreateNoobGameObject();
+			new_game_object = current_scene->CreateNoobGameObject();
 			break;
 		case GameObjectType::Sphere:
-			newGameObject = currentScene->CreateSphereGameObject();
+			new_game_object = current_scene->CreateSphereGameObject();
 			break;
 		case GameObjectType::Multiple:
-			newGameObject = currentScene->CreateMultipleGameObject(_otherType);
+			new_game_object = current_scene->CreateMultipleGameObject(_otherType);
 			break;
 
 		}

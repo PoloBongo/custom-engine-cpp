@@ -394,15 +394,14 @@ GameObject* BaseScene::CreatePlaneGameObject() {
 }
 
 GameObject* BaseScene::CreateVaseGameObject(const int _type) {
-
+	lve::LveDevice* device = Engine::GetInstance()->GetModuleManager()->GetModule<RHIModule>()->GetDevice();
 	if (_type == 0) {
-		lve::LveDevice* device = Engine::GetInstance()->GetModuleManager()->GetModule<RHIModule>()->GetDevice();
 		return lve::VaseGameObject::CreateFlat(*device);
 	}
 	else if (_type == 1) {
-		lve::LveDevice* device = Engine::GetInstance()->GetModuleManager()->GetModule<RHIModule>()->GetDevice();
 		return lve::VaseGameObject::CreateSmooth(*device);
 	}
+	return lve::VaseGameObject::CreateFlat(*device);
 }
 
 GameObject* BaseScene::CreateGirlGameObject() {
@@ -446,6 +445,7 @@ GameObject* BaseScene::CreateMultipleGameObject(int _type) {
 		return lve::MultipleGameObject::CreateCylindreCoupe(*device);
 		break;
 	default:
+		return lve::MultipleGameObject::CreateCylindreCoupe(*device);
 		break;
 	}
 }
