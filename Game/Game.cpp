@@ -3,10 +3,9 @@
 
 #include <iostream>
 
-#include "Engine/CoreEngine.h"
 int main()
 {
-	Engine* engine = Engine::GetInstance();
+	/*Engine* engine = Engine::GetInstance();
 	engine->Initialize(_h_instance);
 
 	//engine->AddScript<RedCube>();
@@ -15,7 +14,7 @@ int main()
 
 	engine->AddScript<CameraScript>();
 
-	engine->Start();
+	engine->Start();*/
 }
 
 // Run program: Ctrl + F5 or Debug > Start Without Debugging menu

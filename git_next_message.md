@@ -1,3 +1,3 @@
-FIX : DLL Debug
+FIX : Game
 
-- retire la création de la dll en debug
+- Met en commentaire le Game
