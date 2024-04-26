@@ -937,6 +937,22 @@ void ImGuiModule::DrawFilesExplorerWindow() {
 		for (const auto& filenames_wide : filenames) 
 		{
 			ImGui::Text(filesdirs.ConvertWideStringToString(filenames_wide).c_str());
+			std::string ext;
+			std::string filename;
+			std::ifstream file(filenames_wide);
+			
+			filesdirs.ExtractFilenameAndExtension(currentDir+"/"+filesdirs.ConvertWideStringToString(filenames_wide), filename, ext);
+
+			if (ext == "png" || ext == "jpg" || ext == "gif" || ext == "tga" || ext == "bmp" || ext == "psd" || ext == "hdr" || ext == "pic")
+			{
+				ImGui::SameLine();
+				if (ImGui::Button("Add", ImVec2(35, 25))) {
+					moduleManager->GetModule<RHIVulkanModule>()->AddTextureToPool(GetCurrentDir() + fileToLook);
+					// Décomposer la string pour garder ce qu'il y a après le dernier /
+					moduleManager->GetModule<RHIVulkanModule>()->AddListTexturesNames(filename);
+					AddLog("Texture has been added : " + filename);
+				}
+			}
 		}
 
 		ImGui::EndChild();
