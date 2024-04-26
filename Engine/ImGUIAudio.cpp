@@ -16,7 +16,7 @@ void ImGUIAudio::DrawAudioControls() {
     }
 
     if (ImGui::Button("Start")) {
-        _soundModule->loadAndPlaySound("Sounds/babooshka.mp3");  // Remplacez par votre chemin de fichier ou variable
+        _soundModule->loadAndPlaySound("Sounds/babooshka.mp3");
     }
     ImGui::SameLine();
     if (ImGui::Button(_soundModule->IsPlaying() ? "Pause" : "Play")) {
@@ -42,10 +42,10 @@ void ImGUIAudio::DrawAudioControls() {
     // Vérifier si un fichier a été sélectionné et validé
     //if (ImGuiFileDialog::Instance()->Display("ChooseFileDlgKey")) {
     //    if (ImGuiFileDialog::Instance()->IsOk()) {
-    //        std::string filePath = ImGuiFileDialog::Instance()->GetFilePathName();
+    //        std::string _filePath = ImGuiFileDialog::Instance()->GetFilePathName();
     //        std::string fileName = ImGuiFileDialog::Instance()->GetCurrentFileName();
-    //        // Vous pouvez ici utiliser filePath ou fileName selon vos besoins
-    //        _soundModule->loadAndPlaySound(filePath.c_str());
+    //        // Vous pouvez ici utiliser _filePath ou fileName selon vos besoins
+    //        _soundModule->loadAndPlaySound(_filePath.c_str());
     //    }
     //    // Fermer le dialogue une fois fini
     //    ImGuiFileDialog::Instance()->Close();

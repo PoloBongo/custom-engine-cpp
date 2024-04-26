@@ -135,18 +135,18 @@ std::string SoundSystemModule::GetCurrentTrackName() const {
 	return currentTrackName;
 }
 
-void SoundSystemModule::loadAndPlaySound(const char* filePath) {
-	if (!isPlaying || currentTrackName != filePath) {  // V�rifier si le son n'est pas d�j� en cours de lecture ou si un nouveau fichier est choisi
+void SoundSystemModule::loadAndPlaySound(const char* _filePath) {
+	if (!isPlaying || currentTrackName != _filePath) {  // V�rifier si le son n'est pas d�j� en cours de lecture ou si un nouveau fichier est choisi
 		if (mainChannel) {
 			mainChannel->stop();  // Arr�tez le son actuel s'il y en a un
 		}
 
 		FMOD::Sound* newSound;
-		FMOD_RESULT result = system->createSound(filePath, FMOD_DEFAULT, nullptr, &newSound);
+		FMOD_RESULT result = system->createSound(_filePath, FMOD_DEFAULT, nullptr, &newSound);
 		if (result == FMOD_OK) {
 			system->playSound(newSound, nullptr, false, &mainChannel);
 			currentSound = newSound;
-			currentTrackName = filePath;
+			currentTrackName = _filePath;
 			isPlaying = true;
 		}
 		else {

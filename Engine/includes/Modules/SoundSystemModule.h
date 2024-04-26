@@ -1,6 +1,7 @@
 #pragma once
 
 #include <fmod.hpp>
+#include <string>
 #include "Modules/Module.h"
 
 /**
@@ -101,8 +102,7 @@ class SoundSystemModule final : public Module
 		void SetMasterVolume(float _volume);
 
 		/**
-		* @brief Joue un son sp�cifi�
-		* @param _filePath Chemin du fichier audio � jouer
+		* @brief Est ce que le son est en cours de lecture
 		*/
 		bool IsPlaying() const;
 
