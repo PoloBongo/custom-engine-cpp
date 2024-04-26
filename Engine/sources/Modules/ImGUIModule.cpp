@@ -1,12 +1,8 @@
 ﻿#include "Modules/ImGUIModule.h"
-#include "lve_renderer.h"
-#include "ModuleManager.h"
 #include "Modules/WindowModule.h"
 #include "Modules/ImGUIModule.h"
 
 #include "FilesDirs.h"
-
-#include <CoreEngine.h>
 
 #include "ImGUIInterface.h"
 
@@ -31,6 +27,7 @@
 #include <locale>
 #include <codecvt>
 #include <algorithm>
+#include <Engine/CoreEngine.h>
 
 class BaseScene;
 // ----------========== IMGUI SETTINGS ==========---------- //
@@ -266,7 +263,7 @@ void ImGuiModule::GetGui()
 	DrawInspectorWindow();
 	ImGui::End();
 
-	ImGuiModule::DrawTchatWindow();
+	DrawTchatWindow();
 	
 	ImGui::SetNextWindowSize(ImVec2(300, 72), ImGuiCond_Always); // Hauteur fixe et non-redimensionnable
 	ImGui::SetNextWindowPos(ImVec2(mainWindowSize.x / 2 - 300 / 2, 0), ImGuiCond_Always); // Ancrage en haut à droite
@@ -274,10 +271,7 @@ void ImGuiModule::GetGui()
 	DrawModesWindow();
 	ImGui::End();
 
-	//ImGui::SetNextWindowSize(ImVec2(500, 400), ImGuiCond_FirstUseEver);
-	//ImGui::Begin("Console", nullptr, window_flags);
 	DrawConsoleWindow();
-	//ImGui::End();
 
 	DrawFilesExplorerWindow();
 
@@ -820,8 +814,8 @@ void ImGuiModule::DrawTchatWindow() {
 			memset(messageBuffer, 0, sizeof(messageBuffer));  // Effacer le buffer de message après "l'envoi"
 		}
 
-		ImGui::End();
 	}
+	ImGui::End();
 }
 
 void ImGuiModule::DrawConsoleWindow() 
@@ -936,7 +930,7 @@ void ImGuiModule::DrawFilesExplorerWindow() {
 
 		std::vector<std::wstring> filenames = filesdirs.GetFilesInDir(filesdirs.ConvertStringToWideString(GetCurrentDir()));
 
-		float scrollHeight = ImGui::GetWindowSize().y - 70;
+		float scrollHeight = ImGui::GetWindowSize().y - 90;
 
 		ImGui::BeginChild("ScrollingRegion", ImVec2(0, scrollHeight), true, ImGuiWindowFlags_HorizontalScrollbar);
 

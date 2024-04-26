@@ -98,11 +98,11 @@
     <ClCompile Include="sources\Script\GameObjectScript.cpp" />
     <ClCompile Include="sources\GameObject\PreGameObject\VaseGameObject.cpp" />
     <ClCompile Include="ImGUIAudio.cpp" />
-    <ClCompile Include="sources\GameObject\PreGameObject\GirlGameObject.cpp" />
     <ClCompile Include="sources\GameObject\PreGameObject\MultipleGameObject.cpp" />
     <ClCompile Include="sources\GameObject\PreGameObject\NoobGameObject.cpp" />
     <ClCompile Include="sources\GameObject\PreGameObject\SphereGameObject.cpp" />
     <ClCompile Include="sources\FilesDirs.cpp" />
+    <ClCompile Include="sources\GameObject\PreGameObject\GirlGameObject.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="includes\UDP\ErrorsUDP.h" />
