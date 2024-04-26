@@ -13,9 +13,24 @@ namespace lve
 	{
 	}
 
-	void CameraManager::Initialize()
+	CameraManager::~CameraManager()
 	{
-		BaseCamera* camera = CurrentCamera();
+		while (!cameraStack.empty())
+		{
+			cameraStack.pop();
+		}
+
+		for (BaseCamera* camera : cameras)
+		{
+			camera->Finalize();
+			delete camera;
+		}
+		cameras.clear();
+	}
+
+	void CameraManager::Init()
+	{
+		BaseCamera* camera = GetCurrentCamera();
 		/*CHECK_NE(camera, nullptr);
 
 		camera->Initialize();
@@ -26,7 +41,48 @@ namespace lve
 		bInitialized = true;
 	}
 
-	void CameraManager::Destroy()
+	void CameraManager::Start()
+	{
+		Module::Start();
+	}
+
+
+	void CameraManager::FixedUpdate()
+	{
+		Module::FixedUpdate();
+	}
+
+	void CameraManager::Update()
+	{
+		Module::Update();
+	}
+
+	void CameraManager::PreRender()
+	{
+		Module::PreRender();
+	}
+
+	void CameraManager::Render()
+	{
+		Module::Render();
+	}
+
+	void CameraManager::RenderGui()
+	{
+		Module::RenderGui();
+	}
+
+	void CameraManager::PostRender()
+	{
+		Module::PostRender();
+	}
+
+	void CameraManager::Release()
+	{
+		Module::Release();
+	}
+
+	void CameraManager::Finalize()
 	{
 		while (!cameraStack.empty())
 		{
@@ -46,9 +102,6 @@ namespace lve
 		bInitialized = false;
 	}
 
-	void CameraManager::Update()
-	{
-	}
 
 	void CameraManager::OnPostSceneChange() const
 	{
@@ -58,7 +111,7 @@ namespace lve
 		}
 	}
 
-	BaseCamera* CameraManager::CurrentCamera() const
+	BaseCamera* CameraManager::GetCurrentCamera() const
 	{
 		return cameraStack.top();
 	}
@@ -78,7 +131,7 @@ namespace lve
 
 	BaseCamera* CameraManager::SetCamera(BaseCamera* _camera, const bool _bAlignWithPrevious)
 	{
-		if (!cameraStack.empty()) BaseCamera* active_camera = CurrentCamera();
+		if (!cameraStack.empty()) BaseCamera* active_camera = GetCurrentCamera();
 		/*active_camera->OnDepossess();
 		active_camera->Destroy();*/
 
@@ -178,14 +231,14 @@ namespace lve
 
 		/*g_InputModule->ClearAllInputs();*/
 
-		BaseCamera* currentCamera = CurrentCamera();
+		BaseCamera* currentCamera = GetCurrentCamera();
 		currentCamera->OnDepossess();
 		currentCamera->Finalize();
 		const BaseCamera* prev_camera = currentCamera;
 
 		cameraStack.pop();
 
-		currentCamera = CurrentCamera();
+		currentCamera = GetCurrentCamera();
 		currentCamera->OnPossess();
 		currentCamera->Init();
 
@@ -206,7 +259,7 @@ namespace lve
 	{
 		/*if (ImGui::TreeNode("Camera"))
 		{
-			BaseCamera* currentCamera = CurrentCamera();
+			BaseCamera* currentCamera = GetCurrentCamera();
 
 			const uint32_t cameraCount = (uint32_t)cameras.size();
 
@@ -290,7 +343,7 @@ namespace lve
 				currentCamera->ResetPosition();
 			}
 
-			CurrentCamera()->DrawImGuiObjects();
+			GetCurrentCamera()->DrawImGuiObjects();
 
 			ImGui::TreePop();
 		}*/
@@ -332,4 +385,4 @@ namespace lve
 
 		return EventReply::UNCONSUMED;
 	}*/
-} // namespace flex
+} 

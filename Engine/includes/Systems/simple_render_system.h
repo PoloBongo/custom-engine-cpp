@@ -2,10 +2,8 @@
 
 #include <vulkan/vulkan.hpp>
 
-#include "lve_device.h"
-#include "lve_frame_info.h"
-#include "lve_game_object.h"
-#include "lve_pipeline.h"
+#include "LveEngine/lve_device.h"
+#include "LveEngine/lve_pipeline.h"
 #include "Camera/lve_camera.h"
 
 //std
@@ -47,8 +45,10 @@ namespace lve
 			 * @param _camera
 			 * @param _commandBuffer
 			 * @param _globalDescriptorSet
+			 * @param _tex1DescriptorSet
+			 * @param _tex2DescriptorSet
 			 */
-			void RenderGameObjects(const std::vector<GameObject*>& _gameObjects, const LveCamera& _camera, const vk::CommandBuffer _commandBuffer, std::vector<std::vector<vk::DescriptorSet>*>* _DescriptorSetsAll, int _frameIndex) const;
+			void RenderGameObjects(const std::vector<GameObject*>& _gameObjects, const LveCamera& _camera, const vk::CommandBuffer _commandBuffer, std::vector<std::vector<vk::DescriptorSet>*>* _DescriptorSetsAll, int _frameIndex)  const;
 
 		private:
 			/**

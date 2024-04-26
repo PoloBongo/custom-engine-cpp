@@ -1,9 +1,10 @@
 #pragma once
 
 #include <functional>
-#include "Module.h"
+#include "Modules/Module.h"
 #include "Modules/WindowModule.h"
 #include "Scene/SceneManager.h"
+#include "RHIVulkanModule.h"
 
 class RHIModule;
 
@@ -116,6 +117,8 @@ public:
 	 */
 	void DisplayTransform(Transform* _transform);
 
+	void DrawModesWindow();
+
 	/**
 	 * @brief Dessine les paramètres de l'interface utilisateur du moteur de jeu.
 	 */
@@ -154,8 +157,9 @@ public:
 	/**
 	 * @brief Crée un nouveau GameObject du type spécifié et l'ajoute à la scène active.
 	 * @param _type Type de GameObject à créer, comme Cube, Light ou Plane.
+	 * @param _otherType
 	 */
-	void CreateSpecificGameObject(GameObjectType _type);
+	void CreateSpecificGameObject(GameObjectType _type, int _otherType = 0);
 
 protected:
 	vk::Device device; ///< Périphérique utilisé pour le rendu avec Vulkan.
@@ -186,6 +190,8 @@ protected:
 	char messageBuffer[256] = ""; // Buffer pour le message à envoyer
 	std::vector<std::string> messageLogs; // Liste des messages reçus
 
+
+	bool textureView = false;
 
 	/**
 	 * @brief Destructeur par défaut.

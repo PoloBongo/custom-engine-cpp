@@ -9,6 +9,7 @@
 class TimeModule : public Module
 {
 	public:
+
 		/**
 		 * @brief Constructeur par défaut de la classe TimeModule.
 		 */
@@ -71,8 +72,8 @@ class TimeModule : public Module
 		}
 
 		/**
-	 * @brief Réinitialise le temps.
-	 */
+		 * @brief Réinitialise le temps.
+		 */
 		void Reset()
 		{
 			currentTime = std::chrono::high_resolution_clock::now();
@@ -80,9 +81,11 @@ class TimeModule : public Module
 			deltaTime   = 0.0f;
 		}
 
+#pragma region Event
+
 		/**
-		* @brief Initialise le module.
-		*/
+		 * @brief Initialise le module.
+		 */
 		void Init() override;
 
 		/**
@@ -129,6 +132,9 @@ class TimeModule : public Module
 		 * @brief Finalise le module.
 		 */
 		void Finalize() override;
+
+#pragma endregion
+
 		static float deltaTime;
 
 	private:

@@ -1,8 +1,8 @@
 #include "Modules/SoundSystemModule.h"
 #include <fmod_errors.h>
-#include <string>
+#include <iostream>
 
-SoundSystemModule::SoundSystemModule()
+SoundSystemModule::SoundSystemModule(): channelGroup(nullptr), min(0), max(0)
 {
 	if (System_Create(&system) != FMOD_OK)
 	{
@@ -10,10 +10,10 @@ SoundSystemModule::SoundSystemModule()
 		return;
 	}
 
-	int driverCount = 0;
-	system->getNumDrivers(&driverCount);
+	int driver_count = 0;
+	system->getNumDrivers(&driver_count);
 
-	if (driverCount == 0)
+	if (driver_count == 0)
 	{
 		std::cout << "FMOD n'a pas trouvé de sortie de son" << std::endl;
 		return;
@@ -24,44 +24,42 @@ SoundSystemModule::SoundSystemModule()
 }
 
 // Permet la création du son avec son chemin d'accès //
-void SoundSystemModule::CreateSound(SoundClass* p_Sound, const char* p_pathAudio) const
+void SoundSystemModule::CreateSound(SoundClass* p_sound, const char* p_pathAudio) const
 {
-	const FMOD_RESULT result = system->createSound(p_pathAudio, FMOD_LOOP_OFF, nullptr, p_Sound);
-
-	if (result != FMOD_OK) std::cout << "le son n'a pas charge : " << FMOD_ErrorString(result) << std::endl;
+	if (const FMOD_RESULT result = system->createSound(p_pathAudio, FMOD_LOOP_OFF, nullptr, p_sound); result != FMOD_OK) std::cout << "le son n'a pas charge : " << FMOD_ErrorString(result) << std::endl;
 }
 
 // Permet la création d'un groupe de son. //
-void SoundSystemModule::CreateSoundGroup(SoundGroup* p_pSoundGroup, const char* p_pathAudio) const
+void SoundSystemModule::CreateSoundGroup(SoundGroup* p_soundGroup, const char* p_pathAudio) const
 {
-	if (const FMOD_RESULT result = system->createSoundGroup(p_pathAudio, p_pSoundGroup);
+	if (const FMOD_RESULT result = system->createSoundGroup(p_pathAudio, p_soundGroup);
 		result != FMOD_OK) std::cout << "le groupe n'a pas charge : " << FMOD_ErrorString(result) << std::endl;
 }
 
 // Permet la récupération d'un groupe de son. //
-void SoundSystemModule::GetMasterSoundGroup(SoundGroup* p_pSound) const
+void SoundSystemModule::GetMasterSoundGroup(SoundGroup* p_sound) const
 {
-	if (const FMOD_RESULT result = system->getMasterSoundGroup(p_pSound);
+	if (const FMOD_RESULT result = system->getMasterSoundGroup(p_sound);
 		result != FMOD_OK) std::cout << "le groupe n'a pas charge : " << FMOD_ErrorString(result) << std::endl;
 }
 
 // Permet de joué un son spécifique avec ces propres paramètres. //
-void SoundSystemModule::PlaySound(const SoundClass _pSound, const bool _isPlay, const int _loopCount,
+void SoundSystemModule::PlaySound(const SoundClass p_sound, const bool _isPlay, const int _loopCount,
                                   const float      _volume, Channel*   p_channelPtr) const
 {
 	FMOD::Channel* channel = nullptr;
 
 	if (!_isPlay)
 	{
-		_pSound->setMode(FMOD_LOOP_OFF);
+		p_sound->setMode(FMOD_LOOP_OFF);
 	}
 	else
 	{
-		_pSound->setMode(FMOD_LOOP_NORMAL);
-		_pSound->setLoopCount(_loopCount);
+		p_sound->setMode(FMOD_LOOP_NORMAL);
+		p_sound->setLoopCount(_loopCount);
 	}
 
-	system->playSound(_pSound, channelGroup, false, &channel);
+	system->playSound(p_sound, channelGroup, false, &channel);
 
 	channel->setVolume(_volume);
 
@@ -70,21 +68,21 @@ void SoundSystemModule::PlaySound(const SoundClass _pSound, const bool _isPlay, 
 }
 
 // Permet de libérer la mémoire et de couper le son. //
-void SoundSystemModule::ReleaseSound(const SoundClass _pSound)
+void SoundSystemModule::ReleaseSound(const SoundClass p_sound)
 {
-	_pSound->release();
+	p_sound->release();
 }
 
 // Permet d'obtenir le nombre total de tour sur le son //
-int SoundSystemModule::GetLoopCount(const SoundClass _pSound, int* p_loopCount)
+int SoundSystemModule::GetLoopCount(const SoundClass p_sound, int* p_loopCount)
 {
-	return _pSound->getLoopCount(p_loopCount);
+	return p_sound->getLoopCount(p_loopCount);
 }
 
 // Permet la création d'un channel de groupe. //
-void SoundSystemModule::CreateChannelGroup(FMOD::ChannelGroup** channelGroup) const
+void SoundSystemModule::CreateChannelGroup(FMOD::ChannelGroup** pp_channelGroup) const
 {
-	system->createChannelGroup(nullptr, channelGroup);
+	system->createChannelGroup(nullptr, pp_channelGroup);
 }
 
 // Permet d'ajouter un son à un channel de groupe pour pouvoir modifier les paramètres du son du tout les sons du channel. //

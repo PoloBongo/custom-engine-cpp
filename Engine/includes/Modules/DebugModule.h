@@ -1,13 +1,30 @@
 #pragma once
 #include <iostream>
 
-#include "Module.h"
+#include "Modules/Module.h"
 
+
+/**
+ * @brief Classe représentant un module de débogage.
+ *
+ * Cette classe hérite de la classe Module et permet de gérer les fonctionnalités de débogage dans le jeu.
+ */
 class DebugModule : public Module
 {
 	public:
+
+		/**
+	 * @brief Destructeur virtuel de la classe DebugModule.
+	 *
+	 * Ce destructeur virtuel permet une destruction appropriée des objets de la classe DebugModule lorsqu'ils sont utilisés polymorphiquement.
+	 */
 		virtual ~DebugModule();
 
+		/**
+		 * @brief Énumération représentant les types de journaux.
+		 *
+		 * Cette énumération définit les différents types de journaux utilisés pour les messages de débogage.
+		 */
 		enum class TypeLog
 		{
 			INFO,
@@ -16,56 +33,70 @@ class DebugModule : public Module
 			SUCCESS
 		};
 
-		static void Log(const std::string& _message, const TypeLog _level = TypeLog::INFO)
-		{
-			std::string prefix_type;
-			std::string color_code;
-			switch (_level)
-			{
-				case TypeLog::INFO:
-					prefix_type = "[INFO]";
-					color_code = "\033[1;34m"; // Bleu
-					break;
-				case TypeLog::WARNING:
-					prefix_type = "[WARNING]";
-					color_code = "\033[1;33m"; // Jaune
-					break;
-				case TypeLog::ERROR:
-					prefix_type = "[ERROR]";
-					color_code = "\033[1;31m"; // Rouge
-					break;
-				case TypeLog::SUCCESS:
-					prefix_type = "[SUCCESS]";
-					color_code = "\033[1;32m"; // Vert
-					break;
-				default:
-					break;
-			}
+#pragma region Logs
 
-			const std::string reset_color = "\033[0m"; // Reset la couleur
-			// TODO : question pour Adrien : '\n' à la place de std::endl
-			std::cout << color_code << prefix_type << " : " << _message << reset_color << std::endl;
-		}
+		/**
+		 * @brief Enregistre un message de journal avec un niveau de priorité spécifié.
+		 *
+		 * Cette méthode statique enregistre un message de journal avec un niveau de priorité spécifié.
+		 *
+		 * @param _message Le message à enregistrer dans le journal.
+		 * @param _level Le niveau de priorité du message (par défaut: TypeLog::INFO).
+		 *        Les valeurs possibles sont TypeLog::INFO, TypeLog::WARNING, TypeLog::ERROR et TypeLog::SUCCESS.
+		 */
+		static void Log(const std::string& _message, const TypeLog _level = TypeLog::INFO);
 
+		/**
+		 * @brief Enregistre un message d'erreur dans le journal.
+		 *
+		 * Cette méthode statique enregistre un message d'erreur dans le journal avec le niveau de priorité TypeLog::ERROR.
+		 *
+		 * @param _message Le message d'erreur à enregistrer dans le journal.
+		 */
 		static void LogError(const std::string& _message)
 		{
 			Log(_message, TypeLog::ERROR);
 		}
 
+		/**
+		 * @brief Enregistre un message d'avertissement dans le journal.
+		 *
+		 * Cette méthode statique enregistre un message d'avertissement dans le journal avec le niveau de priorité TypeLog::WARNING.
+		 *
+		 * @param _message Le message d'avertissement à enregistrer dans le journal.
+		 */
 		static void LogWarning(const std::string& _message)
 		{
 			Log(_message, TypeLog::WARNING);
 		}
 
+		/**
+		 * @brief Enregistre un message d'information dans le journal.
+		 *
+		 * Cette méthode statique enregistre un message d'information dans le journal avec le niveau de priorité TypeLog::INFO.
+		 *
+		 * @param _message Le message d'information à enregistrer dans le journal.
+		 */
 		static void LogInfo(const std::string& _message)
 		{
 			Log(_message, TypeLog::INFO);
 		}
 
+		/**
+		 * @brief Enregistre un message de réussite dans le journal.
+		 *
+		 * Cette méthode statique enregistre un message de réussite dans le journal avec le niveau de priorité TypeLog::SUCCESS.
+		 *
+		 * @param _message Le message de réussite à enregistrer dans le journal.
+		 */
 		static void LogSuccess(const std::string& _message)
 		{
 			Log(_message, TypeLog::SUCCESS);
 		}
+
+#pragma endregion
+
+#pragma region Event
 
 		/**
 			* @brief Initialise le module.
@@ -116,4 +147,7 @@ class DebugModule : public Module
 		 * @brief Finalise le module.
 		 */
 		void Finalize() override;
+
+#pragma endregion
+
 };

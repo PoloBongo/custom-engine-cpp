@@ -1,10 +1,7 @@
 #pragma once
 
-#include <cstddef>
 #include <fmod.hpp>
-#include <iostream>
-
-#include "Module.h"
+#include "Modules/Module.h"
 
 /**
  * @brief Classe SoundClass : Gère le système Sound utilisant la bibliothèque FMOD
@@ -34,39 +31,39 @@ class SoundSystemModule final : public Module
 
 		/**
 		 * @brief Crée un objet Sound à partir d'un fichier audio spécifié
-		 * @param p_Sound Pointeur vers l'objet Sound créé
-		 * @param _pathAudio Chemin du fichier audio à charger
+		 * @param p_sound Pointeur vers l'objet Sound créé
+		 * @param p_pathAudio Chemin du fichier audio à charger
 		 */
-		void CreateSound(SoundClass* p_Sound, const char* p_pathAudio) const;
+		void CreateSound(SoundClass* p_sound, const char* p_pathAudio) const;
 
 		/**
 		 * @brief Crée un objet SoundGroup à partir d'un fichier audio spécifié
-		 * @param _pSoundGroup Pointeur vers l'objet SoundGroup créé
-		 * @param _pathAudio Chemin du fichier audio à charger
+		 * @param p_soundGroup Pointeur vers l'objet SoundGroup créé
+		 * @param p_pathAudio Chemin du fichier audio à charger
 		 */
-		void CreateSoundGroup(SoundGroup* p_pSoundGroup, const char* p_pathAudio) const;
+		void CreateSoundGroup(SoundGroup* p_soundGroup, const char* p_pathAudio) const;
 
 		/**
 		 * @brief Obtient le groupe de sons principal
-		 * @param _pSound Pointeur vers le groupe de sons principal
+		 * @param p_Sound Pointeur vers le groupe de sons principal
 		 */
-		void GetMasterSoundGroup(SoundGroup* p_pSound) const;
+		void GetMasterSoundGroup(SoundGroup* p_Sound) const;
 
 		/**
 		 * @brief Joue un son spécifié
-		 * @param _pSound Pointeur vers l'objet Sound à jouer
+		 * @param p_sound Pointeur vers l'objet Sound à jouer
 		 * @param _isPlay Booléen indiquant si le son doit être joué immédiatement
 		 * @param _loopCount Nombre de fois que le son doit être joué en boucle
 		 * @param _volume Volume du son à jouer
 		 * @param p_channelPtr Pointeur vers le canal sur lequel le son est joué
 		 */
-		void PlaySound(SoundClass _pSound, bool _isPlay, int _loopCount, float _volume, Channel* p_channelPtr) const;
+		void PlaySound(SoundClass p_sound, bool _isPlay, int _loopCount, float _volume, Channel* p_channelPtr) const;
 
 		/**
 		 * @brief Libère les ressources utilisées par un son spécifié
-		 * @param _pSound Pointeur vers l'objet Sound à libérer
+		 * @param p_sound Pointeur vers l'objet Sound à libérer
 		 */
-		void ReleaseSound(SoundClass _pSound);
+		void ReleaseSound(SoundClass p_sound);
 
 		/**
 		 * @brief Crée un groupe de canaux pour le système audio
@@ -78,27 +75,9 @@ class SoundSystemModule final : public Module
 		/**
 		 * @brief Ajoute un son à un groupe de canaux spécifié
 		 * @param _pSound Pointeur vers l'objet Sound à ajouter au groupe de canaux
-		 * @param _channelGroup Pointeur vers le groupe de canaux auquel ajouter le son
+		 * @param p_channelGroup Pointeur vers le groupe de canaux auquel ajouter le son
 		 */
 		void AddSoundToGroup(SoundClass _pSound, FMOD::ChannelGroup* p_channelGroup) const;
-
-		/**
-		 * @brief Définit la distance minimum et maximum pour un son 3D
-		 * @param _min Distance minimum du son
-		 * @param _max Distance maximum du son
-		 * @return La distance minimum et maximum définie
-		 */
-		float Set3DMinMaxDistance(const float _min, const float _max)
-		{
-			min = _min;
-			max = _max;
-		}
-
-		/**
-		 * @brief Obtient la distance minimum et maximum pour un son 3D
-		 * @return La distance minimum et maximum du son
-		 */
-		float Get3DMinMaxDistance() { return min, max; }
 
 		/**
 		 * @brief Obtient le nombre de boucles d'un son spécifié
@@ -142,6 +121,7 @@ class SoundSystemModule final : public Module
 		 */
 		FMOD_RESULT GetReverbProperties(int _instance, FMOD_REVERB_PROPERTIES* p_prop) const;
 
+#pragma region Event
 
 		/**
 		    * @brief Initialise le module.
@@ -193,11 +173,18 @@ class SoundSystemModule final : public Module
 		 */
 		void Finalize() override;
 
-	private:
-		FMOD::System*       system;       // Pointeur vers l'objet système FMOD
-		FMOD::ChannelGroup* channelGroup; // Pointeur vers le groupe de canaux utilisé
+#pragma endregion
 
-		// Variables pour la distance minimum et maximum d'un son 3D
+	private:
+		/**< Pointeur vers l'objet système FMOD. */
+		FMOD::System* system;
+
+		/**< Pointeur vers le groupe de canaux utilisé. */
+		FMOD::ChannelGroup* channelGroup;
+
+		/**< Distance minimale d'un son 3D. */
 		float min;
+
+		/**< Distance maximale d'un son 3D. */
 		float max;
 };
