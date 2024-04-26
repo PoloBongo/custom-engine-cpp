@@ -67,3 +67,17 @@ std::string FilesDirs::ConvertWideStringToString(const std::wstring& wide_string
 
     return narrow_string;
 }
+
+void FilesDirs::ExtractFilenameAndExtension(const std::string& filePath, std::string& filename, std::string& extension) {
+    // Find the position of the last '/' or '\' character in the path
+    size_t lastSlashPos = filePath.find_last_of("/\\");
+
+    // Extract the filename from the path
+    filename = (lastSlashPos != std::string::npos) ? filePath.substr(lastSlashPos + 1) : filePath;
+
+    // Find the position of the last '.' character in the filename
+    size_t lastDotPos = filename.find_last_of('.');
+
+    // Extract the extension from the filename
+    extension = (lastDotPos != std::string::npos) ? filename.substr(lastDotPos + 1) : "";
+}

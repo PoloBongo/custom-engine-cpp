@@ -30,6 +30,7 @@
 #include <windows.h>
 #include <locale>
 #include <codecvt>
+#include <algorithm>
 
 class BaseScene;
 // ----------========== IMGUI SETTINGS ==========---------- //
@@ -362,7 +363,7 @@ void ImGuiModule::DrawInspectorWindow() {
 					std::cout << "File good";
 					AddLog("Model file good");
 					selectedGameObject->SetTexMultiplier(textureMulti);
-					std::shared_ptr<lve::LveModel> lve_model = lve::LveModel::CreateModelFromFile(*rhiModule->GetDevice(), selectedGameObject->GetFileModel(), selectedGameObject->GetTexMultiplier());
+					std::shared_ptr<lve::LveModel> lve_model = lve::LveModel::CreateModelFromFile(*rhiModule->GetDevice(), selectedGameObject->GetFileModel(), selectedGameObject->GetTexMultiplier(), selectedGameObject->GetColor());
 					selectedGameObject->SetModel(lve_model);
 				}
 				else {
@@ -377,7 +378,7 @@ void ImGuiModule::DrawInspectorWindow() {
 					std::cout << "File good";
 					AddLog("Model file good");
 					selectedGameObject->SetTexMultiplier(1.0f);
-					std::shared_ptr<lve::LveModel> lve_model = lve::LveModel::CreateModelFromFile(*rhiModule->GetDevice(), selectedGameObject->GetFileModel(), selectedGameObject->GetTexMultiplier());
+					std::shared_ptr<lve::LveModel> lve_model = lve::LveModel::CreateModelFromFile(*rhiModule->GetDevice(), selectedGameObject->GetFileModel(), selectedGameObject->GetTexMultiplier(), selectedGameObject->GetColor());
 					selectedGameObject->SetModel(lve_model);
 				}
 				else {
@@ -800,15 +801,85 @@ void ImGuiModule::DrawFilesExplorerWindow() {
 	if (ImGui::Begin("Files Explorer")) 
 	{
 		FilesDirs filesdirs;
-		AddLog("Files found in ../Textures : " + std::to_string(filesdirs.FilesInDir("../Textures")));
-		std::string str;
-		std::vector<std::wstring> filenames = filesdirs.GetFilesInDir(filesdirs.ConvertStringToWideString("../Textures"));
-		for (const auto& filenames_wide : filenames) {
-			str += filesdirs.ConvertWideStringToString(filenames_wide) + ", ";
-		}
-		AddLog("Find files in ../Textures :" + str);
 
-		// Auto add textures to pool ?
+
+		char* charBuffer1 = new char[100];
+		strcpy_s(charBuffer1, 100, GetCurrentDir().c_str());
+		if (ImGui::InputText("Change Dir", charBuffer1, 100)) { SetCurrentDir(charBuffer1); }
+		delete[] charBuffer1;
+
+		if (ImGui::Button("Add Textures Dir")) 
+		{
+			AddLog("Files found in ../Textures : " + std::to_string(filesdirs.FilesInDir("../Textures")));
+			std::string str;
+			std::vector<std::wstring> filenames = filesdirs.GetFilesInDir(filesdirs.ConvertStringToWideString(GetCurrentDir()));
+			std::vector<std::string>* listTexturesNames = moduleManager->GetModule<RHIVulkanModule>()->GetListTexturesNames();
+			for (const auto& filenames_wide : filenames) {
+				str += filesdirs.ConvertWideStringToString(filenames_wide) + ", ";
+
+				std::string ext;
+				std::string filename;
+				filesdirs.ExtractFilenameAndExtension(GetCurrentDir() + filesdirs.ConvertWideStringToString(filenames_wide), filename, ext);
+				
+				if (ext == "png" || ext == "jpg" || ext == "gif" || ext == "tga" || ext == "bmp" || ext == "psd" || ext == "hdr" || ext == "pic")
+				{
+					// Will work on things like name.truc if it's in the dir
+					if (std::find(listTexturesNames->begin(), listTexturesNames->end(), filesdirs.ConvertWideStringToString(filenames_wide)) != listTexturesNames->end())
+					{
+						AddLog("Texture already added : " + filesdirs.ConvertWideStringToString(filenames_wide));
+					}
+					else {
+						AddLog("Texture not added yet : " + filesdirs.ConvertWideStringToString(filenames_wide));
+						moduleManager->GetModule<RHIVulkanModule>()->AddTextureToPool(GetCurrentDir() + "/" + filesdirs.ConvertWideStringToString(filenames_wide));
+						moduleManager->GetModule<RHIVulkanModule>()->AddListTexturesNames(filesdirs.ConvertWideStringToString(filenames_wide));
+						AddLog("Texture has been added : " + filesdirs.ConvertWideStringToString(filenames_wide));
+					}
+				}
+			
+			}
+			AddLog("Find files in ../Textures :" + str);
+		}
+
+		ImGui::SameLine();
+		char* charBuffer = new char[100];
+		strcpy_s(charBuffer, 100, GetFileToLook().c_str());
+		if (ImGui::InputText("-", charBuffer, 100)) { SetFileToLook(charBuffer); }
+		delete[] charBuffer;
+
+		ImGui::SameLine();
+
+		if (ImGui::Button("Add Tex")) 
+		{
+			std::string ext;
+			std::string filename;
+			std::ifstream file(GetFileToLook());
+			filesdirs.ExtractFilenameAndExtension(GetFileToLook(), filename, ext);
+
+			if (ext == "png" || ext == "jpg" || ext == "gif" || ext == "tga" || ext == "bmp" || ext == "psd" || ext == "hdr" || ext == "pic")
+			{
+				moduleManager->GetModule<RHIVulkanModule>()->AddTextureToPool(fileToLook);
+				// Décomposer la string pour garder ce qu'il y a après le dernier /
+				moduleManager->GetModule<RHIVulkanModule>()->AddListTexturesNames(fileToLook);
+				AddLog("Texture has been added : " + fileToLook);
+				SetFileToLook("");
+			}	
+		}
+
+		ImGui::Separator();
+
+		std::vector<std::wstring> filenames = filesdirs.GetFilesInDir(filesdirs.ConvertStringToWideString(GetCurrentDir()));
+
+		float scrollHeight = ImGui::GetWindowSize().y - 70;
+
+		ImGui::BeginChild("ScrollingRegion", ImVec2(0, scrollHeight), true, ImGuiWindowFlags_HorizontalScrollbar);
+
+		for (const auto& filenames_wide : filenames) 
+		{
+			ImGui::Text(filesdirs.ConvertWideStringToString(filenames_wide).c_str());
+		}
+
+		ImGui::EndChild();
+
 	}
 	ImGui::End();
 }

@@ -172,6 +172,12 @@ public:
 	void SetFilterError(bool _newState) { filterError = _newState; }
 	void SetFilterSimple(bool _newState) { filterSimple = _newState; }
 
+	std::string GetFileToLook() { return fileToLook; }
+	void SetFileToLook(std::string _newFileToLook) { fileToLook = _newFileToLook; }
+
+	std::string GetCurrentDir() { return currentDir; }
+	void SetCurrentDir(std::string _newDir) { currentDir = _newDir; }
+
 protected:
 	vk::Device device; ///< Périphérique utilisé pour le rendu avec Vulkan.
 	vk::Queue graphicsQueue; ///< File d'attente graphique pour la soumission des commandes Vulkan.
@@ -201,6 +207,9 @@ protected:
 	bool filterSimple = true;
 	bool filterError = true;
 	bool filterWarning = true;
+
+	std::string fileToLook;
+	std::string currentDir = "../Textures";
 
 	std::vector<std::string>* logs = new std::vector<std::string>();
 

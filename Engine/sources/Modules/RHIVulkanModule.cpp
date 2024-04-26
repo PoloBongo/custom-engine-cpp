@@ -111,7 +111,7 @@ void RHIVulkanModule::Start()
 		.Build();
 
 	// Je laisse la construction du globalDesc comme ça pour montrer 
-	texture1 = new lve::LveTexture(*p_lveDevice, "../Textures/coconut.jpg");
+	texture1 = new lve::LveTexture(*p_lveDevice, "../Textures/bugtexture2.png");
 
 	vk::DescriptorImageInfo imageInfo{};
 	imageInfo.sampler = texture1->getSampler();
@@ -132,6 +132,15 @@ void RHIVulkanModule::Start()
 	ListTextures.push_back(imageInfo);
 
 	ListDescriptors.push_back(&globalDescriptorSets);
+
+	ListTexturesNames->push_back("bugtexture.png");
+	ListTexturesNames->push_back("unnamed.png");
+	ListTexturesNames->push_back("viking_room.png");
+	ListTexturesNames->push_back("grass.jpg");
+	ListTexturesNames->push_back("noobtex.png");
+	ListTexturesNames->push_back("sand1.png");
+	ListTexturesNames->push_back("sand2.png");
+	ListTexturesNames->push_back("sand3.png");
 
 	AddTextureToPool("../Textures/unnamed.png");
 	AddTextureToPool("../Textures/viking_room.png");
