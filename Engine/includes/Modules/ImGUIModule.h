@@ -8,6 +8,7 @@
 
 #include "TCP/Client/TCPClientStart.h"
 #include "TCP/Server/TCPServerStart.h"
+#include "TCP/StatusMessage.h"
 
 class RHIModule;
 

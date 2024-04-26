@@ -1,5 +1,6 @@
 #pragma once
 #include "TCP/Server/Server.h"
+#include "TCP/Client/TCPClientStart.h"
 #include <thread>
 
 class TCPServerStart

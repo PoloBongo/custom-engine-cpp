@@ -553,9 +553,6 @@ void ImGuiModule::DrawSettingsWindow() {
 //}
 
 void ImGuiModule::DrawTchatWindow() {
-	//ClientUDPStart clientUDP;
-	//ServerUDPStart serverUDP;
-
 	if (ImGui::Begin("Tchat")) {
 		ImGui::Spacing();
 
@@ -573,7 +570,7 @@ void ImGuiModule::DrawTchatWindow() {
 				serverTCP.TCPServer(port, ipBuffer);
 			}
 			else {
-				clientTCP.TCPClient(ipBuffer, port);
+				clientTCP.ConnexionClientUDP(ipBuffer, port);
 			}
 		}
 		ImGui::Spacing();
@@ -607,13 +604,16 @@ void ImGuiModule::DrawTchatWindow() {
 			std::string fullMessage = "Ready to send message to " + std::string(ipBuffer) + ":" + std::string(portBuffer) + "\nMessage: " + std::string(messageBuffer);
 			messageLogs.push_back(fullMessage); // Ajouter le message à la liste des logs
 			std::cout << fullMessage << std::endl;
-			clientTCP.TCPClient(ipBuffer, port, true, fullMessage);
-			//std::thread clientThread(&TCPServerStart::clientThreadFunction, std::ref(serverTCP.getClient()), std::ref(active));
+			//clientTCP.SendDataClientUDP();
+			//clientTCP.sendData(messageBuffer);
+			StatusMessage& statusMsg = StatusMessage::getInstance();
+			statusMsg.setStatus(StatusMessage::Send);
+			clientTCP.sendData(messageBuffer);
+			
 			memset(messageBuffer, 0, sizeof(messageBuffer));  // Effacer le buffer de message après "l'envoi"
 		}
-
-		ImGui::End();
 	}
+	ImGui::End();
 }
 
 void ImGuiModule::DisplayTransform(Transform* _transform) {

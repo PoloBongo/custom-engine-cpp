@@ -21,11 +21,18 @@ void TCPServerStart::serverThreadFunction(Network::TCP::Server& server) {
 			else if (msg->is<Network::Messages::UserData>()) {
 				auto userdata = msg->as<Network::Messages::UserData>();
 				server.sendToAll(userdata->data.data(), static_cast<unsigned int>(userdata->data.size()));
+				//std::string reply(reinterpret_cast<const char*>(userdata->data.data()), userdata->data.size());
+				//std::cout << "Reponse du client : " << reply << std::endl;
+				//std::cout << ">";
+				//TCPClientStart tcp;
+				//std::string phrase = tcp.sendData();
 			}
 		}
 		// Permet de mettre le thread en pause pour éviter la surcharge de la CPU
 		//std::this_thread::sleep_for(std::chrono::milliseconds(100));
 	}
+	server.stop();
+	Network::Release();
 }
 
 void TCPServerStart::TCPServer(unsigned short _port, std::string ipAdress, bool active)
