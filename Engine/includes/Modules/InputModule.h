@@ -4,7 +4,7 @@
 #include <unordered_map>
 #include <GLFW/glfw3.h>
 
-#include "Module.h"
+#include "Modules/Module.h"
 
 class InputModule final : public Module
 {

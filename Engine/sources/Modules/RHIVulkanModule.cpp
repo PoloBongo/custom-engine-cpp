@@ -1,15 +1,13 @@
 #include "Modules/RHIVulkanModule.h"
 
-#include "ModuleManager.h"
-#include "Transform.h"
+#include <fstream>
+#include <iostream>
+#include "GameObject/Components/Transform.h"
 #include "GameObject/PreGameObject/CubeGameObject.h"
 #include "GameObject/PreGameObject/LightGameObject.h"
-#include "GameObject/PreGameObject/PlaneGameObject.h"
+#include "Modules/ModuleManager.h"
 #include "Modules/TimeModule.h"
 #include "Scene/SceneManager.h"
-
-#include <iostream>
-#include <fstream>
 
 RHIVulkanModule::RHIVulkanModule()
 {
@@ -26,7 +24,7 @@ void RHIVulkanModule:: Init()
 	p_lveRenderer = new lve::LveRenderer{ windowModule, *p_lveDevice };
 }
 
-void RHIVulkanModule::AddTextureToPool(const std::string _filepath) {
+void RHIVulkanModule::AddTextureToPool(const std::string& _filepath) {
 
 	
 	std::ifstream file(_filepath);
@@ -40,7 +38,7 @@ void RHIVulkanModule::AddTextureToPool(const std::string _filepath) {
 		.Build();
 
 	lve::LveTexture* NewTexture;
-	if (!file.good()) { NewTexture = new lve::LveTexture(*p_lveDevice, "../Textures/bugtexture.png"); }// return; }
+	if (!file.good()) { NewTexture = new lve::LveTexture(*p_lveDevice, "Textures/bugtexture.png"); }// return; }
 	else { NewTexture = new lve::LveTexture(*p_lveDevice, _filepath); }
 
 	ListTextures.push_back(vk::DescriptorImageInfo());
@@ -111,7 +109,7 @@ void RHIVulkanModule::Start()
 		.Build();
 
 	// Je laisse la construction du globalDesc comme ça pour montrer 
-	texture1 = new lve::LveTexture(*p_lveDevice, "../Textures/coconut.jpg");
+	texture1 = new lve::LveTexture(*p_lveDevice, "Textures/coconut.jpg");
 
 	vk::DescriptorImageInfo imageInfo{};
 	imageInfo.sampler = texture1->getSampler();
@@ -133,10 +131,10 @@ void RHIVulkanModule::Start()
 
 	ListDescriptors.push_back(&globalDescriptorSets);
 
-	AddTextureToPool("../Textures/unnamed.png");
-	AddTextureToPool("../Textures/viking_room.png");
-	AddTextureToPool("../Textures/grass.jpg");
-	AddTextureToPool("../Textures/gras.truc"); // TEST	
+	AddTextureToPool("Textures/unnamed.png");
+	AddTextureToPool("Textures/viking_room.png");
+	AddTextureToPool("Textures/grass.jpg");
+	AddTextureToPool("Textures/gras.truc"); // TEST	
 
 	simpleRenderSystem = new lve::SimpleRenderSystem{
 		*p_lveDevice, p_lveRenderer->GetSwapChainRenderPass(), global_set_layout->GetDescriptorSetLayout()
@@ -188,7 +186,7 @@ void RHIVulkanModule::PreRender()
 
 void RHIVulkanModule::Render()
 {
-	simpleRenderSystem->RenderGameObjects(gameObjects, *camera, *currentCommandBuffer, &ListDescriptors, frameIndex);      //render shadow casting objects
+	simpleRenderSystem->RenderGameObjects(gameObjects, *camera, *currentCommandBuffer, &ListDescriptors, frameIndex);       //render shadow casting objects
 	pointLightSystem->Render(gameObjects, *camera, *currentCommandBuffer, globalDescriptorSets[frameIndex]);                 //render shadow casting objects
 }
 

@@ -1,18 +1,18 @@
 #include "Modules/SoundSystemModule.h"
 #include <fmod_errors.h>
-#include <string>
+#include <iostream>
 
 SoundSystemModule::SoundSystemModule() : isInitialized(false) {
 	FMOD_RESULT result = System_Create(&system);
 	if (result != FMOD_OK) {
-		std::cerr << "Erreur lors de la création du système FMOD: " << FMOD_ErrorString(result) << std::endl;
-		return;  // Important pour éviter d'exécuter les étapes suivantes si le système n'est pas créé
+		std::cerr << "Erreur lors de la crï¿½ation du systï¿½me FMOD: " << FMOD_ErrorString(result) << std::endl;
+		return;  // Important pour ï¿½viter d'exï¿½cuter les ï¿½tapes suivantes si le systï¿½me n'est pas crï¿½ï¿½
 	}
 
 	int driverCount = 0;
 	system->getNumDrivers(&driverCount);
 	if (driverCount == 0) {
-		std::cerr << "FMOD n'a pas trouvé de sortie de son." << std::endl;
+		std::cerr << "FMOD n'a pas trouvï¿½ de sortie de son." << std::endl;
 		return;
 	}
 
@@ -22,82 +22,80 @@ SoundSystemModule::SoundSystemModule() : isInitialized(false) {
 		return;
 	}
 
-	std::cout << "SoundSystemModule initialisé avec succès." << std::endl;
+	std::cout << "SoundSystemModule initialisï¿½ avec succï¿½s." << std::endl;
 }
 
-// Permet la création du son avec son chemin d'accès //
-void SoundSystemModule::CreateSound(SoundClass* p_Sound, const char* p_pathAudio) const
+// Permet la crï¿½ation du son avec son chemin d'accï¿½s //
+void SoundSystemModule::CreateSound(SoundClass* p_sound, const char* p_pathAudio) const
 {
-	const FMOD_RESULT result = system->createSound(p_pathAudio, FMOD_LOOP_OFF, nullptr, p_Sound);
-
-	if (result != FMOD_OK) std::cout << "le son n'a pas charge : " << FMOD_ErrorString(result) << std::endl;
+	if (const FMOD_RESULT result = system->createSound(p_pathAudio, FMOD_LOOP_OFF, nullptr, p_sound); result != FMOD_OK) std::cout << "le son n'a pas charge : " << FMOD_ErrorString(result) << std::endl;
 }
 
-// Permet la création d'un groupe de son. //
-void SoundSystemModule::CreateSoundGroup(SoundGroup* p_pSoundGroup, const char* p_pathAudio) const
+// Permet la crï¿½ation d'un groupe de son. //
+void SoundSystemModule::CreateSoundGroup(SoundGroup* p_soundGroup, const char* p_pathAudio) const
 {
-	if (const FMOD_RESULT result = system->createSoundGroup(p_pathAudio, p_pSoundGroup);
+	if (const FMOD_RESULT result = system->createSoundGroup(p_pathAudio, p_soundGroup);
 		result != FMOD_OK) std::cout << "le groupe n'a pas charge : " << FMOD_ErrorString(result) << std::endl;
 }
 
-// Permet la récupération d'un groupe de son. //
-void SoundSystemModule::GetMasterSoundGroup(SoundGroup* p_pSound) const
+// Permet la rï¿½cupï¿½ration d'un groupe de son. //
+void SoundSystemModule::GetMasterSoundGroup(SoundGroup* p_sound) const
 {
-	if (const FMOD_RESULT result = system->getMasterSoundGroup(p_pSound);
+	if (const FMOD_RESULT result = system->getMasterSoundGroup(p_sound);
 		result != FMOD_OK) std::cout << "le groupe n'a pas charge : " << FMOD_ErrorString(result) << std::endl;
 }
 
-// Permet de joué un son spécifique avec ces propres paramètres. //
-void SoundSystemModule::PlaySound(const SoundClass _pSound, const bool _isPlay, const int _loopCount,
+// Permet de jouï¿½ un son spï¿½cifique avec ces propres paramï¿½tres. //
+void SoundSystemModule::PlaySound(const SoundClass p_sound, const bool _isPlay, const int _loopCount,
                                   const float      _volume, Channel*   p_channelPtr) const
 {
 	FMOD::Channel* channel = nullptr;
 
 	if (!_isPlay)
 	{
-		_pSound->setMode(FMOD_LOOP_OFF);
+		p_sound->setMode(FMOD_LOOP_OFF);
 	}
 	else
 	{
-		_pSound->setMode(FMOD_LOOP_NORMAL);
-		_pSound->setLoopCount(_loopCount);
+		p_sound->setMode(FMOD_LOOP_NORMAL);
+		p_sound->setLoopCount(_loopCount);
 	}
 
-	system->playSound(_pSound, channelGroup, false, &channel);
+	system->playSound(p_sound, channelGroup, false, &channel);
 
 	channel->setVolume(_volume);
 
-	// Affecter le canal créé au pointeur de pointeur passé en paramètre
+	// Affecter le canal crï¿½ï¿½ au pointeur de pointeur passï¿½ en paramï¿½tre
 	*p_channelPtr = channel;
 }
 
 void SoundSystemModule::StopSound() {
 	if (mainChannel) {
 		mainChannel->stop();
-		mainChannel = nullptr;	// Réinitialisez le canal principal après l'arrêt
+		mainChannel = nullptr;	// Rï¿½initialisez le canal principal aprï¿½s l'arrï¿½t
 		isPlaying = false;
 	}
 }
 
-// Permet de libérer la mémoire et de couper le son. //
-void SoundSystemModule::ReleaseSound(const SoundClass _pSound)
+// Permet de libï¿½rer la mï¿½moire et de couper le son. //
+void SoundSystemModule::ReleaseSound(const SoundClass p_sound)
 {
-	_pSound->release();
+	p_sound->release();
 }
 
 // Permet d'obtenir le nombre total de tour sur le son //
-int SoundSystemModule::GetLoopCount(const SoundClass _pSound, int* p_loopCount)
+int SoundSystemModule::GetLoopCount(const SoundClass p_sound, int* p_loopCount)
 {
-	return _pSound->getLoopCount(p_loopCount);
+	return p_sound->getLoopCount(p_loopCount);
 }
 
-// Permet la création d'un channel de groupe. //
-void SoundSystemModule::CreateChannelGroup(FMOD::ChannelGroup** channelGroup) const
+// Permet la crï¿½ation d'un channel de groupe. //
+void SoundSystemModule::CreateChannelGroup(FMOD::ChannelGroup** pp_channelGroup) const
 {
-	system->createChannelGroup(nullptr, channelGroup);
+	system->createChannelGroup(nullptr, pp_channelGroup);
 }
 
-// Permet d'ajouter un son à un channel de groupe pour pouvoir modifier les paramètres du son du tout les sons du channel. //
+// Permet d'ajouter un son ï¿½ un channel de groupe pour pouvoir modifier les paramï¿½tres du son du tout les sons du channel. //
 void SoundSystemModule::AddSoundToGroup(const SoundClass _pSound, FMOD::ChannelGroup* p_channelGroup) const
 {
 	system->playSound(_pSound, p_channelGroup, false, nullptr);
@@ -109,7 +107,7 @@ float SoundSystemModule::GetMasterVolume() const {
 		mainChannel->getVolume(&volume);
 	}
 	else {
-		volume = 0.0f; // Aucun canal actif, retourne 0 ou un état de volume inactif
+		volume = 0.0f; // Aucun canal actif, retourne 0 ou un ï¿½tat de volume inactif
 	}
 	return volume;
 }
@@ -138,9 +136,9 @@ std::string SoundSystemModule::GetCurrentTrackName() const {
 }
 
 void SoundSystemModule::loadAndPlaySound(const char* filePath) {
-	if (!isPlaying || currentTrackName != filePath) {  // Vérifier si le son n'est pas déjà en cours de lecture ou si un nouveau fichier est choisi
+	if (!isPlaying || currentTrackName != filePath) {  // Vï¿½rifier si le son n'est pas dï¿½jï¿½ en cours de lecture ou si un nouveau fichier est choisi
 		if (mainChannel) {
-			mainChannel->stop();  // Arrêtez le son actuel s'il y en a un
+			mainChannel->stop();  // Arrï¿½tez le son actuel s'il y en a un
 		}
 
 		FMOD::Sound* newSound;
@@ -157,7 +155,7 @@ void SoundSystemModule::loadAndPlaySound(const char* filePath) {
 	}
 }
 
-// Implémentation des fonctions pour le routing vers les ports et la gestion de la réverbération //
+// Implï¿½mentation des fonctions pour le routing vers les ports et la gestion de la rï¿½verbï¿½ration //
 FMOD_RESULT SoundSystemModule::AttachChannelGroupToPort(const FMOD_PORT_TYPE _portType,
                                                         const FMOD_PORT_INDEX _portIndex,
                                                         FMOD::ChannelGroup* p_channelGroup, const bool _passThru) const
@@ -183,7 +181,7 @@ FMOD_RESULT SoundSystemModule::GetReverbProperties(const int _instance, FMOD_REV
 void SoundSystemModule::Init()
 {
 	if (FMOD::System_Create(&system) != FMOD_OK) {
-		std::cerr << "Erreur lors de la création du système FMOD." << std::endl;
+		std::cerr << "Erreur lors de la crï¿½ation du systï¿½me FMOD." << std::endl;
 		isInitialized = false;
 		return;
 	}
@@ -191,13 +189,13 @@ void SoundSystemModule::Init()
 	int driverCount = 0;
 	system->getNumDrivers(&driverCount);
 	if (driverCount == 0) {
-		std::cerr << "FMOD n'a pas trouvé de sortie de son." << std::endl;
+		std::cerr << "FMOD n'a pas trouvï¿½ de sortie de son." << std::endl;
 		isInitialized = false;
 		return;
 	}
 
 	if (system->init(36, FMOD_INIT_NORMAL, nullptr) != FMOD_OK) {
-		std::cerr << "Échec de l'initialisation de FMOD." << std::endl;
+		std::cerr << "ï¿½chec de l'initialisation de FMOD." << std::endl;
 		isInitialized = false;
 		return;
 	}
@@ -210,11 +208,11 @@ void SoundSystemModule::Init()
 void SoundSystemModule::Start()
 {
 	if (!isInitialized) {
-		std::cerr << "Tentative de démarrage d'un module non initialisé." << std::endl;
+		std::cerr << "Tentative de dï¿½marrage d'un module non initialisï¿½." << std::endl;
 		return;
 	}
 	Module::Start();
-	std::cout << "SoundSystemModule::Start appelé." << std::endl;
+	std::cout << "SoundSystemModule::Start appelï¿½." << std::endl;
 }
 
 void SoundSystemModule::FixedUpdate()

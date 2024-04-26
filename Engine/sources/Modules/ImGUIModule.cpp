@@ -1,4 +1,16 @@
 ﻿#include "Modules/ImGUIModule.h"
+#include <imgui.h>
+#include <imgui_impl_glfw.h>
+#include <imgui_impl_vulkan.h>
+#include "ImGUIInterface.h"
+#include "GameObject/Components/Light.h"
+#include "GameObject/Components/Transform.h"
+#include "LveEngine/lve_renderer.h"
+#include "Modules/ModuleManager.h"
+#include "Modules/rhi.h"
+#include "Modules/WindowModule.h"
+#include "Scene/SceneManager.h"
+#include "TCP/Errors.h"
 
 class BaseScene;
 // ----------========== IMGUI SETTINGS ==========---------- //
@@ -304,9 +316,9 @@ void ImGuiModule::DrawInspectorWindow() {
 			}
 
 			// Couleur de la lumiere
-			glm::vec3 color = selectedGameObject->color;
+			glm::vec3 color = selectedGameObject->GetColor();
 			if (ImGui::ColorEdit3("Color", glm::value_ptr(color))) {
-				selectedGameObject->color = color;
+				selectedGameObject->SetColor(color);
 			}
 		}
 
@@ -355,6 +367,14 @@ void ImGuiModule::DrawHierarchyWindow() {
 			CreateSpecificGameObject(GameObjectType::Plane);
 			std::cout << "Added new GameObject-Plane to current scene." << std::endl;
 
+		}
+		if (ImGui::MenuItem("Vase Flat")) {
+			CreateSpecificGameObject(GameObjectType::Vase);
+			std::cout << "Added new GameObject-Plane to current scene." << std::endl;
+		}
+		if (ImGui::MenuItem("Vase Smooth")) {
+			CreateSpecificGameObject(GameObjectType::Vase, 1);
+			std::cout << "Added new GameObject-Plane to current scene." << std::endl;
 		}
 		ImGui::EndPopup();
 	}
@@ -609,24 +629,26 @@ void ImGuiModule::DeleteGameObject(GameObject* _gameObject) {
 void ImGuiModule::DuplicateGameObject(GameObject* _gameObject) {
 }
 
-void ImGuiModule::CreateSpecificGameObject(GameObjectType _type) {
-	BaseScene* currentScene = sceneManager->GetCurrentScene();
-	if (currentScene) {
-		GameObject* newGameObject = nullptr;
+void               ImGuiModule::CreateSpecificGameObject(const GameObjectType _type, const int _otherType) {
+	if (BaseScene* current_scene = sceneManager->GetCurrentScene()) {
+		GameObject* new_game_object = nullptr;
 		switch (_type) {
 		case GameObjectType::Cube:
-			newGameObject = currentScene->CreateCubeGameObject();
+			new_game_object = current_scene->CreateCubeGameObject(_otherType);
 			break;
 		case GameObjectType::Light:
-			newGameObject = currentScene->CreateLightGameObject();
+			new_game_object = current_scene->CreateLightGameObject();
 			break;
 		case GameObjectType::Plane:
-			newGameObject = currentScene->CreatePlaneGameObject();
+			new_game_object = current_scene->CreatePlaneGameObject();
+			break;
+		case GameObjectType::Vase:
+			new_game_object = current_scene->CreateVaseGameObject(_otherType);
 			break;
 		}
 
-		if (newGameObject) {
-			currentScene->AddRootObject(newGameObject);
+		if (new_game_object) {
+			current_scene->AddRootObject(new_game_object);
 		}
 	}
 }

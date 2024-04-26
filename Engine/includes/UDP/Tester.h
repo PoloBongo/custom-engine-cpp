@@ -10,8 +10,8 @@
 #define DEBUGBREAK() 
 #endif
 
-#define TO_STRING_INTERNAL(token) #token
-#define TO_STRING(token) TO_STRING_INTERNAL(token)
+#define TO_STRING_INTERNAL(...) #__VA_ARGS__
+#define TO_STRING(...) TO_STRING_INTERNAL(__VA_ARGS__)
 #define CHECK_SUCCESS(expr) do { /*std::cout << "[OK] " #expr << std::endl;*/ } while(0)
 #define CHECK_FAILURE(expr) do { std::cout << "[FAILURE][" __FILE__ ":" TO_STRING(__LINE__) "] " #expr << std::endl; DEBUGBREAK(); } while(0)
 // variadic arguments but is supposed to be used with 1 single check. This to prevent issues "too many arguments" when using multiple template parameters hence using a , ...
