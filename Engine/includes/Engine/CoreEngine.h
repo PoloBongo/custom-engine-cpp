@@ -15,7 +15,8 @@ enum EngineMode
 	Pause
 };
 
-class ENGINEDLL_API Engine
+//class ENGINEDLL_API Engine
+class Engine
 {
 	public:
 

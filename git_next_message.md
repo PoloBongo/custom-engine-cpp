@@ -1,3 +1,3 @@
-NEW : Documentation files
+FIX : DLL Debug
 
-- Ajout de la documentation en html
+- retire la création de la dll en debug
