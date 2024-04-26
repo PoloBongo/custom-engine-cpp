@@ -3,6 +3,7 @@
 
 #include "LveEngine/lve_descriptors.h"
 #include "LveEngine/lve_window.h"
+#include "Modules/InputModule.h"
 //std
 #include <iostream>
 #include <stb_image.h>
@@ -29,6 +30,8 @@ namespace Inputs
 	 */
 	enum class KeyCode;
 }
+
+class InputModule;
 
 class SceneManager;
 
@@ -354,6 +357,12 @@ class WindowModule final : public Module
 		 * @return La position verticale initiale de la fenêtre.
 		 */
 		[[nodiscard]] int GetStartingPositionY() const { return startingPosition.y; }
+
+		[[nodiscard]] glm::vec2 GetMousePosition() {
+			double posX, posY;
+			glfwGetCursorPos(window, &posX, &posY);
+			return glm::vec2((int)posX, (int)posY);
+		}
 
 		#pragma endregion
 
@@ -868,6 +877,18 @@ class WindowModule final : public Module
 		}
 
 		//TODO : faire les fonctions de callback
+		static Inputs::KeyAction GLFWActionToInputManagerAction(int32_t _glfwAction);
+		static Inputs::KeyCode GLFWKeyToInputManagerKey(int32_t _glfwKey);
+		static int32_t GLFWModsToInputManagerMods(int32_t _glfwMods);
+		static Inputs::MouseButton GLFWButtonToInputManagerMouseButton(int32_t _glfwButton);
+
+		static void GLFWMouseButtonCallback(GLFWwindow* _glfwWindow, int32_t _button, int32_t _action, int32_t _mods);
+		static void GLFWKeyCallback(GLFWwindow* _glfwWindow, int32_t _key, int32_t _scancode, int32_t _action, int32_t _mods);
+		static void GLFWCursorPosCallback(GLFWwindow* _glfwWindow, double _x, double _y);
+
+		void MouseButtonCallback(Inputs::MouseButton _mouseButton, Inputs::KeyAction _action, int32_t _mods);
+		void KeyCallback(Inputs::KeyCode _keyCode, Inputs::KeyAction _keyAction, int32_t _mods);
+		void CursorPosCallback(double x, double y);
 		/*void KeyCallback(Inputs::KeyCode keycode, Inputs::KeyAction action, int32_t mods){}
 		void CharCallback(uint32_t character){}
 		void MouseButtonCallback(Inputs::MouseButton mouseButton, Inputs::KeyAction action, int32_t mods){}
@@ -1011,6 +1032,7 @@ class WindowModule final : public Module
 		bool bFrameBufferResize = false; /**< Booléen indiquant si le framebuffer a été redimensionné. */
 
 		SceneManager* sceneManager = nullptr; /**< Gestionnaire de scène associé à la fenêtre. */
+		InputModule* inputModule = nullptr;
 
 		std::string windowName; /**< Nom de la fenêtre. */
 

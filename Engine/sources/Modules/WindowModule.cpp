@@ -143,6 +143,233 @@ void WindowModule::SetInputCursorMode(const GlfwCursorMode _mode)
 	}
 }
 
+Inputs::KeyAction WindowModule::GLFWActionToInputManagerAction(int32_t _glfwAction)
+{
+	Inputs::KeyAction inputAction = Inputs::KeyAction::_NONE;
+
+	switch (_glfwAction)
+	{
+	case GLFW_PRESS: inputAction = Inputs::KeyAction::KEY_PRESS; break;
+	case GLFW_REPEAT: inputAction = Inputs::KeyAction::KEY_REPEAT; break;
+	case GLFW_RELEASE: inputAction = Inputs::KeyAction::KEY_RELEASE; break;
+	case -1: break; // We don't care about events GLFW can't handle
+	default: std::cout << "Unhandled glfw action passed to GLFWActionToInputManagerAction in GLFWWIndowWrapper: %i\n" << _glfwAction;
+	}
+
+	return inputAction;
+}
+
+Inputs::KeyCode WindowModule::GLFWKeyToInputManagerKey(int32_t _glfwKey)
+{
+	Inputs::KeyCode inputKey = Inputs::KeyCode::_NONE;
+
+	switch (_glfwKey)
+	{
+	case GLFW_KEY_SPACE: inputKey = Inputs::KeyCode::KEY_SPACE; break;
+	case GLFW_KEY_APOSTROPHE: inputKey = Inputs::KeyCode::KEY_APOSTROPHE; break;
+	case GLFW_KEY_COMMA: inputKey = Inputs::KeyCode::KEY_COMMA; break;
+	case GLFW_KEY_MINUS: inputKey = Inputs::KeyCode::KEY_MINUS; break;
+	case GLFW_KEY_PERIOD: inputKey = Inputs::KeyCode::KEY_PERIOD; break;
+	case GLFW_KEY_SLASH: inputKey = Inputs::KeyCode::KEY_SLASH; break;
+	case GLFW_KEY_0: inputKey = Inputs::KeyCode::KEY_0; break;
+	case GLFW_KEY_1: inputKey = Inputs::KeyCode::KEY_1; break;
+	case GLFW_KEY_2: inputKey = Inputs::KeyCode::KEY_2; break;
+	case GLFW_KEY_3: inputKey = Inputs::KeyCode::KEY_3; break;
+	case GLFW_KEY_4: inputKey = Inputs::KeyCode::KEY_4; break;
+	case GLFW_KEY_5: inputKey = Inputs::KeyCode::KEY_5; break;
+	case GLFW_KEY_6: inputKey = Inputs::KeyCode::KEY_6; break;
+	case GLFW_KEY_7: inputKey = Inputs::KeyCode::KEY_7; break;
+	case GLFW_KEY_8: inputKey = Inputs::KeyCode::KEY_8; break;
+	case GLFW_KEY_9: inputKey = Inputs::KeyCode::KEY_9; break;
+	case GLFW_KEY_SEMICOLON: inputKey = Inputs::KeyCode::KEY_SEMICOLON; break;
+	case GLFW_KEY_EQUAL: inputKey = Inputs::KeyCode::KEY_EQUAL; break;
+	case GLFW_KEY_A: inputKey = Inputs::KeyCode::KEY_A; break;
+	case GLFW_KEY_B: inputKey = Inputs::KeyCode::KEY_B; break;
+	case GLFW_KEY_C: inputKey = Inputs::KeyCode::KEY_C; break;
+	case GLFW_KEY_D: inputKey = Inputs::KeyCode::KEY_D; break;
+	case GLFW_KEY_E: inputKey = Inputs::KeyCode::KEY_E; break;
+	case GLFW_KEY_F: inputKey = Inputs::KeyCode::KEY_F; break;
+	case GLFW_KEY_G: inputKey = Inputs::KeyCode::KEY_G; break;
+	case GLFW_KEY_H: inputKey = Inputs::KeyCode::KEY_H; break;
+	case GLFW_KEY_I: inputKey = Inputs::KeyCode::KEY_I; break;
+	case GLFW_KEY_J: inputKey = Inputs::KeyCode::KEY_J; break;
+	case GLFW_KEY_K: inputKey = Inputs::KeyCode::KEY_K; break;
+	case GLFW_KEY_L: inputKey = Inputs::KeyCode::KEY_L; break;
+	case GLFW_KEY_M: inputKey = Inputs::KeyCode::KEY_M; break;
+	case GLFW_KEY_N: inputKey = Inputs::KeyCode::KEY_N; break;
+	case GLFW_KEY_O: inputKey = Inputs::KeyCode::KEY_O; break;
+	case GLFW_KEY_P: inputKey = Inputs::KeyCode::KEY_P; break;
+	case GLFW_KEY_Q: inputKey = Inputs::KeyCode::KEY_Q; break;
+	case GLFW_KEY_R: inputKey = Inputs::KeyCode::KEY_R; break;
+	case GLFW_KEY_S: inputKey = Inputs::KeyCode::KEY_S; break;
+	case GLFW_KEY_T: inputKey = Inputs::KeyCode::KEY_T; break;
+	case GLFW_KEY_U: inputKey = Inputs::KeyCode::KEY_U; break;
+	case GLFW_KEY_V: inputKey = Inputs::KeyCode::KEY_V; break;
+	case GLFW_KEY_W: inputKey = Inputs::KeyCode::KEY_W; break;
+	case GLFW_KEY_X: inputKey = Inputs::KeyCode::KEY_X; break;
+	case GLFW_KEY_Y: inputKey = Inputs::KeyCode::KEY_Y; break;
+	case GLFW_KEY_Z: inputKey = Inputs::KeyCode::KEY_Z; break;
+	case GLFW_KEY_LEFT_BRACKET: inputKey = Inputs::KeyCode::KEY_LEFT_BRACKET; break;
+	case GLFW_KEY_BACKSLASH: inputKey = Inputs::KeyCode::KEY_BACKSLASH; break;
+	case GLFW_KEY_RIGHT_BRACKET: inputKey = Inputs::KeyCode::KEY_RIGHT_BRACKET; break;
+	case GLFW_KEY_GRAVE_ACCENT: inputKey = Inputs::KeyCode::KEY_GRAVE_ACCENT; break;
+	case GLFW_KEY_WORLD_1: inputKey = Inputs::KeyCode::KEY_WORLD_1; break;
+	case GLFW_KEY_WORLD_2: inputKey = Inputs::KeyCode::KEY_WORLD_2; break;
+	case GLFW_KEY_ESCAPE: inputKey = Inputs::KeyCode::KEY_ESCAPE; break;
+	case GLFW_KEY_ENTER: inputKey = Inputs::KeyCode::KEY_ENTER; break;
+	case GLFW_KEY_TAB: inputKey = Inputs::KeyCode::KEY_TAB; break;
+	case GLFW_KEY_BACKSPACE: inputKey = Inputs::KeyCode::KEY_BACKSPACE; break;
+	case GLFW_KEY_INSERT: inputKey = Inputs::KeyCode::KEY_INSERT; break;
+	case GLFW_KEY_DELETE: inputKey = Inputs::KeyCode::KEY_DELETE; break;
+	case GLFW_KEY_RIGHT: inputKey = Inputs::KeyCode::KEY_RIGHT; break;
+	case GLFW_KEY_LEFT: inputKey = Inputs::KeyCode::KEY_LEFT; break;
+	case GLFW_KEY_DOWN: inputKey = Inputs::KeyCode::KEY_DOWN; break;
+	case GLFW_KEY_UP: inputKey = Inputs::KeyCode::KEY_UP; break;
+	case GLFW_KEY_PAGE_UP: inputKey = Inputs::KeyCode::KEY_PAGE_UP; break;
+	case GLFW_KEY_PAGE_DOWN: inputKey = Inputs::KeyCode::KEY_PAGE_DOWN; break;
+	case GLFW_KEY_HOME: inputKey = Inputs::KeyCode::KEY_HOME; break;
+	case GLFW_KEY_END: inputKey = Inputs::KeyCode::KEY_END; break;
+	case GLFW_KEY_CAPS_LOCK: inputKey = Inputs::KeyCode::KEY_CAPS_LOCK; break;
+	case GLFW_KEY_SCROLL_LOCK: inputKey = Inputs::KeyCode::KEY_SCROLL_LOCK; break;
+	case GLFW_KEY_NUM_LOCK: inputKey = Inputs::KeyCode::KEY_NUM_LOCK; break;
+	case GLFW_KEY_PRINT_SCREEN: inputKey = Inputs::KeyCode::KEY_PRINT_SCREEN; break;
+	case GLFW_KEY_PAUSE: inputKey = Inputs::KeyCode::KEY_PAUSE; break;
+	case GLFW_KEY_F1: inputKey = Inputs::KeyCode::KEY_F1; break;
+	case GLFW_KEY_F2: inputKey = Inputs::KeyCode::KEY_F2; break;
+	case GLFW_KEY_F3: inputKey = Inputs::KeyCode::KEY_F3; break;
+	case GLFW_KEY_F4: inputKey = Inputs::KeyCode::KEY_F4; break;
+	case GLFW_KEY_F5: inputKey = Inputs::KeyCode::KEY_F5; break;
+	case GLFW_KEY_F6: inputKey = Inputs::KeyCode::KEY_F6; break;
+	case GLFW_KEY_F7: inputKey = Inputs::KeyCode::KEY_F7; break;
+	case GLFW_KEY_F8: inputKey = Inputs::KeyCode::KEY_F8; break;
+	case GLFW_KEY_F9: inputKey = Inputs::KeyCode::KEY_F9; break;
+	case GLFW_KEY_F10: inputKey = Inputs::KeyCode::KEY_F10; break;
+	case GLFW_KEY_F11: inputKey = Inputs::KeyCode::KEY_F11; break;
+	case GLFW_KEY_F12: inputKey = Inputs::KeyCode::KEY_F12; break;
+	case GLFW_KEY_F13: inputKey = Inputs::KeyCode::KEY_F13; break;
+	case GLFW_KEY_F14: inputKey = Inputs::KeyCode::KEY_F14; break;
+	case GLFW_KEY_F15: inputKey = Inputs::KeyCode::KEY_F15; break;
+	case GLFW_KEY_F16: inputKey = Inputs::KeyCode::KEY_F16; break;
+	case GLFW_KEY_F17: inputKey = Inputs::KeyCode::KEY_F17; break;
+	case GLFW_KEY_F18: inputKey = Inputs::KeyCode::KEY_F18; break;
+	case GLFW_KEY_F19: inputKey = Inputs::KeyCode::KEY_F19; break;
+	case GLFW_KEY_F20: inputKey = Inputs::KeyCode::KEY_F20; break;
+	case GLFW_KEY_F21: inputKey = Inputs::KeyCode::KEY_F21; break;
+	case GLFW_KEY_F22: inputKey = Inputs::KeyCode::KEY_F22; break;
+	case GLFW_KEY_F23: inputKey = Inputs::KeyCode::KEY_F23; break;
+	case GLFW_KEY_F24: inputKey = Inputs::KeyCode::KEY_F24; break;
+	case GLFW_KEY_F25: inputKey = Inputs::KeyCode::KEY_F25; break;
+	case GLFW_KEY_KP_0: inputKey = Inputs::KeyCode::KEY_KP_0; break;
+	case GLFW_KEY_KP_1: inputKey = Inputs::KeyCode::KEY_KP_1; break;
+	case GLFW_KEY_KP_2: inputKey = Inputs::KeyCode::KEY_KP_2; break;
+	case GLFW_KEY_KP_3: inputKey = Inputs::KeyCode::KEY_KP_3; break;
+	case GLFW_KEY_KP_4: inputKey = Inputs::KeyCode::KEY_KP_4; break;
+	case GLFW_KEY_KP_5: inputKey = Inputs::KeyCode::KEY_KP_5; break;
+	case GLFW_KEY_KP_6: inputKey = Inputs::KeyCode::KEY_KP_6; break;
+	case GLFW_KEY_KP_7: inputKey = Inputs::KeyCode::KEY_KP_7; break;
+	case GLFW_KEY_KP_8: inputKey = Inputs::KeyCode::KEY_KP_8; break;
+	case GLFW_KEY_KP_9: inputKey = Inputs::KeyCode::KEY_KP_9; break;
+	case GLFW_KEY_KP_DECIMAL: inputKey = Inputs::KeyCode::KEY_KP_DECIMAL; break;
+	case GLFW_KEY_KP_DIVIDE: inputKey = Inputs::KeyCode::KEY_KP_DIVIDE; break;
+	case GLFW_KEY_KP_MULTIPLY: inputKey = Inputs::KeyCode::KEY_KP_MULTIPLY; break;
+	case GLFW_KEY_KP_SUBTRACT: inputKey = Inputs::KeyCode::KEY_KP_SUBTRACT; break;
+	case GLFW_KEY_KP_ADD: inputKey = Inputs::KeyCode::KEY_KP_ADD; break;
+	case GLFW_KEY_KP_ENTER: inputKey = Inputs::KeyCode::KEY_KP_ENTER; break;
+	case GLFW_KEY_KP_EQUAL: inputKey = Inputs::KeyCode::KEY_KP_EQUAL; break;
+	case GLFW_KEY_LEFT_SHIFT: inputKey = Inputs::KeyCode::KEY_LEFT_SHIFT; break;
+	case GLFW_KEY_LEFT_CONTROL: inputKey = Inputs::KeyCode::KEY_LEFT_CONTROL; break;
+	case GLFW_KEY_LEFT_ALT: inputKey = Inputs::KeyCode::KEY_LEFT_ALT; break;
+	case GLFW_KEY_LEFT_SUPER: inputKey = Inputs::KeyCode::KEY_LEFT_SUPER; break;
+	case GLFW_KEY_RIGHT_SHIFT: inputKey = Inputs::KeyCode::KEY_RIGHT_SHIFT; break;
+	case GLFW_KEY_RIGHT_CONTROL: inputKey = Inputs::KeyCode::KEY_RIGHT_CONTROL; break;
+	case GLFW_KEY_RIGHT_ALT: inputKey = Inputs::KeyCode::KEY_RIGHT_ALT; break;
+	case GLFW_KEY_RIGHT_SUPER: inputKey = Inputs::KeyCode::KEY_RIGHT_SUPER; break;
+	case GLFW_KEY_MENU: inputKey = Inputs::KeyCode::KEY_MENU; break;
+	case -1: break; // We don't care about events GLFW can't handle
+	default:
+		std::cout << "Unhandled glfw key passed to GLFWKeyToInputManagerKey in GLFWWIndowWrapper: %i\n" << _glfwKey;
+		break;
+	}
+
+	return inputKey;
+}
+
+int32_t WindowModule::GLFWModsToInputManagerMods(int32_t _glfwMods)
+{
+	int32_t inputMods = 0;
+
+	if (_glfwMods & GLFW_MOD_SHIFT) inputMods |= (int32_t)Inputs::InputModifier::SHIFT;
+	if (_glfwMods & GLFW_MOD_ALT) inputMods |= (int32_t)Inputs::InputModifier::ALT;
+	if (_glfwMods & GLFW_MOD_CONTROL) inputMods |= (int32_t)Inputs::InputModifier::CONTROL;
+	if (_glfwMods & GLFW_MOD_SUPER) inputMods |= (int32_t)Inputs::InputModifier::SUPER;
+	if (_glfwMods & GLFW_MOD_CAPS_LOCK) inputMods |= (int32_t)Inputs::InputModifier::CAPS_LOCK;
+	if (_glfwMods & GLFW_MOD_NUM_LOCK) inputMods |= (int32_t)Inputs::InputModifier::NUM_LOCK;
+
+	return inputMods;
+}
+
+Inputs::MouseButton WindowModule::GLFWButtonToInputManagerMouseButton(int32_t _glfwButton)
+{
+	Inputs::MouseButton inputMouseButton = Inputs::MouseButton::_NONE;
+
+	switch (_glfwButton)
+	{
+	case GLFW_MOUSE_BUTTON_1: inputMouseButton = Inputs::MouseButton::MOUSE_BUTTON_1; break;
+	case GLFW_MOUSE_BUTTON_2: inputMouseButton = Inputs::MouseButton::MOUSE_BUTTON_2; break;
+	case GLFW_MOUSE_BUTTON_3: inputMouseButton = Inputs::MouseButton::MOUSE_BUTTON_3; break;
+	case GLFW_MOUSE_BUTTON_4: inputMouseButton = Inputs::MouseButton::MOUSE_BUTTON_4; break;
+	case GLFW_MOUSE_BUTTON_5: inputMouseButton = Inputs::MouseButton::MOUSE_BUTTON_5; break;
+	case GLFW_MOUSE_BUTTON_6: inputMouseButton = Inputs::MouseButton::MOUSE_BUTTON_6; break;
+	case GLFW_MOUSE_BUTTON_7: inputMouseButton = Inputs::MouseButton::MOUSE_BUTTON_7; break;
+	case GLFW_MOUSE_BUTTON_8: inputMouseButton = Inputs::MouseButton::MOUSE_BUTTON_8; break;
+	case -1: break; // We don't care about events GLFW can't handle
+	default: std::cout << "Unhandled glfw button passed to GLFWButtonToInputManagerMouseButton in GLFWWIndowWrapper: %i\n" << _glfwButton;
+		break;
+	}
+
+	return inputMouseButton;
+}
+
+void WindowModule::GLFWMouseButtonCallback(GLFWwindow* _glfwWindow, int32_t _button, int32_t _action, int32_t _mods)
+{
+	WindowModule* window = static_cast<WindowModule*>(glfwGetWindowUserPointer(_glfwWindow));
+	const Inputs::KeyAction inputAction = GLFWActionToInputManagerAction(_action);
+	const int32_t inputMods = GLFWModsToInputManagerMods(_mods);
+	const Inputs::MouseButton mouseButton = GLFWButtonToInputManagerMouseButton(_button);
+
+	window->MouseButtonCallback(mouseButton, inputAction, inputMods);
+}
+
+void WindowModule::GLFWKeyCallback(GLFWwindow* _glfwWindow, int32_t _key, int32_t _scancode, int32_t _action, int32_t _mods)
+{
+	WindowModule* window = static_cast<WindowModule*>(glfwGetWindowUserPointer(_glfwWindow));
+	const Inputs::KeyAction inputAction = GLFWActionToInputManagerAction(_action);
+	const Inputs::KeyCode inputKey = GLFWKeyToInputManagerKey(_key);
+	const int32_t inputMods = GLFWModsToInputManagerMods(_mods);
+
+	window->KeyCallback(inputKey, inputAction, inputMods);
+}
+
+void WindowModule::GLFWCursorPosCallback(GLFWwindow* _glfwWindow, double _x, double _y)
+{
+	WindowModule* window = static_cast<WindowModule*>(glfwGetWindowUserPointer(_glfwWindow));
+	window->CursorPosCallback(_x, _y);
+}
+
+void WindowModule::MouseButtonCallback(Inputs::MouseButton _mouseButton, Inputs::KeyAction _action, int32_t _mods)
+{
+	inputModule->MouseButtonCallback(_mouseButton, _action, _mods);
+}
+
+void WindowModule::KeyCallback(Inputs::KeyCode _inputKey, Inputs::KeyAction _inputAction, int32_t _inputMods)
+{
+	inputModule->KeyCallback(_inputKey, _inputAction, _inputMods);
+}
+
+void WindowModule::CursorPosCallback(double _x, double _y) {
+	inputModule->CursorPosCallback(_x, _y);
+}
+
 
 WindowMode WindowModule::StrToWindowMode(const char* _modeStr)
 {
