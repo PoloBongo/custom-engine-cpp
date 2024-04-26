@@ -483,6 +483,7 @@ xcopy /E /I /Y "$(ProjectDir)Textures" "$(TargetDir)Textures"</Command>
     <ClCompile Include="sources\Script\GameObjectScript.cpp" />
     <ClCompile Include="sources\Modules\ScriptModule.cpp" />
     <ClCompile Include="sources\Script\Script.cpp" />
+    <ClCompile Include="ImGUIAudio.cpp" />
     <ClCompile Include="sources\UDP\ErrorsUDP.cpp" />
     <ClCompile Include="sources\UDP\Network\ConnexionTimeout\ConnexionTiemout.cpp" />
     <ClCompile Include="sources\UDP\Network\Connextion\Connexion.cpp" />
@@ -555,6 +556,7 @@ xcopy /E /I /Y "$(ProjectDir)Textures" "$(TargetDir)Textures"</Command>
     <ClInclude Include="includes\Script\GameObjectScript.h" />
     <ClInclude Include="includes\Script\IScript.h" />
     <ClInclude Include="includes\Modules\ScriptModule.h" />
+    <ClInclude Include="ImGUIAudio.h" />
     <ClInclude Include="includes\UDP\ErrorsUDP.h" />
     <ClInclude Include="includes\UDP\Float.h" />
     <ClInclude Include="includes\UDP\Network\ServerUDP\ServerUDPStart.h" />

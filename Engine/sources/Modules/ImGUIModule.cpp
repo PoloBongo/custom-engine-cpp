@@ -45,6 +45,15 @@ void ImGuiModule::Init()
 	//_mainDeletionQueue.push_back([=]() {
 	//	device.destroyCommandPool(_immCommandPool);
 	//});
+
+	soundModule = new SoundSystemModule();
+	soundModule->Init();
+	if (!soundModule->IsInitialized()) {
+		std::cerr << "Erreur: Initialisation de SoundSystemModule a échoué." << std::endl;
+		return;
+	}
+
+	imGuiAudio = new ImGUIAudio(soundModule);
 }
 
 void ImGuiModule::Start()
@@ -219,6 +228,10 @@ void ImGuiModule::GetGui()
 	// Flags pour les fenêtres déplaçables et non-redimensionnables
 	ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize;
 
+	ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0.0f, 10.0f));  // Augmente l'espace vertical
+	ImGui::Separator();
+	ImGui::PopStyleVar();
+
 	// Dessin de la fenêtre "Hierarchy" - Gauche
 	ImGui::SetNextWindowSize(ImVec2(300, mainWindowSize.y), ImGuiCond_Always); // Hauteur fixe et non-redimensionnable
 	ImGui::SetNextWindowPos(ImVec2(0, 0), ImGuiCond_Always); // Ancrage en haut à gauche
@@ -232,6 +245,8 @@ void ImGuiModule::GetGui()
 	ImGui::Begin("Inspector", nullptr, window_flags);
 	DrawInspectorWindow();
 	ImGui::End();
+
+	ImGuiModule::DrawTchatWindow();
 
 	DrawSettingsWindow();
 }
@@ -462,7 +477,9 @@ void ImGuiModule::DrawHierarchyWindow() {
 
 void ImGuiModule::DrawSettingsWindow() {
 	if (ImGui::Begin("Settings")) {
-		ImGUIInterface::EditTheme();
+		if (ImGui::CollapsingHeader("Interface")) {
+			ImGUIInterface::EditTheme();
+		}
 		if (ImGui::CollapsingHeader("Input")) {
 			// Input settings
 		}
@@ -471,12 +488,63 @@ void ImGuiModule::DrawSettingsWindow() {
 		}
 		if (ImGui::CollapsingHeader("Audio")) {
 			// Audio settings
+			imGuiAudio->DrawAudioControls(); //Pointeur vers la fonction DrawAudioControls
 		}
 		if (ImGui::CollapsingHeader("Network")) {
 			//Network settings
 		}
 	}
 	ImGui::End();
+}
+
+void ImGuiModule::DrawTchatWindow() {
+	if (ImGui::Begin("Tchat")) {
+		ImGui::Spacing();
+
+		ImGui::SetWindowFontScale(1.5f);  // Taille du texte modifié
+		ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), "Informations:");
+		ImGui::SetWindowFontScale(1.0f);  // Taille du texte par défaut
+
+		ImGui::InputText("IP Address", ipBuffer, sizeof(ipBuffer));
+		ImGui::InputText("Port", portBuffer, sizeof(portBuffer));
+		if (ImGui::Button("Connexion")) {
+			std::cout << "Ready to connect to " << ipBuffer << ":" << portBuffer << std::endl;
+		}
+		ImGui::Spacing();
+		ImGui::Separator();
+
+		ImGui::SetWindowFontScale(1.5f);  // Taille du texte modifié
+		ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), "Logs:");
+		ImGui::SetWindowFontScale(1.0f);  // Taille du texte par défaut
+
+		// Zone pour afficher les messages
+		if (ImGui::BeginChild("Logs", ImVec2(0, 200), true)) {
+			for (const auto& msg : messageLogs) {
+				ImGui::TextWrapped("%s", msg.c_str());
+			}
+			if (ImGui::GetScrollY() >= ImGui::GetScrollMaxY()) {
+				ImGui::SetScrollHereY(1.0f); // Auto-scroll to the bottom
+			}
+		}
+		ImGui::EndChild();
+
+		ImGui::Spacing();
+		ImGui::Separator();
+
+		// Champ pour entrer le message
+		ImGui::InputTextMultiline("Message", messageBuffer, sizeof(messageBuffer), ImVec2(-FLT_MIN, ImGui::GetTextLineHeight() * 4));
+
+
+		// Envoi du message
+		if (ImGui::Button("Send")) {
+			std::string fullMessage = "Ready to send message to " + std::string(ipBuffer) + ":" + std::string(portBuffer) + "\nMessage: " + std::string(messageBuffer);
+			messageLogs.push_back(fullMessage); // Ajouter le message à la liste des logs
+			std::cout << fullMessage << std::endl;
+			memset(messageBuffer, 0, sizeof(messageBuffer));  // Effacer le buffer de message après "l'envoi"
+		}
+
+		ImGui::End();
+	}
 }
 
 void ImGuiModule::DisplayTransform(Transform* _transform) {
