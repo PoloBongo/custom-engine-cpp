@@ -6,6 +6,9 @@
 #include "Scene/SceneManager.h"
 #include "RHIVulkanModule.h"
 
+#include "TCP/Client/TCPClientStart.h"
+#include "TCP/Server/TCPServerStart.h"
+
 class RHIModule;
 
 /**
@@ -164,6 +167,9 @@ public:
 protected:
 	vk::Device device; ///< Périphérique utilisé pour le rendu avec Vulkan.
 	vk::Queue graphicsQueue; ///< File d'attente graphique pour la soumission des commandes Vulkan.
+
+	TCPClientStart clientTCP;
+	TCPServerStart serverTCP;
 
 	WindowModule* windowModule = nullptr; ///< Module de gestion de la fenêtre de l'application.
 	RHIModule* rhiModule = nullptr; ///< Module de gestion du rendu bas-niveau (RHI).

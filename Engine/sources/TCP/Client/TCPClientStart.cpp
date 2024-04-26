@@ -1,5 +1,4 @@
 #include "TCP/Client/TCPClientStart.h"
-#include <thread>
 
 void TCPClientStart::clientThreadFunction(Network::TCP::Client& client, bool messageSend, std::string data) {	
 	while (true)
@@ -64,7 +63,7 @@ void TCPClientStart::TCPClient(std::string ipAdress, int _port, bool messageSend
 		std::cout << "Impossible de se connecter au serveur [" << "ipAdress: " << ipAdress << ":" << _port << "] : " << Network::Errors::Get() << std::endl;
 	}
 	else {
-		std::thread clientThread(&TCPClientStart::clientThreadFunction, this, std::ref(client), std::ref(messageSend), std::ref(data));
+		clientThread = std::thread(&TCPClientStart::clientThreadFunction, this, std::ref(client), std::ref(messageSend), std::ref(data));
 		//clientThread.join();
 	}
 }

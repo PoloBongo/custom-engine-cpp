@@ -13,4 +13,5 @@ public:
 	}
 private:
 	Network::TCP::Server server;
+	std::thread serverThread;
 };

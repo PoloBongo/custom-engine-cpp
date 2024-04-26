@@ -6,6 +6,7 @@
 #include "TCP/Errors.h"
 
 #include <iostream>
+#include <thread>
 
 class TCPClientStart
 {
@@ -19,4 +20,5 @@ public:
 
 private:
 	Network::TCP::Client client;
+	std::thread clientThread;
 };

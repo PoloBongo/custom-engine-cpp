@@ -14,8 +14,6 @@
 
 //#include "UDP/Network/ClientUDP/ClientUDPStart.h"
 //#include "UDP/Network/ServerUDP/ServerUDPStart.h"
-#include "TCP/Client/TCPClientStart.h"
-#include "TCP/Server/TCPServerStart.h"
 #include <thread>
 
 class BaseScene;
@@ -557,8 +555,7 @@ void ImGuiModule::DrawSettingsWindow() {
 void ImGuiModule::DrawTchatWindow() {
 	//ClientUDPStart clientUDP;
 	//ServerUDPStart serverUDP;
-	TCPClientStart clientTCP;
-	TCPServerStart serverTCP;
+
 	if (ImGui::Begin("Tchat")) {
 		ImGui::Spacing();
 
