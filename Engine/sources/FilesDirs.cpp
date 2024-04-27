@@ -1,4 +1,5 @@
 #include "FilesDirs.h"
+#include <unordered_set>
 
 
 int FilesDirs::FilesInDir(std::string _filepath) 
@@ -84,4 +85,9 @@ void FilesDirs::ExtractFilenameAndExtension(const std::string& filePath, std::st
 
 bool FilesDirs::ContainsSubstring(const std::string& main_string, const std::string& substring) {
     return main_string.find(substring) != std::string::npos;
+}
+
+bool FilesDirs::IsImageExtension(const std::string& ext) {
+    static const std::unordered_set<std::string> imageExtensions = { "png", "jpg", "gif", "tga", "bmp", "psd", "hdr", "pic" };
+    return imageExtensions.count(ext) > 0;
 }

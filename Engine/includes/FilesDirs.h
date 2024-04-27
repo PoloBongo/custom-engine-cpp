@@ -32,5 +32,6 @@ class FilesDirs
 		void ExtractFilenameAndExtension(const std::string& filePath, std::string& filename, std::string& extension);
 
 		bool ContainsSubstring(const std::string& main_string, const std::string& substring);
+		bool IsImageExtension(const std::string& ext);
 };
 

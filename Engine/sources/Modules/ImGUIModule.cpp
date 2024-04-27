@@ -872,6 +872,8 @@ void ImGuiModule::DrawFilesExplorerWindow() {
 		strcpy_s(charBuffer1, 100, GetCurrentDir().c_str());
 		if (ImGui::InputText("Change Dir", charBuffer1, 100)) { SetCurrentDir(charBuffer1); }
 		delete[] charBuffer1;
+		ImGui::SameLine();
+		ImGui::Checkbox("Add button", &addTexButton);
 
 		if (ImGui::Button("Add Textures Dir")) 
 		{
@@ -922,7 +924,7 @@ void ImGuiModule::DrawFilesExplorerWindow() {
 			filesdirs.ExtractFilenameAndExtension(GetFileToLook(), filename, ext);
 
 			if (file.good()) {
-				if (ext == "png" || ext == "jpg" || ext == "gif" || ext == "tga" || ext == "bmp" || ext == "psd" || ext == "hdr" || ext == "pic")
+				if (filesdirs.IsImageExtension(ext))
 				{
 					moduleManager->GetModule<RHIVulkanModule>()->AddTextureToPool(fileToLook);
 					// Décomposer la string pour garder ce qu'il y a après le dernier /
@@ -961,37 +963,43 @@ void ImGuiModule::DrawFilesExplorerWindow() {
 			fileNames = filesdirs.GetFilesInDir(filesdirs.ConvertStringToWideString(GetCurrentDir()));
 			for (const auto& filenames_wide : fileNames)
 			{
-				std::string ext;
-				std::string filename;
-				std::ifstream file(filenames_wide);
+				std::string filenameWideString = filesdirs.ConvertWideStringToString(filenames_wide);
+				if (filesdirs.ContainsSubstring(filenameWideString, GetFileSearch())) {
 
-				filesdirs.ExtractFilenameAndExtension(currentDir + "/" + filesdirs.ConvertWideStringToString(filenames_wide), filename, ext);
+					std::string ext;
+					std::string filename;
+					//std::ifstream file(filenames_wide);
+					
+					const char* filenameWideStringCstr = filenameWideString.c_str();
+					// Opti en mettant extract juste l'ext, pas besoin de plus
+					filesdirs.ExtractFilenameAndExtension(currentDir + "/" + filenameWideString, filename, ext);
 
-				if (filesdirs.ContainsSubstring(filename, GetFileSearch())) {
 					if (ext == "obj")
 					{
 						if (filterObj)
 						{
-							ImGui::Text(filesdirs.ConvertWideStringToString(filenames_wide).c_str());
+							ImGui::Text(filenameWideStringCstr);
 						}
 					}
-					else if (ext == "png" || ext == "jpg" || ext == "gif" || ext == "tga" || ext == "bmp" || ext == "psd" || ext == "hdr" || ext == "pic")
+					else if (filesdirs.IsImageExtension(ext))
 					{
 						if (filterSupportedImages)
 						{
-							ImGui::Text(filesdirs.ConvertWideStringToString(filenames_wide).c_str());
-							ImGui::SameLine();
-							if (ImGui::Button("Add", ImVec2(35, 25))) {
-								moduleManager->GetModule<RHIVulkanModule>()->AddTextureToPool(GetCurrentDir() + "/" + filesdirs.ConvertWideStringToString(filenames_wide));
-								// Décomposer la string pour garder ce qu'il y a après le dernier /
-								moduleManager->GetModule<RHIVulkanModule>()->AddListTexturesNames(filesdirs.ConvertWideStringToString(filenames_wide));
-								AddLog("Texture has been added : " + filesdirs.ConvertWideStringToString(filenames_wide));
+							ImGui::Text(filenameWideStringCstr);
+							if (addTexButton) {
+								ImGui::SameLine();
+								if (ImGui::Button("Add", ImVec2(35, 25))) {
+									moduleManager->GetModule<RHIVulkanModule>()->AddTextureToPool(GetCurrentDir() + "/" + filenameWideString);
+									// Décomposer la string pour garder ce qu'il y a après le dernier /
+									moduleManager->GetModule<RHIVulkanModule>()->AddListTexturesNames(filenameWideString);
+									AddLog("Texture has been added : " + filenameWideString);
+								}
 							}
 						}
 					}
 					else if (filterOther)
 					{
-						ImGui::Text(filesdirs.ConvertWideStringToString(filenames_wide).c_str());
+						ImGui::Text(filenameWideStringCstr);
 					}
 				}
 			}

@@ -240,6 +240,7 @@ protected:
 	bool filterOther = true;
 
 	bool refreshFileExplorer = true;
+	bool addTexButton = false;
 
 	std::vector<std::wstring> fileNames;
 
