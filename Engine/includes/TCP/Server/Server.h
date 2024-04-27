@@ -97,6 +97,8 @@ namespace Network
              */
             std::unique_ptr<Messages::Base> poll();
 
+            const std::map<uint64_t, Client>& getClients() const;
+
         private:
             std::unique_ptr<ServerImpl> mImpl; /**< Impl�mentation priv�e du serveur. */
         };
@@ -146,6 +148,8 @@ namespace Network
              * @return Un pointeur unique vers le message re�u.
              */
             std::unique_ptr<Messages::Base> poll();
+
+            const std::map<uint64_t, Client>& getClients() const;
 
         private:
             std::map<uint64_t, Client> mClients; /**< Map des clients connect�s, index�s par leur identifiant. */

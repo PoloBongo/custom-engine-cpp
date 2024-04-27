@@ -1,4 +1,5 @@
 ﻿#include "TCP/Server/Server.h"
+#include <iostream>
 
 namespace Network
 {
@@ -120,6 +121,10 @@ namespace Network
 			return msg;
 		}
 
+		const std::map<uint64_t, Client>& ServerImpl::getClients() const
+		{
+			return mClients;
+		}
 
 		// permet de d�placer les ressources de "other" vers l'instance de "Server"
 		Server::Server(Server&& other)
@@ -168,6 +173,11 @@ namespace Network
 		std::unique_ptr<Messages::Base> Server::poll()
 		{
 			return mImpl ? mImpl->poll() : nullptr;
+		}
+
+		const std::map<uint64_t, Client>& Server::getClients() const
+		{
+			return mImpl->getClients();
 		}
 	}
 }

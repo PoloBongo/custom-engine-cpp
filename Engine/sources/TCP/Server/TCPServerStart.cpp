@@ -1,6 +1,7 @@
 #include "TCP/Sockets.h"
 #include "TCP/Messages.h"
 #include "TCP/Server/TCPServerStart.h"
+#include "TCP/Client/TCPClientStart.h"
 
 #include "TCP/Errors.h"
 
@@ -20,16 +21,25 @@ void TCPServerStart::serverThreadFunction(Network::TCP::Server& server) {
 			}
 			else if (msg->is<Network::Messages::UserData>()) {
 				auto userdata = msg->as<Network::Messages::UserData>();
-				server.sendToAll(userdata->data.data(), static_cast<unsigned int>(userdata->data.size()));
-				//std::string reply(reinterpret_cast<const char*>(userdata->data.data()), userdata->data.size());
-				//std::cout << "Reponse du client : " << reply << std::endl;
-				//std::cout << ">";
-				//TCPClientStart tcp;
-				//std::string phrase = tcp.sendData();
+				StatusMessage& statusMsg = StatusMessage::getInstance();
+				const auto& clients = server.getClients();
+
+				std::string reply(reinterpret_cast<const char*>(userdata->data.data()), userdata->data.size());
+				statusMsg.addMessage(reply, statusMsg.getPseudo());
+				std::cout << "Pseudo Server : " << statusMsg.getPseudo() << std::endl;
+				for (const auto& pair : clients) {
+					uint64_t clientId = pair.first;
+					const Network::TCP::Client& client = pair.second;
+
+					const sockaddr_in& address = client.destinationAddress();
+					std::string ipAddress = Network::GetAddress(address);
+					unsigned short port = Network::GetPort(address);
+					server.sendTo(clientId, userdata->data.data(), reply.size());
+
+					std::cout << "Client ID: " << clientId << ", IP Address: " << ipAddress << ", Port: " << port << " Message :" << reply << std::endl;
+				}
 			}
 		}
-		// Permet de mettre le thread en pause pour éviter la surcharge de la CPU
-		//std::this_thread::sleep_for(std::chrono::milliseconds(100));
 	}
 	server.stop();
 	Network::Release();
@@ -52,6 +62,9 @@ void TCPServerStart::TCPServer(unsigned short _port, std::string ipAdress, bool 
 		std::cout << "initialisation du serveur" << std::endl;
 		// Démarre le thread
 		serverThread = std::thread(&TCPServerStart::serverThreadFunction, this, std::ref(server));
-		//serverThread.join();
 	}
+}
+
+void TCPServerStart::setData(const std::string& newData) {
+	stockData = newData;
 }

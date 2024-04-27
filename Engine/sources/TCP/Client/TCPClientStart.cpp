@@ -1,9 +1,9 @@
 #include "TCP/Client/TCPClientStart.h"
 #include <mutex>
 
-void TCPClientStart::threadClientUDPConnexionCheck(Network::TCP::Client& client, std::string _data) {
+void TCPClientStart::threadClientUDPConnexionCheck(std::string _data) {
 	StatusMessage& statusMsg = StatusMessage::getInstance();
-	while (true)
+	while (!getConnectedClient())
 	{
 		while (auto msg = client.poll())
 		{
@@ -13,24 +13,19 @@ void TCPClientStart::threadClientUDPConnexionCheck(Network::TCP::Client& client,
 				if (connection->result == Network::Messages::Connection::Result::Success)
 				{
 					std::cout << "connexion success" << std::endl;
-					if (statusMsg.getStatus() == StatusMessage::Status::Send)
-					{
-						sendData(_data);
-					}
 				} else { std::cout << "Connexion echoue : " << static_cast<int>(connection->result) << std::endl; }
 			}
 			else if (msg->is<Network::Messages::UserData>())
 			{
 				auto userdata = msg->as<Network::Messages::UserData>();
 				std::string reply(reinterpret_cast<const char*>(userdata->data.data()), userdata->data.size());
-				std::cout << "Reponse du serveur : " << reply << std::endl;
+				std::cout << "Reponse du serveur : " << reply << "Pseudo Client : " << statusMsg.getPseudo() << std::endl;
 				std::cout << ">";
-				std::string phrase;
-				std::getline(std::cin, phrase);
-				if (!client.send(reinterpret_cast<const unsigned char*>(phrase.c_str()), static_cast<unsigned int>(phrase.length())))
+				if (statusMsg.getStatus() == StatusMessage::Status::Send)
 				{
-					std::cout << "Erreur envoi : " << Network::Errors::Get() << std::endl;
+					sendData(_data);
 				}
+				statusMsg.addMessage(reply, statusMsg.getPseudo());
 			}
 			else if (msg->is<Network::Messages::Disconnection>())
 			{
@@ -44,21 +39,10 @@ void TCPClientStart::threadClientUDPConnexionCheck(Network::TCP::Client& client,
 std::string TCPClientStart::sendData(std::string _data)
 {
 	StatusMessage& statusMsg = StatusMessage::getInstance();
-	//_data = "bongo";
-	//std::string phrase = _data;
-	//std::getline(std::cin, phrase);
-	//if (statusMsg.getStatus() == StatusMessage::Status::Send)
-	//{
-	//	if (!client.send(reinterpret_cast<const unsigned char*>(phrase.c_str()), static_cast<unsigned int>(phrase.length())))
-	//	{
-	//		std::cout << "Erreur envoi : " << Network::Errors::Get() << std::endl;
-	//	}
-	//	statusMsg.setStatus(StatusMessage::Status::None);
-	//}
 
 	if (!client.send(reinterpret_cast<const unsigned char*>(_data.c_str()), static_cast<unsigned int>(_data.length())))
 	{
-		std::cout << "Erreur envoi2 : " << Network::Errors::Get() << std::endl;
+		std::cout << "Erreur envoi : " << Network::Errors::Get() << std::endl;
 	}
 	else { statusMsg.setStatus(StatusMessage::None); }
 
@@ -78,37 +62,24 @@ void TCPClientStart::ConnexionClientUDP(std::string ipAdress, int _port)
 		std::cout << "Impossible de se connecter au serveur [" << "ipAdress: " << ipAdress << ":" << _port << "] : " << Network::Errors::Get() << std::endl;
 	}
 	else {
-		clientThreadConnexionCheck = std::thread(&TCPClientStart::threadClientUDPConnexionCheck, this, std::ref(client), "");
+		startClient();
 	}
 }
 
-//void TCPClientStart::threadClientUDPDataSendCheck(Network::TCP::Client& _client)
-//{
-//	while (true)
-//	{
-//		while (auto msg = client.poll())
-//		{
-//			auto connection = msg->as<Network::Messages::Connection>();
-//			if (connection->result == Network::Messages::Connection::Result::Success)
-//			{
-//				std::string phrase = "sendData(_data)";
-//				if (!client.send(reinterpret_cast<const unsigned char*>(phrase.c_str()), static_cast<unsigned int>(phrase.length())))
-//				{
-//					std::cout << "Erreur envoi : " << Network::Errors::Get() << std::endl;
-//				}
-//				if (connection->result != Network::Messages::Connection::Result::Success) {
-//					std::cout << "Connexion echoue : " << static_cast<int>(connection->result) << std::endl;
-//				}
-//			}
-//			else
-//			{
-//				std::cout << "Connexion echoue : " << static_cast<int>(connection->result) << std::endl;
-//			}
-//		}
-//	}
-//}
-//
-//void TCPClientStart::SendDataClientUDP(std::string _data)
-//{
-//	clientThreadDataSendCheck = std::thread(&TCPClientStart::threadClientUDPDataSendCheck, this, std::ref(client));
-//}
+void TCPClientStart::setConnectedClient(bool connected) {
+	client.disconnect();
+	Network::Release();
+	isConnected = connected;
+	stopClient();
+}
+
+void TCPClientStart::stopClient() {
+	stopThread = true;
+	if (clientThreadConnexionCheck.joinable()) {
+		clientThreadConnexionCheck.join();
+	}
+}
+
+void TCPClientStart::startClient() {
+	clientThreadConnexionCheck = std::thread(&TCPClientStart::threadClientUDPConnexionCheck, this, "");
+}
