@@ -4,6 +4,7 @@
 
 #include "GameObject/GameObject.h"
 #include "LveEngine/lve_window.h"
+#include <GameObject/PreGameObject/LightGameObject.h>
 /**
  * @brief Interface de base pour les scènes du jeu.
  *
@@ -21,7 +22,11 @@ class BaseScene
 		 *
 		 * @param _fileName Le nom de la scène.
 		 */
-		explicit BaseScene(const std::string& _fileName) : name(_fileName){}
+		explicit BaseScene(const std::string& _fileName) : name(_fileName){
+			const auto sun = lve::LightGameObject::Create(1000000.f, 2.0f, glm::vec3{ 0.f, -1000.f, 0.f });
+			sun->SetName("Sun");
+			rootObjects.push_back(sun);
+		}
 		~BaseScene() = default;
 
 		BaseScene(const BaseScene&)            = delete;

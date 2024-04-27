@@ -78,10 +78,12 @@ std::pair<std::string, bool> SceneManager::GetSceneAt(const int _index)
  * @brief Supprime une scène de la liste des scènes.
  * @param _sceneName Nom de la scène à supprimer.
  */
-void SceneManager::DestroyScene(const std::string& _sceneName)
+void SceneManager::DestroyScene(const std::string& _sceneName, int index)
 {
 	const auto it = listScenes.find(_sceneName);
 	if (it != listScenes.end()) listScenes.erase(it);
+	auto sceneToRemove = scenes.begin() + index;
+	scenes.erase(sceneToRemove);
 }
 
 /**

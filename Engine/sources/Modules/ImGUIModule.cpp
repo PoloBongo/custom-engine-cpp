@@ -21,6 +21,7 @@
 
 #include <fstream>
 #include <cstring>
+#include <vector>
 #include <imgui_internal.h>
 #include <random>
 #include <windows.h>
@@ -28,6 +29,7 @@
 #include <codecvt>
 #include <algorithm>
 #include <Engine/CoreEngine.h>
+#include <memory>
 
 class BaseScene;
 // ----------========== IMGUI SETTINGS ==========---------- //
@@ -602,6 +604,8 @@ void ImGuiModule::DrawHierarchyWindow() {
 		ImGui::EndPopup();
 	}
 
+	bool showErrorPopup = false;
+
 	// Barre de recherche
 	static char searchBuffer[100];
 	ImGui::InputText("Search", searchBuffer, IM_ARRAYSIZE(searchBuffer));
@@ -612,7 +616,7 @@ void ImGuiModule::DrawHierarchyWindow() {
 		ImGui::Spacing();
 		ImGui::Separator();
 
-		const auto& scene = scenes[i];
+		auto& scene = scenes[i];
 		bool isCurrentScene = (sceneManager->GetCurrentScene() == scene.get());
 
 		ImGui::PushID(i); // Identifiant unique pour chaque scène
@@ -637,7 +641,14 @@ void ImGuiModule::DrawHierarchyWindow() {
 			ImGui::Separator();
 
 			if (ImGui::MenuItem("Delete")) {
-				sceneManager->DestroyScene(scene->GetName()); // Supprime la scène
+				if (sceneManager->GetListScenes2().size() > 1) {
+					sceneManager->DestroyScene(scene->GetName(),i);
+					sceneManager->SetCurrentScene(0);
+				}
+				else {
+					AddLog("Warning : You need at least 2 scenes to delete one");
+					SetShowPopupError(true);
+				}
 			}
 			ImGui::EndPopup();
 		}
@@ -682,10 +693,53 @@ void ImGuiModule::DrawHierarchyWindow() {
 						}
 
 						ImGui::Separator();
-						if (ImGui::MenuItem("Delete")) { DeleteGameObject(selectedGameObject); }
+						if (ImGui::MenuItem("Delete")) { 
+							auto& gameObjects = sceneManager->GetCurrentScene()->rootObjects;
+							std::vector<GameObject*> updatedObjects;
+
+							for (auto obj : gameObjects) {
+								if (obj->GetId() != gameObject->GetId()) {
+									updatedObjects.push_back(obj);
+								}
+								else {
+									std::string name = obj->GetName();
+									obj->SetModel(nullptr);
+									delete obj;
+									AddLog("Object Deleted : " + name);
+								}
+							}
+
+							gameObjects = updatedObjects;
+							selectedGameObject = nullptr;
+						}
 
 						ImGui::Separator();
-						if (ImGui::MenuItem("Duplicate")) {}
+						// En mode y a rien ? Mathias chatgpt fait pas tout ton code non plus
+						// this ->>>>>>>>  //if (ImGui::MenuItem("Duplicate")) {}
+						// SI tu tombe sur ça adrien, donne moi un tabouret stp
+
+						if (ImGui::MenuItem("Duplicate")) 
+						{
+							auto& gameObjects = sceneManager->GetCurrentScene()->rootObjects;
+							std::vector<GameObject*> updatedObjects = gameObjects;
+
+							const auto newGameObject = GameObject::CreatePGameObject();
+							newGameObject->SetName(gameObject->GetName());
+							newGameObject->SetFileModel(gameObject->GetFileModel());
+							newGameObject->SetModel(gameObject->GetModel());
+							newGameObject->GetTransform()->SetPosition(gameObject->GetPosition());
+							newGameObject->GetTransform()->SetScale(gameObject->GetScale());
+							newGameObject->GetTransform()->SetRotation(gameObject->GetRotation());
+							newGameObject->SetTexture(gameObject->GetTexture());
+
+
+							//sceneManager->GetCurrentScene()->AddRootObject(newGameObject);
+
+							updatedObjects.push_back(newGameObject);
+							gameObjects = updatedObjects;
+							// Le game object est pas instant add avec le "AddRootObject"
+							selectedGameObject = gameObjects[gameObjects.size()-1];
+						}
 
 						ImGui::EndPopup();
 					}
@@ -695,6 +749,17 @@ void ImGuiModule::DrawHierarchyWindow() {
 			ImGui::TreePop();
 		}
 		ImGui::PopID();  // Restaure l'ID précédent pour les scènes
+	}
+	if (GetShowPopupError()) {
+		ImGui::OpenPopup("ErrorPopup");
+		if (ImGui::BeginPopupModal("ErrorPopup", NULL, ImGuiWindowFlags_AlwaysAutoResize)) {
+			ImGui::Text("You need at least two scenes to delete one.");
+			if (ImGui::Button("OK", ImVec2(120, 0))) {
+				ImGui::CloseCurrentPopup();
+				SetShowPopupError(false);
+			}
+			ImGui::EndPopup();
+		}
 	}
 }
 
@@ -889,9 +954,8 @@ void ImGuiModule::DrawFilesExplorerWindow() {
 				std::string filename;
 				filesdirs.ExtractFilenameAndExtension(GetCurrentDir() + filesdirs.ConvertWideStringToString(filenames_wide), filename, ext);
 				
-				if (ext == "png" || ext == "jpg" || ext == "gif" || ext == "tga" || ext == "bmp" || ext == "psd" || ext == "hdr" || ext == "pic")
+				if (filesdirs.IsImageExtension(ext))
 				{
-					// Will work on things like name.truc if it's in the dir
 					if (std::find(listTexturesNames->begin(), listTexturesNames->end(), filesdirs.ConvertWideStringToString(filenames_wide)) != listTexturesNames->end())
 					{
 						AddLog("Texture already added : " + filesdirs.ConvertWideStringToString(filenames_wide));
@@ -928,7 +992,6 @@ void ImGuiModule::DrawFilesExplorerWindow() {
 				if (filesdirs.IsImageExtension(ext))
 				{
 					moduleManager->GetModule<RHIVulkanModule>()->AddTextureToPool(fileToLook);
-					// Décomposer la string pour garder ce qu'il y a après le dernier /
 					moduleManager->GetModule<RHIVulkanModule>()->AddListTexturesNames(fileToLook);
 					AddLog("Texture has been added : " + fileToLook);
 					SetFileToLook("");
@@ -987,7 +1050,6 @@ void ImGuiModule::DrawFilesExplorerWindow() {
 
 					std::string ext;
 					std::string filename;
-					//std::ifstream file(filenames_wide);
 					
 					const char* filenameWideStringCstr = filenameWideString.c_str();
 					// Opti en mettant extract juste l'ext, pas besoin de plus
@@ -1009,7 +1071,6 @@ void ImGuiModule::DrawFilesExplorerWindow() {
 								ImGui::SameLine();
 								if (ImGui::Button("Add", ImVec2(35, 25))) {
 									moduleManager->GetModule<RHIVulkanModule>()->AddTextureToPool(GetCurrentDir() + "/" + filenameWideString);
-									// Décomposer la string pour garder ce qu'il y a après le dernier /
 									moduleManager->GetModule<RHIVulkanModule>()->AddListTexturesNames(filenameWideString);
 									AddLog("Texture has been added : " + filenameWideString);
 								}
@@ -1173,9 +1234,14 @@ void ImGuiModule::RenameGameObject(GameObject* _gameObject, const std::string& _
 	}
 }
 void ImGuiModule::DeleteGameObject(GameObject* _gameObject) {
+	//AddLog("Try 1 delete");
 	if (_gameObject) {
+		//AddLog("Try 2 delete");
 		BaseScene* currentScene = sceneManager->GetCurrentScene();
 		if (currentScene) {
+			//AddLog("Try 3 delete");
+
+			// Forcément vu que personne a fait de delete sur les gameobjects
 			currentScene->RemoveObject(_gameObject, true); // Suppression de l'objet
 		}
 	}
@@ -1183,7 +1249,7 @@ void ImGuiModule::DeleteGameObject(GameObject* _gameObject) {
 void ImGuiModule::DuplicateGameObject(GameObject* _gameObject) {
 }
 
-void               ImGuiModule::CreateSpecificGameObject(const GameObjectType _type, const int _otherType) {
+void            ImGuiModule::CreateSpecificGameObject(const GameObjectType _type, const int _otherType) {
 	if (BaseScene* current_scene = sceneManager->GetCurrentScene()) {
 		GameObject* new_game_object = nullptr;
 		switch (_type) {

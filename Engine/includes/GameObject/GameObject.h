@@ -559,9 +559,7 @@ class  GameObject
 		 * Cette méthode supprime directement l'objet de jeu de la scène et libère la mémoire associée.
 		 * À utiliser avec prudence, car elle ne gère pas les relations entre objets.
 		 */
-		void DestroyGameObject()
-		{
-		}
+		void DestroyGameObject() {}
 
 		/**
 		 * @brief Marque cet objet de jeu pour suppression.

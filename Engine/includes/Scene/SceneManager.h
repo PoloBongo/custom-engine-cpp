@@ -76,6 +76,8 @@ class SceneManager final : public Module
 		 */
 		std::vector<std::unique_ptr<BaseScene>>& GetScenes() { return scenes; }
 
+		std::map<std::string, bool> GetListScenes2() { return listScenes; }
+
 #pragma endregion
 
 #pragma region Setter
@@ -103,6 +105,8 @@ class SceneManager final : public Module
 		 * @brief Active la scène précédente dans la liste des scènes.
 		 */
 		void SetPreviousSceneActive();
+
+		void SetListScenes(std::map<std::string, bool> _newlistScenes) { listScenes = _newlistScenes; }
 
 #pragma endregion 
 
@@ -135,7 +139,7 @@ class SceneManager final : public Module
 		 *
 		 * @param _sceneName Le nom de la scène à détruire.
 		 */
-		void DestroyScene(const std::string& _sceneName);
+		void DestroyScene(const std::string& _sceneName, int index);
 
 		/**
 		 * @brief Charge une scène à partir d'un fichier avec le nom spécifié.

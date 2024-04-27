@@ -356,10 +356,6 @@ void BaseScene::TestLoadGameObjects()
 		point_light->GetTransform()->SetPosition(glm::vec3(rotate_light * glm::vec4(-1.f, -1.f, -1.f, 1.f)));
 		rootObjects.push_back(point_light);
 	}
-
-	const auto sun = lve::LightGameObject::Create(1000000.f, 2.0f, glm::vec3{ 0.f, -1000.f, 0.f });
-	sun->SetName("Sun");
-	rootObjects.push_back(sun);
 }
 
 GameObject* BaseScene::CreateCubeGameObject(const int _type) {
