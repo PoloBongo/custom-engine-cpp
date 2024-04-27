@@ -49,6 +49,40 @@ std::vector<std::wstring> FilesDirs::GetFilesInDir(std::wstring _filepath)
     return file_names;
 }
 
+int FilesDirs::CountDirectories(const std::string& directory_path) {
+    int directory_count = 0;
+    WIN32_FIND_DATAA find_data;
+    HANDLE find_handle = FindFirstFileA((directory_path + "\\*").c_str(), &find_data);
+    if (find_handle != INVALID_HANDLE_VALUE) {
+        do {
+            if (find_data.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) {
+                if (strcmp(find_data.cFileName, ".") != 0 && strcmp(find_data.cFileName, "..") != 0) {
+                    directory_count++;
+                }
+            }
+        } while (FindNextFileA(find_handle, &find_data) != 0);
+        FindClose(find_handle);
+    }
+    return directory_count;
+}
+
+std::vector<std::string> FilesDirs::GetDirectoryNames(const std::string& directory_path) {
+    std::vector<std::string> directory_names;
+    WIN32_FIND_DATAA find_data;
+    HANDLE find_handle = FindFirstFileA((directory_path + "\\*").c_str(), &find_data);
+    if (find_handle != INVALID_HANDLE_VALUE) {
+        do {
+            if (find_data.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) {
+                if (strcmp(find_data.cFileName, ".") != 0 && strcmp(find_data.cFileName, "..") != 0) {
+                    directory_names.push_back(find_data.cFileName);
+                }
+            }
+        } while (FindNextFileA(find_handle, &find_data) != 0);
+        FindClose(find_handle);
+    }
+    return directory_names;
+}
+
 std::wstring FilesDirs::ConvertStringToWideString(const std::string& narrow_string) {
     int wide_string_length = MultiByteToWideChar(CP_UTF8, 0, narrow_string.c_str(), -1, nullptr, 0);
     wchar_t* wide_string_buffer = new wchar_t[wide_string_length];

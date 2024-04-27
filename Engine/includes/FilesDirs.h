@@ -14,6 +14,10 @@ class FilesDirs
 		*/
 		int FilesInDir(std::string _filepath);
 
+		int CountDirectories(const std::string& directory_path);
+
+		std::vector<std::string> GetDirectoryNames(const std::string& directory_path);
+
 		/**
 		* @brief Return the list of the files in a directory.
 		*/

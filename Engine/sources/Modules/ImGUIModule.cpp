@@ -820,6 +820,7 @@ void ImGuiModule::DrawTchatWindow() {
 
 void ImGuiModule::DrawConsoleWindow() 
 {
+	ImGui::SetNextWindowSizeConstraints(ImVec2(300, 100), ImVec2(FLT_MAX, FLT_MAX));
 	if (ImGui::Begin("Console")) {
 		if (ImGui::Button("Clear")) {
 			ClearLog();
@@ -862,7 +863,7 @@ void ImGuiModule::DrawFilesExplorerWindow() {
 
 	// File research
 	// Type filtrer
-
+	ImGui::SetNextWindowSizeConstraints(ImVec2(450, 150), ImVec2(FLT_MAX, FLT_MAX));
 	if (ImGui::Begin("Files Explorer (0.7v)")) 
 	{
 		FilesDirs filesdirs;
@@ -942,16 +943,23 @@ void ImGuiModule::DrawFilesExplorerWindow() {
 
 		float scrollHeight = ImGui::GetWindowSize().y - 110;
 
-		ImGui::Checkbox("obj", &filterObj);
+		bool filterobj = GetFilterObj();
+		bool filterimg = GetFilterSupportedImages();
+		bool filterother = GetFilterOther();
+		bool filterdirs = GetFilterDirs();
+
+		if(ImGui::Checkbox("obj", &filterobj)) {SetFilterObj(filterobj);}
 		ImGui::SameLine();
-		ImGui::Checkbox("image", &filterSupportedImages);
+		if(ImGui::Checkbox("image", &filterimg)) { SetFilterSupportedImages(filterimg); }
 		ImGui::SameLine();
-		ImGui::Checkbox("other", &filterOther);
+		if(ImGui::Checkbox("other", &filterother)) { SetFilterOther(filterother); }
+		ImGui::SameLine();
+		if(ImGui::Checkbox("dir", &filterdirs)) { SetFilterDirs(filterdirs); }
 		ImGui::SameLine();
 
 		char* charBuffer2 = new char[30];
 		strcpy_s(charBuffer2, 30, GetFileSearch().c_str());
-		ImGui::SetNextItemWidth(200);
+		ImGui::SetNextItemWidth(150);
 		if (ImGui::InputText("Search", charBuffer2, 30)) { SetFileSearch(charBuffer2); }
 
 		ImGui::BeginChild("ScrollingRegion", ImVec2(0, scrollHeight), true, ImGuiWindowFlags_HorizontalScrollbar);
@@ -960,6 +968,17 @@ void ImGuiModule::DrawFilesExplorerWindow() {
 		
 		// Refresh pas les files
 		if (refreshFileExplorer) {
+			
+			if (GetFilterDirs()) {
+				std::vector<std::string> dirNames = filesdirs.GetDirectoryNames(GetCurrentDir());
+
+				for (const auto& dirname : dirNames)
+				{
+					ImGui::Text(dirname.c_str());
+				}
+				ImGui::Separator();
+			}
+
 			fileNames = filesdirs.GetFilesInDir(filesdirs.ConvertStringToWideString(GetCurrentDir()));
 			for (const auto& filenames_wide : fileNames)
 			{

@@ -205,6 +205,17 @@ public:
 	std::string GetFileSearch() { return fileSearch; }
 	void SetFileSearch(std::string _newFileSearch) { fileSearch = _newFileSearch; }
 
+	bool GetFilterObj() { return filterObj; }
+	bool GetFilterSupportedImages() { return filterSupportedImages; }
+	bool GetFilterOther() { return filterOther; }
+	bool GetFilterDirs() { return filterDirs; }
+
+
+	void SetFilterObj(bool _newState) { filterObj = _newState; }
+	void SetFilterSupportedImages(bool _newState) { filterSupportedImages = _newState; }
+	void SetFilterOther(bool _newState) { filterOther = _newState; }
+	void SetFilterDirs(bool _newState) { filterDirs = _newState; }
+
 protected:
 	vk::Device device; ///< P�riph�rique utilis� pour le rendu avec Vulkan.
 	vk::Queue graphicsQueue; ///< File d'attente graphique pour la soumission des commandes Vulkan.
@@ -238,6 +249,7 @@ protected:
 	bool filterSupportedImages = true;
 	bool filterObj = true;
 	bool filterOther = true;
+	bool filterDirs = true;
 
 	bool refreshFileExplorer = true;
 	bool addTexButton = false;
