@@ -392,14 +392,16 @@ void ImGuiModule::DrawInspectorWindow() {
 				std::ifstream file(selectedGameObject->GetFileModel());
 				if (file.good()) {
 					std::cout << "File good";
-					AddLog("Model file good");
+					Console& console = Console::getInstance();
+					console.AddLog("Model file good");
 					selectedGameObject->SetTexMultiplier(textureMulti);
 					std::shared_ptr<lve::LveModel> lve_model = lve::LveModel::CreateModelFromFile(*rhiModule->GetDevice(), selectedGameObject->GetFileModel(), selectedGameObject->GetTexMultiplier(), selectedGameObject->GetColor());
 					selectedGameObject->SetModel(lve_model);
 				}
 				else {
 					std::cout << "File not good :" + selectedGameObject->GetFileModel();
-					AddLog("Warning : Model file not good");
+					Console& console = Console::getInstance();
+					console.AddLog("Warning : Model file not good");
 				}
 			}
 			//ImGui::SameLine();
@@ -973,7 +975,10 @@ void ImGuiModule::DrawConsoleWindow()
 
 		ImGui::BeginChild("ScrollingRegion", ImVec2(0, scrollHeight), true, ImGuiWindowFlags_HorizontalScrollbar);
 
-		for (const auto& msg : (*logs)) {
+		Console& console = Console::getInstance();
+		const std::vector<std::string>& logsconsole = console.GetLogs();
+
+		for (const auto& msg : logsconsole) {
 			if (GetFilterError() && msg.find("Error") != std::string::npos) {
 				ImGui::TextColored(ImVec4(1.0f, 0.0f, 0.0f, 1.0f), msg.c_str());
 			}

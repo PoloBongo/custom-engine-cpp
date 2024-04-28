@@ -478,6 +478,7 @@ xcopy /E /I /Y "$(ProjectDir)Textures" "$(TargetDir)Textures"</Command>
     <ClCompile Include="..\Librairies\imgui\imgui_impl_vulkan.cpp" />
     <ClCompile Include="..\Librairies\imgui\imgui_tables.cpp" />
     <ClCompile Include="..\Librairies\imgui\imgui_widgets.cpp" />
+    <ClCompile Include="Console.cpp" />
     <ClCompile Include="includes\Script\Script.h" />
     <ClCompile Include="sources\FilesDirs.cpp" />
     <ClCompile Include="sources\GameObject\PreGameObject\GirlGameObject.cpp" />
@@ -558,6 +559,7 @@ xcopy /E /I /Y "$(ProjectDir)Textures" "$(TargetDir)Textures"</Command>
     <ClCompile Include="sources\UDP\Protocol\UnreliableOrdered.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Console.h" />
     <ClInclude Include="includes\FilesDirs.h" />
     <ClInclude Include="includes\GameObject\PreGameObject\GirlGameObject.h" />
     <ClInclude Include="includes\GameObject\PreGameObject\MultipleGameObject.h" />

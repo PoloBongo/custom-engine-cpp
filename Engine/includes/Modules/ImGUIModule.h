@@ -30,6 +30,8 @@
 #include "TCP/StatusMessage.h"
 #include "TCP/Server/Server.h"
 
+#include "Console.h"
+
 class RHIModule;
 
 /**
@@ -192,8 +194,14 @@ public:
 	 */
 	void CreateSpecificGameObject(GameObjectType _type, int _otherType = 0);
 
-	void AddLog(std::string _newText) { logs->push_back(_newText); }
-	void ClearLog() { logs->clear(); }
+	void AddLog(std::string _newText) { 
+		Console& console = Console::getInstance();
+		console.AddLog(_newText);
+	}
+	void ClearLog() {
+		Console& console = Console::getInstance();
+		console.ClearLogs();
+	}
 
 	bool GetFilterWarning() { return filterWarning; }
 	bool GetFilterError() { return filterError; }
