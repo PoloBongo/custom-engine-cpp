@@ -11,6 +11,8 @@
 #include "Components/Component.h"
 #include "LveEngine/lve_model.h"
 
+
+
 #include <nlohmann/json.hpp>
 
 using json = nlohmann::json;
@@ -638,20 +640,10 @@ class  GameObject
 
 		#pragma endregion
 
-		json toJson() const {
-			json j;
-			j["id"] = id;
-			j["name"] = name;
-			j["fileModel"] = fileModel;
-			j["parent_id"] = parent->GetId();
-			j["model_filename"] = model->GetFilename();
-			j["texture"] = texture;
-			j["color"] = { color.x, color.y,color.z };
-			j["isActive"] = isActive;
-			j["isVisible"] = isVisible;
+		json toJson() const;
 
-			return j;
-		}
+		void fromJson(const json& _j);
+
 	protected:
 
 		float						texMultiplier = 1;

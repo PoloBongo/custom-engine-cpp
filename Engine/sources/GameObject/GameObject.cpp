@@ -1,6 +1,9 @@
 #include "GameObject/GameObject.h"
+
+#include "GameObject/Components/Light.h"
 #include "GameObject/Components/Transform.h"
- 
+#include "Engine/CoreEngine.h"
+#include "Modules/RHIVulkanModule.h"
 
 GameObject::GameObject(): id(0)
 {
@@ -115,6 +118,55 @@ void GameObject::Release()
 
 void GameObject::Finalize()
 {
+}
+
+json GameObject::toJson() const
+{
+	json j;
+	j["id"] = id;
+	j["name"] = name;
+	j["fileModel"] = fileModel;
+	if (parent) j["parent_id"] = parent->GetId();
+	j["model_filename"] = model->GetFilename();
+	j["texture"] = texture;
+	j["color"] = { color.x, color.y,color.z };
+	j["isActive"] = isActive;
+	j["isVisible"] = isVisible;
+	json componentsJson = json::array();
+	for (const auto& component : components) {
+		componentsJson.push_back(component->toJson());
+	}
+	j["components"] = componentsJson;
+	return j;
+}
+
+void GameObject::fromJson(const json& _j)
+{
+	id = _j["id"];
+	name = _j["name"];
+	fileModel = _j["fileModel"];
+	/*parent = j["parent_id"];*/
+	model = lve::LveModel::CreateModelFromFile(*Engine::GetInstance()->GetModuleManager()->GetModule<RHIVulkanModule>()->GetDevice(), _j["model_filename"]);;
+	texture = _j["texture"];
+	color = glm::vec3(_j["color"][0], _j["color"][1], _j["color"][2]);
+	isActive = _j["isActive"];
+	isVisible = _j["isVisible"];
+
+	for (const auto& componentJson : _j["components"]) {
+		std::string type = componentJson["type"];
+		if (type == "Transform") {
+			const auto transformComponent = new Transform();
+			transformComponent->fromJson(componentJson);
+			components.push_back(transformComponent);
+		}
+		else if (type == "Light")
+		{
+			const auto light_component = new Light();
+			light_component->fromJson(componentJson);
+			components.push_back(light_component);
+		}
+		// Ajoutez des conditions pour d'autres types de composants si nécessaire
+	}
 }
 
 

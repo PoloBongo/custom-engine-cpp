@@ -8,6 +8,11 @@
 #define ENGINEDLL_API __declspec(dllimport)
 #endif
 
+
+#include <nlohmann/json.hpp>
+
+using json = nlohmann::json;
+
 class GameObject;
 
 /**
@@ -119,6 +124,22 @@ class  Component
 		{
 			isVisible = _state;
 			isActive  = _state;
+		}
+
+		// Méthode virtuelle pour convertir en JSON
+		virtual json toJson() const {
+			json j;
+			j["name"] = name;
+			j["isActive"] = isActive;
+			j["isVisible"] = isVisible;
+			return j;
+		}
+
+		// Méthode virtuelle pour initialiser à partir de JSON
+		virtual void fromJson(const json& j) {
+			name = j["name"];
+			isActive = j["isActive"];
+			isVisible = j["isVisible"];
 		}
 
 #pragma endregion

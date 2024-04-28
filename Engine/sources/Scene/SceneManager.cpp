@@ -266,7 +266,6 @@ void SceneManager::Init()
 	Module::Init();
 	CreateScene("SampleScene", true);
 	SetMainScene("SampleScene");
-
 }
 
 /**

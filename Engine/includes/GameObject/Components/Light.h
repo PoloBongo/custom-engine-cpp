@@ -63,6 +63,18 @@ public:
 	 */
 	void Finalize() override;
 
+	// Implémentation de la méthode toJson() pour convertir en JSON
+	json toJson() const override {
+		json j = Component::toJson(); // Appeler la méthode de la classe de base pour obtenir les données communes
+		j["lightIntensity"] = lightIntensity;
+		return j;
+	}
+
+	// Implémentation de la méthode fromJson() pour initialiser à partir de JSON
+	void fromJson(const json& j) override {
+		Component::fromJson(j); // Appeler la méthode de la classe de base pour initialiser les données communes
+		lightIntensity = j["lightIntensity"];
+	}
 #pragma endregion
 
 	float lightIntensity = 1.0f;

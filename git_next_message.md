@@ -1,3 +1,4 @@
-NEW : Save
+ENH : SaveDone
 
-- Création de fonction pour save en json
+- Fonctions Terminées
+- Todo: tester

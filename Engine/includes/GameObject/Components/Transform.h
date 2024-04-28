@@ -115,6 +115,22 @@ class Transform final : public Component
 		// Méthode pour afficher les propriétés du Transform
 		void Display();
 
+		// Implémentation de la méthode toJson() pour convertir en JSON
+		json toJson() const override {
+			json j = Component::toJson(); // Appeler la méthode de la classe de base pour obtenir les données communes
+			j["position"] = { position.x, position.y, position.z };
+			j["scale"] = { scale.x, scale.y, scale.z };
+			j["rotation"] = { rotation.x, rotation.y, rotation.z };
+			return j;
+		}
+
+		// Implémentation de la méthode fromJson() pour initialiser à partir de JSON
+		void fromJson(const json& j) override {
+			Component::fromJson(j); // Appeler la méthode de la classe de base pour initialiser les données communes
+			position = glm::vec3(j["position"][0], j["position"][1], j["position"][2]);
+			scale = glm::vec3(j["scale"][0], j["scale"][1], j["scale"][2]);
+			rotation = glm::vec3(j["rotation"][0], j["rotation"][1], j["rotation"][2]);
+		}
 	private:
 		glm::vec3 position{};
 		glm::vec3 scale{ 1.0f };
