@@ -110,6 +110,8 @@ class RHIVulkanModule final : public RHIModule
 
 		std::vector<std::string>* GetListTexturesNames() { return ListTexturesNames; }
 
+		std::vector<vk::DescriptorImageInfo> GetListTextures() { return ListTextures; }
+
 		void AddListTexturesNames(std::string _newFile) { ListTexturesNames->push_back(_newFile); }
 
 	private:

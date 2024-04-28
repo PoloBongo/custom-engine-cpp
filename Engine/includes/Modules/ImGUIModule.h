@@ -271,6 +271,8 @@ protected:
 
 	std::vector<std::wstring> fileNames;
 
+	std::vector<VkDescriptorSet>* ListDescriptorsImGui = new std::vector<VkDescriptorSet>();
+
 	std::string fileSearch;
 
 

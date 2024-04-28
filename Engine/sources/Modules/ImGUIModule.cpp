@@ -139,6 +139,21 @@ void ImGuiModule::Start()
 
 	// clear font textures from cpu data
 	//ImGui_ImplVulkan_DestroyFontUploadObjects();
+
+	for (int i = 0; i < moduleManager->GetModule<RHIVulkanModule>()->GetListTextures().size();i++)
+	{
+
+		VkDescriptorSet textureID = ImGui_ImplVulkan_AddTexture(
+			moduleManager->GetModule<RHIVulkanModule>()->GetListTextures()[i].sampler,
+			moduleManager->GetModule<RHIVulkanModule>()->GetListTextures()[i].imageView,
+			VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL
+		);
+
+		ListDescriptorsImGui->push_back(textureID);
+	}
+	//std::cout << "SIZE : " << ListDescriptorsImGui->size();
+	
+
 }
 
 void ImGuiModule::FixedUpdate()
@@ -353,6 +368,10 @@ void ImGuiModule::DrawInspectorWindow() {
 		}
 
 		if (ImGui::CollapsingHeader("Texture")) {
+			if (selectedGameObject->GetTexture() < moduleManager->GetModule<RHIVulkanModule>()->GetListTexturesNames()->size()) 
+			{
+				ImGui::Text((*moduleManager->GetModule<RHIVulkanModule>()->GetListTexturesNames())[selectedGameObject->GetTexture()].c_str());
+			}
 			int texture = selectedGameObject->GetTexture();
 			if (ImGui::InputInt("Texture", &texture)) {
 
@@ -402,14 +421,16 @@ void ImGuiModule::DrawInspectorWindow() {
 			}
 
 			if (textureView) {
+
 				int sizeDescList = moduleManager->GetModule<RHIVulkanModule>()->GetListDescriptors().size();
 
 				// Vulkan crie, parce que ce sont les descriptors d'un autre pool et d'une autre pipeline
 				if (selectedGameObject->GetTexture() > sizeDescList - 1) {
-					ImGui::Image(moduleManager->GetModule<RHIVulkanModule>()->GetListDescriptors()[0]->at(0), ImVec2(200, 200));
+					ImGui::Image((*ListDescriptorsImGui)[0], ImVec2(200, 200));
 				}
 				else {
-					ImGui::Image(moduleManager->GetModule<RHIVulkanModule>()->GetListDescriptors()[selectedGameObject->GetTexture()]->at(0), ImVec2(200, 200));
+					//ImGui::Image(&ListDescriptorsImGui[selectedGameObject->GetTexture()], ImVec2(200, 200));
+					ImGui::Image((*ListDescriptorsImGui)[selectedGameObject->GetTexture()], ImVec2(200, 200));
 
 				}
 			}
@@ -702,14 +723,17 @@ void ImGuiModule::DrawHierarchyWindow() {
 									updatedObjects.push_back(obj);
 								}
 								else {
-									std::string name = obj->GetName();
+									std::string name = gameObject->GetName();
 									obj->SetModel(nullptr);
 									delete obj;
 									AddLog("Object Deleted : " + name);
 								}
 							}
 
-							gameObjects = updatedObjects;
+							//sceneManager->GetCurrentScene()->RemoveAllObjects();
+							//std::cout << "Size 1: " << sceneManager->GetCurrentScene()->rootObjects.size(); // 13
+							//std::cout << "Size 2:" << updatedObjects.size(); // 12
+							sceneManager->GetCurrentScene()->rootObjects = updatedObjects;
 							selectedGameObject = nullptr;
 						}
 
@@ -1000,6 +1024,13 @@ void ImGuiModule::DrawFilesExplorerWindow() {
 						moduleManager->GetModule<RHIVulkanModule>()->AddTextureToPool(GetCurrentDir() + "/" + filesdirs.ConvertWideStringToString(filenames_wide));
 						moduleManager->GetModule<RHIVulkanModule>()->AddListTexturesNames(filesdirs.ConvertWideStringToString(filenames_wide));
 						AddLog("Texture has been added : " + filesdirs.ConvertWideStringToString(filenames_wide));
+						VkDescriptorSet textureID = ImGui_ImplVulkan_AddTexture(
+							moduleManager->GetModule<RHIVulkanModule>()->GetListTextures().back().sampler,
+							moduleManager->GetModule<RHIVulkanModule>()->GetListTextures().back().imageView,
+							VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL
+						);
+
+						ListDescriptorsImGui->push_back(textureID);
 					}
 				}
 			
@@ -1028,6 +1059,15 @@ void ImGuiModule::DrawFilesExplorerWindow() {
 				{
 					moduleManager->GetModule<RHIVulkanModule>()->AddTextureToPool(fileToLook);
 					moduleManager->GetModule<RHIVulkanModule>()->AddListTexturesNames(fileToLook);
+
+					VkDescriptorSet textureID = ImGui_ImplVulkan_AddTexture(
+						moduleManager->GetModule<RHIVulkanModule>()->GetListTextures().back().sampler,
+						moduleManager->GetModule<RHIVulkanModule>()->GetListTextures().back().imageView,
+						VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL
+					);
+
+					ListDescriptorsImGui->push_back(textureID);
+
 					AddLog("Texture has been added : " + fileToLook);
 					SetFileToLook("");
 				}
@@ -1108,6 +1148,13 @@ void ImGuiModule::DrawFilesExplorerWindow() {
 									moduleManager->GetModule<RHIVulkanModule>()->AddTextureToPool(GetCurrentDir() + "/" + filenameWideString);
 									moduleManager->GetModule<RHIVulkanModule>()->AddListTexturesNames(filenameWideString);
 									AddLog("Texture has been added : " + filenameWideString);
+									VkDescriptorSet textureID = ImGui_ImplVulkan_AddTexture(
+										moduleManager->GetModule<RHIVulkanModule>()->GetListTextures().back().sampler,
+										moduleManager->GetModule<RHIVulkanModule>()->GetListTextures().back().imageView,
+										VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL
+									);
+
+									ListDescriptorsImGui->push_back(textureID);
 								}
 							}
 						}
