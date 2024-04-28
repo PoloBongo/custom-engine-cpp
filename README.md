@@ -1,6 +1,7 @@
 🖥️ Moteur de jeu 3D avec Vulkan
 ============================
 
+
 Notre moteur 3D en développement s'appuie sur la puissance de Vulkan et intègre plusieurs bibliothèques spécialisées pour améliorer le processus de développement. Actuellement, nous explorons l'utilisation de FMOD pour le rendu audio, GLFW pour la gestion des fenêtres, GLM pour les calculs mathématiques, JSON pour la configuration des données, TinyObjLoader pour le chargement des modèles 3D, STB pour divers utilitaires graphiques, et Winsock pour le support réseau. Combinaison qui permet un bon développement et des solutions plus rapides !
 
 Our in-development 3D engine leverages the power of Vulkan and integrates several specialized libraries to enhance the development process. Currently, we are exploring the use of FMOD for audio rendering, GLFW for window management, GLM for mathematical calculations, JSON for data configuration, TinyObjLoader for loading 3D models, STB for various graphics utilities, and Winsock for network support. This combination enables efficient development and faster solutions!
