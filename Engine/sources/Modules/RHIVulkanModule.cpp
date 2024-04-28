@@ -108,8 +108,8 @@ void RHIVulkanModule::Start()
 			vk::ShaderStageFlagBits::eFragment)
 		.Build();
 
-	// Je laisse la construction du globalDesc comme ça pour montrer 
-	texture1 = new lve::LveTexture(*p_lveDevice, "Textures/coconut.jpg");
+	// Je laisse la construction du globalDesc comme ï¿½a pour montrer 
+	texture1 = new lve::LveTexture(*p_lveDevice, "Textures/bugtexture2.png");
 
 	vk::DescriptorImageInfo imageInfo{};
 	imageInfo.sampler = texture1->getSampler();
@@ -135,6 +135,19 @@ void RHIVulkanModule::Start()
 	AddTextureToPool("Textures/viking_room.png");
 	AddTextureToPool("Textures/grass.jpg");
 	AddTextureToPool("Textures/gras.truc"); // TEST	
+	AddTextureToPool("Textures/noobtex.png");	
+	AddTextureToPool("Textures/sand1.png");
+	AddTextureToPool("Textures/sand2.png");
+	AddTextureToPool("Textures/sand3.png");
+
+	ListTexturesNames->push_back("bugtexture.png");
+	ListTexturesNames->push_back("unnamed.png");
+	ListTexturesNames->push_back("viking_room.png");
+	ListTexturesNames->push_back("grass.jpg");
+	ListTexturesNames->push_back("noobtex.png");
+	ListTexturesNames->push_back("sand1.png");
+	ListTexturesNames->push_back("sand2.png");
+	ListTexturesNames->push_back("sand3.png");
 
 	simpleRenderSystem = new lve::SimpleRenderSystem{
 		*p_lveDevice, p_lveRenderer->GetSwapChainRenderPass(), global_set_layout->GetDescriptorSetLayout()

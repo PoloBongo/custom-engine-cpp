@@ -10,6 +10,10 @@
 #include "GameObject/PreGameObject/LightGameObject.h"
 #include "GameObject/PreGameObject/PlaneGameObject.h"
 #include "GameObject/PreGameObject/VaseGameObject.h"
+#include "GameObject/PreGameObject/GirlGameObject.h"
+#include "GameObject/PreGameObject/NoobGameObject.h"
+#include "GameObject/PreGameObject/SphereGameObject.h"
+#include "GameObject/PreGameObject/MultipleGameObject.h"
 #include "Modules/TimeModule.h"
 
 
@@ -352,10 +356,6 @@ void BaseScene::TestLoadGameObjects()
 		point_light->GetTransform()->SetPosition(glm::vec3(rotate_light * glm::vec4(-1.f, -1.f, -1.f, 1.f)));
 		rootObjects.push_back(point_light);
 	}
-
-	const auto sun = lve::LightGameObject::Create(1000000.f, 2.0f, glm::vec3{ 0.f, -1000.f, 0.f });
-	sun->SetName("Sun");
-	rootObjects.push_back(sun);
 }
 
 GameObject* BaseScene::CreateCubeGameObject(const int _type) {
@@ -390,14 +390,58 @@ GameObject* BaseScene::CreatePlaneGameObject() {
 }
 
 GameObject* BaseScene::CreateVaseGameObject(const int _type) {
-
+	lve::LveDevice* device = Engine::GetInstance()->GetModuleManager()->GetModule<RHIModule>()->GetDevice();
 	if (_type == 0) {
-		lve::LveDevice* device = Engine::GetInstance()->GetModuleManager()->GetModule<RHIModule>()->GetDevice();
 		return lve::VaseGameObject::CreateFlat(*device);
 	}
 	else if (_type == 1) {
-		lve::LveDevice* device = Engine::GetInstance()->GetModuleManager()->GetModule<RHIModule>()->GetDevice();
 		return lve::VaseGameObject::CreateSmooth(*device);
 	}
-	return nullptr;
+	return lve::VaseGameObject::CreateFlat(*device);
+}
+
+GameObject* BaseScene::CreateGirlGameObject() {
+	lve::LveDevice* device = Engine::GetInstance()->GetModuleManager()->GetModule<RHIModule>()->GetDevice();
+	return lve::GirlGameObject::Create(*device);
+}
+
+GameObject* BaseScene::CreateNoobGameObject() {
+	lve::LveDevice* device = Engine::GetInstance()->GetModuleManager()->GetModule<RHIModule>()->GetDevice();
+	return lve::NoobGameObject::Create(*device);
+}
+
+GameObject* BaseScene::CreateSphereGameObject() {
+	lve::LveDevice* device = Engine::GetInstance()->GetModuleManager()->GetModule<RHIModule>()->GetDevice();
+	return lve::SphereGameObject::Create(*device);
+}
+
+GameObject* BaseScene::CreateMultipleGameObject(int _type) {
+	lve::LveDevice* device = Engine::GetInstance()->GetModuleManager()->GetModule<RHIModule>()->GetDevice();
+	switch (_type)
+	{
+	case 0:
+		return lve::MultipleGameObject::CreateCone(*device);
+		break;
+	case 1:
+		return lve::MultipleGameObject::CreateTriangle(*device);
+		break;
+	case 2:
+		return lve::MultipleGameObject::CreateCapsule(*device);
+		break;
+	case 3:
+		return lve::MultipleGameObject::CreateTube(*device);
+		break;
+	case 4:
+		return lve::MultipleGameObject::CreateAnneau(*device);
+		break;
+	case 5:
+		return lve::MultipleGameObject::CreateCylindre(*device);
+		break;
+	case 6:
+		return lve::MultipleGameObject::CreateCylindreCoupe(*device);
+		break;
+	default:
+		return lve::MultipleGameObject::CreateCylindreCoupe(*device);
+		break;
+	}
 }

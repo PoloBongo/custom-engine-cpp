@@ -1,4 +1,11 @@
 ﻿#include "Modules/ImGUIModule.h"
+#include "Modules/WindowModule.h"
+#include "Modules/ImGUIModule.h"
+
+#include "FilesDirs.h"
+
+#include "ImGUIInterface.h"
+
 #include <imgui.h>
 #include <imgui_impl_glfw.h>
 #include <imgui_impl_vulkan.h>
@@ -12,9 +19,17 @@
 #include "Scene/SceneManager.h"
 #include "TCP/Errors.h"
 
-//#include "UDP/Network/ClientUDP/ClientUDPStart.h"
-//#include "UDP/Network/ServerUDP/ServerUDPStart.h"
-#include <thread>
+#include <fstream>
+#include <cstring>
+#include <vector>
+#include <imgui_internal.h>
+#include <random>
+#include <windows.h>
+#include <locale>
+#include <codecvt>
+#include <algorithm>
+#include <Engine/CoreEngine.h>
+#include <memory>
 
 class BaseScene;
 // ----------========== IMGUI SETTINGS ==========---------- //
@@ -49,6 +64,15 @@ void ImGuiModule::Init()
 	//_mainDeletionQueue.push_back([=]() {
 	//	device.destroyCommandPool(_immCommandPool);
 	//});
+
+	soundModule = new SoundSystemModule();
+	soundModule->Init();
+	if (!soundModule->IsInitialized()) {
+		std::cerr << "Erreur: Initialisation de SoundSystemModule a échoué." << std::endl;
+		return;
+	}
+
+	imGuiAudio = new ImGUIAudio(soundModule);
 }
 
 void ImGuiModule::Start()
@@ -241,7 +265,17 @@ void ImGuiModule::GetGui()
 	DrawInspectorWindow();
 	ImGui::End();
 
-	ImGuiModule::DrawTchatWindow();
+	DrawTchatWindow();
+	
+	ImGui::SetNextWindowSize(ImVec2(300, 72), ImGuiCond_Always); // Hauteur fixe et non-redimensionnable
+	ImGui::SetNextWindowPos(ImVec2(mainWindowSize.x / 2 - 300 / 2, 0), ImGuiCond_Always); // Ancrage en haut à droite
+	ImGui::Begin("Modes", nullptr, window_flags);
+	DrawModesWindow();
+	ImGui::End();
+
+	DrawConsoleWindow();
+
+	DrawFilesExplorerWindow();
 
 	DrawSettingsWindow();
 }
@@ -296,27 +330,145 @@ void ImGuiModule::DrawInspectorWindow() {
 		}
 		ShowRenamePopup();
 
+		bool visibility = selectedGameObject->GetVisible();
+		if (ImGui::Checkbox("Visible", &visibility)) {
+			selectedGameObject->SetVisible(visibility);
+		}
+
+		for (size_t j = 0; j < selectedGameObject->GetChildren().size(); ++j) {
+			const auto& gameObject = selectedGameObject->GetChildren()[j];
+
+			ImGui::PushID(j); // Identifiant unique pour chaque GameObject
+
+			std::string name = gameObject->GetName();
+			const char* namePtr = name.c_str();
+			if (ImGui::Button(namePtr, ImVec2(50,50))) {
+				selectedGameObject = gameObject;
+			}
+		}
+
 		// Affichage des propriétés de transformation
 		if (ImGui::CollapsingHeader("Transform")) {
 			DisplayTransform(selectedGameObject->GetTransform());
 		}
 
-		// Detection de Light et affichage des proprietes de la lumiere
-		Light* lightComponent = selectedGameObject->GetComponent<Light>();
-		if (lightComponent) {
-			// Intensite de la lumiere
-			float intensity = lightComponent->lightIntensity;
-			if (ImGui::DragFloat("Light Intensity", &intensity, 0.1f, 0.0f, 100.0f)) {
-				lightComponent->lightIntensity = intensity;
+		if (ImGui::CollapsingHeader("Texture")) {
+			int texture = selectedGameObject->GetTexture();
+			if (ImGui::InputInt("Texture", &texture)) {
+
+				if (texture < 0) {
+					texture = 0;
+				}
+				else if (texture > moduleManager->GetModule<RHIVulkanModule>()->GetListDescriptors().size() - 1) {
+					texture -= 1;
+				}
+				else {
+					selectedGameObject->SetTexture(texture);
+				}
+			}
+			float textureMulti = selectedGameObject->GetTexMultiplier();
+			if (ImGui::DragFloat("Texture Multiplier", &textureMulti, 1, 0.0, 100.0)) {
+				std::ifstream file(selectedGameObject->GetFileModel());
+				if (file.good()) {
+					std::cout << "File good";
+					AddLog("Model file good");
+					selectedGameObject->SetTexMultiplier(textureMulti);
+					std::shared_ptr<lve::LveModel> lve_model = lve::LveModel::CreateModelFromFile(*rhiModule->GetDevice(), selectedGameObject->GetFileModel(), selectedGameObject->GetTexMultiplier(), selectedGameObject->GetColor());
+					selectedGameObject->SetModel(lve_model);
+				}
+				else {
+					std::cout << "File not good :" + selectedGameObject->GetFileModel();
+					AddLog("Warning : Model file not good");
+				}
+			}
+			//ImGui::SameLine();
+			if (ImGui::Button("Reset Multiplier", ImVec2(150, 20))) {
+				std::ifstream file(selectedGameObject->GetFileModel());
+				if (file.good()) {
+					std::cout << "File good";
+					AddLog("Model file good");
+					selectedGameObject->SetTexMultiplier(1.0f);
+					std::shared_ptr<lve::LveModel> lve_model = lve::LveModel::CreateModelFromFile(*rhiModule->GetDevice(), selectedGameObject->GetFileModel(), selectedGameObject->GetTexMultiplier(), selectedGameObject->GetColor());
+					selectedGameObject->SetModel(lve_model);
+				}
+				else {
+					std::cout << "File not good :" + selectedGameObject->GetFileModel();
+					AddLog("Warning : Model file not good");
+				}
 			}
 
-			// Couleur de la lumiere
-			glm::vec3 color = selectedGameObject->GetColor();
-			if (ImGui::ColorEdit3("Color", glm::value_ptr(color))) {
-				selectedGameObject->SetColor(color);
+			if (ImGui::Checkbox("Texture Viewer (0.3v)", &textureView)) {
+				!textureView;
+			}
+
+			if (textureView) {
+				int sizeDescList = moduleManager->GetModule<RHIVulkanModule>()->GetListDescriptors().size();
+
+				// Vulkan crie, parce que ce sont les descriptors d'un autre pool et d'une autre pipeline
+				if (selectedGameObject->GetTexture() > sizeDescList - 1) {
+					ImGui::Image(moduleManager->GetModule<RHIVulkanModule>()->GetListDescriptors()[0]->at(0), ImVec2(200, 200));
+				}
+				else {
+					ImGui::Image(moduleManager->GetModule<RHIVulkanModule>()->GetListDescriptors()[selectedGameObject->GetTexture()]->at(0), ImVec2(200, 200));
+
+				}
 			}
 		}
 
+		glm::vec3 color = selectedGameObject->GetColor();
+		if (ImGui::CollapsingHeader("Color")) {
+			if (ImGui::ColorEdit3("Color", glm::value_ptr(color))) {
+				selectedGameObject->SetColor(color);
+				std::ifstream file(selectedGameObject->GetFileModel());
+				if (file.good()) {
+					std::cout << "File good";
+					AddLog("Model file good");
+					std::shared_ptr<lve::LveModel> lve_model = lve::LveModel::CreateModelFromFile(*rhiModule->GetDevice(), selectedGameObject->GetFileModel(), selectedGameObject->GetTexMultiplier(), selectedGameObject->GetColor());
+					selectedGameObject->SetModel(lve_model);
+				}
+				else {
+					std::cout << "File not good :" + selectedGameObject->GetFileModel();
+					AddLog("Warning : Model file not good");
+				}
+			}
+			if (ImGui::Button("Reset Color", ImVec2(115, 20))) {
+				selectedGameObject->SetColor(glm::vec3(1,1,1));
+				std::ifstream file(selectedGameObject->GetFileModel());
+				if (file.good()) {
+					std::cout << "File good";
+					AddLog("Model file good");
+					std::shared_ptr<lve::LveModel> lve_model = lve::LveModel::CreateModelFromFile(*rhiModule->GetDevice(), selectedGameObject->GetFileModel(), selectedGameObject->GetTexMultiplier(), selectedGameObject->GetColor());
+					selectedGameObject->SetModel(lve_model);
+				}
+				else {
+					std::cout << "File not good :" + selectedGameObject->GetFileModel();
+					AddLog("Warning : model file not good");
+				}
+			}
+		}
+
+
+
+		// Detection de Light et affichage des proprietes de la lumiere
+		Light* lightComponent = selectedGameObject->GetComponent<Light>();
+		if (lightComponent) {
+			if (ImGui::CollapsingHeader("Light")) 
+			{
+				// Intensite de la lumiere
+				float intensity = lightComponent->lightIntensity;
+				if (ImGui::DragFloat("Light Intensity", &intensity, 0.1f, 0.0f, 100.0f)) {
+					lightComponent->lightIntensity = intensity;
+				}
+				//ImGui::SameLine();
+				if (ImGui::Button("X", ImVec2(20, 20))) {
+					selectedGameObject->RemoveComponent(lightComponent);
+					AddLog("Removed Component Light from : " + selectedGameObject->GetName());
+				}
+			}
+		}
+
+		ImGui::Spacing();
+		ImGui::Separator();
 		// Bouton pour ajouter un composant
 		if (ImGui::Button("Add Component")) {
 			ImGui::OpenPopup("AddComponentPopup");
@@ -326,11 +478,22 @@ void ImGuiModule::DrawInspectorWindow() {
 		if (ImGui::BeginPopup("AddComponentPopup")) {
 			if (ImGui::MenuItem("Add Light")) {
 				Light* newLight = selectedGameObject->CreateComponent<Light>();
+				AddLog("Created Component Light to : " + selectedGameObject->GetName());
 				newLight->lightIntensity = 1.0;  // Intensit� initiale standard
 				ImGui::CloseCurrentPopup();
 			}
 			ImGui::EndPopup();
 		}
+		ImGui::Spacing();
+		ImGui::Separator();
+
+		char* charBuffer = new char[300];
+		strcpy_s(charBuffer, 300, selectedGameObject->GetDesc().c_str());
+		ImGui::Text("Description");
+		if (ImGui::InputTextMultiline("-", charBuffer, 300)) {
+			selectedGameObject->SetDesc(charBuffer);
+		}
+		delete[] charBuffer;
 	}
 	else {
 		ImGui::Text("No GameObject selected");
@@ -351,28 +514,97 @@ void ImGuiModule::DrawHierarchyWindow() {
 		if (ImGui::MenuItem("Cube")) {
 			CreateSpecificGameObject(GameObjectType::Cube);
 			std::cout << "Added new GameObject-Cube to current scene." << std::endl;
-
+			AddLog("Added new GameObject-Cube to current scene.");
+		}
+		if (ImGui::MenuItem("Colored Cube")) {
+			CreateSpecificGameObject(GameObjectType::Cube,1);
+			std::cout << "Added new GameObject-Cube to current scene." << std::endl;
+			AddLog("Added new GameObject-Cube to current scene.");
 		}
 		if (ImGui::MenuItem("Light")) {
 			CreateSpecificGameObject(GameObjectType::Light);
 			std::cout << "Added new GameObject-Light to current scene." << std::endl;
+			AddLog("Added new GameObject-Light to current scene.");
 
 		}
 		if (ImGui::MenuItem("Plane")) {
 			CreateSpecificGameObject(GameObjectType::Plane);
 			std::cout << "Added new GameObject-Plane to current scene." << std::endl;
+			AddLog("Added new GameObject-Plane to current scene.");
 
 		}
 		if (ImGui::MenuItem("Vase Flat")) {
 			CreateSpecificGameObject(GameObjectType::Vase);
-			std::cout << "Added new GameObject-Plane to current scene." << std::endl;
+			std::cout << "Added new GameObject-Vase Flat to current scene." << std::endl;
+			AddLog("Added new GameObject-Vase Flat to current scene.");
 		}
 		if (ImGui::MenuItem("Vase Smooth")) {
-			CreateSpecificGameObject(GameObjectType::Vase, 1);
-			std::cout << "Added new GameObject-Plane to current scene." << std::endl;
+			CreateSpecificGameObject(GameObjectType::Vase,1);
+			std::cout << "Added new GameObject-Vase Smooth to current scene." << std::endl;
+			AddLog("Added new GameObject-Vase Smooth to current scene.");
 		}
+
+		if (ImGui::MenuItem("Girl")) {
+			CreateSpecificGameObject(GameObjectType::Girl);
+			std::cout << "Added new GameObject-Girl to current scene." << std::endl;
+			AddLog("Added new GameObject-Girl to current scene.");
+		}
+
+		if (ImGui::MenuItem("Noob")) {
+			CreateSpecificGameObject(GameObjectType::Noob);
+			std::cout << "Added new GameObject-Noob to current scene." << std::endl;
+			AddLog("Added new GameObject-Noob to current scene.");
+		}
+
+		if (ImGui::MenuItem("Sphere")) {
+			CreateSpecificGameObject(GameObjectType::Sphere);
+			std::cout << "Added new GameObject-Sphere to current scene." << std::endl;
+			AddLog("Added new GameObject-Sphere to current scene.");
+		}
+
+		if (ImGui::MenuItem("Cone")) {
+			CreateSpecificGameObject(GameObjectType::Multiple,0);
+			std::cout << "Added new GameObject-Cone to current scene." << std::endl;
+			AddLog("Added new GameObject-Cone to current scene.");
+		}
+
+		if (ImGui::MenuItem("Triangle")) {
+			CreateSpecificGameObject(GameObjectType::Multiple,1);
+			std::cout << "Added new GameObject-Triangle to current scene." << std::endl;
+			AddLog("Added new GameObject-Triangle to current scene.");
+		}
+
+		if (ImGui::MenuItem("Capsule")) {
+			CreateSpecificGameObject(GameObjectType::Multiple, 2);
+			std::cout << "Added new GameObject-Capsule to current scene." << std::endl;
+			AddLog("Added new GameObject-Capsule to current scene.");
+		}
+		if (ImGui::MenuItem("Tube")) {
+			CreateSpecificGameObject(GameObjectType::Multiple, 3);
+			std::cout << "Added new GameObject-Tube to current scene." << std::endl;
+			AddLog("Added new GameObject-Tube to current scene.");
+		}
+		if (ImGui::MenuItem("Anneau")) {
+			CreateSpecificGameObject(GameObjectType::Multiple, 4);
+			std::cout << "Added new GameObject-Anneau to current scene." << std::endl;
+			AddLog("Added new GameObject-Anneau to current scene.");
+		}
+		if (ImGui::MenuItem("Cylindre")) {
+			CreateSpecificGameObject(GameObjectType::Multiple, 5);
+			std::cout << "Added new GameObject-Cylindre to current scene." << std::endl;
+			AddLog("Added new GameObject-Cylindre to current scene.");
+		}
+		if (ImGui::MenuItem("Cylindre Coupe")) {
+			CreateSpecificGameObject(GameObjectType::Multiple, 6);
+			std::cout << "Added new GameObject-Cylindre Coupe to current scene." << std::endl;
+			AddLog("Added new GameObject-Cylindre Coupe to current scene.");
+		}
+
+
 		ImGui::EndPopup();
 	}
+
+	bool showErrorPopup = false;
 
 	// Barre de recherche
 	static char searchBuffer[100];
@@ -384,7 +616,7 @@ void ImGuiModule::DrawHierarchyWindow() {
 		ImGui::Spacing();
 		ImGui::Separator();
 
-		const auto& scene = scenes[i];
+		auto& scene = scenes[i];
 		bool isCurrentScene = (sceneManager->GetCurrentScene() == scene.get());
 
 		ImGui::PushID(i); // Identifiant unique pour chaque scène
@@ -409,7 +641,14 @@ void ImGuiModule::DrawHierarchyWindow() {
 			ImGui::Separator();
 
 			if (ImGui::MenuItem("Delete")) {
-				sceneManager->DestroyScene(scene->GetName()); // Supprime la scène
+				if (sceneManager->GetListScenes2().size() > 1) {
+					sceneManager->DestroyScene(scene->GetName(),i);
+					sceneManager->SetCurrentScene(0);
+				}
+				else {
+					AddLog("Warning : You need at least 2 scenes to delete one");
+					SetShowPopupError(true);
+				}
 			}
 			ImGui::EndPopup();
 		}
@@ -454,10 +693,53 @@ void ImGuiModule::DrawHierarchyWindow() {
 						}
 
 						ImGui::Separator();
-						if (ImGui::MenuItem("Delete")) { DeleteGameObject(selectedGameObject); }
+						if (ImGui::MenuItem("Delete")) { 
+							auto& gameObjects = sceneManager->GetCurrentScene()->rootObjects;
+							std::vector<GameObject*> updatedObjects;
+
+							for (auto obj : gameObjects) {
+								if (obj->GetId() != gameObject->GetId()) {
+									updatedObjects.push_back(obj);
+								}
+								else {
+									std::string name = obj->GetName();
+									obj->SetModel(nullptr);
+									delete obj;
+									AddLog("Object Deleted : " + name);
+								}
+							}
+
+							gameObjects = updatedObjects;
+							selectedGameObject = nullptr;
+						}
 
 						ImGui::Separator();
-						if (ImGui::MenuItem("Duplicate")) {}
+						// En mode y a rien ? Mathias chatgpt fait pas tout ton code non plus
+						// this ->>>>>>>>  //if (ImGui::MenuItem("Duplicate")) {}
+						// SI tu tombe sur ça adrien, donne moi un tabouret stp
+
+						if (ImGui::MenuItem("Duplicate")) 
+						{
+							auto& gameObjects = sceneManager->GetCurrentScene()->rootObjects;
+							std::vector<GameObject*> updatedObjects = gameObjects;
+
+							const auto newGameObject = GameObject::CreatePGameObject();
+							newGameObject->SetName(gameObject->GetName());
+							newGameObject->SetFileModel(gameObject->GetFileModel());
+							newGameObject->SetModel(gameObject->GetModel());
+							newGameObject->GetTransform()->SetPosition(gameObject->GetPosition());
+							newGameObject->GetTransform()->SetScale(gameObject->GetScale());
+							newGameObject->GetTransform()->SetRotation(gameObject->GetRotation());
+							newGameObject->SetTexture(gameObject->GetTexture());
+
+
+							//sceneManager->GetCurrentScene()->AddRootObject(newGameObject);
+
+							updatedObjects.push_back(newGameObject);
+							gameObjects = updatedObjects;
+							// Le game object est pas instant add avec le "AddRootObject"
+							selectedGameObject = gameObjects[gameObjects.size()-1];
+						}
 
 						ImGui::EndPopup();
 					}
@@ -468,11 +750,72 @@ void ImGuiModule::DrawHierarchyWindow() {
 		}
 		ImGui::PopID();  // Restaure l'ID précédent pour les scènes
 	}
+	if (GetShowPopupError()) {
+		ImGui::OpenPopup("ErrorPopup");
+		if (ImGui::BeginPopupModal("ErrorPopup", NULL, ImGuiWindowFlags_AlwaysAutoResize)) {
+			ImGui::Text("You need at least two scenes to delete one.");
+			if (ImGui::Button("OK", ImVec2(120, 0))) {
+				ImGui::CloseCurrentPopup();
+				SetShowPopupError(false);
+			}
+			ImGui::EndPopup();
+		}
+	}
 }
+
+void ImGuiModule::DrawModesWindow() {
+
+	//std::cout << Engine::GetInstance()->GetEngineMode() << std::endl;
+
+	if (ImGui::Button("Play Button", ImVec2(110, 20))) {
+		if (Engine::GetInstance()->GetEngineMode() == EngineMode::Editor) {
+			Engine::GetInstance()->PlayEngineMode();
+			std::cout << Engine::GetInstance()->GetEngineMode() << std::endl;
+		}
+		else {
+			Engine::GetInstance()->EditorEngineMode();
+			std::cout << Engine::GetInstance()->GetEngineMode() << std::endl;
+		}
+	}
+
+	ImGui::SameLine();
+
+	if (ImGui::Button("Pause Button", ImVec2(110, 20))) {
+		if (Engine::GetInstance()->GetEngineMode() == EngineMode::Play) {
+			Engine::GetInstance()->PauseEngineMode();
+			std::cout << Engine::GetInstance()->GetEngineMode() << std::endl;
+		}
+		else if (Engine::GetInstance()->GetEngineMode() == EngineMode::Pause) {
+			Engine::GetInstance()->PlayEngineMode();
+			std::cout << Engine::GetInstance()->GetEngineMode() << std::endl;
+		}
+	}
+
+	//ImGui::SameLine();
+
+	std::string str = "Mode : ";
+	switch (Engine::GetInstance()->GetEngineMode()) {
+	case EngineMode::Editor:
+		str += "Editor";
+		break;
+	case EngineMode::Play:
+		str += "Play";
+		break;
+	case EngineMode::Pause:
+		str += "Pause";
+		break;
+	default:
+		break;
+	}
+	ImGui::TextColored(ImVec4(1.0f, 0.5f, 0.5f, 1.0f), str.c_str());
+}
+
 
 void ImGuiModule::DrawSettingsWindow() {
 	if (ImGui::Begin("Settings")) {
-		ImGUIInterface::EditTheme();
+		if (ImGui::CollapsingHeader("Interface")) {
+			ImGUIInterface::EditTheme();
+		}
 		if (ImGui::CollapsingHeader("Input")) {
 			// Input settings
 		}
@@ -481,6 +824,7 @@ void ImGuiModule::DrawSettingsWindow() {
 		}
 		if (ImGui::CollapsingHeader("Audio")) {
 			// Audio settings
+			imGuiAudio->DrawAudioControls(); //Pointeur vers la fonction DrawAudioControls
 		}
 		if (ImGui::CollapsingHeader("Network")) {
 			//Network settings
@@ -488,69 +832,6 @@ void ImGuiModule::DrawSettingsWindow() {
 	}
 	ImGui::End();
 }
-
-//void ImGuiModule::DrawTchatWindow() {
-//	ClientUDPStart clientUDP;
-//	ServerUDPStart serverUDP;
-//	if (ImGui::Begin("Tchat")) {
-//		ImGui::Spacing();
-//
-//		ImGui::SetWindowFontScale(1.5f);  // Taille du texte modifié
-//		ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), "Informations:");
-//		ImGui::SetWindowFontScale(1.0f);  // Taille du texte par défaut
-//
-//		ImGui::InputText("IP Address", ipBuffer, sizeof(ipBuffer));
-//		ImGui::InputText("Port", portBuffer, sizeof(portBuffer));
-//		if (ImGui::Button("Connexion")) {
-//			unsigned long port = std::stoul(portBuffer, nullptr, 0);
-//			if (std::string(ipBuffer) == "" && std::string(portBuffer) != "")
-//			{
-//				std::cout << "server";
-//				serverUDP.CreateSocketServer(port);
-//			}
-//			else {
-//				clientUDP.CreateSocketClient();
-//			}
-//		}
-//		ImGui::Spacing();
-//		ImGui::Separator();
-//
-//		ImGui::SetWindowFontScale(1.5f);  // Taille du texte modifié
-//		ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), "Logs:");
-//		ImGui::SetWindowFontScale(1.0f);  // Taille du texte par défaut
-//
-//		// Zone pour afficher les messages
-//		if (ImGui::BeginChild("Logs", ImVec2(0, 200), true)) {
-//			for (const auto& msg : messageLogs) {
-//				ImGui::TextWrapped("%s", msg.c_str());
-//			}
-//			if (ImGui::GetScrollY() >= ImGui::GetScrollMaxY()) {
-//				ImGui::SetScrollHereY(1.0f); // Auto-scroll to the bottom
-//			}
-//		}
-//		ImGui::EndChild();
-//
-//		ImGui::Spacing();
-//		ImGui::Separator();
-//
-//		// Champ pour entrer le message
-//		ImGui::InputTextMultiline("Message", messageBuffer, sizeof(messageBuffer), ImVec2(-FLT_MIN, ImGui::GetTextLineHeight() * 4));
-//
-//
-//		// Envoi du message
-//		if (ImGui::Button("Send")) {
-//			unsigned long port = std::stoul(portBuffer, nullptr, 0);
-//			std::string fullMessage = "Ready to send message to " + std::string(ipBuffer) + ":" + std::string(portBuffer) + "\nMessage: " + std::string(messageBuffer);
-//			messageLogs.push_back(fullMessage); // Ajouter le message à la liste des logs
-//			std::cout << fullMessage << std::endl;
-//			clientUDP.ClientStartUDP(port, ipBuffer, std::string(messageBuffer));
-//			serverUDP.ServerStartUDP(port, ipBuffer);
-//			memset(messageBuffer, 0, sizeof(messageBuffer));  // Effacer le buffer de message après "l'envoi"
-//		}
-//
-//		ImGui::End();
-//	}
-//}
 
 void ImGuiModule::DrawTchatWindow() {
 	StatusMessage& statusMsg = StatusMessage::GetInstance();
@@ -605,7 +886,7 @@ void ImGuiModule::DrawTchatWindow() {
 		if (ImGui::BeginChild("Logs", ImVec2(0, 200), true)) {
 			const auto& receivedMessages = StatusMessage::GetInstance().GetReceivedMessages();
 			if (receivedMessages.empty()) {
-				ImGui::TextWrapped("Pas de messages reçu");
+				ImGui::TextWrapped("Pas de messages recu");
 			}
 			else {
 				for (const auto& msg : receivedMessages) {
@@ -632,30 +913,310 @@ void ImGuiModule::DrawTchatWindow() {
 			
 			memset(messageBuffer, 0, sizeof(messageBuffer));  // Effacer le buffer de message après "l'envoi"
 		}
+
 	}
 	ImGui::End();
 }
+
+void ImGuiModule::DrawConsoleWindow() 
+{
+	ImGui::SetNextWindowSizeConstraints(ImVec2(300, 100), ImVec2(FLT_MAX, FLT_MAX));
+	if (ImGui::Begin("Console")) {
+		if (ImGui::Button("Clear")) {
+			ClearLog();
+		}
+
+		bool filterError = GetFilterError();
+		bool filterSimple = GetFilterSimple();
+		bool filterWarning = GetFilterWarning();
+
+		ImGui::SameLine();
+		if (ImGui::Checkbox("Error", &filterError)) { SetFilterError(filterError); }
+		ImGui::SameLine();
+		if (ImGui::Checkbox("Warning", &filterWarning)) { SetFilterWarning(filterWarning); }
+		ImGui::SameLine();
+		if (ImGui::Checkbox("Simple", &filterSimple)) { SetFilterSimple(filterSimple); }
+		ImGui::Separator();
+
+		float scrollHeight = ImGui::GetWindowSize().y - 70;
+
+		ImGui::BeginChild("ScrollingRegion", ImVec2(0, scrollHeight), true, ImGuiWindowFlags_HorizontalScrollbar);
+
+		for (const auto& msg : (*logs)) {
+			if (GetFilterError() && msg.find("Error") != std::string::npos) {
+				ImGui::TextColored(ImVec4(1.0f, 0.0f, 0.0f, 1.0f), msg.c_str());
+			}
+			else if (GetFilterWarning() && msg.find("Warning") != std::string::npos) {
+				ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), msg.c_str());
+			}
+			else if (GetFilterSimple()){
+				ImGui::TextUnformatted(msg.c_str());
+			}
+		}
+		ImGui::EndChild();
+	}
+	ImGui::End();
+
+}
+
+void ImGuiModule::DrawFilesExplorerWindow() {
+
+	// File research
+	// Type filtrer
+	ImGui::SetNextWindowSizeConstraints(ImVec2(450, 150), ImVec2(FLT_MAX, FLT_MAX));
+	if (ImGui::Begin("Files Explorer (0.7v)")) 
+	{
+		FilesDirs filesdirs;
+
+		ImGui::SetNextItemWidth(250);
+		char* charBuffer1 = new char[100];
+		strcpy_s(charBuffer1, 100, GetCurrentDir().c_str());
+		if (ImGui::InputText("Change Dir", charBuffer1, 100)) { SetCurrentDir(charBuffer1); }
+		delete[] charBuffer1;
+		ImGui::SameLine();
+		ImGui::Checkbox("Add button", &addTexButton);
+
+		if (ImGui::Button("Add Textures Dir")) 
+		{
+			AddLog("Files found in ../Textures : " + std::to_string(filesdirs.FilesInDir("../Textures")));
+			std::string str;
+			std::vector<std::wstring> filenames = filesdirs.GetFilesInDir(filesdirs.ConvertStringToWideString(GetCurrentDir()));
+			std::vector<std::string>* listTexturesNames = moduleManager->GetModule<RHIVulkanModule>()->GetListTexturesNames();
+			for (const auto& filenames_wide : filenames) {
+				str += filesdirs.ConvertWideStringToString(filenames_wide) + ", ";
+
+				std::string ext;
+				std::string filename;
+				filesdirs.ExtractFilenameAndExtension(GetCurrentDir() + filesdirs.ConvertWideStringToString(filenames_wide), filename, ext);
+				
+				if (filesdirs.IsImageExtension(ext))
+				{
+					if (std::find(listTexturesNames->begin(), listTexturesNames->end(), filesdirs.ConvertWideStringToString(filenames_wide)) != listTexturesNames->end())
+					{
+						AddLog("Texture already added : " + filesdirs.ConvertWideStringToString(filenames_wide));
+					}
+					else {
+						AddLog("Texture not added yet : " + filesdirs.ConvertWideStringToString(filenames_wide));
+						moduleManager->GetModule<RHIVulkanModule>()->AddTextureToPool(GetCurrentDir() + "/" + filesdirs.ConvertWideStringToString(filenames_wide));
+						moduleManager->GetModule<RHIVulkanModule>()->AddListTexturesNames(filesdirs.ConvertWideStringToString(filenames_wide));
+						AddLog("Texture has been added : " + filesdirs.ConvertWideStringToString(filenames_wide));
+					}
+				}
+			
+			}
+			AddLog("Find files in ../Textures :" + str);
+		}
+
+		ImGui::SameLine();
+		ImGui::SetNextItemWidth(200);
+		char* charBuffer = new char[100];
+		strcpy_s(charBuffer, 100, GetFileToLook().c_str());
+		if (ImGui::InputText("-", charBuffer, 100)) { SetFileToLook(charBuffer); }
+		delete[] charBuffer;
+
+		ImGui::SameLine();
+
+		if (ImGui::Button("Add Tex")) 
+		{
+			std::string ext;
+			std::string filename;
+			std::ifstream file(GetFileToLook());
+			filesdirs.ExtractFilenameAndExtension(GetFileToLook(), filename, ext);
+
+			if (file.good()) {
+				if (filesdirs.IsImageExtension(ext))
+				{
+					moduleManager->GetModule<RHIVulkanModule>()->AddTextureToPool(fileToLook);
+					moduleManager->GetModule<RHIVulkanModule>()->AddListTexturesNames(fileToLook);
+					AddLog("Texture has been added : " + fileToLook);
+					SetFileToLook("");
+				}
+			}
+			else {
+				AddLog("Warning : Filepath incorrect : " + fileToLook);
+			}
+		}
+
+		ImGui::Separator();
+
+		float scrollHeight = ImGui::GetWindowSize().y - 110;
+
+		bool filterobj = GetFilterObj();
+		bool filterimg = GetFilterSupportedImages();
+		bool filterother = GetFilterOther();
+		bool filterdirs = GetFilterDirs();
+
+		if(ImGui::Checkbox("obj", &filterobj)) {SetFilterObj(filterobj);}
+		ImGui::SameLine();
+		if(ImGui::Checkbox("image", &filterimg)) { SetFilterSupportedImages(filterimg); }
+		ImGui::SameLine();
+		if(ImGui::Checkbox("other", &filterother)) { SetFilterOther(filterother); }
+		ImGui::SameLine();
+		if(ImGui::Checkbox("dir", &filterdirs)) { SetFilterDirs(filterdirs); }
+		ImGui::SameLine();
+
+		char* charBuffer2 = new char[30];
+		strcpy_s(charBuffer2, 30, GetFileSearch().c_str());
+		ImGui::SetNextItemWidth(150);
+		if (ImGui::InputText("Search", charBuffer2, 30)) { SetFileSearch(charBuffer2); }
+
+		ImGui::BeginChild("ScrollingRegion", ImVec2(0, scrollHeight), true, ImGuiWindowFlags_HorizontalScrollbar);
+		// A opti (baisse de perf monstrueuse quand gros dossiers
+		// Fait à chaque frame ducoup énormé désastre de performance 
+		
+		// Refresh pas les files
+		if (refreshFileExplorer) {
+			
+			if (GetFilterDirs()) {
+				std::vector<std::string> dirNames = filesdirs.GetDirectoryNames(GetCurrentDir());
+
+				for (const auto& dirname : dirNames)
+				{
+					ImGui::Text(dirname.c_str());
+				}
+				ImGui::Separator();
+			}
+
+			fileNames = filesdirs.GetFilesInDir(filesdirs.ConvertStringToWideString(GetCurrentDir()));
+			for (const auto& filenames_wide : fileNames)
+			{
+				std::string filenameWideString = filesdirs.ConvertWideStringToString(filenames_wide);
+				if (filesdirs.ContainsSubstring(filenameWideString, GetFileSearch())) {
+
+					std::string ext;
+					std::string filename;
+					
+					const char* filenameWideStringCstr = filenameWideString.c_str();
+					// Opti en mettant extract juste l'ext, pas besoin de plus
+					filesdirs.ExtractFilenameAndExtension(currentDir + "/" + filenameWideString, filename, ext);
+
+					if (ext == "obj")
+					{
+						if (filterObj)
+						{
+							ImGui::Text(filenameWideStringCstr);
+						}
+					}
+					else if (filesdirs.IsImageExtension(ext))
+					{
+						if (filterSupportedImages)
+						{
+							ImGui::Text(filenameWideStringCstr);
+							if (addTexButton) {
+								ImGui::SameLine();
+								if (ImGui::Button("Add", ImVec2(35, 25))) {
+									moduleManager->GetModule<RHIVulkanModule>()->AddTextureToPool(GetCurrentDir() + "/" + filenameWideString);
+									moduleManager->GetModule<RHIVulkanModule>()->AddListTexturesNames(filenameWideString);
+									AddLog("Texture has been added : " + filenameWideString);
+								}
+							}
+						}
+					}
+					else if (filterOther)
+					{
+						ImGui::Text(filenameWideStringCstr);
+					}
+				}
+			}
+			//refreshFileExplorer = false;
+		}
+		//else {
+		//	for (const auto& filenames_wide : fileNames)
+		//	{
+		//		std::string ext;
+		//		std::string filename;
+		//		std::ifstream file(filenames_wide);
+
+		//		filesdirs.ExtractFilenameAndExtension(currentDir + "/" + filesdirs.ConvertWideStringToString(filenames_wide), filename, ext);
+
+		//		if (filesdirs.ContainsSubstring(filename, GetFileSearch())) {
+		//			if (ext == "obj")
+		//			{
+		//				if (filterObj)
+		//				{
+		//					ImGui::Text(filesdirs.ConvertWideStringToString(filenames_wide).c_str());
+		//				}
+		//			}
+		//			else if (ext == "png" || ext == "jpg" || ext == "gif" || ext == "tga" || ext == "bmp" || ext == "psd" || ext == "hdr" || ext == "pic")
+		//			{
+		//				if (filterSupportedImages)
+		//				{
+		//					ImGui::Text(filesdirs.ConvertWideStringToString(filenames_wide).c_str());
+		//					ImGui::SameLine();
+		//					if (ImGui::Button("Add", ImVec2(35, 25))) {
+		//						moduleManager->GetModule<RHIVulkanModule>()->AddTextureToPool(GetCurrentDir() + "/" + filesdirs.ConvertWideStringToString(filenames_wide));
+		//						// Décomposer la string pour garder ce qu'il y a après le dernier /
+		//						moduleManager->GetModule<RHIVulkanModule>()->AddListTexturesNames(filesdirs.ConvertWideStringToString(filenames_wide));
+		//						AddLog("Texture has been added : " + filesdirs.ConvertWideStringToString(filenames_wide));
+		//					}
+		//				}
+		//			}
+		//			else if (filterOther)
+		//			{
+		//				ImGui::Text(filesdirs.ConvertWideStringToString(filenames_wide).c_str());
+		//			}
+		//		}
+		//	}
+		//}
+
+		ImGui::EndChild();
+
+	}
+	ImGui::End();
+}
+
 
 void ImGuiModule::DisplayTransform(Transform* _transform) {
 	if (!_transform) return;
 
 	// Position
 	glm::vec3 position = _transform->GetPosition();
-	if (ImGui::DragFloat3("Position", &position[0])) {
+	if (ImGui::DragFloat3("Position", &position[0], 0.1f, 0.0f, 0.0f, "%.2f")) {
 		_transform->SetPosition(position);
+	}
+	if (ImGui::Button("Position Reset", ImVec2(110, 25))) {
+		_transform->SetPosition(glm::vec3(0, 0, 0));
 	}
 
 	// Rotation
 	glm::vec3 rotationDegrees = _transform->GetRotationDegrees();
-	if (ImGui::DragFloat3("Rotation", &rotationDegrees[0])) {
+	if (ImGui::DragFloat3("Rotation", &rotationDegrees[0], 0.1f, 0.0f, 0.0f, "%.2f")) {
 		_transform->SetRotationDegrees(rotationDegrees);
+	}
+	if (ImGui::Button("Rotation Reset", ImVec2(110,25))) {
+		_transform->SetRotationDegrees(glm::vec3(0,0,0));
 	}
 
 	// Scale
 	glm::vec3 scale = _transform->GetScale();
-	if (ImGui::DragFloat3("Scale", &scale[0])) {
+	glm::vec3 scale_buff = _transform->GetScale();
+	if (ImGui::DragFloat3("Scale", &scale[0],0.1f,0.0f,0.0f,"%.2f")) {
+		if (changeScaleLinked) {
+			if (scale.x - scale_buff.x != 0) {
+				scale.y += scale.x - scale_buff.x;
+				scale.z += scale.x - scale_buff.x;
+			}
+			else if (scale.y - scale_buff.y != 0) {
+				scale.x += scale.y - scale_buff.y;
+				scale.z += scale.y - scale_buff.y;
+			}
+			else if (scale.z - scale_buff.z != 0) {
+				scale.x += scale.z - scale_buff.z;
+				scale.y += scale.y - scale_buff.y;
+			}
+		}
 		_transform->SetScale(scale);
 	}
+
+
+	if (ImGui::Button("Scale Reset", ImVec2(110, 25))) {
+		_transform->SetScale(glm::vec3(1, 1, 1));
+	}
+
+	if (ImGui::Checkbox("Linked Change", &changeScaleLinked)) {
+
+	}
+
 }
 
 // ----------========== POPUPS ==========---------- //
@@ -708,9 +1269,14 @@ void ImGuiModule::RenameGameObject(GameObject* _gameObject, const std::string& _
 	}
 }
 void ImGuiModule::DeleteGameObject(GameObject* _gameObject) {
+	//AddLog("Try 1 delete");
 	if (_gameObject) {
+		//AddLog("Try 2 delete");
 		BaseScene* currentScene = sceneManager->GetCurrentScene();
 		if (currentScene) {
+			//AddLog("Try 3 delete");
+
+			// Forcément vu que personne a fait de delete sur les gameobjects
 			currentScene->RemoveObject(_gameObject, true); // Suppression de l'objet
 		}
 	}
@@ -718,7 +1284,7 @@ void ImGuiModule::DeleteGameObject(GameObject* _gameObject) {
 void ImGuiModule::DuplicateGameObject(GameObject* _gameObject) {
 }
 
-void               ImGuiModule::CreateSpecificGameObject(const GameObjectType _type, const int _otherType) {
+void            ImGuiModule::CreateSpecificGameObject(const GameObjectType _type, const int _otherType) {
 	if (BaseScene* current_scene = sceneManager->GetCurrentScene()) {
 		GameObject* new_game_object = nullptr;
 		switch (_type) {
@@ -734,6 +1300,19 @@ void               ImGuiModule::CreateSpecificGameObject(const GameObjectType _t
 		case GameObjectType::Vase:
 			new_game_object = current_scene->CreateVaseGameObject(_otherType);
 			break;
+		case GameObjectType::Girl:
+			new_game_object = current_scene->CreateGirlGameObject();
+			break;
+		case GameObjectType::Noob:
+			new_game_object = current_scene->CreateNoobGameObject();
+			break;
+		case GameObjectType::Sphere:
+			new_game_object = current_scene->CreateSphereGameObject();
+			break;
+		case GameObjectType::Multiple:
+			new_game_object = current_scene->CreateMultipleGameObject(_otherType);
+			break;
+
 		}
 
 		if (new_game_object) {

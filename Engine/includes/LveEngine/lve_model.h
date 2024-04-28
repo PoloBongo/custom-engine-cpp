@@ -81,7 +81,7 @@ namespace lve
 				 * @param _filepath Le chemin du fichier du modèle.
 				 * @throws std::runtime_error Si une erreur survient lors du chargement du modèle.
 				 */
-				void LoadModel(const std::string& _filepath, float _texMultiplier);
+				void LoadModel(const std::string& _filepath, float _texMultiplier, glm::vec3 _color =  {-1,-1,-1});
 			};
 
 
@@ -126,7 +126,7 @@ namespace lve
 			 * @param _filepath Le chemin du fichier à partir duquel charger le modèle.
 			 * @return Un pointeur unique vers le modèle créé.
 			 */
-			static std::unique_ptr<LveModel> CreateModelFromFile(LveDevice& _device, const std::string& _filepath, float _texMultiplier = 1);
+			static std::unique_ptr<LveModel> CreateModelFromFile(LveDevice& _device, const std::string& _filepath, float _texMultiplier = 1, glm::vec3 _color = {-1,-1,-1});
 
 			/**
 			 * @brief Lie les tampons de vertex et d'index au tampon de commande spécifié.

@@ -479,11 +479,17 @@ xcopy /E /I /Y "$(ProjectDir)Textures" "$(TargetDir)Textures"</Command>
     <ClCompile Include="..\Librairies\imgui\imgui_tables.cpp" />
     <ClCompile Include="..\Librairies\imgui\imgui_widgets.cpp" />
     <ClCompile Include="includes\Script\Script.h" />
+    <ClCompile Include="sources\FilesDirs.cpp" />
+    <ClCompile Include="sources\GameObject\PreGameObject\GirlGameObject.cpp" />
+    <ClCompile Include="sources\GameObject\PreGameObject\MultipleGameObject.cpp" />
+    <ClCompile Include="sources\GameObject\PreGameObject\NoobGameObject.cpp" />
+    <ClCompile Include="sources\GameObject\PreGameObject\SphereGameObject.cpp" />
     <ClCompile Include="sources\GameObject\PreGameObject\VaseGameObject.cpp" />
     <ClCompile Include="sources\Script\GameObjectScript.cpp" />
     <ClCompile Include="sources\Modules\ScriptModule.cpp" />
     <ClCompile Include="sources\Script\Script.cpp" />
     <ClCompile Include="sources\TCP\StatusMessage.cpp" />
+    <ClCompile Include="ImGUIAudio.cpp" />
     <ClCompile Include="sources\UDP\ErrorsUDP.cpp" />
     <ClCompile Include="sources\UDP\Network\ConnexionTimeout\ConnexionTiemout.cpp" />
     <ClCompile Include="sources\UDP\Network\Connextion\Connexion.cpp" />
@@ -552,10 +558,16 @@ xcopy /E /I /Y "$(ProjectDir)Textures" "$(TargetDir)Textures"</Command>
     <ClCompile Include="sources\UDP\Protocol\UnreliableOrdered.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="includes\FilesDirs.h" />
+    <ClInclude Include="includes\GameObject\PreGameObject\GirlGameObject.h" />
+    <ClInclude Include="includes\GameObject\PreGameObject\MultipleGameObject.h" />
+    <ClInclude Include="includes\GameObject\PreGameObject\NoobGameObject.h" />
+    <ClInclude Include="includes\GameObject\PreGameObject\SphereGameObject.h" />
     <ClInclude Include="includes\GameObject\PreGameObject\VaseGameObject.h" />
     <ClInclude Include="includes\Script\GameObjectScript.h" />
     <ClInclude Include="includes\Script\IScript.h" />
     <ClInclude Include="includes\Modules\ScriptModule.h" />
+    <ClInclude Include="ImGUIAudio.h" />
     <ClInclude Include="includes\TCP\StatusMessage.h" />
     <ClInclude Include="includes\UDP\ErrorsUDP.h" />
     <ClInclude Include="includes\UDP\Float.h" />

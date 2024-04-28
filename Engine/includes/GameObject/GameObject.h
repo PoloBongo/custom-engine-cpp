@@ -15,7 +15,12 @@ enum class GameObjectType {
 	Cube,
 	Light,
 	Plane,
-	Vase
+	Vase,
+	Girl,
+	Noob,
+	Sphere,
+	Triangle,
+	Multiple
 	// TODO: Ajouter plus de types d'objets
 };
 
@@ -153,6 +158,8 @@ class  GameObject
 		 * @return L'état d'activation de l'objet (true s'il est activé, false s'il est désactivé).
 		 */
 		[[nodiscard]] bool GetVisible() const { return isVisible; }
+
+		std::string GetDesc() const { return desc; }
 
 		#pragma endregion
 
@@ -401,6 +408,8 @@ class  GameObject
 			isVisible = _state;
 		}
 
+		void SetDesc(std::string _newDesc) { desc = _newDesc; }
+
 		#pragma endregion
 
 		#pragma region Layer
@@ -550,9 +559,7 @@ class  GameObject
 		 * Cette méthode supprime directement l'objet de jeu de la scène et libère la mémoire associée.
 		 * À utiliser avec prudence, car elle ne gère pas les relations entre objets.
 		 */
-		void DestroyGameObject()
-		{
-		}
+		void DestroyGameObject() {}
 
 		/**
 		 * @brief Marque cet objet de jeu pour suppression.
@@ -634,6 +641,8 @@ class  GameObject
 		std::string             fileModel;
 
 		std::string name = "GameObject"; /**< Le nom de l'objet GameObject. */
+
+		std::string desc = "";
 
 		id_t id; /**< L'identifiant unique de l'objet GameObject. */
 

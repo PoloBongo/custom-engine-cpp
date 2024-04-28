@@ -1,7 +1,6 @@
 #include "ImGUIInterface.h"
 
 
-
 // Déclaration des couleurs
 ImVec4 ImGUIInterface::mainColor = ImVec4(0.12549, 0.08235, 0.19216, 1.0f);
 ImVec4 ImGUIInterface::accentColor = ImVec4(0.29f, 0.27f, 0.33f, 1.0f);
@@ -94,82 +93,80 @@ void ImGUIInterface::ApplyCustomTheme() {
 
 void ImGUIInterface::EditTheme() {
     ImGuiStyle& style = ImGui::GetStyle();
-    if (ImGui::CollapsingHeader("Interface")) {
-        if (ImGui::TreeNode("Parameters")) {
-            // Marges et espacements
-            ImGui::Separator();
-            ImGui::DragFloat2("Window Padding", (float*)&style.WindowPadding, 0.1f, 0.0f, 20.0f, "%.1f");
-            ImGui::DragFloat2("Item Spacing", (float*)&style.ItemSpacing, 0.1f, 0.0f, 20.0f, "%.1f");
-            ImGui::DragFloat2("Item Inner Spacing", (float*)&style.ItemInnerSpacing, 0.1f, 0.0f, 20.0f, "%.1f");
-            ImGui::DragFloat("Indent Spacing", &style.IndentSpacing, 0.1f, 0.0f, 30.0f, "%.1f");
+    if (ImGui::TreeNode("Parameters")) {
+        // Marges et espacements
+        ImGui::Separator();
+        ImGui::DragFloat2("Window Padding", (float*)&style.WindowPadding, 0.1f, 0.0f, 20.0f, "%.1f");
+        ImGui::DragFloat2("Item Spacing", (float*)&style.ItemSpacing, 0.1f, 0.0f, 20.0f, "%.1f");
+        ImGui::DragFloat2("Item Inner Spacing", (float*)&style.ItemInnerSpacing, 0.1f, 0.0f, 20.0f, "%.1f");
+        ImGui::DragFloat("Indent Spacing", &style.IndentSpacing, 0.1f, 0.0f, 30.0f, "%.1f");
 
-            // Tailles et rayons
-            ImGui::Separator();
-            ImGui::DragFloat2("Frame Padding", (float*)&style.FramePadding, 0.1f, 0.0f, 20.0f, "%.1f");
+        // Tailles et rayons
+        ImGui::Separator();
+        ImGui::DragFloat2("Frame Padding", (float*)&style.FramePadding, 0.1f, 0.0f, 20.0f, "%.1f");
 
-            // Rounding            
-            ImGui::Separator();
-            ImGui::DragFloat("Window Rounding", &style.WindowRounding, 0.1f, 0.0f, 12.0f, "%.1f");
-            ImGui::DragFloat("Child Rounding", &style.ChildRounding, 0.1f, 0.0f, 12.0f, "%.1f");
-            ImGui::DragFloat("Popup Rounding", &style.PopupRounding, 0.1f, 0.0f, 12.0f, "%.1f");
-            ImGui::DragFloat("Frame Rounding", &style.FrameRounding, 0.1f, 0.0f, 12.0f, "%.1f");
-            ImGui::DragFloat("Grab Rounding", &style.GrabRounding, 0.1f, 0.0f, 12.0f, "%.1f");
-			ImGui::DragFloat("Tab Rounding", &style.TabRounding, 0.1f, 0.0f, 12.0f, "%.1f");
+        // Rounding            
+        ImGui::Separator();
+        ImGui::DragFloat("Window Rounding", &style.WindowRounding, 0.1f, 0.0f, 12.0f, "%.1f");
+        ImGui::DragFloat("Child Rounding", &style.ChildRounding, 0.1f, 0.0f, 12.0f, "%.1f");
+        ImGui::DragFloat("Popup Rounding", &style.PopupRounding, 0.1f, 0.0f, 12.0f, "%.1f");
+        ImGui::DragFloat("Frame Rounding", &style.FrameRounding, 0.1f, 0.0f, 12.0f, "%.1f");
+        ImGui::DragFloat("Grab Rounding", &style.GrabRounding, 0.1f, 0.0f, 12.0f, "%.1f");
+		ImGui::DragFloat("Tab Rounding", &style.TabRounding, 0.1f, 0.0f, 12.0f, "%.1f");
 
 
+        // Alpha et transparence
+        ImGui::Separator();
+        ImGui::DragFloat("Window Min Alpha", &style.Alpha, 0.01f, 0.1f, 1.0f, "%.2f");
+        ImGui::DragFloat("Window Title Alignment", &style.WindowTitleAlign.x, 0.01f, 0.0f, 1.0f, "%.2f");
+
+        // Les options avancées
+        if (ImGui::TreeNode("Advanced")) {
             // Alpha et transparence
             ImGui::Separator();
             ImGui::DragFloat("Window Min Alpha", &style.Alpha, 0.01f, 0.1f, 1.0f, "%.2f");
             ImGui::DragFloat("Window Title Alignment", &style.WindowTitleAlign.x, 0.01f, 0.0f, 1.0f, "%.2f");
 
-            // Les options avancées
-            if (ImGui::TreeNode("Advanced")) {
-                // Alpha et transparence
-                ImGui::Separator();
-                ImGui::DragFloat("Window Min Alpha", &style.Alpha, 0.01f, 0.1f, 1.0f, "%.2f");
-                ImGui::DragFloat("Window Title Alignment", &style.WindowTitleAlign.x, 0.01f, 0.0f, 1.0f, "%.2f");
-
-                // Barres de défilement
-                ImGui::Separator();
-                ImGui::DragFloat("Scrollbar Size", &style.ScrollbarSize, 0.1f, 1.0f, 20.0f, "%.1f");
-                ImGui::DragFloat("Scrollbar Rounding", &style.ScrollbarRounding, 0.1f, 0.0f, 12.0f, "%.1f");
-
-                // Bordures
-                ImGui::Separator();
-                ImGui::DragFloat("Window Border Size", &style.WindowBorderSize, 0.1f, 0.0f, 1.0f, "%.1f");
-                ImGui::DragFloat("Child Border Size", &style.ChildBorderSize, 0.1f, 0.0f, 1.0f, "%.1f");
-                ImGui::DragFloat("Popup Border Size", &style.PopupBorderSize, 0.1f, 0.0f, 1.0f, "%.1f");
-				ImGui::DragFloat("Frame Border Size", &style.FrameBorderSize, 0.1f, 0.0f, 1.0f, "%.1f");
-                ImGui::DragFloat("Tab Border Size", &style.TabBorderSize, 0.1f, 0.0f, 1.0f, "%.1f");
-
-                ImGui::TreePop();
-            }
-            ImGui::TreePop();
-        }
-        if (ImGui::TreeNode("Colors")) {
-            ImGui::ColorEdit4("Main Color", (float*)&mainColor);     
+            // Barres de défilement
             ImGui::Separator();
+            ImGui::DragFloat("Scrollbar Size", &style.ScrollbarSize, 0.1f, 1.0f, 20.0f, "%.1f");
+            ImGui::DragFloat("Scrollbar Rounding", &style.ScrollbarRounding, 0.1f, 0.0f, 12.0f, "%.1f");
 
-            ImGui::ColorEdit4("Accent Color", (float*)&accentColor);
+            // Bordures
             ImGui::Separator();
-
-            ImGui::ColorEdit4("Text Color", (float*)&textColor);
-            ImGui::Separator();
-
-            ImGui::ColorEdit4("Area Background Color", (float*)&areaBgColor);
-            ImGui::Separator();
-
-            ImGui::ColorEdit4("Secondary Color", (float*)&secondaryColor);
-            ImGui::Separator();
+            ImGui::DragFloat("Window Border Size", &style.WindowBorderSize, 0.1f, 0.0f, 1.0f, "%.1f");
+            ImGui::DragFloat("Child Border Size", &style.ChildBorderSize, 0.1f, 0.0f, 1.0f, "%.1f");
+            ImGui::DragFloat("Popup Border Size", &style.PopupBorderSize, 0.1f, 0.0f, 1.0f, "%.1f");
+			ImGui::DragFloat("Frame Border Size", &style.FrameBorderSize, 0.1f, 0.0f, 1.0f, "%.1f");
+            ImGui::DragFloat("Tab Border Size", &style.TabBorderSize, 0.1f, 0.0f, 1.0f, "%.1f");
 
             ImGui::TreePop();
         }
-        if (ImGui::Button("Apply Theme")) {
-            ApplyCustomTheme();
-        }
-        ImGui::SameLine();
-        if (ImGui::Button("Reset to Default")) {
-            ResetToDefaults();
-        }
+        ImGui::TreePop();
+    }
+    if (ImGui::TreeNode("Colors")) {
+        ImGui::ColorEdit4("Main Color", (float*)&mainColor);     
+        ImGui::Separator();
+
+        ImGui::ColorEdit4("Accent Color", (float*)&accentColor);
+        ImGui::Separator();
+
+        ImGui::ColorEdit4("Text Color", (float*)&textColor);
+        ImGui::Separator();
+
+        ImGui::ColorEdit4("Area Background Color", (float*)&areaBgColor);
+        ImGui::Separator();
+
+        ImGui::ColorEdit4("Secondary Color", (float*)&secondaryColor);
+        ImGui::Separator();
+
+        ImGui::TreePop();
+    }
+    if (ImGui::Button("Apply Theme")) {
+        ApplyCustomTheme();
+    }
+    ImGui::SameLine();
+    if (ImGui::Button("Reset to Default")) {
+        ResetToDefaults();
     }
 }

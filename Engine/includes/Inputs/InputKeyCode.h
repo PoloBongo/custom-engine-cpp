@@ -1,4 +1,5 @@
 #pragma once
+#include <glm.hpp>
 
 namespace Inputs
 {
@@ -606,6 +607,18 @@ namespace Inputs
 		"Gamepad axis",
 
 		"None"
+	};
+
+	struct Key
+	{
+		int32_t pDown = 0;
+		int32_t down = 0; // A count of how many frames this key has been down for (0 means not down)
+	};
+
+	struct MouseDrag
+	{
+		glm::vec2 startLocation;
+		glm::vec2 endLocation;
 	};
 }
 

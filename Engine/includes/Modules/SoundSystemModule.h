@@ -1,45 +1,46 @@
 #pragma once
 
 #include <fmod.hpp>
+#include <string>
 #include "Modules/Module.h"
 
 /**
- * @brief Classe SoundClass : Gère le système Sound utilisant la bibliothèque FMOD
+ * @brief Classe SoundClass : Gï¿½re le systï¿½me Sound utilisant la bibliothï¿½que FMOD
  */
 using SoundClass = FMOD::Sound*;
 
 /**
- * @brief Classe SoundGroup : Gère le système SoundGroup utilisant la bibliothèque FMOD
+ * @brief Classe SoundGroup : Gï¿½re le systï¿½me SoundGroup utilisant la bibliothï¿½que FMOD
  */
 using SoundGroup = FMOD::SoundGroup*;
 
 /**
- * @brief Classe Channel : Gère les canaux audio utilisant la bibliothèque FMOD
+ * @brief Classe Channel : Gï¿½re les canaux audio utilisant la bibliothï¿½que FMOD
  */
 using Channel = FMOD::Channel*;
 
 /**
- * @brief Classe SoundSystemModule : Gère le système audio utilisant la bibliothèque FMOD
+ * @brief Classe SoundSystemModule : Gï¿½re le systï¿½me audio utilisant la bibliothï¿½que FMOD
  */
 class SoundSystemModule final : public Module
 {
 	public:
 		/**
-		 * @brief Constructeur par défaut de la classe SoundSystemModule
+		 * @brief Constructeur par dï¿½faut de la classe SoundSystemModule
 		 */
 		SoundSystemModule();
 
 		/**
-		 * @brief Crée un objet Sound à partir d'un fichier audio spécifié
-		 * @param p_sound Pointeur vers l'objet Sound créé
-		 * @param p_pathAudio Chemin du fichier audio à charger
+		 * @brief Crï¿½e un objet Sound ï¿½ partir d'un fichier audio spï¿½cifiï¿½
+		 * @param p_sound Pointeur vers l'objet Sound crï¿½ï¿½
+		 * @param p_pathAudio Chemin du fichier audio ï¿½ charger
 		 */
 		void CreateSound(SoundClass* p_sound, const char* p_pathAudio) const;
 
 		/**
-		 * @brief Crée un objet SoundGroup à partir d'un fichier audio spécifié
-		 * @param p_soundGroup Pointeur vers l'objet SoundGroup créé
-		 * @param p_pathAudio Chemin du fichier audio à charger
+		 * @brief Crï¿½e un objet SoundGroup ï¿½ partir d'un fichier audio spï¿½cifiï¿½
+		 * @param p_soundGroup Pointeur vers l'objet SoundGroup crï¿½ï¿½
+		 * @param p_pathAudio Chemin du fichier audio ï¿½ charger
 		 */
 		void CreateSoundGroup(SoundGroup* p_soundGroup, const char* p_pathAudio) const;
 
@@ -50,101 +51,143 @@ class SoundSystemModule final : public Module
 		void GetMasterSoundGroup(SoundGroup* p_Sound) const;
 
 		/**
-		 * @brief Joue un son spécifié
-		 * @param p_sound Pointeur vers l'objet Sound à jouer
-		 * @param _isPlay Booléen indiquant si le son doit être joué immédiatement
-		 * @param _loopCount Nombre de fois que le son doit être joué en boucle
-		 * @param _volume Volume du son à jouer
-		 * @param p_channelPtr Pointeur vers le canal sur lequel le son est joué
+		 * @brief Joue un son spï¿½cifiï¿½
+		 * @param p_sound Pointeur vers l'objet Sound ï¿½ jouer
+		 * @param _isPlay Boolï¿½en indiquant si le son doit ï¿½tre jouï¿½ immï¿½diatement
+		 * @param _loopCount Nombre de fois que le son doit ï¿½tre jouï¿½ en boucle
+		 * @param _volume Volume du son ï¿½ jouer
+		 * @param p_channelPtr Pointeur vers le canal sur lequel le son est jouï¿½
 		 */
 		void PlaySound(SoundClass p_sound, bool _isPlay, int _loopCount, float _volume, Channel* p_channelPtr) const;
 
 		/**
-		 * @brief Libère les ressources utilisées par un son spécifié
-		 * @param p_sound Pointeur vers l'objet Sound à libérer
+		 * @brief Libï¿½re les ressources utilisï¿½es par un son spï¿½cifiï¿½
+		 * @param p_sound Pointeur vers l'objet Sound ï¿½ libï¿½rer
 		 */
 		void ReleaseSound(SoundClass p_sound);
 
 		/**
-		 * @brief Crée un groupe de canaux pour le système audio
-		 * @param pp_channelGroup Pointeur vers le groupe de canaux créé
+		 * @brief Crï¿½e un groupe de canaux pour le systï¿½me audio
+		 * @param pp_channelGroup Pointeur vers le groupe de canaux crï¿½ï¿½
 		 */
 		// ReSharper disable once CppInconsistentNaming
 		void CreateChannelGroup(FMOD::ChannelGroup** pp_channelGroup) const;
 
 		/**
-		 * @brief Ajoute un son à un groupe de canaux spécifié
-		 * @param _pSound Pointeur vers l'objet Sound à ajouter au groupe de canaux
+		 * @brief Ajoute un son ï¿½ un groupe de canaux spï¿½cifiï¿½
+		 * @param _pSound Pointeur vers l'objet Sound ï¿½ ajouter au groupe de canaux
 		 * @param p_channelGroup Pointeur vers le groupe de canaux auquel ajouter le son
 		 */
 		void AddSoundToGroup(SoundClass _pSound, FMOD::ChannelGroup* p_channelGroup) const;
 
 		/**
-		 * @brief Obtient le nombre de boucles d'un son spécifié
+		 * @brief Obtient le nombre de boucles d'un son spï¿½cifiï¿½
 		 * @param _pSound Pointeur vers l'objet Sound
 		 * @param p_loopCount Pointeur vers la variable pour stocker le nombre de boucles
-		 * @return Le nombre de boucles du son spécifié
+		 * @return Le nombre de boucles du son spï¿½cifiï¿½
 		 */
 		static int GetLoopCount(SoundClass _pSound, int* p_loopCount);
 
+
 		/**
-		 * @brief Attache un groupe de canaux à un port spécifié pour le rendu audio
+		* @brief Obtient le volume principal du systï¿½me audio
+		* @return Le volume principal du systï¿½me audio
+		*/
+		float GetMasterVolume() const;
+
+		/**
+		* @brief Dï¿½finit le volume principal du systï¿½me audio
+		* @param _volume Volume principal ï¿½ dï¿½finir
+		*/
+		void SetMasterVolume(float _volume);
+
+		/**
+		* @brief Est ce que le son est en cours de lecture
+		*/
+		bool IsPlaying() const;
+
+		/*
+		* @brief Joue un son spï¿½cifiï¿½ ou met en pause le son actuel
+		*/
+		void TogglePlayPause();
+
+		/*
+		* @brief Arrï¿½te le son actuellement jouï¿½
+		*/
+		void StopSound();
+
+		/**
+		* @brief Charge et joue un fichier audio spï¿½cifiï¿½
+		* @param _filePath Chemin du fichier audio ï¿½ charger et jouer
+		*/
+		void loadAndPlaySound(const char* _filePath);
+
+		std::string GetCurrentTrackName() const; // Obtenir le nom de la piste actuelle
+
+		/**
+		 * @brief Attache un groupe de canaux ï¿½ un port spï¿½cifiï¿½ pour le rendu audio
 		 * @param _portType Type de port auquel attacher le groupe de canaux
 		 * @param _portIndex Index du port auquel attacher le groupe de canaux
-		 * @param p_channelGroup Pointeur vers le groupe de canaux à attacher
-		 * @param _passThru Indique si le signal doit être acheminé directement sans traitement (par défaut, false)
-		 * @return Résultat de l'opération d'attache du groupe de canaux au port
+		 * @param p_channelGroup Pointeur vers le groupe de canaux ï¿½ attacher
+		 * @param _passThru Indique si le signal doit ï¿½tre acheminï¿½ directement sans traitement (par dï¿½faut, false)
+		 * @return Rï¿½sultat de l'opï¿½ration d'attache du groupe de canaux au port
 		 */
 		FMOD_RESULT AttachChannelGroupToPort(FMOD_PORT_TYPE      _portType, FMOD_PORT_INDEX _portIndex,
 		                                     FMOD::ChannelGroup* p_channelGroup, bool       _passThru = false) const;
 
 		/**
-		 * @brief Détache un groupe de canaux d'un port auquel il était précédemment attaché
-		 * @param p_channelGroup Pointeur vers le groupe de canaux à détacher du port
-		 * @return Résultat de l'opération de détachement du groupe de canaux du port
+		 * @brief Dï¿½tache un groupe de canaux d'un port auquel il ï¿½tait prï¿½cï¿½demment attachï¿½
+		 * @param p_channelGroup Pointeur vers le groupe de canaux ï¿½ dï¿½tacher du port
+		 * @return Rï¿½sultat de l'opï¿½ration de dï¿½tachement du groupe de canaux du port
 		 */
 		FMOD_RESULT DetachChannelGroupFromPort(FMOD::ChannelGroup* p_channelGroup) const;
 
 		/**
-		 * @brief Définit les propriétés de réverbération pour une instance de réverbération spécifiée
-		 * @param _instance Instance de réverbération pour laquelle définir les propriétés
-		 * @param p_prop Pointeur vers les propriétés de réverbération à définir
-		 * @return Résultat de l'opération de définition des propriétés de réverbération
+		 * @brief Dï¿½finit les propriï¿½tï¿½s de rï¿½verbï¿½ration pour une instance de rï¿½verbï¿½ration spï¿½cifiï¿½e
+		 * @param _instance Instance de rï¿½verbï¿½ration pour laquelle dï¿½finir les propriï¿½tï¿½s
+		 * @param p_prop Pointeur vers les propriï¿½tï¿½s de rï¿½verbï¿½ration ï¿½ dï¿½finir
+		 * @return Rï¿½sultat de l'opï¿½ration de dï¿½finition des propriï¿½tï¿½s de rï¿½verbï¿½ration
 		 */
 		FMOD_RESULT SetReverbProperties(int _instance, const FMOD_REVERB_PROPERTIES* p_prop) const;
 
 		/**
-		 * @brief Obtient les propriétés de réverbération pour une instance de réverbération spécifiée
-		 * @param _instance Instance de réverbération pour laquelle obtenir les propriétés
-		 * @param p_prop Pointeur vers les propriétés de réverbération à remplir avec les valeurs obtenues
-		 * @return Résultat de l'opération de récupération des propriétés de réverbération
+		 * @brief Obtient les propriï¿½tï¿½s de rï¿½verbï¿½ration pour une instance de rï¿½verbï¿½ration spï¿½cifiï¿½e
+		 * @param _instance Instance de rï¿½verbï¿½ration pour laquelle obtenir les propriï¿½tï¿½s
+		 * @param p_prop Pointeur vers les propriï¿½tï¿½s de rï¿½verbï¿½ration ï¿½ remplir avec les valeurs obtenues
+		 * @return Rï¿½sultat de l'opï¿½ration de rï¿½cupï¿½ration des propriï¿½tï¿½s de rï¿½verbï¿½ration
 		 */
 		FMOD_RESULT GetReverbProperties(int _instance, FMOD_REVERB_PROPERTIES* p_prop) const;
 
 #pragma region Event
 
 		/**
-		    * @brief Initialise le module.
-		    */
+		* @brief Initialise le module.
+		*/
 		void Init() override;
 
 		/**
-		 * @brief Démarre le module.
+		* @brief Vï¿½rifie si le module est initialisï¿½.
+		* @return Vrai si le module est initialisï¿½, sinon faux.
+		*/
+		bool IsInitialized() const { return isInitialized; }
+
+		/**
+		 * @brief Dï¿½marre le module.
 		 */
 		void Start() override;
 
 		/**
-		 * @brief Effectue une mise à jour fixe du module.
+		 * @brief Effectue une mise ï¿½ jour fixe du module.
 		 */
 		void FixedUpdate() override;
 
 		/**
-		 * @brief Met à jour le module.
+		 * @brief Met ï¿½ jour le module.
 		 */
 		void Update() override;
 
 		/**
-		 * @brief Fonction pré-rendu du module.
+		 * @brief Fonction prï¿½-rendu du module.
 		 */
 		void PreRender() override;
 
@@ -164,7 +207,7 @@ class SoundSystemModule final : public Module
 		void PostRender() override;
 
 		/**
-		 * @brief Libère les ressources utilisées par le module.
+		 * @brief Libï¿½re les ressources utilisï¿½es par le module.
 		 */
 		void Release() override;
 
@@ -176,11 +219,15 @@ class SoundSystemModule final : public Module
 #pragma endregion
 
 	private:
-		/**< Pointeur vers l'objet système FMOD. */
-		FMOD::System* system;
-
-		/**< Pointeur vers le groupe de canaux utilisé. */
-		FMOD::ChannelGroup* channelGroup;
+		FMOD::System*       system;       // Pointeur vers l'objet systï¿½me FMOD
+		FMOD::ChannelGroup* channelGroup; // Pointeur vers le groupe de canaux utilisï¿½
+		FMOD::Channel* mainChannel; // Canal principal
+		FMOD::Channel* currentChannel = nullptr; // Canal actuel
+		SoundClass currentSound = nullptr; // Actuellement son jouï¿½
+		float masterVolume; // Volume principal
+		bool isPlaying = false; // Indique si un son est actuellement jouï¿½
+		std::string currentTrackName; // Nom de la piste actuelle
+		bool isInitialized; // Indique si le module est initialisï¿½
 
 		/**< Distance minimale d'un son 3D. */
 		float min;
