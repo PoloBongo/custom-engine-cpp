@@ -392,16 +392,14 @@ void ImGuiModule::DrawInspectorWindow() {
 				std::ifstream file(selectedGameObject->GetFileModel());
 				if (file.good()) {
 					std::cout << "File good";
-					Console& console = Console::getInstance();
-					console.AddLog("Model file good");
+					AddLog("Model file good");
 					selectedGameObject->SetTexMultiplier(textureMulti);
 					std::shared_ptr<lve::LveModel> lve_model = lve::LveModel::CreateModelFromFile(*rhiModule->GetDevice(), selectedGameObject->GetFileModel(), selectedGameObject->GetTexMultiplier(), selectedGameObject->GetColor());
 					selectedGameObject->SetModel(lve_model);
 				}
 				else {
 					std::cout << "File not good :" + selectedGameObject->GetFileModel();
-					Console& console = Console::getInstance();
-					console.AddLog("Warning : Model file not good");
+					AddLog("Warning : Model file not good");
 				}
 			}
 			//ImGui::SameLine();
