@@ -3,55 +3,76 @@
 #include <vector>
 #include <string>
 
+/**
+ * @brief The StatusMessage class represents a status message handler.
+ */
 class StatusMessage
 {
 public:
+    /**
+     * @brief Enumeration representing status types.
+     */
     enum Status
     {
-        Send,
-        None
+        Send, /**< Status indicating sending. */
+        None /**< Status indicating no operation. */
     };
 
-    // Méthode pour obtenir l'instance unique de StatusMessage
-    static StatusMessage& getInstance() {
-        static StatusMessage instance; // Crée une seule instance de StatusMessage
+    /**
+     * @brief Gets the unique instance of StatusMessage.
+     * @return The unique instance of StatusMessage.
+     */
+    static StatusMessage& GetInstance() {
+        static StatusMessage instance; // Creates a single instance of StatusMessage
         return instance;
     }
 
-    void setStatus(Status newStatus) {
-        status_ = newStatus;
+    /**
+     * @brief Sets the status.
+     * @param _newStatus The new status to set.
+     */
+    void SetStatus(Status _newStatus) {
+        status = _newStatus;
     }
 
-    Status getStatus() const {
-        return status_;
+    /**
+     * @brief Gets the current status.
+     * @return The current status.
+     */
+    Status GetStatus() const {
+        return status;
     }
 
-    const std::vector<std::pair<std::string, std::string>>& getReceivedMessages() const {
+    /**
+     * @brief Gets the received messages.
+     * @return A constant reference to the received messages.
+     */
+    const std::vector<std::string>& GetReceivedMessages() const {
         return receivedMessages;
     }
 
-    void addMessage(const std::string& message, const std::string& pseudo) {
-        receivedMessages.emplace_back(message, pseudo);
-    }
-
-    std::string getHostName();
-
-    void setPseudo(std::string _pseudo) {
-        pseudo = _pseudo;
-    }
-
-    std::string getPseudo() const {
-        return pseudo;
+    /**
+     * @brief Adds a message to the received messages.
+     * @param _message The message to add.
+     */
+    void AddMessage(const std::string& _message) {
+        receivedMessages.push_back(_message);
     }
 
 private:
-    StatusMessage() : status_(None) {} // Initialisation par défaut à None
-    ~StatusMessage() {} // Destructeur privé pour empêcher la destruction externe
+    /**
+     * @brief Constructs a new StatusMessage object.
+     */
+    StatusMessage() : status(None) {}
 
-    StatusMessage(const StatusMessage&) = delete;              // Supprime la copie
+    /**
+     * @brief Destroys the StatusMessage object.
+     */
+    ~StatusMessage() {}
+
+    StatusMessage(const StatusMessage&) = delete;
     StatusMessage& operator=(const StatusMessage&) = delete;
 
-    std::vector<std::pair<std::string, std::string>> receivedMessages;
-    Status status_;
-    std::string pseudo;
+    std::vector<std::string> receivedMessages; /**< Vector storing received messages. */
+    Status status; /**< Current status. */
 };

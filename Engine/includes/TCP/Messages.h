@@ -19,7 +19,7 @@ namespace Network
              * @return true si le message est de type M, sinon false.
              */
             template<class M>
-            bool is() const { return mType == M::StaticType; }
+            bool Is() const { return mType == M::StaticType; }
 
             /**
              * @brief Convertit le message en type M.
@@ -27,7 +27,7 @@ namespace Network
              * @return Pointeur vers le message converti en type M.
              */
             template<class M>
-            const M* as() const { return static_cast<const M*>(this); }
+            const M* As() const { return static_cast<const M*>(this); }
 
             sockaddr_in from; /**< Adresse du destinataire du message. */
             uint64_t idFrom; /**< Identifiant du destinataire du message. */

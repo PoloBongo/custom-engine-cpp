@@ -19,48 +19,48 @@ namespace Network
     namespace TCP
     {
         /**
-         * @brief Type de donn�es utilis� pour l'en-t�te des messages.
+         * @brief Type de données utilisé pour l'en-tête des messages.
          */
         using HeaderType = uint16_t;
 
         /**
-         * @brief Taille de l'en-t�te des messages en octets.
+         * @brief Taille de l'en-tête des messages en octets.
          */
         static const unsigned int HeaderSize = sizeof(HeaderType);
 
         /**
-         * @brief Impl�mentation priv�e de la classe Client.
+         * @brief Implémentation privée de la classe Client.
          */
         class ClientImpl;
 
         /**
-         * @brief La classe Client repr�sente un client TCP.
+         * @brief La classe Client représente un client TCP.
          */
         class Client
         {
         public:
             /**
-             * @brief Constructeur par d�faut de la classe Client.
-             */
+ * @brief Constructeur par défaut de la classe Client.
+ */
             Client() {}
 
             /**
-             * @brief Constructeur de copie supprim�.
+             * @brief Constructeur de copie supprimé.
              */
             Client(const Client&) = delete;
 
             /**
-             * @brief Op�rateur d'assignation de copie supprim�.
+             * @brief Opérateur d'assignation de copie supprimé.
              */
             Client& operator=(const Client&) = delete;
 
             /**
-             * @brief Constructeur de d�placement de la classe Client.
+             * @brief Constructeur de déplacement de la classe Client.
              */
             Client(Client&&);
 
             /**
-             * @brief Op�rateur d'assignation par d�placement de la classe Client.
+             * @brief Opérateur d'assignation par déplacement de la classe Client.
              */
             Client& operator=(Client&&);
 
@@ -70,54 +70,54 @@ namespace Network
             ~Client() {}
 
             /**
-             * @brief Initialise le client avec le socket et l'adresse sp�cifi�s.
-             * @param sckt Socket � associer au client.
-             * @param addr Adresse � associer au client.
-             * @return true si l'initialisation r�ussit, sinon false.
+             * @brief Initialise le client avec le socket et l'adresse spécifiés.
+             * @param sckt Socket à associer au client.
+             * @param addr Adresse à associer au client.
+             * @return true si l'initialisation réussit, sinon false.
              */
-            bool init(SOCKET&& _sckt, const sockaddr_in& _addr);
+            bool Init(SOCKET&& _sckt, const sockaddr_in& _addr);
 
             /**
-             * @brief �tablit une connexion avec le serveur � l'adresse et au port sp�cifi�s.
+             * @brief Établit une connexion avec le serveur à l'adresse et au port spécifiés.
              * @param ipaddress Adresse IP du serveur.
              * @param port Port du serveur.
-             * @return true si la connexion r�ussit, sinon false.
+             * @return true si la connexion réussit, sinon false.
              */
-            bool connect(const std::string& _ipaddress, unsigned short _port);
+            bool Connect(const std::string& _ipaddress, unsigned short _port);
 
             /**
              * @brief Ferme la connexion avec le serveur.
              */
-            void disconnect();
+            void Disconnect();
 
             /**
-             * @brief Envoie des donn�es au serveur.
-             * @param data Pointeur vers les donn�es � envoyer.
-             * @param len Longueur des donn�es � envoyer.
-             * @return true si l'envoi r�ussit, sinon false.
+             * @brief Envoie des données au serveur.
+             * @param _data Pointeur vers les données à envoyer.
+             * @param _len Longueur des données à envoyer.
+             * @return true si l'envoi réussit, sinon false.
              */
-            bool send(const unsigned char* _data, unsigned int _len);
+            bool Send(const unsigned char* _data, unsigned int _len);
 
             /**
-             * @brief R�cup�re les messages entrants du serveur.
-             * @return Un pointeur unique vers le message re�u.
+             * @brief Récupère les messages entrants du serveur.
+             * @return Un pointeur unique vers le message reçu.
              */
-            std::unique_ptr<Messages::Base> poll();
+            std::unique_ptr<Messages::Base> Poll();
 
             /**
-             * @brief R�cup�re l'identifiant du client.
+             * @brief Récupère l'identifiant du client.
              * @return L'identifiant du client.
              */
-            uint64_t id() const;
+            uint64_t Id() const;
 
             /**
-             * @brief R�cup�re l'adresse de destination du client.
+             * @brief Récupère l'adresse de destination du client.
              * @return L'adresse de destination du client.
              */
-            const sockaddr_in& destinationAddress() const;
+            const sockaddr_in& DestinationAddress() const;
 
         private:
-            std::unique_ptr<ClientImpl> mImpl; /**< Impl�mentation priv�e du client. */
+            std::unique_ptr<ClientImpl> mImpl; /**< Implémentation privée du client. */
         };
 
 
@@ -127,25 +127,25 @@ namespace Network
             ConnectionHandler() = default;
 
             /**
-             * @brief �tablit une connexion avec l'adresse et le port sp�cifi�s.
-             * @param sckt Socket � utiliser pour la connexion.
-             * @param address Adresse IP du serveur.
-             * @param port Port du serveur.
-             * @return true si la connexion r�ussit, sinon false.
+             * @brief établit une connexion avec l'adresse et le port spécifiés.
+             * @param _sckt Socket à utiliser pour la connexion.
+             * @param _address Adresse IP du serveur.
+             * @param _port Port du serveur.
+             * @return true si la connexion réussit, sinon false.
              */
-            bool connect(SOCKET _sckt, const std::string& _address, unsigned short _port);
+            bool Connect(SOCKET _sckt, const std::string& _address, unsigned short _port);
 
             /**
-             * @brief R�cup�re les messages de connexion.
+             * @brief Récupère les messages de connexion.
              * @return Un pointeur unique vers le message de connexion re�u.
              */
-            std::unique_ptr<Messages::Connection> poll();
+            std::unique_ptr<Messages::Connection> Poll();
 
             /**
              * @brief Renvoie l'adresse � laquelle la connexion est �tablie.
              * @return L'adresse � laquelle la connexion est �tablie.
              */
-            const sockaddr_in& connectedAddress() const { return mConnectedAddress; }
+            const sockaddr_in& ConnectedAddress() const { return mConnectedAddress; }
 
         private:
             pollfd mFd = { 0 }; /**< Permet d'associer le descripteur de fichier � la connexion. */
@@ -164,112 +164,112 @@ namespace Network
             ReceptionHandler() = default;
 
             /**
-             * @brief Initialise le gestionnaire de r�ception avec le socket sp�cifi�.
-             * @param sckt Socket � utiliser pour la r�ception.
+             * @brief Initialise le gestionnaire de réception avec le socket spécifié.
+             * @param _sckt Socket à utiliser pour la réception.
              */
-            void init(SOCKET _sckt);
+            void Init(SOCKET _sckt);
 
             /**
-             * @brief Re�oit les messages entrants.
+             * @brief Reçoit les messages entrants.
              * @return Un pointeur unique vers le message re�u.
              */
-            std::unique_ptr<Messages::Base> recv();
+            std::unique_ptr<Messages::Base> Recv();
 
         private:
             /**
-             * @brief Pointeur vers le d�but des donn�es manquantes dans le tampon de r�ception.
-             * @return Pointeur vers le d�but des donn�es manquantes.
-             */
-            inline char* missingDataStartBuffer() { return reinterpret_cast<char*>(mBuffer.data() + mReceived); }
+ * @brief Pointeur vers le début des données manquantes dans le tampon de réception.
+ * @return Pointeur vers le début des données manquantes.
+ */
+            inline char* MissingDataStartBuffer() { return reinterpret_cast<char*>(mBuffer.data() + mReceived); }
 
             /**
-             * @brief Calcule la longueur des donn�es manquantes dans le tampon de r�ception.
-             * @return Longueur des donn�es manquantes.
+             * @brief Calcule la longueur des données manquantes dans le tampon de réception.
+             * @return Longueur des données manquantes.
              */
-            inline int missingDataLength() const { return static_cast<int>(mBuffer.size() - mReceived); }
+            inline int MissingDataLength() const { return static_cast<int>(mBuffer.size() - mReceived); }
 
             /**
-             * @brief D�marre la r�ception de l'en-t�te du message.
+             * @brief Démarre la réception de l'en-tête du message.
              */
-            void startHeaderReception();
+            void StartHeaderReception();
 
             /**
-             * @brief D�marre la r�ception des donn�es du message.
+             * @brief Démarre la réception des données du message.
              */
-            void startDataReception();
+            void StartDataReception();
 
             /**
-             * @brief D�marre la r�ception en sp�cifiant la longueur attendue des donn�es.
-             * @param expectedDataLength Longueur attendue des donn�es.
-             * @param newState Nouvel �tat de la r�ception.
+             * @brief Démarre la réception en spécifiant la longueur attendue des données.
+             * @param expectedDataLength Longueur attendue des données.
+             * @param newState Nouvel état de la réception.
              */
-            void startReception(unsigned int _expectedDataLength, State _newState);
+            void StartReception(unsigned int _expectedDataLength, State _newState);
 
         private:
-            std::vector<unsigned char> mBuffer; /**< Tampon de r�ception des donn�es. */
-            unsigned int mReceived; /**< Nombre de donn�es d�j� re�ues. */
-            SOCKET mSckt{ INVALID_SOCKET }; /**< Socket utilis� pour la r�ception. */
-            State mState; /**< �tat actuel de la r�ception. */
+            std::vector<unsigned char> mBuffer; /**< Tampon de réception des données. */
+            unsigned int mReceived; /**< Nombre de données déjà reçues. */
+            SOCKET mSckt{ INVALID_SOCKET }; /**< Socket utilisé pour la réception. */
+            State mState; /**< état actuel de la réception. */
         };
 
 
         class SendingHandler
         {
             enum class State {
-                Idle, /**< �tat inactif. */
-                Header, /**< �tat de l'en-t�te. */
-                Data, /**< �tat des donn�es. */
+                Idle, /**< état inactif. */
+                Header, /**< état de l'en-tête. */
+                Data, /**< état des données. */
             };
         public:
             SendingHandler() = default;
 
             /**
-             * @brief Initialise le gestionnaire d'envoi avec le socket sp�cifi�.
-             * @param sckt Socket � utiliser pour l'envoi.
+             * @brief Initialise le gestionnaire d'envoi avec le socket spécifié.
+             * @param sckt Socket à utiliser pour l'envoi.
              */
-            void init(SOCKET _sckt);
+            void Init(SOCKET _sckt);
 
             /**
-             * @brief Envoie des donn�es au serveur.
-             * @param data Pointeur vers les donn�es � envoyer.
-             * @param datalen Longueur des donn�es � envoyer.
-             * @return true si l'envoi r�ussit, sinon false.
+             * @brief Envoie des données au serveur.
+             * @param data Pointeur vers les données à envoyer.
+             * @param datalen Longueur des données à envoyer.
+             * @return true si l'envoi réussit, sinon false.
              */
-            bool send(const unsigned char* _data, unsigned int _datalen);
+            bool Send(const unsigned char* _data, unsigned int _datalen);
 
             /**
-             * @brief Met � jour le gestionnaire d'envoi.
+             * @brief Met à jour le gestionnaire d'envoi.
              */
-            void update();
+            void Update();
 
             /**
              * @brief Renvoie la taille de la file d'attente d'envoi.
              * @return Taille de la file d'attente.
              */
-            size_t queueSize() const;
+            size_t QueueSize() const;
 
         private:
             /**
              * @brief Envoie le tampon en attente.
-             * @return true si l'envoi r�ussit, sinon false.
+             * @return true si l'envoi réussit, sinon false.
              */
-            bool sendPendingBuffer();
+            bool SendPendingBuffer();
 
             /**
-             * @brief Pr�pare l'en-t�te du prochain message � envoyer.
+             * @brief Prépare l'en-tête du prochain message à envoyer.
              */
-            void prepareNextHeader();
+            void PrepareNextHeader();
 
             /**
-             * @brief Pr�pare les donn�es du prochain message � envoyer.
+             * @brief Prépare les données du prochain message à envoyer.
              */
-            void prepareNextData();
+            void PrepareNextData();
 
         private:
-            std::list<std::vector<unsigned char>> mQueueingBuffers; /**< File d'attente des tampons � envoyer. */
+            std::list<std::vector<unsigned char>> mQueueingBuffers; /**< File d'attente des tampons à envoyer. */
             std::vector<unsigned char> mSendingBuffer; /**< Tampon actuellement en cours d'envoi. */
-            SOCKET mSocket{ INVALID_SOCKET }; /**< Socket associ� au gestionnaire d'envoi. */
-            State mState{ State::Idle }; /**< �tat actuel du gestionnaire d'envoi. */
+            SOCKET mSocket{ INVALID_SOCKET }; /**< Socket associé au gestionnaire d'envoi. */
+            State mState{ State::Idle }; /**< État actuel du gestionnaire d'envoi. */
         };
 
 
@@ -286,66 +286,66 @@ namespace Network
             ~ClientImpl();
 
             /**
-             * @brief Initialise la connexion client avec le socket et l'adresse sp�cifi�s.
-             * @param sckt Socket � associer au client.
-             * @param addr Adresse � associer au client.
-             * @return true si l'initialisation r�ussit, sinon false.
+             * @brief Initialise la connexion client avec le socket et l'adresse spécifiés.
+             * @param sckt Socket à associer au client.
+             * @param addr Adresse à associer au client.
+             * @return true si l'initialisation réussit, sinon false.
              */
-            bool init(SOCKET&& _sckt, const sockaddr_in& _addr);
+            bool Init(SOCKET&& _sckt, const sockaddr_in& _addr);
 
             /**
-             * @brief �tablit une connexion avec le serveur � l'adresse et au port sp�cifi�s.
+             * @brief Établit une connexion avec le serveur à l'adresse et au port spécifiés.
              * @param ipaddress Adresse IP du serveur.
              * @param port Port du serveur.
-             * @return true si la connexion r�ussit, sinon false.
+             * @return true si la connexion réussit, sinon false.
              */
-            bool connect(const std::string& _ipaddress, unsigned short _port);
+            bool Connect(const std::string& _ipaddress, unsigned short _port);
 
             /**
              * @brief Ferme la connexion avec le serveur.
              */
-            void disconnect();
+            void Disconnect();
 
             /**
-             * @brief Envoie des donn�es au serveur.
-             * @param data Pointeur vers les donn�es � envoyer.
-             * @param len Longueur des donn�es � envoyer.
-             * @return true si l'envoi r�ussit, sinon false.
+             * @brief Envoie des données au serveur.
+             * @param data Pointeur vers les données à envoyer.
+             * @param len Longueur des données à envoyer.
+             * @return true si l'envoi réussit, sinon false.
              */
-            bool send(const unsigned char* _data, unsigned int _len);
+            bool Send(const unsigned char* _data, unsigned int _len);
 
             /**
             * @brief Retrieves incoming messages from the server.
             * @return A unique pointer to the received message.
             */
-            std::unique_ptr<Messages::Base> poll();
+            std::unique_ptr<Messages::Base> Poll();
 
             /**
-             * @brief R�cup�re l'identifiant du client.
-             * @return L'identifiant du client.
-             */
-            uint64_t id() const { return static_cast<uint64_t>(mSocket); }
+  * @brief Récupère l'identifiant du client.
+  * @return L'identifiant du client.
+  */
+            uint64_t Id() const { return static_cast<uint64_t>(mSocket); }
 
             /**
-             * @brief R�cup�re l'adresse de destination du client.
+             * @brief Récupère l'adresse de destination du client.
              * @return L'adresse de destination du client.
              */
-            const sockaddr_in& destinationAddress() const { return mAddress; }
+            const sockaddr_in& DestinationAddress() const { return mAddress; }
 
         private:
             /**
-             * @brief Callback appel� lorsqu'une connexion est �tablie avec succ�s.
-             * @param addr Adresse du serveur connect�.
+             * @brief Callback appelé lorsqu'une connexion est établie avec succès.
+             * @param addr Adresse du serveur connecté.
              */
-            void onConnected(const sockaddr_in& _addr);
+            void OnConnected(const sockaddr_in& _addr);
 
         private:
             ConnectionHandler mConnectionHandler;
             SendingHandler mSendingHandler;
             ReceptionHandler mReceivingHandler;
-            sockaddr_in mAddress{ 0 }; /**< Adresse associ�e au client. */
-            SOCKET mSocket{ INVALID_SOCKET }; /**< Socket associ� au client. */
-            State mState{ State::Disconnected }; /**< �tat actuel du client. */
+            sockaddr_in mAddress{ 0 }; /**< Adresse associée au client. */
+            SOCKET mSocket{ INVALID_SOCKET }; /**< Socket associé au client. */
+            State mState{ State::Disconnected }; /**< État actuel du client. */
         };
     }
 }

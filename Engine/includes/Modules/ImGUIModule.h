@@ -172,7 +172,8 @@ protected:
 
 	TCPClientStart clientTCP;
 	TCPServerStart serverTCP;
-	bool isConnectedTCP = false;
+	bool isConnectedTCPClient = false;
+	bool isConnectedTCPServer = false;
 
 	WindowModule* windowModule = nullptr; ///< Module de gestion de la fenêtre de l'application.
 	RHIModule* rhiModule = nullptr; ///< Module de gestion du rendu bas-niveau (RHI).
@@ -194,7 +195,6 @@ protected:
 
 	std::vector<bool> isOpen; ///< Vecteur pour suivre l'état ouvert/fermé des différents panneaux de l'interface utilisateur.
 
-	char pseudo[256] = "";  // Buffer pour l'adresse IP
 	char ipBuffer[64] = "";  // Buffer pour l'adresse IP
 	char portBuffer[6] = ""; // Buffer pour le port, suffisant pour contenir des nombres jusqu'à 65535
 	char messageBuffer[256] = ""; // Buffer pour le message à envoyer

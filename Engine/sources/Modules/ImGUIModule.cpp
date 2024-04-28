@@ -553,6 +553,7 @@ void ImGuiModule::DrawSettingsWindow() {
 //}
 
 void ImGuiModule::DrawTchatWindow() {
+	StatusMessage& statusMsg = StatusMessage::GetInstance();
 	if (ImGui::Begin("Tchat")) {
 		ImGui::Spacing();
 
@@ -560,37 +561,37 @@ void ImGuiModule::DrawTchatWindow() {
 		ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), "Informations:");
 		ImGui::SetWindowFontScale(1.0f);  // Taille du texte par défaut
 
-		std::string host = StatusMessage::getInstance().getHostName();
-		ImGui::InputText("Pseudo", pseudo, sizeof(pseudo));
 		ImGui::InputText("IP Address", ipBuffer, sizeof(ipBuffer));
 		ImGui::InputText("Port", portBuffer, sizeof(portBuffer));
-		if (!isConnectedTCP)
+		if (!isConnectedTCPClient && !isConnectedTCPServer)
 		{
 			if (ImGui::Button("Connexion")) {
-				clientTCP.setConnectedClient(false);
+				clientTCP.SetConnectedClient(false);
 				unsigned long port = std::stoul(portBuffer, nullptr, 0);
-				StatusMessage& statusMsg = StatusMessage::getInstance();
 				if (std::string(ipBuffer) == "" && std::string(portBuffer) != "")
 				{
-					serverTCP.TCPServer(port, ipBuffer);
+					serverTCP.StartServer(port, ipBuffer);
+					isConnectedTCPServer = true;
 				}
 				else {
-					isConnectedTCP = true;
+					isConnectedTCPClient = true;
 					clientTCP.ConnexionClientUDP(ipBuffer, port);
 				}
 			}
 		}
-		else {
+		else if (isConnectedTCPClient && !isConnectedTCPServer) {
 			if (ImGui::Button("Deconnexion")) {
-				isConnectedTCP = false;
+				isConnectedTCPClient = false;
 				unsigned long port = std::stoul(portBuffer, nullptr, 0);
-				if (std::string(ipBuffer) == "" && std::string(portBuffer) != "")
+				if (std::string(ipBuffer) != "" && std::string(portBuffer) != "")
 				{
-					serverTCP.TCPServer(port, ipBuffer);
+					clientTCP.SetConnectedClient(true);
 				}
-				else {
-					clientTCP.setConnectedClient(true);
-				}
+			}
+		}
+		else if (isConnectedTCPServer && !isConnectedTCPClient) {
+			if (ImGui::Button("Connecte")) {
+				isConnectedTCPServer = false;
 			}
 		}
 		ImGui::Spacing();
@@ -602,15 +603,13 @@ void ImGuiModule::DrawTchatWindow() {
 
 		// Zone pour afficher les messages
 		if (ImGui::BeginChild("Logs", ImVec2(0, 200), true)) {
-			const auto& receivedMessages = StatusMessage::getInstance().getReceivedMessages();
+			const auto& receivedMessages = StatusMessage::GetInstance().GetReceivedMessages();
 			if (receivedMessages.empty()) {
-				ImGui::TextWrapped("No messages received.");
+				ImGui::TextWrapped("Pas de messages reçu");
 			}
 			else {
 				for (const auto& msg : receivedMessages) {
-					const std::string& pseudo = msg.second;
-					const std::string& message = msg.first; 
-					ImGui::TextWrapped("[%s] %s", pseudo.c_str(), message.c_str());
+					ImGui::TextWrapped("%s", msg.c_str());
 				}
 				if (ImGui::GetScrollY() >= ImGui::GetScrollMaxY()) {
 					ImGui::SetScrollHereY(1.0f); // Auto-scroll to the bottom
@@ -628,17 +627,9 @@ void ImGuiModule::DrawTchatWindow() {
 		// Envoi du message
 		if (ImGui::Button("Send")) {
 			std::string fullMessage = "Ready to send message to " + std::string(ipBuffer) + ":" + std::string(portBuffer) + "\nMessage: " + std::string(messageBuffer);
-			StatusMessage& statusMsg = StatusMessage::getInstance();
-			if (std::string(pseudo) == "")
-			{
-				statusMsg.setPseudo(host);
-			}
-			else {
-				statusMsg.setPseudo(pseudo);
-			}
-			statusMsg.setStatus(StatusMessage::Send);
-
-			clientTCP.sendData(messageBuffer);
+			statusMsg.SetStatus(StatusMessage::Send);
+			clientTCP.SendData(messageBuffer);
+			
 			memset(messageBuffer, 0, sizeof(messageBuffer));  // Effacer le buffer de message après "l'envoi"
 		}
 	}

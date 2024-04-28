@@ -1,26 +1,29 @@
 #pragma once
-#include "TCP/Server/Server.h"
+
+#include "TCP/Server/Server.h" // Including necessary headers for TCP server
 #include "TCP/StatusMessage.h"
 
-#include <thread>
+#include <thread> // Including thread for multithreading support
 
 class TCPServerStart
 {
 public:
-	void TCPServer(unsigned short _port, std::string _ipAdress, bool _active = false);
-	void serverThreadFunction(Network::TCP::Server& _server);
+    /**
+     * @brief Starts the TCP server
+     *
+     * @param _port Port number to listen on
+     * @param _ipAdress IP address to bind the server
+     */
+    void StartServer(unsigned short _port, std::string _ipAdress);
 
-	static TCPServerStart& getInstance() {
-		static TCPServerStart instance; // Crée une seule instance de StatusMessage
-		return instance;
-	}
-
-	void setData(const std::string& newData);
-	std::string getData() const {
-		return stockData;
-	}
 private:
-	Network::TCP::Server server;
-	std::thread serverThread;
-	std::string stockData;
+    /**
+     * @brief Thread function for running the server
+     *
+     * @param _server Reference to the server instance
+     */
+    void ServerThreadFunction(Network::TCP::Server& _server);
+
+    Network::TCP::Server server; // TCP server instance
+    std::thread serverThread; // Thread for running the server
 };

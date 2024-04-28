@@ -17,38 +17,38 @@ namespace Network
     namespace TCP
     {
         /**
-         * @brief Impl�mentation priv�e de la classe Server.
+         * @brief Implémentation privée de la classe Server.
          */
         class ServerImpl;
 
         /**
-         * @brief La classe Server repr�sente un serveur TCP.
+         * @brief La classe Server représente un serveur TCP.
          */
         class Server
         {
         public:
             /**
-             * @brief Constructeur par d�faut de la classe Server.
+             * @brief Constructeur par défaut de la classe Server.
              */
             Server() {}
 
             /**
-             * @brief Constructeur de copie supprim�.
+             * @brief Constructeur de copie supprimé.
              */
             Server(const Server&) = delete;
 
             /**
-             * @brief Op�rateur d'assignation de copie supprim�.
+             * @brief Opérateur d'assignation de copie supprimé.
              */
             Server& operator=(const Server&) = delete;
 
             /**
-             * @brief Constructeur de d�placement de la classe Server.
+             * @brief Constructeur de déplacement de la classe Server.
              */
             Server(Server&&);
 
             /**
-             * @brief Op�rateur d'assignation par d�placement de la classe Server.
+             * @brief Opérateur d'assignation par déplacement de la classe Server.
              */
             Server& operator=(Server&&);
 
@@ -58,101 +58,117 @@ namespace Network
             ~Server() {}
 
             /**
-             * @brief D�marre le serveur sur le port sp�cifi�.
-             * @param _port Port sur lequel d�marrer le serveur.
-             * @return true si le d�marrage r�ussit, sinon false.
+             * @brief Démarre le serveur sur le port spécifié.
+             * @param _port Port sur lequel démarrer le serveur.
+             * @return true si le démarrage réussit, sinon false.
              */
-            bool start(unsigned short _port);
+            bool Start(unsigned short _port);
 
             /**
-             * @brief Arr�te le serveur.
+             * @brief Arrête le serveur.
              */
-            void stop();
+            void Stop();
 
             /**
-             * @brief Met � jour le serveur pour traiter les �v�nements en attente.
+             * @brief Met à jour le serveur pour traiter les événements en attente.
              */
-            void update();
+            void Update();
 
             /**
-             * @brief Envoie des donn�es � un client sp�cifi�.
+             * @brief Envoie des données à un client spécifié.
              * @param clientid Identifiant du client.
-             * @param data Pointeur vers les donn�es � envoyer.
-             * @param len Longueur des donn�es � envoyer.
-             * @return true si l'envoi r�ussit, sinon false.
+             * @param data Pointeur vers les données à envoyer.
+             * @param len Longueur des données à envoyer.
+             * @return true si l'envoi réussit, sinon false.
              */
-            bool sendTo(uint64_t _clientid, const unsigned char* _data, unsigned int _len);
+            bool SendTo(uint64_t _clientid, const unsigned char* _data, unsigned int _len);
 
             /**
-             * @brief Envoie des donn�es � tous les clients connect�s.
-             * @param data Pointeur vers les donn�es � envoyer.
-             * @param len Longueur des donn�es � envoyer.
-             * @return true si l'envoi r�ussit, sinon false.
+             * @brief Envoie des données à tous les clients connectés.
+             * @param data Pointeur vers les données à envoyer.
+             * @param len Longueur des données à envoyer.
+             * @return true si l'envoi réussit, sinon false.
              */
-            bool sendToAll(const unsigned char* _data, unsigned int _len);
+            bool SendToAll(const unsigned char* _data, unsigned int _len);
 
             /**
-             * @brief R�cup�re les messages entrants du serveur.
-             * @return Un pointeur unique vers le message re�u.
+             * @brief Récupère les messages entrants du serveur.
+             * @return Un pointeur unique vers le message reçu.
              */
-            std::unique_ptr<Messages::Base> poll();
+            std::unique_ptr<Messages::Base> Poll();
 
-            const std::map<uint64_t, Client>& getClients() const;
+            /**
+             * @brief Obtient la liste des clients connectés au serveur.
+             *
+             * @return Une référence constante à la map des clients, indexée par leur identifiant.
+             */
+            const std::map<uint64_t, Client>& GetClients() const;
 
         private:
-            std::unique_ptr<ServerImpl> mImpl; /**< Impl�mentation priv�e du serveur. */
+            std::unique_ptr<ServerImpl> mImpl; /**< Implémentation privée du serveur. */
         };
 
         class ServerImpl
         {
         public:
+            /**
+            * @brief Constructeur par défaut de la classe ServerImpl.
+            */
             ServerImpl() = default;
+
+            /**
+             * @brief Destructeur de la classe ServerImpl.
+             */
             ~ServerImpl();
 
             /**
-             * @brief D�marre le serveur sur le port sp�cifi�.
-             * @param _port Port sur lequel d�marrer le serveur.
-             * @return true si le d�marrage r�ussit, sinon false.
+             * @brief Démarre le serveur sur le port spécifié.
+             *
+             * @param _port Port sur lequel démarrer le serveur.
+             * @return true si le démarrage réussit, sinon false.
              */
-            bool start(unsigned short _port);
+            bool Start(unsigned short _port);
 
             /**
-             * @brief Arr�te le serveur.
+             * @brief Arrête le serveur.
              */
-            void stop();
+            void Stop();
 
             /**
-             * @brief Met � jour le serveur.
+             * @brief Met à jour le serveur.
              */
-            void update();
+            void Update();
 
             /**
-             * @brief Envoie des donn�es � un client sp�cifique.
-             * @param clientid Identifiant du client.
-             * @param data Pointeur vers les donn�es � envoyer.
-             * @param len Longueur des donn�es � envoyer.
-             * @return true si l'envoi r�ussit, sinon false.
+             * @brief Envoie des données à un client spécifique.
+             *
+             * @param _clientid Identifiant du client.
+             * @param _data Pointeur vers les données à envoyer.
+             * @param _len Longueur des données à envoyer.
+             * @return true si l'envoi réussit, sinon false.
              */
-            bool sendTo(uint64_t _clientid, const unsigned char* _data, unsigned int _len);
+            bool SendTo(uint64_t _clientid, const unsigned char* _data, unsigned int _len);
 
             /**
-             * @brief Envoie des donn�es � tous les clients connect�s.
-             * @param data Pointeur vers les donn�es � envoyer.
-             * @param len Longueur des donn�es � envoyer.
-             * @return true si l'envoi r�ussit, sinon false.
+             * @brief Envoie des données à tous les clients connectés.
+             *
+             * @param _data Pointeur vers les données à envoyer.
+             * @param _len Longueur des données à envoyer.
+             * @return true si l'envoi réussit, sinon false.
              */
-            bool sendToAll(const unsigned char* _data, unsigned int _len);
+            bool SendToAll(const unsigned char* _data, unsigned int _len);
 
             /**
-             * @brief R�cup�re les messages entrants.
-             * @return Un pointeur unique vers le message re�u.
+             * @brief Récupère les messages entrants.
+             *
+             * @return Un pointeur unique vers le message reçu.
              */
-            std::unique_ptr<Messages::Base> poll();
+            std::unique_ptr<Messages::Base> Poll();
 
-            const std::map<uint64_t, Client>& getClients() const;
+            const std::map<uint64_t, Client>& GetClients() const;
 
         private:
-            std::map<uint64_t, Client> mClients; /**< Map des clients connect�s, index�s par leur identifiant. */
+            std::map<uint64_t, Client> mClients; /**< Map des clients connectés, indexés par leur identifiant. */
             std::list<std::unique_ptr<Messages::Base>> mMessages; /**< Liste des messages entrants. */
             SOCKET mSocket{ INVALID_SOCKET }; /**< Socket du serveur. */
         };

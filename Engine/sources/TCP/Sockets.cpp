@@ -19,19 +19,19 @@ namespace Network
 		WSACleanup();
 #endif
 	}
-	bool SetNonBlocking(SOCKET socket)
+	bool SetNonBlocking(SOCKET _socket)
 	{
 #ifdef _WIN32
 		u_long mode = 1;
-		return ioctlsocket(socket, FIONBIO, &mode) == 0;
+		return ioctlsocket(_socket, FIONBIO, &mode) == 0;
 #else
 		return fcntl(socket, F_SETFL, O_NONBLOCK) != -1;
 #endif
 	}
-	bool SetReuseAddr(SOCKET socket)
+	bool SetReuseAddr(SOCKET _socket)
 	{
 #ifdef _WIN32
-		UNUSED(socket);
+		UNUSED(_socket);
 		//int optval = 1;
 		//return setsockopt(socket, SOL_SOCKET, SO_REUSEADDR, reinterpret_cast<const char*>(&optval), sizeof(optval)) == 0;
 		return true;
@@ -40,26 +40,26 @@ namespace Network
 		return setsockopt(socket, SOL_SOCKET, SO_REUSEADDR, &optval, sizeof(optval)) == 0;
 #endif
 	}
-	void CloseSocket(SOCKET s)
+	void CloseSocket(SOCKET _s)
 	{
 #ifdef _WIN32
-		closesocket(s);
+		closesocket(_s);
 #else
-		close(s);
+		close(_s);
 #endif
 	}
-	std::string GetAddress(const sockaddr_in& addr)
+	std::string GetAddress(const sockaddr_in& _addr)
 	{
 		char buff[INET6_ADDRSTRLEN] = { 0 };
-		if (auto ret = inet_ntop(addr.sin_family, (void*)&(addr.sin_addr), buff, INET6_ADDRSTRLEN))
+		if (auto ret = inet_ntop(_addr.sin_family, (void*)&(_addr.sin_addr), buff, INET6_ADDRSTRLEN))
 		{
 			return ret;
 		}
 		return "";
 	}
-	unsigned short GetPort(const sockaddr_in& addr)
+	unsigned short GetPort(const sockaddr_in& _addr)
 	{
-		std::cout << &addr << std::endl;
-		return ntohs(addr.sin_port);
+		std::cout << &_addr << std::endl;
+		return ntohs(_addr.sin_port);
 	}
 }

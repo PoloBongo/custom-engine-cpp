@@ -7,45 +7,45 @@
 
 #include <iostream>
 
-void TCPServerStart::serverThreadFunction(Network::TCP::Server& server) {
+void TCPServerStart::ServerThreadFunction(Network::TCP::Server& server) {
 	while (true)
 	{
-		server.update();
-		while (auto msg = server.poll())
+		server.Update();
+		while (auto msg = server.Poll())
 		{
-			if (msg->is<Network::Messages::Connection>()) {
+			if (msg->Is<Network::Messages::Connection>()) {
 				std::cout << "Connexion de [" << Network::GetAddress(msg->from) << ":" << Network::GetPort(msg->from) << "]" << std::endl;
 			}
-			else if (msg->is<Network::Messages::Disconnection>()) {
+			else if (msg->Is<Network::Messages::Disconnection>()) {
 				std::cout << "Deconnexion de [" << Network::GetAddress(msg->from) << ":" << Network::GetPort(msg->from) << "]" << std::endl;
 			}
-			else if (msg->is<Network::Messages::UserData>()) {
-				auto userdata = msg->as<Network::Messages::UserData>();
-				StatusMessage& statusMsg = StatusMessage::getInstance();
-				const auto& clients = server.getClients();
+			else if (msg->As<Network::Messages::UserData>()) {
+				auto userdata = msg->As<Network::Messages::UserData>();
+				StatusMessage& statusMsg = StatusMessage::GetInstance();
+				const auto& clients = server.GetClients();
 
 				std::string reply(reinterpret_cast<const char*>(userdata->data.data()), userdata->data.size());
-				statusMsg.addMessage(reply, statusMsg.getPseudo());
-				std::cout << "Pseudo Server : " << statusMsg.getPseudo() << std::endl;
-				for (const auto& pair : clients) {
-					uint64_t clientId = pair.first;
-					const Network::TCP::Client& client = pair.second;
+				statusMsg.AddMessage(reply);
 
-					const sockaddr_in& address = client.destinationAddress();
+				for (const auto& entities : clients) {
+					uint64_t clientId = entities.first;
+					const Network::TCP::Client& client = entities.second;
+
+					const sockaddr_in& address = client.DestinationAddress();
 					std::string ipAddress = Network::GetAddress(address);
 					unsigned short port = Network::GetPort(address);
-					server.sendTo(clientId, userdata->data.data(), reply.size());
+					server.SendTo(clientId, userdata->data.data(), reply.size());
 
-					std::cout << "Client ID: " << clientId << ", IP Address: " << ipAddress << ", Port: " << port << " Message :" << reply << std::endl;
+					std::cout << "Client ID: " << clientId << ", IP Address: " << ipAddress << ", Port: " << port << " Pseudo :" << reply << std::endl;
 				}
 			}
 		}
 	}
-	server.stop();
+	server.Stop();
 	Network::Release();
 }
 
-void TCPServerStart::TCPServer(unsigned short _port, std::string ipAdress, bool active)
+void TCPServerStart::StartServer(unsigned short _port, std::string ipAdress)
 {
 	std::cout << "Active le port : " << _port << std::endl;
 	if (!Network::Start())
@@ -54,17 +54,13 @@ void TCPServerStart::TCPServer(unsigned short _port, std::string ipAdress, bool 
 	}
 	else { std::cout << "initialisation WinSock" << std::endl; }
 
-	if (!server.start(_port))
+	if (!server.Start(_port))
 	{
 		std::cout << "Erreur initialisation serveur : " << Network::Errors::Get() << std::endl;
 	}
 	else {
 		std::cout << "initialisation du serveur" << std::endl;
 		// Démarre le thread
-		serverThread = std::thread(&TCPServerStart::serverThreadFunction, this, std::ref(server));
+		serverThread = std::thread(&TCPServerStart::ServerThreadFunction, this, std::ref(server));
 	}
-}
-
-void TCPServerStart::setData(const std::string& newData) {
-	stockData = newData;
 }
