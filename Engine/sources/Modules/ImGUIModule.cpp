@@ -1234,6 +1234,10 @@ void ImGuiModule::DrawProjectSaveWindow()
 		ImGui::OpenPopup("Project");
 		if (ImGui::BeginPopupModal("Project", NULL, ImGuiWindowFlags_AlwaysAutoResize)) {
 			FilesDirs filesDirs;
+			if (ImGui::Button("X", ImVec2(20, 20))) {
+				showPopupProject = false;
+				selectedGameObject = nullptr;
+			}
 			ImGui::Text("Here you can save, load or start a new project !");
 			if (ImGui::Button("Save", ImVec2(120, 0))) {
 				ImGui::CloseCurrentPopup();
