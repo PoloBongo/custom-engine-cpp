@@ -293,6 +293,8 @@ void ImGuiModule::GetGui()
 	DrawFilesExplorerWindow();
 
 	DrawSettingsWindow();
+
+	DrawProjectSaveWindow();
 }
 
 void ImGuiModule::AnchorWindow(const std::string& _windowName)
@@ -523,6 +525,11 @@ void ImGuiModule::DrawInspectorWindow() {
 
 void ImGuiModule::DrawHierarchyWindow() {
 	// Bouton pour créer un nouveau GameObject
+	if (ImGui::Button("Project popup")) {
+		showPopupProject = true;
+	}
+	ImGui::Separator();
+
 	if (ImGui::Button("New GameObject")) {
 		ImGui::OpenPopup("CreateGameObjectPopup");
 	}
@@ -1211,6 +1218,116 @@ void ImGuiModule::DrawFilesExplorerWindow() {
 	}
 	ImGui::End();
 }
+
+void ImGuiModule::DrawProjectSaveWindow() 
+{
+
+	// Bouton save
+	// Bouton charger save
+	// Bouton nouveau projet
+
+
+	// ATTENTION : Je crois il manque la verif de si c'est un bon filepath, donc faut check au cas où
+	// ATTENTION : Je check juste si c'est un json -> pas forcément le bon format de données
+
+	if (showPopupProject) {
+		ImGui::OpenPopup("Project");
+		if (ImGui::BeginPopupModal("Project", NULL, ImGuiWindowFlags_AlwaysAutoResize)) {
+			FilesDirs filesDirs;
+			ImGui::Text("Here you can save, load or start a new project !");
+			if (ImGui::Button("Save", ImVec2(120, 0))) {
+				ImGui::CloseCurrentPopup();
+				showPopupProject = false;
+				selectedGameObject = nullptr;
+
+				// Tu peux utiliser 
+				// filesDirs.addPathToANFile(filesDirs.ConvertStringToWideString("filepath"));
+				// pour save le path comme ça tu save
+				// Tu créé une instance de FilesDirs et puis tu fait le truc
+
+				//----------------------------------------------------------------------
+				// TA FONCTION POUR SAVE
+
+
+			}
+			if (ImGui::Button("Load", ImVec2(120, 0))) {
+				ImGui::CloseCurrentPopup();
+				showPopupProject = false;
+				selectedGameObject = nullptr;
+
+				std::string file = filesDirs.ConvertWideStringToString(filesDirs.openFileDialog());
+				AddLog("File :" + file);
+				std::string filename;
+				std::string ext;
+				filesDirs.ExtractFilenameAndExtension(file, filename, ext);
+				if (ext == "json") {
+					filesDirs.createEngineDataDirectory();
+					filesDirs.createANFileInDirectory();
+					filesDirs.addPathToANFile(filesDirs.ConvertStringToWideString(file));
+					//----------------------------------------------------------------------
+					// TA FONCTION POUR LOAD (en utilisant "file" pour le path)
+
+
+
+				}
+			}
+			if (ImGui::Button("New", ImVec2(120, 0))) {
+				ImGui::CloseCurrentPopup();
+				showPopupProject = false;
+				selectedGameObject = nullptr;
+
+				//----------------------------------------------------------------------
+				// TA FONCTION POUR NEW
+
+
+			}
+
+			filesDirs.createEngineDataDirectory();
+			filesDirs.createANFileInDirectory();
+			filesDirs.addPathToANFile(filesDirs.ConvertStringToWideString("CoolMonsieur.json"));
+
+			std::vector<std::wstring> pathsAN = filesDirs.readANFile();
+
+			ImGui::Separator();
+			ImGui::Text("Already added projects :");
+			ImGui::BeginChild("ScrollingRegion", ImVec2(0, 100), true, ImGuiWindowFlags_HorizontalScrollbar);
+			for (const auto& wpath : pathsAN) 
+			{
+				std::string spath = filesDirs.ConvertWideStringToString(wpath);
+				ImGui::Text(spath.c_str());
+				ImGui::SameLine();
+				if (ImGui::Button("Load", ImVec2(50, 20))) {
+					showPopupProject = false;
+					selectedGameObject = nullptr;
+
+					std::ifstream file(spath);
+					if (file.good()) {
+
+
+						// (Oui c'est la meme fonction que tu dois utiliser)
+						//----------------------------------------------------------------------
+						// TA FONCTION POUR LOAD ( en utilisant "spath" pour le path)
+
+
+
+
+
+					}
+					else {
+						AddLog("Warning : Failed to open the file");
+					}
+				}
+			}
+			ImGui::EndChild();
+
+			ImGui::EndPopup();
+		}
+	}
+
+}
+
+
+
 
 
 void ImGuiModule::DisplayTransform(Transform* _transform) {

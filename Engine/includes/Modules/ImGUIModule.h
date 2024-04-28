@@ -152,6 +152,8 @@ public:
 
 	void DrawFilesExplorerWindow();
 
+	void DrawProjectSaveWindow();
+
 
 
 	// ----------========== POPUPS ==========---------- //
@@ -268,6 +270,7 @@ protected:
 	bool addTexButton = false;
 
 	bool showPopupError = false;
+	bool showPopupProject = true;
 
 	std::vector<std::wstring> fileNames;
 
