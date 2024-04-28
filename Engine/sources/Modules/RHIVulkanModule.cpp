@@ -144,6 +144,7 @@ void RHIVulkanModule::Start()
 	ListTexturesNames->push_back("unnamed.png");
 	ListTexturesNames->push_back("viking_room.png");
 	ListTexturesNames->push_back("grass.jpg");
+	ListTexturesNames->push_back("gras.truc");
 	ListTexturesNames->push_back("noobtex.png");
 	ListTexturesNames->push_back("sand1.png");
 	ListTexturesNames->push_back("sand2.png");
@@ -199,6 +200,7 @@ void RHIVulkanModule::PreRender()
 
 void RHIVulkanModule::Render()
 {
+	gameObjects = moduleManager->GetModule<SceneManager>()->GetCurrentScene()->GetAllGameObject();
 	simpleRenderSystem->RenderGameObjects(gameObjects, *camera, *currentCommandBuffer, &ListDescriptors, frameIndex);       //render shadow casting objects
 	pointLightSystem->Render(gameObjects, *camera, *currentCommandBuffer, globalDescriptorSets[frameIndex]);                 //render shadow casting objects
 }
