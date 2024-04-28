@@ -1281,7 +1281,7 @@ void ImGuiModule::DrawProjectSaveWindow()
 
 				//----------------------------------------------------------------------
 				// TA FONCTION POUR SAVE
-				moduleManager->GetModule<SceneManager>()->SaveScenesToFile(projectName);
+				moduleManager->GetModule<SceneManager>()->SaveScenesToFile("project");
 
 
 			}
