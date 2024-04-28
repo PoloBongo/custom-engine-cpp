@@ -1282,6 +1282,7 @@ void ImGuiModule::DrawProjectSaveWindow()
 
 				//----------------------------------------------------------------------
 				// TA FONCTION POUR SAVE
+				moduleManager->GetModule<SceneManager>()->SaveScenesToFile("project");
 
 
 			}
@@ -1301,7 +1302,7 @@ void ImGuiModule::DrawProjectSaveWindow()
 					filesDirs.addPathToANFile(filesDirs.ConvertStringToWideString(file));
 					//----------------------------------------------------------------------
 					// TA FONCTION POUR LOAD (en utilisant "file" pour le path)
-
+					moduleManager->GetModule<SceneManager>()->LoadAllScenes("project");
 
 
 				}
@@ -1339,14 +1340,7 @@ void ImGuiModule::DrawProjectSaveWindow()
 					if (file.good()) {
 
 
-						// (Oui c'est la meme fonction que tu dois utiliser)
-						//----------------------------------------------------------------------
-						// TA FONCTION POUR LOAD ( en utilisant "spath" pour le path)
-
-
-
-
-
+						moduleManager->GetModule<SceneManager>()->LoadAllScenesSPath(spath);
 					}
 					else {
 						AddLog("Warning : Failed to open the file");

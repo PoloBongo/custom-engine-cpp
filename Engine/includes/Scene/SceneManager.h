@@ -288,6 +288,25 @@ public:
 			std::cerr << "Le répertoire de sauvegarde n'existe pas : " << directory << std::endl;
 		}
 	}
+	void LoadAllScenesSPath(const std::string& _sPath)
+	{
+		if (const std::string directory = _sPath; fs::exists(directory) &&
+			fs::is_directory(directory))
+		{
+			for (const auto& entry : fs::directory_iterator(directory))
+			{
+				if (entry.is_regular_file() && entry.path().extension() == ".json")
+				{
+					const std::string filename = entry.path().filename().stem().string();
+					LoadScenesFromFile(_sPath, filename);
+				}
+			}
+		}
+		else
+		{
+			std::cerr << "Le répertoire de sauvegarde n'existe pas : " << directory << std::endl;
+		}
+	}
 
 	void LoadScenesFromFile(const std::string& _projectName, const std::string& _sceneName)
 	{

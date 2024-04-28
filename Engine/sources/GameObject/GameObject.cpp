@@ -128,7 +128,8 @@ json GameObject::toJson() const
 	j["name"] = name;
 	j["fileModel"] = fileModel;
 	if (parent) j["parent_id"] = parent->GetId();
-	j["model_filename"] = model->GetFilename();
+	if(model) j["model_filename"] = model->GetFilename();
+	else j["model_filename"] = "";
 	j["texture"] = texture;
 	j["color"] = { color.x, color.y,color.z };
 	j["isActive"] = isActive;
@@ -147,7 +148,8 @@ void GameObject::fromJson(const json& _j)
 	name = _j["name"];
 	fileModel = _j["fileModel"];
 	/*parent = j["parent_id"];*/
-	model = lve::LveModel::CreateModelFromFile(*Engine::GetInstance()->GetModuleManager()->GetModule<RHIVulkanModule>()->GetDevice(), _j["model_filename"]);;
+	std::string modelname = _j["model_filename"];
+	if (!fileModel.empty()) model = lve::LveModel::CreateModelFromFile(*Engine::GetInstance()->GetModuleManager()->GetModule<RHIVulkanModule>()->GetDevice(), fileModel);
 	texture = _j["texture"];
 	color = glm::vec3(_j["color"][0], _j["color"][1], _j["color"][2]);
 	isActive = _j["isActive"];

@@ -11,7 +11,11 @@
 class Transform final : public Component
 {
 	public:
-		Transform() = default;
+		Transform()
+		{
+			type = "Transform";
+			name = "Transform";
+		}
 		// Méthode pour récupérer et définir la position
 		glm::vec3 GetPosition() const { return position; }
 		void      SetPosition(const float& _x, const float& _y, const float& _z) { position = glm::vec3(_x, -_y, -_z); }
