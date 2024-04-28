@@ -194,57 +194,176 @@ public:
 	 */
 	void CreateSpecificGameObject(GameObjectType _type, int _otherType = 0);
 
+	/**
+	* @brief Ajoute un nouveau texte aux logs de la console.
+	* @param _newText Le nouveau texte à ajouter.
+	*/
 	void AddLog(std::string _newText) { 
 		Console& console = Console::getInstance();
 		console.AddLog(_newText);
 	}
+
+	/**
+	* @brief Efface tous les logs de la console.
+	*/
 	void ClearLog() {
 		Console& console = Console::getInstance();
 		console.ClearLogs();
 	}
 
+	/**
+	 * @brief Obtient l'état du filtre de mise en garde.
+	 * @return L'état actuel du filtre de mise en garde.
+	 */
 	bool GetFilterWarning() { return filterWarning; }
+
+	/**
+	 * @brief Obtient l'état du filtre d'erreur.
+	 * @return L'état actuel du filtre d'erreur.
+	 */
 	bool GetFilterError() { return filterError; }
+
+	/**
+	 * @brief Obtient l'état du filtre simple.
+	 * @return L'état actuel du filtre simple.
+	 */
 	bool GetFilterSimple() { return filterSimple; }
 
+	/**
+	 * @brief Définit l'état du filtre de mise en garde.
+	 * @param _newState Le nouvel état du filtre de mise en garde.
+	 */
 	void SetFilterWarning(bool _newState) { filterWarning = _newState; }
+
+	/**
+	 * @brief Définit l'état du filtre d'erreur.
+	 * @param _newState Le nouvel état du filtre d'erreur.
+	 */
 	void SetFilterError(bool _newState) { filterError = _newState; }
+
+	/**
+	 * @brief Définit l'état du filtre simple.
+	 * @param _newState Le nouvel état du filtre simple.
+	 */
 	void SetFilterSimple(bool _newState) { filterSimple = _newState; }
 
+	/**
+	 * @brief Obtient le fichier à rechercher.
+	 * @return Le fichier à rechercher.
+	 */
 	std::string GetFileToLook() { return fileToLook; }
+
+	/**
+	 * @brief Définit le fichier à rechercher.
+	 * @param _newFileToLook Le nouveau fichier à rechercher.
+	 */
 	void SetFileToLook(std::string _newFileToLook) { fileToLook = _newFileToLook; }
 
+	/**
+	 * @brief Obtient le répertoire actuel.
+	 * @return Le répertoire actuel.
+	 */
 	std::string GetCurrentDir() { return currentDir; }
+
+	/**
+	 * @brief Définit le répertoire actuel.
+	 * @param _newDir Le nouveau répertoire actuel.
+	 */
 	void SetCurrentDir(std::string _newDir) { currentDir = _newDir; }
 
+	/**
+	 * @brief Obtient la recherche de fichier.
+	 * @return La recherche de fichier.
+	 */
 	std::string GetFileSearch() { return fileSearch; }
+
+	/**
+	 * @brief Définit la recherche de fichier.
+	 * @param _newFileSearch La nouvelle recherche de fichier.
+	 */
 	void SetFileSearch(std::string _newFileSearch) { fileSearch = _newFileSearch; }
 
+	/**
+	 * @brief Obtient l'état du filtre pour les fichiers .obj.
+	 * @return L'état actuel du filtre pour les fichiers .obj.
+	 */
 	bool GetFilterObj() { return filterObj; }
+
+	/**
+	 * @brief Obtient l'état du filtre pour les images supportées.
+	 * @return L'état actuel du filtre pour les images supportées.
+	 */
 	bool GetFilterSupportedImages() { return filterSupportedImages; }
+
+	/**
+	 * @brief Obtient l'état du filtre pour les autres types de fichiers.
+	 * @return L'état actuel du filtre pour les autres types de fichiers.
+	 */
 	bool GetFilterOther() { return filterOther; }
+
+	/**
+	 * @brief Obtient l'état du filtre pour les répertoires.
+	 * @return L'état actuel du filtre pour les répertoires.
+	 */
 	bool GetFilterDirs() { return filterDirs; }
 
 
+	/**
+	 * @brief Définit l'état du filtre pour les fichiers .obj.
+	 * @param _newState Le nouvel état du filtre pour les fichiers .obj.
+	 */
 	void SetFilterObj(bool _newState) { filterObj = _newState; }
+
+	/**
+	 * @brief Définit l'état du filtre pour les images supportées.
+	 * @param _newState Le nouvel état du filtre pour les images supportées.
+	 */
 	void SetFilterSupportedImages(bool _newState) { filterSupportedImages = _newState; }
+
+	/**
+	 * @brief Définit l'état du filtre pour les autres types de fichiers.
+	 * @param _newState Le nouvel état du filtre pour les autres types de fichiers.
+	 */
 	void SetFilterOther(bool _newState) { filterOther = _newState; }
+
+	/**
+	 * @brief Définit l'état du filtre pour les répertoires.
+	 * @param _newState Le nouvel état du filtre pour les répertoires.
+	 */
 	void SetFilterDirs(bool _newState) { filterDirs = _newState; }
 
+	/**
+	 * @brief Obtient l'état d'affichage de la popup d'erreur.
+	 * @return L'état actuel d'affichage de la popup d'erreur.
+	 */
 	bool GetShowPopupError() { return showPopupError; }
+
+	/**
+	 * @brief Définit l'état d'affichage de la popup d'erreur.
+	 * @param _newState Le nouvel état d'affichage de la popup d'erreur.
+	 */
 	void SetShowPopupError(bool _newState) { showPopupError = _newState; }
 
+	/**
+	 * @brief Obtient le nom de la scène à nommer.
+	 * @return Le nom de la scène à nommer.
+	 */
 	std::string GetSceneToName() { return sceneToName; }
+
+	/**
+	 * @brief Définit le nom de la scène à nommer.
+	 * @param _newString Le nouveau nom de la scène à nommer.
+	 */
 	void SetSceneToName(std::string _newString) { sceneToName = _newString; }
 
 protected:
 	vk::Device device; ///< P�riph�rique utilis� pour le rendu avec Vulkan.
 	vk::Queue graphicsQueue; ///< File d'attente graphique pour la soumission des commandes Vulkan.
 
-	TCPClientStart clientTCP;
-	TCPServerStart serverTCP;
-	bool isConnectedTCPClient = false;
-	bool isConnectedTCPServer = false;
+	TCPClientStart clientTCP;///< Instance du client TCP.
+	TCPServerStart serverTCP;///< Instance du serveur TCP.
+	bool isConnectedTCPClient = false;///< Indicateur indiquant si le client TCP est connecté.
+	bool isConnectedTCPServer = false;///< Indicateur indiquant si le serveur TCP est connecté.
 
 	WindowModule* windowModule = nullptr; ///< Module de gestion de la fenêtre de l'application.
 	RHIModule* rhiModule = nullptr; ///< Module de gestion du rendu bas-niveau (RHI).
@@ -266,35 +385,32 @@ protected:
 
 	std::vector<bool> isOpen; ///< Vecteur pour suivre l'�tat ouvert/ferm� des diff�rents panneaux de l'interface utilisateur.
 
-	bool textureView = false;
-	bool changeScaleLinked = false;
-	bool filterSimple = true;
-	bool filterError = true;
-	bool filterWarning = true;
+	bool textureView = false; ///< Indicateur de visualisation de texture.
+	bool changeScaleLinked = false; ///< Indicateur de changement d'échelle lié.
+	bool filterSimple = true; ///< Indicateur de filtre simple activé.
+	bool filterError = true; ///< Indicateur de filtre d'erreurs activé.
+	bool filterWarning = true; ///< Indicateur de filtre de mises en garde activé.
 
-	bool filterSupportedImages = true;
-	bool filterObj = true;
-	bool filterOther = true;
-	bool filterDirs = true;
+	bool filterSupportedImages = true; ///< Indicateur de filtre des images supportées activé.
+	bool filterObj = true; ///< Indicateur de filtre pour les fichiers .obj activé.
+	bool filterOther = true; ///< Indicateur de filtre pour les autres types de fichiers activé.
+	bool filterDirs = true; ///< Indicateur de filtre pour les répertoires activé.
 
-	bool refreshFileExplorer = true;
-	bool addTexButton = false;
+	bool refreshFileExplorer = true; ///< Indicateur de rafraîchissement de l'explorateur de fichiers activé.
+	bool addTexButton = false; ///< Indicateur de bouton d'ajout de texture activé.
 
-	bool showPopupError = false;
-	bool showPopupProject = true;
+	bool showPopupError = false; ///< Indicateur d'affichage de la popup d'erreur.
+	bool showPopupProject = true; ///< Indicateur d'affichage de la popup de projet.
 
-	std::vector<std::wstring> fileNames;
+	std::vector<std::wstring> fileNames; ///< Liste des noms de fichiers.
 
-	std::vector<VkDescriptorSet>* ListDescriptorsImGui = new std::vector<VkDescriptorSet>();
+	std::vector<VkDescriptorSet>* ListDescriptorsImGui = new std::vector<VkDescriptorSet>(); ///< Liste des descripteurs ImGui.
 
-	std::string fileSearch;
+	std::string fileSearch; ///< Recherche de fichier.
 
-
-	std::string fileToLook;
-	std::string currentDir = "./Textures";
-	std::string sceneToName;
-
-	std::vector<std::string>* logs = new std::vector<std::string>();
+	std::string fileToLook; ///< Fichier à rechercher.
+	std::string currentDir = "./Textures"; ///< Répertoire actuel.
+	std::string sceneToName; ///< Scène à nommer.
 
 	char ipBuffer[64] = "";  // Buffer pour l'adresse IP
 	char portBuffer[6] = ""; // Buffer pour le port, suffisant pour contenir des nombres jusqu'� 65535
