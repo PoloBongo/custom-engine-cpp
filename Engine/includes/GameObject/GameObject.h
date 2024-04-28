@@ -644,7 +644,7 @@ class  GameObject
 			j["name"] = name;
 			j["fileModel"] = fileModel;
 			j["parent_id"] = parent->GetId();
-			j["model_name"] = model->GetName();
+			j["model_filename"] = model->GetFilename();
 			j["texture"] = texture;
 			j["color"] = { color.x, color.y,color.z };
 			j["isActive"] = isActive;

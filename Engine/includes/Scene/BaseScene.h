@@ -2,9 +2,9 @@
 
 #include <string>
 
+#include <GameObject/PreGameObject/LightGameObject.h>
 #include "GameObject/GameObject.h"
 #include "LveEngine/lve_window.h"
-#include <GameObject/PreGameObject/LightGameObject.h>
 
 #include <nlohmann/json.hpp>
 
@@ -26,8 +26,9 @@ class BaseScene
 		 * Initialise une nouvelle instance de la classe BaseScene avec le nom spécifié.
 		 *
 		 * @param _fileName Le nom de la scène.
+		 * @param _id
 		 */
-		explicit BaseScene(const std::string& _fileName) : name(_fileName){
+		explicit BaseScene(const std::string& _fileName, const int _id) : id(_id), name(_fileName){
 			const auto sun = lve::LightGameObject::Create(1000000.f, 2.0f, glm::vec3{ 0.f, -1000.f, 0.f });
 			sun->SetName("Sun");
 			rootObjects.push_back(sun);
@@ -152,6 +153,8 @@ class BaseScene
 			return allGameObject;
 		}
 
+		bool IsActive() const { return isActive; }
+
 
 #pragma endregion
 
@@ -180,6 +183,8 @@ class BaseScene
 		 * @param _newIndex Le nouvel indice de l'objet racine.
 		 */
 		void SetRootObjectIndex(GameObject* _rootObject, uint32_t _newIndex) {}
+
+		void SetActive(const bool _state) { isActive = _state; }
 
 #pragma endregion
 
@@ -413,6 +418,8 @@ class BaseScene
 			json j;
 			j["id"] = id;
 			j["name"] = name;
+			j["fileName"] = fileName;
+			j["isActive"] = isActive;
 			// Créer un tableau JSON pour stocker les GameObjects
 			json gameObjectsJson = json::array();
 			for (const auto& gameObjectPtr : rootObjects) {
@@ -425,6 +432,7 @@ class BaseScene
 			return j;
 		}
 
+		int id = 0;
 		std::string name; /**< Le nom de la scène. */
 		std::string fileName; /**< Le nom du fichier de la scène. */
 
@@ -437,6 +445,7 @@ class BaseScene
 
 		bool bInitialized = false; /**< Indique si la scène est initialisée. */
 		bool bLoaded = false; /**< Indique si la scène est chargée. */
+		bool isActive = false;
 		GameObject* CreateVaseGameObject(int _type = 0);
 		GameObject* CreateGirlGameObject();
 		GameObject* CreateNoobGameObject();

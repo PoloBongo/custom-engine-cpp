@@ -12,10 +12,10 @@
  * @param _name Nom de la nouvelle scène.
  * @param _isActive Indique si la nouvelle scène est active.
  */
-void SceneManager::CreateScene(std::string _name, bool _isActive)
+void SceneManager::CreateScene(const std::string& _name, bool _isActive)
 {
 	listScenes.insert(std::make_pair(_name, _isActive));
-	scenes.push_back(std::make_unique<BaseScene>(_name));
+	scenes.push_back(std::make_unique<BaseScene>(_name, scenes.size()));
 }
 
 /**
@@ -24,9 +24,7 @@ void SceneManager::CreateScene(std::string _name, bool _isActive)
  */
 int SceneManager::SceneCount() const
 {
-	int count = 0;
-	if (!listScenes.empty()) count = listScenes.size();
-	return count;
+	return listScenes.size();
 }
 
 /**
@@ -95,6 +93,7 @@ void SceneManager::SetCurrentScene(const int _sceneIndex)
 	if (_sceneIndex >= 0 && _sceneIndex < static_cast<int>(scenes.size())) {
 		currentSceneIndex = _sceneIndex;
 		mainScene = scenes[currentSceneIndex].get();
+		mainScene->SetActive(true);
 	}
 }
 
@@ -198,9 +197,8 @@ bool SceneManager::LoadSceneFromFile(const std::string& _fileName)
 }
 
 /**
- * @brief Sauvegarde une scène dans un fichier.
- * @param _fileName Nom du fichier de scène à sauvegarder.
- * @return true si la scène a été sauvegardée avec succès, sinon false.
+ * @brief Lancer une scène
+ * @param _sceneName Nom de la scène à lancer
  */
 void SceneManager::RunScene(const std::string& _sceneName)
 {
@@ -334,6 +332,7 @@ void SceneManager::Release()
 		scenes[currentSceneIndex]->
 		Finalize();
 
+	listScenes.clear();
 	scenes.clear();
 	currentSceneIndex = -1;
 }

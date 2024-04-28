@@ -1,5 +1,6 @@
 #pragma once
 #include <filesystem>
+#include <fstream>
 #include <iostream>
 #include <map>
 #include <string>
@@ -13,7 +14,6 @@
 
 using json = nlohmann::json;
 
-#include <filesystem>
 namespace fs = std::filesystem;
 
 /**
@@ -141,7 +141,7 @@ class SceneManager final : public Module
 		 * @param _name Le nom de la nouvelle scène.
 		 * @param _isActive Indique si la nouvelle scène doit être active ou non.
 		 */
-		void CreateScene(std::string _name, bool _isActive);
+		void CreateScene(const std::string& _name, bool _isActive);
 
 		/**
 		 * @brief Détruit une scène spécifiée par son nom.
@@ -219,7 +219,7 @@ class SceneManager final : public Module
 
 #pragma endregion
 
-		void SceneManager::SaveSceneToFile(const BaseScene& _scene, const std::string& _filename)
+		void SaveSceneToFile(const BaseScene& _scene, const std::string& _filename)
 		{
 			// Convertir la scène en JSON
 			const json scene_json = _scene.toJson();
@@ -236,7 +236,7 @@ class SceneManager final : public Module
 			}
 		}
 
-		void SceneManager::SaveScenesToFile()
+		void  SaveScenesToFile() const
 		{
 			const std::string directory("Saves");
 			if (!fs::exists(directory)) {
@@ -260,7 +260,11 @@ class SceneManager final : public Module
 					std::cerr << "Erreur: Impossible d'ouvrir le fichier pour l'enregistrement" << std::endl;
 				}
 			}
+		}
 
+	void LoadScenesFromFile()
+		{
+			//Todo
 		}
 
 	private:
