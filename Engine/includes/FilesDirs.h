@@ -3,6 +3,7 @@
 #include <iostream>
 #include <string>
 #include <windows.h>
+#include <fstream>
 #include <vector>
 
 class FilesDirs
@@ -32,6 +33,18 @@ class FilesDirs
 		* @brief Convert the wide string to a string.
 		*/
 		std::string ConvertWideStringToString(const std::wstring& wide_string);
+
+		bool createEngineDataDirectory();
+
+		bool createANFileInDirectory();
+
+		std::vector<std::wstring> readANFile();
+
+		std::wstring openFileDialog();
+
+		bool addPathToANFile(const std::wstring& newPath);
+
+		bool pathExistsInANFile(const std::wstring& filePath);
 
 		void ExtractFilenameAndExtension(const std::string& filePath, std::string& filename, std::string& extension);
 

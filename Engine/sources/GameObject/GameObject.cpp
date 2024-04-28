@@ -19,6 +19,7 @@ GameObject::GameObject(const id_t _id) : id(_id)
 
 GameObject::~GameObject()
 {
+	std::cout << "deleted game object";
 	for (const Component* component : components)
 	{
 		delete component;
