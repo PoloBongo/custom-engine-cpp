@@ -148,6 +148,9 @@ namespace lve
 			 */
 			void Draw(vk::CommandBuffer _commandBuffer) const;
 
+			std::string GetFilename() const { return filename; }
+			void SetFileName(const std::string& _filename) { filename = _filename; }
+
 		private:
 			/**
 			 * @brief Crée le tampon de vertex.
@@ -174,6 +177,8 @@ namespace lve
 			void CreateIndexBuffer(const std::vector<uint32_t>& _indices);
 
 			LveDevice& lveDevice; /**< Référence vers l'objet LveDevice utilisé pour la création du modèle. */
+
+			std::string filename = "model.obj";
 
 			std::unique_ptr<LveBuffer> vertexBuffer; /**< Pointeur unique vers le tampon de vertex du modèle. */
 			uint32_t                   vertexCount;  /**< Nombre de vertices dans le tampon de vertex. */

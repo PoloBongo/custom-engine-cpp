@@ -5,15 +5,15 @@
 
 #include "Engine/CoreEngine.h"
 #include "GameObject/Components/Transform.h"
-#include "Modules/rhi.h"
 #include "GameObject/PreGameObject/CubeGameObject.h"
-#include "GameObject/PreGameObject/LightGameObject.h"
-#include "GameObject/PreGameObject/PlaneGameObject.h"
-#include "GameObject/PreGameObject/VaseGameObject.h"
 #include "GameObject/PreGameObject/GirlGameObject.h"
-#include "GameObject/PreGameObject/NoobGameObject.h"
-#include "GameObject/PreGameObject/SphereGameObject.h"
+#include "GameObject/PreGameObject/LightGameObject.h"
 #include "GameObject/PreGameObject/MultipleGameObject.h"
+#include "GameObject/PreGameObject/NoobGameObject.h"
+#include "GameObject/PreGameObject/PlaneGameObject.h"
+#include "GameObject/PreGameObject/SphereGameObject.h"
+#include "GameObject/PreGameObject/VaseGameObject.h"
+#include "Modules/rhi.h"
 #include "Modules/TimeModule.h"
 
 
@@ -193,7 +193,8 @@ GameObject* BaseScene::GetGameObjectById(const GameObject::id_t& _gameObjectId) 
 std::vector<GameObject*> BaseScene::FindGameObjectsByName(const std::string& name) const
 {
 	std::vector<GameObject*> result;
-	for (const GameObject* root_object : rootObjects) {
+	for (const GameObject* root_object : rootObjects)
+	{
 		std::vector<GameObject*> found = root_object->FindChildrenByName(name);
 		result.insert(result.end(), found.begin(), found.end());
 	}
@@ -207,6 +208,7 @@ void BaseScene::Init()
 
 void BaseScene::Start()
 {
+	isActive = true;
 	TestLoadGameObjects();
 }
 
@@ -216,35 +218,44 @@ void BaseScene::FixedUpdate()
 
 void BaseScene::Update()
 {
-	// Mettez � jour chaque objet de la sc�ne avec le delta time
-	for (auto* obj : pendingAddObjects) {
-		rootObjects.push_back(obj);
-	}
-	pendingAddObjects.clear();
-
-	for (const GameObject* root_object : rootObjects)
+	if (isActive)
 	{
-		root_object->Update(); // Mettez � jour chaque objet avec le delta time
+		// Mettez � jour chaque objet de la sc�ne avec le delta time
+		for (auto* obj : pendingAddObjects)
+		{
+			rootObjects.push_back(obj);
+		}
+		pendingAddObjects.clear();
+
+		for (const GameObject* root_object : rootObjects)
+		{
+			root_object->Update(); // Mettez � jour chaque objet avec le delta time
+		}
 	}
 }
 
 void BaseScene::UpdateEditor()
 {
-	// Mettez � jour chaque objet de la sc�ne avec le delta time
-	for (auto* obj : pendingAddObjects) {
-		rootObjects.push_back(obj);
-	}
-	pendingAddObjects.clear();
-
-	for (const GameObject* root_object : rootObjects)
+	if (isActive)
 	{
-		root_object->UpdateEditor(); // Mettez � jour chaque objet avec le delta time
+		// Mettez � jour chaque objet de la sc�ne avec le delta time
+		for (auto* obj : pendingAddObjects)
+		{
+			rootObjects.push_back(obj);
+		}
+		pendingAddObjects.clear();
+
+		for (const GameObject* root_object : rootObjects)
+		{
+			root_object->UpdateEditor(); // Mettez � jour chaque objet avec le delta time
+		}
 	}
 }
 
 void BaseScene::PreRender()
 {
 }
+
 void BaseScene::Render()
 {
 	// Rendu de chaque objet de la sc�ne
@@ -264,6 +275,7 @@ void BaseScene::PostRender()
 
 void BaseScene::Release()
 {
+	isActive = false;
 }
 
 void BaseScene::Finalize()
@@ -289,17 +301,17 @@ void BaseScene::Finalize()
 void BaseScene::TestLoadGameObjects()
 {
 	lve::LveDevice* _p_lveDevice = Engine::GetInstance()->GetModuleManager()->GetModule<RHIModule>()->GetDevice();
-	std::shared_ptr<lve::LveModel> lve_model = lve::LveModel::CreateModelFromFile(*_p_lveDevice, "Models\\flat_vase.obj");
+	std::shared_ptr<lve::LveModel> lve_model = lve::LveModel::CreateModelFromFile(
+		*_p_lveDevice, "Models\\flat_vase.obj");
 
 	const auto flat_vase_go = GameObject::CreatePGameObject();
 	flat_vase_go->SetName("FlatVase");
 	flat_vase_go->SetModel(lve_model);
 	flat_vase_go->SetFileModel("Models\\flat_vase.obj");
-	flat_vase_go->GetTransform()->SetPosition(glm::vec3{ -.5f, .5f, 0.f });
-	flat_vase_go->GetTransform()->SetScale(glm::vec3{ 3.f, 1.5f, 3.f });
+	flat_vase_go->GetTransform()->SetPosition(glm::vec3{-.5f, .5f, 0.f});
+	flat_vase_go->GetTransform()->SetScale(glm::vec3{3.f, 1.5f, 3.f});
 	flat_vase_go->SetTexture(1);
 	rootObjects.push_back(flat_vase_go);
-
 
 
 	lve_model                 = lve::LveModel::CreateModelFromFile(*_p_lveDevice, "Models\\smooth_vase.obj");
@@ -307,11 +319,12 @@ void BaseScene::TestLoadGameObjects()
 	smooth_vase_go->SetName("SmoothVase");
 	smooth_vase_go->SetFileModel("Models\\smooth_vase.obj");
 	smooth_vase_go->SetModel(lve_model);
-	smooth_vase_go->GetTransform()->SetPosition(glm::vec3{ .5f, .5f, 0.f });
-	smooth_vase_go->GetTransform()->SetScale(glm::vec3{ 3.f, 1.5f, 3.f });
+	smooth_vase_go->GetTransform()->SetPosition(glm::vec3{.5f, .5f, 0.f});
+	smooth_vase_go->GetTransform()->SetScale(glm::vec3{3.f, 1.5f, 3.f});
 	rootObjects.push_back(smooth_vase_go);
 
-	const auto quad_go = lve::PlaneGameObject::Create(*_p_lveDevice, glm::vec3{ .0f, .5f, 0.f }, glm::vec3{ 3.f, 1.f, 3.f });
+	const auto quad_go =
+		lve::PlaneGameObject::Create(*_p_lveDevice, glm::vec3{.0f, .5f, 0.f}, glm::vec3{3.f, 1.f, 3.f});
 	quad_go->SetName("QuadGo");
 	quad_go->SetTexture(1);
 	rootObjects.push_back(quad_go);
@@ -321,9 +334,9 @@ void BaseScene::TestLoadGameObjects()
 	viking->SetName("Viking");
 	viking->SetFileModel("Models\\viking_room.obj");
 	viking->SetModel(lve_model);
-	viking->GetTransform()->SetPosition(glm::vec3{ 0.f, 0.f, 5.f });
-	viking->GetTransform()->SetScale(glm::vec3{ 3.f, 3.f, 3.f });
-	viking->GetTransform()->SetRotation(glm::vec3{ glm::radians(90.0f), glm::radians(90.0f), 0.0f });
+	viking->GetTransform()->SetPosition(glm::vec3{0.f, 0.f, 5.f});
+	viking->GetTransform()->SetScale(glm::vec3{3.f, 3.f, 3.f});
+	viking->GetTransform()->SetRotation(glm::vec3{glm::radians(90.0f), glm::radians(90.0f), 0.0f});
 	viking->SetTexture(2);
 	rootObjects.push_back(viking);
 
@@ -331,7 +344,7 @@ void BaseScene::TestLoadGameObjects()
 	cube->SetName("Cube");
 	rootObjects.push_back(cube);
 
-	const auto color_cube = lve::CubeGameObject::CreateColor(*_p_lveDevice, glm::vec3{ 0.f, 0.f, 10.f });
+	const auto color_cube = lve::CubeGameObject::CreateColor(*_p_lveDevice, glm::vec3{0.f, 0.f, 10.f});
 	color_cube->SetName("ColorCube");
 	rootObjects.push_back(color_cube);
 
@@ -352,96 +365,100 @@ void BaseScene::TestLoadGameObjects()
 		auto rotate_light = rotate(
 			glm::mat4(1.f),
 			(i * glm::two_pi<float>()) / light_colors.size(),
-			{ 0.f, -1.f, 0.f });
+			{0.f, -1.f, 0.f});
 		point_light->GetTransform()->SetPosition(glm::vec3(rotate_light * glm::vec4(-1.f, -1.f, -1.f, 1.f)));
 		rootObjects.push_back(point_light);
 	}
 }
 
-GameObject* BaseScene::CreateCubeGameObject(const int _type) {
-
-	if (_type == 0) {
+GameObject* BaseScene::CreateCubeGameObject(const int _type)
+{
+	if (_type == 0)
+	{
 		lve::LveDevice* device = Engine::GetInstance()->GetModuleManager()->GetModule<RHIModule>()->GetDevice();
 		return lve::CubeGameObject::Create(*device);
 	}
-	else if (_type == 1) {
+	if (_type == 1)
+	{
 		lve::LveDevice* device = Engine::GetInstance()->GetModuleManager()->GetModule<RHIModule>()->GetDevice();
 		return lve::CubeGameObject::CreateColor(*device);
 	}
 	return nullptr;
 }
 
-GameObject* BaseScene::CreateLightGameObject() {
-	float intensity = 10.0f;  // Exemple d'intensité pour la lumière
-	float radius = 1.0f;      // Rayon de la lumière
-	glm::vec3 position = glm::vec3(0.0f, 0.0f, 0.0f);  // Position initiale
-	glm::vec3 rotation = glm::vec3(0.0f, 0.0f, 0.0f);  // Rotation initiale
-	glm::vec3 color = glm::vec3(1.0f, 1.0f, 1.0f);     // Couleur de la lumière (blanche)
+GameObject* BaseScene::CreateLightGameObject()
+{
+	float intensity = 10.0f;                       // Exemple d'intensité pour la lumière
+	float radius    = 1.0f;                        // Rayon de la lumière
+	auto  position  = glm::vec3(0.0f, 0.0f, 0.0f); // Position initiale
+	auto  rotation  = glm::vec3(0.0f, 0.0f, 0.0f); // Rotation initiale
+	auto  color     = glm::vec3(1.0f, 1.0f, 1.0f); // Couleur de la lumière (blanche)
 
 	// Crée un GameObject représentant une lumière avec les paramètres spécifiés
 	return lve::LightGameObject::Create(intensity, radius, position, rotation, color);
 }
 
 
-
-GameObject* BaseScene::CreatePlaneGameObject() {
+GameObject* BaseScene::CreatePlaneGameObject()
+{
 	lve::LveDevice* device = Engine::GetInstance()->GetModuleManager()->GetModule<RHIModule>()->GetDevice();
 	return lve::PlaneGameObject::Create(*device);
 }
 
-GameObject* BaseScene::CreateVaseGameObject(const int _type) {
+GameObject* BaseScene::CreateVaseGameObject(const int _type)
+{
 	lve::LveDevice* device = Engine::GetInstance()->GetModuleManager()->GetModule<RHIModule>()->GetDevice();
-	if (_type == 0) {
-		return lve::VaseGameObject::CreateFlat(*device);
-	}
-	else if (_type == 1) {
-		return lve::VaseGameObject::CreateSmooth(*device);
-	}
+	if (_type == 0) return lve::VaseGameObject::CreateFlat(*device);
+	if (_type == 1) return lve::VaseGameObject::CreateSmooth(*device);
 	return lve::VaseGameObject::CreateFlat(*device);
 }
 
-GameObject* BaseScene::CreateGirlGameObject() {
+GameObject* BaseScene::CreateGirlGameObject()
+{
 	lve::LveDevice* device = Engine::GetInstance()->GetModuleManager()->GetModule<RHIModule>()->GetDevice();
 	return lve::GirlGameObject::Create(*device);
 }
 
-GameObject* BaseScene::CreateNoobGameObject() {
+GameObject* BaseScene::CreateNoobGameObject()
+{
 	lve::LveDevice* device = Engine::GetInstance()->GetModuleManager()->GetModule<RHIModule>()->GetDevice();
 	return lve::NoobGameObject::Create(*device);
 }
 
-GameObject* BaseScene::CreateSphereGameObject() {
+GameObject* BaseScene::CreateSphereGameObject()
+{
 	lve::LveDevice* device = Engine::GetInstance()->GetModuleManager()->GetModule<RHIModule>()->GetDevice();
 	return lve::SphereGameObject::Create(*device);
 }
 
-GameObject* BaseScene::CreateMultipleGameObject(int _type) {
+GameObject* BaseScene::CreateMultipleGameObject(int _type)
+{
 	lve::LveDevice* device = Engine::GetInstance()->GetModuleManager()->GetModule<RHIModule>()->GetDevice();
 	switch (_type)
 	{
-	case 0:
-		return lve::MultipleGameObject::CreateCone(*device);
-		break;
-	case 1:
-		return lve::MultipleGameObject::CreateTriangle(*device);
-		break;
-	case 2:
-		return lve::MultipleGameObject::CreateCapsule(*device);
-		break;
-	case 3:
-		return lve::MultipleGameObject::CreateTube(*device);
-		break;
-	case 4:
-		return lve::MultipleGameObject::CreateAnneau(*device);
-		break;
-	case 5:
-		return lve::MultipleGameObject::CreateCylindre(*device);
-		break;
-	case 6:
-		return lve::MultipleGameObject::CreateCylindreCoupe(*device);
-		break;
-	default:
-		return lve::MultipleGameObject::CreateCylindreCoupe(*device);
-		break;
+		case 0:
+			return lve::MultipleGameObject::CreateCone(*device);
+			break;
+		case 1:
+			return lve::MultipleGameObject::CreateTriangle(*device);
+			break;
+		case 2:
+			return lve::MultipleGameObject::CreateCapsule(*device);
+			break;
+		case 3:
+			return lve::MultipleGameObject::CreateTube(*device);
+			break;
+		case 4:
+			return lve::MultipleGameObject::CreateAnneau(*device);
+			break;
+		case 5:
+			return lve::MultipleGameObject::CreateCylindre(*device);
+			break;
+		case 6:
+			return lve::MultipleGameObject::CreateCylindreCoupe(*device);
+			break;
+		default:
+			return lve::MultipleGameObject::CreateCylindreCoupe(*device);
+			break;
 	}
 }
