@@ -1083,6 +1083,26 @@ void ImGuiModule::DrawFilesExplorerWindow() {
 				AddLog("Warning : Filepath incorrect : " + fileToLook);
 			}
 		}
+		if (ImGui::Button("Add File (Window File Explorer)", ImVec2(100,20))) {
+			FilesDirs filesDirs;
+			std::string file = filesDirs.ConvertWideStringToString(filesDirs.openImageFileDialog());
+			AddLog("Texture File :" + file);
+			std::string filename;
+			std::string ext;
+			filesDirs.ExtractFilenameAndExtension(file, filename, ext);
+			moduleManager->GetModule<RHIVulkanModule>()->AddTextureToPool(file);
+			moduleManager->GetModule<RHIVulkanModule>()->AddListTexturesNames(filename + "." + ext);
+
+			VkDescriptorSet textureID = ImGui_ImplVulkan_AddTexture(
+				moduleManager->GetModule<RHIVulkanModule>()->GetListTextures().back().sampler,
+				moduleManager->GetModule<RHIVulkanModule>()->GetListTextures().back().imageView,
+				VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL
+			);
+
+			ListDescriptorsImGui->push_back(textureID);
+
+			AddLog("Texture has been added : " + file);
+		}
 
 		ImGui::Separator();
 
@@ -1239,6 +1259,12 @@ void ImGuiModule::DrawProjectSaveWindow()
 				selectedGameObject = nullptr;
 			}
 			ImGui::Text("Here you can save, load or start a new project !");
+			ImGui::SetNextItemWidth(200);
+			char* charBuffer = new char[100];
+			strcpy_s(charBuffer, 100, GetSceneToName().c_str());
+			if (ImGui::InputText("Project Name", charBuffer, 100)) { SetSceneToName(charBuffer); }
+			delete[] charBuffer;
+
 			if (ImGui::Button("Save", ImVec2(120, 0))) {
 				ImGui::CloseCurrentPopup();
 				showPopupProject = false;

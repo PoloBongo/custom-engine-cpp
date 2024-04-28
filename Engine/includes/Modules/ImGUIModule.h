@@ -226,6 +226,9 @@ public:
 	bool GetShowPopupError() { return showPopupError; }
 	void SetShowPopupError(bool _newState) { showPopupError = _newState; }
 
+	std::string GetSceneToName() { return sceneToName; }
+	void SetSceneToName(std::string _newString) { sceneToName = _newString; }
+
 protected:
 	vk::Device device; ///< P�riph�rique utilis� pour le rendu avec Vulkan.
 	vk::Queue graphicsQueue; ///< File d'attente graphique pour la soumission des commandes Vulkan.
@@ -281,6 +284,7 @@ protected:
 
 	std::string fileToLook;
 	std::string currentDir = "./Textures";
+	std::string sceneToName;
 
 	std::vector<std::string>* logs = new std::vector<std::string>();
 

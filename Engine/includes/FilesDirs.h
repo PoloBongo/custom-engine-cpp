@@ -46,6 +46,8 @@ class FilesDirs
 
 		bool pathExistsInANFile(const std::wstring& filePath);
 
+		std::wstring openImageFileDialog();
+
 		void ExtractFilenameAndExtension(const std::string& filePath, std::string& filename, std::string& extension);
 
 		bool ContainsSubstring(const std::string& main_string, const std::string& substring);

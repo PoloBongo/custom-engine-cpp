@@ -312,3 +312,26 @@ std::wstring FilesDirs::openFileDialog() {
         return L""; 
     }
 }
+
+std::wstring FilesDirs::openImageFileDialog() {
+    OPENFILENAME ofn;
+    wchar_t szFile[260];
+    ZeroMemory(&ofn, sizeof(ofn));
+    ofn.lStructSize = sizeof(ofn);
+    ofn.hwndOwner = NULL;
+    ofn.lpstrFile = szFile;
+    ofn.lpstrFile[0] = '\0';
+    ofn.nMaxFile = sizeof(szFile);
+    ofn.lpstrFilter = L"Image Files\0*.png;*.jpg;*.gif;*.tga;*.bmp;*.psd;*.hdr;*.pic\0*.*\0";
+    ofn.nFilterIndex = 1;
+    ofn.lpstrInitialDir = NULL;
+    ofn.lpstrTitle = L"Select an Image file";
+    ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST | OFN_NOCHANGEDIR;
+
+    if (GetOpenFileName(&ofn) == TRUE) {
+        return ofn.lpstrFile;
+    }
+    else {
+        return L"";
+    }
+}
