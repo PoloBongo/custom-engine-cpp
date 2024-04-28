@@ -156,7 +156,7 @@ public:
 	 * @param _fileName Le nom du fichier de la scène à charger.
 	 * @return true si la scène a été chargée avec succès, sinon false.
 	 */
-	bool LoadSceneFromFile(const std::string& _fileName);
+	bool LoaddSceneFromFile(const std::string& _fileName);
 
 	/**
 	 * @brief Obtient le nombre total de scènes.
@@ -312,6 +312,47 @@ public:
 	{
 		const std::string directory = "Saves/Projects/" + _projectName;
 		const std::string filename = directory + "/" + _sceneName + ".json";
+		// Vérifier si le fichier existe
+		if (fs::exists(filename))
+		{
+			// Lire le fichier JSON
+			std::ifstream file(filename);
+			if (file.is_open())
+			{
+				json sceneJson;
+				file >> sceneJson;
+				file.close();
+
+				// Récupérer les données de la scène à partir du JSON
+				const int id = sceneJson["id"];
+				const std::string name = sceneJson["name"];
+				CreateScene(name, id);
+				// Récupérer les GameObjects
+				for (const auto& gameObjectJson : sceneJson["gameObjects"])
+				{
+					int gameObjectId = gameObjectJson["id"];
+					std::string gameObjectName = gameObjectJson["name"];
+					GameObject* game_object = new GameObject();
+					game_object->fromJson(gameObjectJson);
+					GetScene(name)->rootObjects.push_back(game_object);
+				}
+
+				std::cout << "La scène a été chargée depuis " << filename << std::endl;
+			}
+			else
+			{
+				std::cerr << "Erreur: Impossible d'ouvrir le fichier pour la lecture" << std::endl;
+			}
+		}
+		else
+		{
+			std::cerr << "Erreur: Le fichier " << filename << " n'existe pas" << std::endl;
+		}
+	}
+	void LoadSceneFromFile(const std::string& _filename)
+	{
+		const std::string directory = "Saves/Projects/project";
+		const std::string filename = directory + "/" + _filename ;
 		// Vérifier si le fichier existe
 		if (fs::exists(filename))
 		{

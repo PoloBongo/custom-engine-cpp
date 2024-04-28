@@ -1263,9 +1263,10 @@ void ImGuiModule::DrawProjectSaveWindow()
 			}
 			ImGui::Text("Here you can save, load or start a new project !");
 			ImGui::SetNextItemWidth(200);
+			std::string projectName;
 			char* charBuffer = new char[100];
 			strcpy_s(charBuffer, 100, GetSceneToName().c_str());
-			if (ImGui::InputText("Project Name", charBuffer, 100)) { SetSceneToName(charBuffer); }
+			if (ImGui::InputText("Project Name", charBuffer, 100)) { projectName = charBuffer; }
 			delete[] charBuffer;
 
 			if (ImGui::Button("Save", ImVec2(120, 0))) {
@@ -1300,7 +1301,7 @@ void ImGuiModule::DrawProjectSaveWindow()
 					filesDirs.addPathToANFile(filesDirs.ConvertStringToWideString(file));
 					//----------------------------------------------------------------------
 					// TA FONCTION POUR LOAD (en utilisant "file" pour le path)
-					moduleManager->GetModule<SceneManager>()->LoadAllScenes("project");
+					moduleManager->GetModule<SceneManager>()->LoadSceneFromFile(filename);
 
 
 				}
@@ -1336,8 +1337,6 @@ void ImGuiModule::DrawProjectSaveWindow()
 
 					std::ifstream file(spath);
 					if (file.good()) {
-
-
 						moduleManager->GetModule<SceneManager>()->LoadAllScenesSPath(spath);
 					}
 					else {
