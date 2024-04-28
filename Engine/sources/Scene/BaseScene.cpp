@@ -91,7 +91,7 @@ bool BaseScene::FileExists(const std::string& _filePath)
 void BaseScene::DeleteSaveFiles()
 {
 	const std::string default_save_file_path = "assets/scenes/" + fileName;
-	const std::string saved_save_file_path   = "saved/scenes/" + fileName;
+	const std::string saved_save_file_path = "saved/scenes/" + fileName;
 
 	const bool b_default_file_exists = FileExists(default_save_file_path);
 
@@ -102,7 +102,7 @@ void BaseScene::DeleteSaveFiles()
 		if (b_default_file_exists)
 		{
 			if (remove(default_save_file_path.c_str()) !=
-			    0)
+				0)
 				std::cerr << "Error deleting default save file: " << default_save_file_path << std::endl;
 			else std::cout << "Default save file deleted successfully." << std::endl;
 		}
@@ -110,7 +110,7 @@ void BaseScene::DeleteSaveFiles()
 		if (b_saved_file_exists)
 		{
 			if (remove(saved_save_file_path.c_str()) !=
-			    0)
+				0)
 				std::cerr << "Error deleting saved save file: " << saved_save_file_path << std::endl;
 			else std::cout << "Saved save file deleted successfully." << std::endl;
 		}
@@ -280,7 +280,7 @@ void BaseScene::Release()
 
 void BaseScene::Finalize()
 {
-	bLoaded      = false;
+	bLoaded = false;
 	bInitialized = false;
 
 	for (GameObject* root_object : rootObjects)
@@ -314,7 +314,7 @@ void BaseScene::TestLoadGameObjects()
 	rootObjects.push_back(flat_vase_go);
 
 
-	lve_model                 = lve::LveModel::CreateModelFromFile(*_p_lveDevice, "Models\\smooth_vase.obj");
+	lve_model = lve::LveModel::CreateModelFromFile(*_p_lveDevice, "Models\\smooth_vase.obj");
 	const auto smooth_vase_go = GameObject::CreatePGameObject();
 	smooth_vase_go->SetName("SmoothVase");
 	smooth_vase_go->SetFileModel("Models\\smooth_vase.obj");
@@ -329,7 +329,7 @@ void BaseScene::TestLoadGameObjects()
 	quad_go->SetTexture(1);
 	rootObjects.push_back(quad_go);
 
-	lve_model         = lve::LveModel::CreateModelFromFile(*_p_lveDevice, "Models\\viking_room.obj");
+	lve_model = lve::LveModel::CreateModelFromFile(*_p_lveDevice, "Models\\viking_room.obj");
 	const auto viking = GameObject::CreatePGameObject();
 	viking->SetName("Viking");
 	viking->SetFileModel("Models\\viking_room.obj");
@@ -388,11 +388,11 @@ GameObject* BaseScene::CreateCubeGameObject(const int _type)
 
 GameObject* BaseScene::CreateLightGameObject()
 {
-	float intensity = 10.0f;                       // Exemple d'intensité pour la lumière
-	float radius    = 1.0f;                        // Rayon de la lumière
-	auto  position  = glm::vec3(0.0f, 0.0f, 0.0f); // Position initiale
-	auto  rotation  = glm::vec3(0.0f, 0.0f, 0.0f); // Rotation initiale
-	auto  color     = glm::vec3(1.0f, 1.0f, 1.0f); // Couleur de la lumière (blanche)
+	float intensity = 10.0f; // Exemple d'intensité pour la lumière
+	float radius = 1.0f; // Rayon de la lumière
+	auto position = glm::vec3(0.0f, 0.0f, 0.0f); // Position initiale
+	auto rotation = glm::vec3(0.0f, 0.0f, 0.0f); // Rotation initiale
+	auto color = glm::vec3(1.0f, 1.0f, 1.0f); // Couleur de la lumière (blanche)
 
 	// Crée un GameObject représentant une lumière avec les paramètres spécifiés
 	return lve::LightGameObject::Create(intensity, radius, position, rotation, color);
@@ -436,29 +436,29 @@ GameObject* BaseScene::CreateMultipleGameObject(int _type)
 	lve::LveDevice* device = Engine::GetInstance()->GetModuleManager()->GetModule<RHIModule>()->GetDevice();
 	switch (_type)
 	{
-		case 0:
-			return lve::MultipleGameObject::CreateCone(*device);
-			break;
-		case 1:
-			return lve::MultipleGameObject::CreateTriangle(*device);
-			break;
-		case 2:
-			return lve::MultipleGameObject::CreateCapsule(*device);
-			break;
-		case 3:
-			return lve::MultipleGameObject::CreateTube(*device);
-			break;
-		case 4:
-			return lve::MultipleGameObject::CreateAnneau(*device);
-			break;
-		case 5:
-			return lve::MultipleGameObject::CreateCylindre(*device);
-			break;
-		case 6:
-			return lve::MultipleGameObject::CreateCylindreCoupe(*device);
-			break;
-		default:
-			return lve::MultipleGameObject::CreateCylindreCoupe(*device);
-			break;
+	case 0:
+		return lve::MultipleGameObject::CreateCone(*device);
+		break;
+	case 1:
+		return lve::MultipleGameObject::CreateTriangle(*device);
+		break;
+	case 2:
+		return lve::MultipleGameObject::CreateCapsule(*device);
+		break;
+	case 3:
+		return lve::MultipleGameObject::CreateTube(*device);
+		break;
+	case 4:
+		return lve::MultipleGameObject::CreateAnneau(*device);
+		break;
+	case 5:
+		return lve::MultipleGameObject::CreateCylindre(*device);
+		break;
+	case 6:
+		return lve::MultipleGameObject::CreateCylindreCoupe(*device);
+		break;
+	default:
+		return lve::MultipleGameObject::CreateCylindreCoupe(*device);
+		break;
 	}
 }
