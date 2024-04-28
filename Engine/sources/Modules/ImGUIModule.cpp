@@ -834,6 +834,7 @@ void ImGuiModule::DrawSettingsWindow() {
 }
 
 void ImGuiModule::DrawTchatWindow() {
+	StatusMessage& statusMsg = StatusMessage::GetInstance();
 	if (ImGui::Begin("Tchat")) {
 		ImGui::Spacing();
 
@@ -843,8 +844,36 @@ void ImGuiModule::DrawTchatWindow() {
 
 		ImGui::InputText("IP Address", ipBuffer, sizeof(ipBuffer));
 		ImGui::InputText("Port", portBuffer, sizeof(portBuffer));
-		if (ImGui::Button("Connexion")) {
-			std::cout << "Ready to connect to " << ipBuffer << ":" << portBuffer << std::endl;
+		if (!isConnectedTCPClient && !isConnectedTCPServer)
+		{
+			if (ImGui::Button("Connexion")) {
+				clientTCP.SetConnectedClient(false);
+				unsigned long port = std::stoul(portBuffer, nullptr, 0);
+				if (std::string(ipBuffer) == "" && std::string(portBuffer) != "")
+				{
+					serverTCP.StartServer(port, ipBuffer);
+					isConnectedTCPServer = true;
+				}
+				else {
+					isConnectedTCPClient = true;
+					clientTCP.ConnexionClientUDP(ipBuffer, port);
+				}
+			}
+		}
+		else if (isConnectedTCPClient && !isConnectedTCPServer) {
+			if (ImGui::Button("Deconnexion")) {
+				isConnectedTCPClient = false;
+				unsigned long port = std::stoul(portBuffer, nullptr, 0);
+				if (std::string(ipBuffer) != "" && std::string(portBuffer) != "")
+				{
+					clientTCP.SetConnectedClient(true);
+				}
+			}
+		}
+		else if (isConnectedTCPServer && !isConnectedTCPClient) {
+			if (ImGui::Button("Connecte")) {
+				isConnectedTCPServer = false;
+			}
 		}
 		ImGui::Spacing();
 		ImGui::Separator();
@@ -855,11 +884,17 @@ void ImGuiModule::DrawTchatWindow() {
 
 		// Zone pour afficher les messages
 		if (ImGui::BeginChild("Logs", ImVec2(0, 200), true)) {
-			for (const auto& msg : messageLogs) {
-				ImGui::TextWrapped("%s", msg.c_str());
+			const auto& receivedMessages = StatusMessage::GetInstance().GetReceivedMessages();
+			if (receivedMessages.empty()) {
+				ImGui::TextWrapped("Pas de messages recu");
 			}
-			if (ImGui::GetScrollY() >= ImGui::GetScrollMaxY()) {
-				ImGui::SetScrollHereY(1.0f); // Auto-scroll to the bottom
+			else {
+				for (const auto& msg : receivedMessages) {
+					ImGui::TextWrapped("%s", msg.c_str());
+				}
+				if (ImGui::GetScrollY() >= ImGui::GetScrollMaxY()) {
+					ImGui::SetScrollHereY(1.0f); // Auto-scroll to the bottom
+				}
 			}
 		}
 		ImGui::EndChild();
@@ -870,12 +905,12 @@ void ImGuiModule::DrawTchatWindow() {
 		// Champ pour entrer le message
 		ImGui::InputTextMultiline("Message", messageBuffer, sizeof(messageBuffer), ImVec2(-FLT_MIN, ImGui::GetTextLineHeight() * 4));
 
-
 		// Envoi du message
 		if (ImGui::Button("Send")) {
 			std::string fullMessage = "Ready to send message to " + std::string(ipBuffer) + ":" + std::string(portBuffer) + "\nMessage: " + std::string(messageBuffer);
-			messageLogs.push_back(fullMessage); // Ajouter le message à la liste des logs
-			std::cout << fullMessage << std::endl;
+			statusMsg.SetStatus(StatusMessage::Send);
+			clientTCP.SendData(messageBuffer);
+			
 			memset(messageBuffer, 0, sizeof(messageBuffer));  // Effacer le buffer de message après "l'envoi"
 		}
 

@@ -57,7 +57,7 @@ namespace Bousk
 					in_addr6& inaddr = addrin.sin6_addr;
 					if (inet_pton(AF_INET6, ip.c_str(), &inaddr) == 1)
 					{
-						mType == Type::IPv6;
+						mType = Type::IPv6;
 						addrin.sin6_family = AF_INET6;
 						Serialization::Conversion::ToNetwork(mPort, addrin.sin6_port);
 						return;

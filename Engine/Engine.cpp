@@ -30,28 +30,28 @@ int main(int argc, char* argv[])
 
 	printf("You have entered %d arguments:\n", argc);
 
-	for (int i = 0; i < argc; i++) {
-		if (strcmp(argv[i], "clientTCP") == 0)
-		{
-			TCPClientStart clientTCP;
-			clientTCP.TCPClient();
-		}
-		if (strcmp(argv[i], "serverTCP") == 0)
-		{
-			TCPServerStart serverTCP;
-			serverTCP.TCPServer();
-		}
-		if (strcmp(argv[i], "clientUDP") == 0)
-		{
-			ClientUDPStart clientUDP;
-			clientUDP.ClientStartUDP();
-		}
-		if (strcmp(argv[i], "serverUDP") == 0)
-		{
-			ServerUDPStart serverUDP;
-			serverUDP.ServerStartUDP();
-		}
-	}
+	//for (int i = 0; i < argc; i++) {
+	//	if (strcmp(argv[i], "clientTCP") == 0)
+	//	{
+	//		TCPClientStart clientTCP;
+	//		clientTCP.TCPClient();
+	//	}
+	//	if (strcmp(argv[i], "serverTCP") == 0)
+	//	{
+	//		TCPServerStart serverTCP;
+	//		serverTCP.TCPServer();
+	//	}
+	//	if (strcmp(argv[i], "clientUDP") == 0)
+	//	{
+	//		ClientUDPStart clientUDP;
+	//		clientUDP.ClientStartUDP();
+	//	}
+	//	if (strcmp(argv[i], "serverUDP") == 0)
+	//	{
+	//		ServerUDPStart serverUDP;
+	//		serverUDP.ServerStartUDP();
+	//	}
+	//}
 
 	//SoundSystemModule sound;
 	//SoundClass soundSample;

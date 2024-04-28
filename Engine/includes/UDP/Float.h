@@ -5,6 +5,14 @@
 
 namespace Bousk
 {
+	/**
+  * @brief Classe template représentant un nombre flottant avec une précision et une plage spécifiées.
+  * @tparam FLOATTYPE Le type de données flottant (float32 ou float64).
+  * @tparam MIN La valeur minimale autorisée.
+  * @tparam MAX La valeur maximale autorisée.
+  * @tparam NBDECIMALS Le nombre de décimales après la virgule.
+  * @tparam STEP Le pas entre chaque valeur autorisée.
+  */
 	template<class FLOATTYPE, int32 MIN, int32 MAX, uint8 NBDECIMALS, uint8 STEP = 1>
 	class Float : public Serialization::Serializable
 	{
@@ -22,24 +30,57 @@ namespace Bousk
 		static constexpr uint8 Step = STEP;
 		static constexpr uint32 Domain = (MAX - MIN) * Multiple / STEP;
 
-	public:
-		Float() = default;
-		Float(FloatType value)
-		{
-			mQuantizedValue = Quantize(value);
-		}
+    public:
+        /**
+         * @brief Constructeur par défaut.
+         */
+        Float() = default;
 
-		static uint32 Quantize(FloatType value)
-		{
-			assert(value >= Min && value <= Max);
-			return static_cast<uint32>(((value - Min) * Multiple) / Step);
-		}
+        /**
+         * @brief Constructeur prenant une valeur flottante en paramètre.
+         * @param _value La valeur flottante à assigner.
+         */
+        Float(FloatType _value)
+        {
+            mQuantizedValue = Quantize(_value);
+        }
 
-		inline FloatType get() const { return static_cast<FloatType>((mQuantizedValue.get() * Step * 1.) / Multiple + Min); }
-		inline operator FloatType() const { return get(); }
+        /**
+         * @brief Quantifie une valeur flottante en un entier.
+         * @param _value La valeur flottante à quantifier.
+         * @return La valeur quantifiée.
+         */
+        static uint32 Quantize(FloatType _value)
+        {
+            assert(_value >= Min && _value <= Max);
+            return static_cast<uint32>(((_value - Min) * Multiple) / Step);
+        }
 
-		bool write(Serialization::Serializer& serializer) const override { return mQuantizedValue.write(serializer); }
-		bool read(Serialization::Deserializer& deserializer) override { return mQuantizedValue.read(deserializer); }
+        /**
+         * @brief Récupère la valeur flottante correspondante à la valeur quantifiée.
+         * @return La valeur flottante correspondante.
+         */
+        inline FloatType get() const { return static_cast<FloatType>((mQuantizedValue.get() * Step * 1.) / Multiple + Min); }
+
+        /**
+         * @brief Conversion implicite vers le type de données flottant.
+         * @return La valeur flottante correspondante.
+         */
+        inline operator FloatType() const { return get(); }
+
+        /**
+         * @brief Fonction de sérialisation pour écrire l'objet dans un flux.
+         * @param _serializer Le sérialiseur utilisé pour écrire l'objet.
+         * @return True si la sérialisation a réussi, sinon False.
+         */
+        bool write(Serialization::Serializer& _serializer) const override { return mQuantizedValue.write(_serializer); }
+
+        /**
+         * @brief Fonction de désérialisation pour lire l'objet depuis un flux.
+         * @param _deserializer Le désérialiseur utilisé pour lire l'objet.
+         * @return True si la désérialisation a réussi, sinon False.
+         */
+        bool read(Serialization::Deserializer& _deserializer) override { return mQuantizedValue.read(_deserializer); }
 
 	private:
 		RangedInteger<0, Domain> mQuantizedValue;

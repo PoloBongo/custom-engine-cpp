@@ -1,9 +1,9 @@
 #pragma once
 
-#include "../Address.h"
-#include "../Datagram.h"
-#include "../RangedInteger.h"
-#include "../Settings.h"
+#include "UDP/Address.h"
+#include "UDP/Datagram.h"
+#include "UDP/RangedInteger.h"
+#include "UDP/Settings.h"
 
 #include <chrono>
 #include <vector>
@@ -26,11 +26,11 @@ namespace Bousk
 				bool isEnabled() const { return mEnabled; }
 				void seed(unsigned int value);
 
-				void setDuplicate(RangedInteger<1, 10> duplicate) { mDuplicate = duplicate; }
-				void setLossRate(RangedInteger<0, 100> loss) { mLoss = loss; }
-				void setDelay(RangedInteger<0, 250> fixed, RangedInteger<0, 100> random) { mFixedDelay = fixed; mRandomDelay = random; }
+				void setDuplicate(RangedInteger<1, 10> _duplicate) { mDuplicate = _duplicate; }
+				void setLossRate(RangedInteger<0, 100> _loss) { mLoss = _loss; }
+				void setDelay(RangedInteger<0, 250> _fixed, RangedInteger<0, 100> _random) { mFixedDelay = _fixed; mRandomDelay = _random; }
 
-				void push(const Datagram& datagram, const Address& from);
+				void push(const Datagram& _datagram, const Address& _from);
 				std::vector<std::pair<Datagram, Address>> poll();
 
 			private:

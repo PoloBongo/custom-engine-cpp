@@ -8,26 +8,26 @@ namespace Network
     namespace Messages
     {
         /**
-         * @brief Classe de base pour les messages r�seau.
+         * @brief Classe de base pour les messages réseau.
          */
         class Base
         {
         public:
             /**
-             * @brief V�rifie si le message est de type M.
-             * @tparam M Type de message � v�rifier.
+             * @brief Vérifie si le message est de type M.
+             * @tparam M Type de message à vérifier.
              * @return true si le message est de type M, sinon false.
              */
             template<class M>
-            bool is() const { return mType == M::StaticType; }
+            bool Is() const { return mType == M::StaticType; }
 
             /**
              * @brief Convertit le message en type M.
-             * @tparam M Type de message � convertir.
+             * @tparam M Type de message à convertir.
              * @return Pointeur vers le message converti en type M.
              */
             template<class M>
-            const M* as() const { return static_cast<const M*>(this); }
+            const M* As() const { return static_cast<const M*>(this); }
 
             sockaddr_in from; /**< Adresse du destinataire du message. */
             uint64_t idFrom; /**< Identifiant du destinataire du message. */
@@ -38,16 +38,16 @@ namespace Network
              */
             enum class Type {
                 Connection, /**< Message de connexion. */
-                Disconnection, /**< Message de d�connexion. */
-                UserData, /**< Message de donn�es utilisateur. */
+                Disconnection, /**< Message de déconnexion. */
+                UserData, /**< Message de données utilisateur. */
             };
 
             /**
              * @brief Constructeur de la classe Base.
              * @param type Type du message.
              */
-            Base(Type type)
-                : mType(type)
+            Base(Type _type)
+                : mType(_type)
             {}
 
         private:
@@ -64,27 +64,27 @@ namespace Network
 
         public:
             /**
-             * @brief R�sultat de la connexion.
+             * @brief Résultat de la connexion.
              */
             enum class Result {
-                Success, /**< Connexion r�ussie. */
-                Failed, /**< Connexion �chou�e. */
+                Success, /**< Connexion réussie. */
+                Failed, /**< Connexion échouée. */
             };
 
             /**
              * @brief Constructeur de la classe Connection.
-             * @param r R�sultat de la connexion.
+             * @param r Résultat de la connexion.
              */
-            Connection(Result r)
+            Connection(Result _r)
                 : Base(Type::Connection)
-                , result(r)
+                , result(_r)
             {}
 
-            Result result; /**< R�sultat de la connexion. */
+            Result result; /**< Résultat de la connexion. */
         };
 
         /**
-         * @brief Message de d�connexion.
+         * @brief Message de déconnexion.
          */
         class Disconnection : public Base
         {
@@ -93,27 +93,27 @@ namespace Network
 
         public:
             /**
-             * @brief Raison de la d�connexion.
+             * @brief Raison de la déconnexion.
              */
             enum class Reason {
-                Disconnected, /**< D�connexion. */
+                Disconnected, /**< Déconnexion. */
                 Lost, /**< Connexion perdue. */
             };
 
             /**
              * @brief Constructeur de la classe Disconnection.
-             * @param r Raison de la d�connexion.
+             * @param r Raison de la déconnexion.
              */
-            Disconnection(Reason r)
+            Disconnection(Reason _r)
                 : Base(Type::Disconnection)
-                , reason(r)
+                , reason(_r)
             {}
 
-            Reason reason; /**< Raison de la d�connexion. */
+            Reason reason; /**< Raison de la déconnexion. */
         };
 
         /**
-         * @brief Message de donn�es utilisateur.
+         * @brief Message de données utilisateur.
          */
         class UserData : public Base
         {
@@ -123,14 +123,14 @@ namespace Network
         public:
             /**
              * @brief Constructeur de la classe UserData.
-             * @param d Donn�es utilisateur.
+             * @param d Données utilisateur.
              */
-            UserData(std::vector<unsigned char>&& d)
+            UserData(std::vector<unsigned char>&& _d)
                 : Base(Type::UserData)
-                , data(std::move(d))
+                , data(std::move(_d))
             {}
 
-            std::vector<unsigned char> data; /**< Donn�es utilisateur. */
+            std::vector<unsigned char> data; /**< Données utilisateur. */
         };
     }
 }

@@ -1,75 +1,85 @@
 #include "TCP/Client/TCPClientStart.h"
+#include <mutex>
 
-int TCPClientStart::TCPClient()
-{
-	if (!Network::Start())
+void TCPClientStart::ThreadClientUDPConnexionCheck(std::string _data) {
+	StatusMessage& statusMsg = StatusMessage::GetInstance();
+	while (!GetConnectedClient())
 	{
-		std::cout << "Error starting sockets : " << Network::Errors::Get() << std::endl;
-		return -1;
-	}
-
-	Network::TCP::Client client;
-	std::string ipAdress;
-	std::cout << "Adresse IPv4 ? ";
-	std::cin >> ipAdress;
-	int port;
-	std::cout << "Port du serveur ? ";
-	std::cin >> port;
-	if (!client.connect(ipAdress, port))
-	{
-		std::cout << "Impossible de se connecter au serveur [" << "ipAdress:" << port << "] : " << Network::Errors::Get() << std::endl;
-	}
-	else
-	{
-		while (1)
+		while (auto msg = client.Poll())
 		{
-			while (auto msg = client.poll())
+			if (msg->Is<Network::Messages::Connection>())
 			{
-				if (msg->is<Network::Messages::Connection>())
+				auto connection = msg->As<Network::Messages::Connection>();
+				if (connection->result == Network::Messages::Connection::Result::Success)
 				{
-					auto connection = msg->as<Network::Messages::Connection>();
-					if (connection->result == Network::Messages::Connection::Result::Success)
-					{
-						std::cin.ignore();
-						std::cout << "Connecte!" << std::endl;
-						std::cout << "Entrez une phrase >";
-						std::string phrase;
-						std::getline(std::cin, phrase);
-						if (!client.send(reinterpret_cast<const unsigned char*>(phrase.c_str()), static_cast<unsigned int>(phrase.length())))
-						{
-							std::cout << "Erreur envoi : " << Network::Errors::Get() << std::endl;
-							break;
-						}
-					}
-					else
-					{
-						std::cout << "Connexion echoue : " << static_cast<int>(connection->result) << std::endl;
-						break;
-					}
-				}
-				else if (msg->is<Network::Messages::UserData>())
+					std::cout << "connexion success" << std::endl;
+				} else { std::cout << "Connexion echoue : " << static_cast<int>(connection->result) << std::endl; }
+			}
+			else if (msg->Is<Network::Messages::UserData>())
+			{
+				auto userdata = msg->As<Network::Messages::UserData>();
+				std::string reply(reinterpret_cast<const char*>(userdata->data.data()), userdata->data.size());
+				std::cout << "Reponse du serveur : " << reply << std::endl;
+				std::cout << ">";
+				if (statusMsg.GetStatus() == StatusMessage::Status::Send)
 				{
-					auto userdata = msg->as<Network::Messages::UserData>();
-					std::string reply(reinterpret_cast<const char*>(userdata->data.data()), userdata->data.size());
-					std::cout << "Reponse du serveur : " << reply << std::endl;
-					std::cout << ">";
-					std::string phrase;
-					std::getline(std::cin, phrase);
-					if (!client.send(reinterpret_cast<const unsigned char*>(phrase.c_str()), static_cast<unsigned int>(phrase.length())))
-					{
-						std::cout << "Erreur envoi : " << Network::Errors::Get() << std::endl;
-						break;
-					}
+					SendData(_data);
 				}
-				else if (msg->is<Network::Messages::Disconnection>())
-				{
-					auto disconnection = msg->as<Network::Messages::Disconnection>();
-					std::cout << "Deconnecte : " << static_cast<int>(disconnection->reason) << std::endl;
-					break;
-				}
+				statusMsg.AddMessage(reply);
+			}
+			else if (msg->Is<Network::Messages::Disconnection>())
+			{
+				auto disconnection = msg->As<Network::Messages::Disconnection>();
+				std::cout << "Deconnecte : " << static_cast<int>(disconnection->reason) << std::endl;
 			}
 		}
 	}
+}
+
+std::string TCPClientStart::SendData(std::string _data)
+{
+	StatusMessage& statusMsg = StatusMessage::GetInstance();
+
+	if (!client.Send(reinterpret_cast<const unsigned char*>(_data.c_str()), static_cast<unsigned int>(_data.length())))
+	{
+		std::cout << "Erreur envoi : " << Network::Errors::Get() << std::endl;
+	}
+	else { statusMsg.SetStatus(StatusMessage::None); }
+
+	return _data;
+}
+
+void TCPClientStart::ConnexionClientUDP(std::string ipAdress, int _port)
+{
+	if (!Network::Start())
+	{
+		std::cout << "Erreur initialisation WinSock : " << Network::Errors::Get() << std::endl;
+	}
+	else { std::cout << "initialisation WinSock" << std::endl; }
+
+	if (!client.Connect(ipAdress, _port))
+	{
+		std::cout << "Impossible de se connecter au serveur [" << "ipAdress: " << ipAdress << ":" << _port << "] : " << Network::Errors::Get() << std::endl;
+	}
+	else {
+		StartClient();
+	}
+}
+
+void TCPClientStart::SetConnectedClient(bool connected) {
+	client.Disconnect();
 	Network::Release();
-	return 0;
+	isConnected = connected;
+	StopClient();
+}
+
+void TCPClientStart::StopClient() {
+	stopThread = true;
+	if (clientThreadConnexionCheck.joinable()) {
+		clientThreadConnexionCheck.join();
+	}
+}
+
+void TCPClientStart::StartClient() {
+	clientThreadConnexionCheck = std::thread(&TCPClientStart::ThreadClientUDPConnexionCheck, this, "");
 }

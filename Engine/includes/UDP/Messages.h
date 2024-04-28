@@ -9,120 +9,220 @@
 
 namespace Bousk
 {
-	namespace Network
-	{
-		namespace Messages
-		{
+    namespace Network
+    {
+        namespace Messages
+        {
 #define DECLARE_MESSAGE(name) friend class Base; static const Base::Type StaticType = Base::Type::name
-			class Base
-			{
-			public:
-				template<class M>
-				bool is() const { return mType == M::StaticType; }
-				template<class M>
-				const M* as() const { assert(is<M>()); return static_cast<const M*>(this); }
+            /**
+             * @brief Base class for network messages.
+             */
+            class Base
+            {
+            public:
+                /**
+                 * @brief Checks if the message is of type M.
+                 * @tparam M The type to check against.
+                 * @return True if the message is of type M, false otherwise.
+                 */
+                template<class M>
+                bool is() const { return mType == M::StaticType; }
 
-				const Address& emitter() const { return mEmitter; }
-				uint64_t emmiterId() const { return mEmitterId; }
+                /**
+                 * @brief Casts the message to type M.
+                 * @tparam M The type to cast to.
+                 * @return Pointer to the message cast to type M.
+                 */
+                template<class M>
+                const M* as() const { assert(is<M>()); return static_cast<const M*>(this); }
 
-			protected:
-				enum class Type {
-					IncomingConnection,
-					Connection,
-					ConnectionInterrupted,
-					ConnectionResumed,
-					Disconnection,
-					UserData,
-				};
-				Base(Type type, const Address& emitter, uint64_t emitterid)
-					: mType(type)
-					, mEmitter(emitter)
-					, mEmitterId(emitterid)
-				{}
-			private:
-				Address mEmitter;
-				uint64_t mEmitterId;
-				Type mType;
-			};
-			class IncomingConnection : public Base
-			{
-				DECLARE_MESSAGE(IncomingConnection);
-			public:
-				IncomingConnection(const Address& emitter, uint64_t emitterid)
-					: Base(Type::IncomingConnection, emitter, emitterid)
-				{}
-			};
-			class Connection : public Base
-			{
-				DECLARE_MESSAGE(Connection);
-			public:
-				enum class Result {
-					Success,
-					Failed,
-					Refused,
-					TimedOut,
-				};
-				Connection(const Address& emitter, uint64_t emitterid, Result r)
-					: Base(Type::Connection, emitter, emitterid)
-					, result(r)
-				{}
-				Result result;
-			};
+                /**
+                 * @brief Retrieves the emitter's address.
+                 * @return The emitter's address.
+                 */
+                const Address& emitter() const { return mEmitter; }
+
+                /**
+                 * @brief Retrieves the emitter's ID.
+                 * @return The emitter's ID.
+                 */
+                uint64_t emmiterId() const { return mEmitterId; }
+
+            protected:
+                enum class Type {
+                    IncomingConnection,
+                    Connection,
+                    ConnectionInterrupted,
+                    ConnectionResumed,
+                    Disconnection,
+                    UserData,
+                };
+
+                /**
+                 * @brief Constructs a base message.
+                 * @param _type The type of the message.
+                 * @param _emitter The emitter's address.
+                 * @param _emitterid The emitter's ID.
+                 */
+                Base(Type _type, const Address& _emitter, uint64_t _emitterid)
+                    : mType(_type)
+                    , mEmitter(_emitter)
+                    , mEmitterId(_emitterid)
+                {}
+
+            private:
+                Address mEmitter; /**< The emitter's address. */
+                uint64_t mEmitterId; /**< The emitter's ID. */
+                Type mType; /**< The type of the message. */
+            };
+
+            /**
+             * @brief Represents an incoming connection message.
+             */
+            class IncomingConnection : public Base
+            {
+                DECLARE_MESSAGE(IncomingConnection);
+            public:
+                /**
+                 * @brief Constructs an incoming connection message.
+                 * @param _emitter The emitter's address.
+                 * @param _emitterid The emitter's ID.
+                 */
+                IncomingConnection(const Address& _emitter, uint64_t _emitterid)
+                    : Base(Type::IncomingConnection, _emitter, _emitterid)
+                {}
+            };
+
+            /**
+             * @brief Represents a connection message.
+             */
+            class Connection : public Base
+            {
+                DECLARE_MESSAGE(Connection);
+            public:
+                /**
+                 * @brief Represents the result of a connection attempt.
+                 */
+                enum class Result {
+                    Success,
+                    Failed,
+                    Refused,
+                    TimedOut,
+                };
+
+                /**
+                 * @brief Constructs a connection message.
+                 * @param _emitter The emitter's address.
+                 * @param _emitterid The emitter's ID.
+                 * @param _r The result of the connection attempt.
+                 */
+                Connection(const Address& _emitter, uint64_t _emitterid, Result _r)
+                    : Base(Type::Connection, _emitter, _emitterid)
+                    , result(_r)
+                {}
+
+                Result result; /**< The result of the connection attempt. */
+            };
+
 #if BOUSKNET_ALLOW_NETWORK_INTERRUPTION == BOUSKNET_SETTINGS_ENABLED
-			class ConnectionInterrupted : public Base
-			{
-				DECLARE_MESSAGE(ConnectionInterrupted);
-			public:
-				ConnectionInterrupted(const Address& emitter, uint64_t emitterid, bool isDirect)
-					: Base(Type::ConnectionInterrupted, emitter, emitterid)
-					, isDirectInterruption(isDirect)
-				{}
-				// True if the emitter is directly interrupted to us. False if the emitter forwarded an interruption on his side.
-				bool isDirectInterruption;
-			};
-			class ConnectionResumed : public Base
-			{
-				DECLARE_MESSAGE(ConnectionResumed);
-			public:
-				ConnectionResumed(const Address& emitter, uint64_t emitterid, bool networkResume)
-					: Base(Type::ConnectionResumed, emitter, emitterid)
-					, isNetworkResumed(networkResume)
-				{}
-				// True if the network is now completely resumed. False if network is not yet resumed due to another client being interrupted.
-				bool isNetworkResumed;
-			};
+            /**
+             * @brief Represents a message indicating that a connection has been interrupted.
+             */
+            class ConnectionInterrupted : public Base
+            {
+                DECLARE_MESSAGE(ConnectionInterrupted);
+            public:
+                /**
+                 * @brief Constructs a new ConnectionInterrupted object.
+                 * @param _emitter The address of the emitter.
+                 * @param _emitterid The ID of the emitter.
+                 * @param _isDirect True if the emitter is directly interrupted to us. False if the emitter forwarded an interruption on his side.
+                 */
+                ConnectionInterrupted(const Address& _emitter, uint64_t _emitterid, bool _isDirect)
+                    : Base(Type::ConnectionInterrupted, _emitter, _emitterid)
+                    , isDirectInterruption(_isDirect)
+                {}
+                bool isDirectInterruption; /**< True if the emitter is directly interrupted to us. False if the emitter forwarded an interruption on his side. */
+            };
+
+            /**
+             * @brief Represents a message indicating that a connection has been resumed.
+             */
+            class ConnectionResumed : public Base
+            {
+                DECLARE_MESSAGE(ConnectionResumed);
+            public:
+                /**
+                 * @brief Constructs a new ConnectionResumed object.
+                 * @param _emitter The address of the emitter.
+                 * @param _emitterid The ID of the emitter.
+                 * @param _networkResume True if the network is now completely resumed. False if network is not yet resumed due to another client being interrupted.
+                 */
+                ConnectionResumed(const Address& _emitter, uint64_t _emitterid, bool _networkResume)
+                    : Base(Type::ConnectionResumed, _emitter, _emitterid)
+                    , isNetworkResumed(_networkResume)
+                {}
+                bool isNetworkResumed; /**< True if the network is now completely resumed. False if network is not yet resumed due to another client being interrupted. */
+            };
 #endif // BOUSKNET_ALLOW_NETWORK_INTERRUPTION == BOUSKNET_SETTINGS_ENABLED
-			class Disconnection : public Base
-			{
-				DECLARE_MESSAGE(Disconnection);
-			public:
-				enum class Reason {
-					Disconnected,
-					Lost,
-				};
-				Disconnection(const Address& emitter, uint64_t emitterid, Reason r)
-					: Base(Type::Disconnection, emitter, emitterid)
-					, reason(r)
-				{}
-				Reason reason;
-			};
-			class UserData : public Base
-			{
-				DECLARE_MESSAGE(UserData);
-			public:
-				UserData(const Address& emitter, uint64_t emitterid, std::vector<unsigned char>&& d, uint8_t chanId)
-					: Base(Type::UserData, emitter, emitterid)
-					, data(std::move(d))
-					, channelId(chanId)
-				{}
-				std::vector<unsigned char> data;
-				uint8_t channelId;
-			};
+
+            /**
+             * @brief Represents a disconnection message.
+             */
+            class Disconnection : public Base
+            {
+                DECLARE_MESSAGE(Disconnection);
+            public:
+                /**
+                 * @brief Represents the reason for disconnection.
+                 */
+                enum class Reason {
+                    Disconnected,
+                    Lost,
+                };
+
+                /**
+                 * @brief Constructs a disconnection message.
+                 * @param _emitter The emitter's address.
+                 * @param _emitterid The emitter's ID.
+                 * @param _r The reason for disconnection.
+                 */
+                Disconnection(const Address& _emitter, uint64_t _emitterid, Reason _r)
+                    : Base(Type::Disconnection, _emitter, _emitterid)
+                    , reason(_r)
+                {}
+
+                Reason reason; /**< The reason for disconnection. */
+            };
+
+            /**
+             * @brief Represents a user data message.
+             */
+            class UserData : public Base
+            {
+                DECLARE_MESSAGE(UserData);
+            public:
+                /**
+                 * @brief Constructs a user data message.
+                 * @param _emitter The emitter's address.
+                 * @param _emitterid The emitter's ID.
+                 * @param _d The user data.
+                 * @param _chanId The channel ID.
+                 */
+                UserData(const Address& _emitter, uint64_t _emitterid, std::vector<unsigned char>&& _d, uint8_t _chanId)
+                    : Base(Type::UserData, _emitter, _emitterid)
+                    , data(std::move(_d))
+                    , channelId(_chanId)
+                {}
+
+                std::vector<unsigned char> data; /**< The user data. */
+                uint8_t channelId; /**< The channel ID. */
+            };
 #undef DECLARE_MESSAGE
-		}
-	}
+        }
+    }
 }
 
 #include <iosfwd>
-std::ostream& operator<<(std::ostream& out, Bousk::Network::Messages::Connection::Result result);
-std::ostream& operator<<(std::ostream& out, Bousk::Network::Messages::Disconnection::Reason reason);
+std::ostream& operator<<(std::ostream& _out, Bousk::Network::Messages::Connection::Result _result);
+std::ostream& operator<<(std::ostream& _out, Bousk::Network::Messages::Disconnection::Reason _reason);

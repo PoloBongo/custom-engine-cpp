@@ -124,16 +124,16 @@ namespace Bousk
 		static constexpr uint8 NbBits = NbBits<Range>::Value;
 
 		RangedInteger() = default;
-		explicit RangedInteger(Type v) : mValue(v) { checkValue(); }
-		RangedInteger& operator=(Type v) { CheckValue(v); mValue = v; return *this; }
+		explicit RangedInteger(Type _v) : mValue(_v) { checkValue(); }
+		RangedInteger& operator=(Type _v) { CheckValue(_v); mValue = _v; return *this; }
 		template<typename OtherType>
-		RangedInteger(OtherType v) { CheckValue(v); mValue = static_cast<Type>(v); }
+		RangedInteger(OtherType _v) { CheckValue(_v); mValue = static_cast<Type>(_v); }
 		template<typename OtherType>
-		RangedInteger& operator=(OtherType v) { CheckValue(v); mValue = static_cast<Type>(v); return *this; }
+		RangedInteger& operator=(OtherType _v) { CheckValue(_v); mValue = static_cast<Type>(_v); return *this; }
 
-		static constexpr bool IsWithinRange(Type v) { return (v >= Min() && v <= Max()); }
+		static constexpr bool IsWithinRange(Type _v) { return (_v >= Min() && _v <= Max()); }
 		template<typename OtherType>
-		static constexpr bool IsWithinRange(OtherType v)
+		static constexpr bool IsWithinRange(OtherType _v)
 		{
 			if constexpr (!HoldingType<Type, OtherType>::IsPossible)
 			{
@@ -142,21 +142,21 @@ namespace Bousk
 			else
 			{
 				using CastType = typename HoldingType<Type, OtherType>::Type;
-				return (static_cast<CastType>(v) >= static_cast<CastType>(Min()) && static_cast<CastType>(v) <= static_cast<CastType>(Max()));
+				return (static_cast<CastType>(_v) >= static_cast<CastType>(Min()) && static_cast<CastType>(_v) <= static_cast<CastType>(Max()));
 			}
 		}
 
 		inline Type get() const { return mValue; }
 		inline operator Type() const { return mValue; }
 
-		bool write(Serialization::Serializer& serializer) const override { return serializer.write(get(), Min(), Max()); }
-		bool read(Serialization::Deserializer& deserializer) override { return deserializer.read(mValue, Min(), Max()); }
+		bool write(Serialization::Serializer& _serializer) const override { return _serializer.write(get(), Min(), Max()); }
+		bool read(Serialization::Deserializer& _deserializer) override { return _deserializer.read(mValue, Min(), Max()); }
 
 	private:
 		void checkValue() { assert(IsWithinRange(mValue)); }
-		static void CheckValue(Type v) { assert(IsWithinRange(v)); }
+		static void CheckValue(Type _v) { assert(IsWithinRange(_v)); }
 		template<typename OtherType>
-		static void CheckValue(OtherType v) { assert(IsWithinRange(v)); }
+		static void CheckValue(OtherType _v) { assert(IsWithinRange(_v)); }
 
 	private:
 		Type mValue{ Min() };

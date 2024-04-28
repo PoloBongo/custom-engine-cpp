@@ -25,6 +25,11 @@
 #include "TCP/Errors.h"
 #include <cstdarg>
 
+#include "TCP/Client/TCPClientStart.h"
+#include "TCP/Server/TCPServerStart.h"
+#include "TCP/StatusMessage.h"
+#include "TCP/Server/Server.h"
+
 class RHIModule;
 
 /**
@@ -223,7 +228,12 @@ protected:
 	vk::Device device; ///< P�riph�rique utilis� pour le rendu avec Vulkan.
 	vk::Queue graphicsQueue; ///< File d'attente graphique pour la soumission des commandes Vulkan.
 
-	WindowModule* windowModule = nullptr; ///< Module de gestion de la fen�tre de l'application.
+	TCPClientStart clientTCP;
+	TCPServerStart serverTCP;
+	bool isConnectedTCPClient = false;
+	bool isConnectedTCPServer = false;
+
+	WindowModule* windowModule = nullptr; ///< Module de gestion de la fenêtre de l'application.
 	RHIModule* rhiModule = nullptr; ///< Module de gestion du rendu bas-niveau (RHI).
 	SceneManager* sceneManager = nullptr; ///< Gestionnaire de sc�nes de l'application.
 

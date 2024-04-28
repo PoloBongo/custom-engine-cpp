@@ -1,52 +1,66 @@
 #include "TCP/Sockets.h"
-#include "TCP/Server/Server.h"
 #include "TCP/Messages.h"
 #include "TCP/Server/TCPServerStart.h"
+#include "TCP/Client/TCPClientStart.h"
 
 #include "TCP/Errors.h"
 
 #include <iostream>
 
-int TCPServerStart::TCPServer()
-{
-	if (!Network::Start())
+void TCPServerStart::ServerThreadFunction(Network::TCP::Server& server) {
+	while (true)
 	{
-		std::cout << "Erreur initialisation WinSock : " << Network::Errors::Get();
-		return -1;
-	}
-
-	unsigned short port;
-	std::cout << "Port ? ";
-	std::cin >> port;
-
-	Network::TCP::Server server;
-	if (!server.start(port))
-	{
-		std::cout << "Erreur initialisation serveur : " << Network::Errors::Get();
-		return -2;
-	}
-
-	while (1)
-	{
-		server.update();
-		while (auto msg = server.poll())
+		server.Update();
+		while (auto msg = server.Poll())
 		{
-			if (msg->is<Network::Messages::Connection>())
-			{
+			if (msg->Is<Network::Messages::Connection>()) {
 				std::cout << "Connexion de [" << Network::GetAddress(msg->from) << ":" << Network::GetPort(msg->from) << "]" << std::endl;
 			}
-			else if (msg->is<Network::Messages::Disconnection>())
-			{
+			else if (msg->Is<Network::Messages::Disconnection>()) {
 				std::cout << "Deconnexion de [" << Network::GetAddress(msg->from) << ":" << Network::GetPort(msg->from) << "]" << std::endl;
 			}
-			else if (msg->is<Network::Messages::UserData>())
-			{
-				auto userdata = msg->as<Network::Messages::UserData>();
-				server.sendToAll(userdata->data.data(), static_cast<unsigned int>(userdata->data.size()));
+			else if (msg->As<Network::Messages::UserData>()) {
+				auto userdata = msg->As<Network::Messages::UserData>();
+				StatusMessage& statusMsg = StatusMessage::GetInstance();
+				const auto& clients = server.GetClients();
+
+				std::string reply(reinterpret_cast<const char*>(userdata->data.data()), userdata->data.size());
+				statusMsg.AddMessage(reply);
+
+				for (const auto& entities : clients) {
+					uint64_t clientId = entities.first;
+					const Network::TCP::Client& client = entities.second;
+
+					const sockaddr_in& address = client.DestinationAddress();
+					std::string ipAddress = Network::GetAddress(address);
+					unsigned short port = Network::GetPort(address);
+					server.SendTo(clientId, userdata->data.data(), reply.size());
+
+					std::cout << "Client ID: " << clientId << ", IP Address: " << ipAddress << ", Port: " << port << " Pseudo :" << reply << std::endl;
+				}
 			}
 		}
 	}
-	server.stop();
+	server.Stop();
 	Network::Release();
-	return 0;
+}
+
+void TCPServerStart::StartServer(unsigned short _port, std::string ipAdress)
+{
+	std::cout << "Active le port : " << _port << std::endl;
+	if (!Network::Start())
+	{
+		std::cout << "Erreur initialisation WinSock : " << Network::Errors::Get() << std::endl;
+	}
+	else { std::cout << "initialisation WinSock" << std::endl; }
+
+	if (!server.Start(_port))
+	{
+		std::cout << "Erreur initialisation serveur : " << Network::Errors::Get() << std::endl;
+	}
+	else {
+		std::cout << "initialisation du serveur" << std::endl;
+		// Démarre le thread
+		serverThread = std::thread(&TCPServerStart::ServerThreadFunction, this, std::ref(server));
+	}
 }

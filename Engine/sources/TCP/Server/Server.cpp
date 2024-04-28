@@ -1,4 +1,5 @@
 ﻿#include "TCP/Server/Server.h"
+#include <iostream>
 
 namespace Network
 {
@@ -6,21 +7,21 @@ namespace Network
 	{
 		ServerImpl::~ServerImpl()
 		{
-			stop();
+			Stop();
 		}
 
-		bool ServerImpl::start(unsigned short _port)
+		bool ServerImpl::Start(unsigned short _port)
 		{
 			assert(mSocket == INVALID_SOCKET);
 			if (mSocket != INVALID_SOCKET)
-				stop();
+				Stop();
 			mSocket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
 			if (mSocket == INVALID_SOCKET)
 				return false;
 
 			if (!Network::SetReuseAddr(mSocket) || !Network::SetNonBlocking(mSocket))
 			{
-				stop();
+				Stop();
 				return false;
 			}
 
@@ -30,26 +31,26 @@ namespace Network
 			addr.sin_family = AF_INET;
 			if (bind(mSocket, reinterpret_cast<sockaddr*>(&addr), sizeof(addr)) != 0)
 			{
-				stop();
+				Stop();
 				return false;
 			}
 			if (listen(mSocket, SOMAXCONN) != 0)
 			{
-				stop();
+				Stop();
 				return false;
 			}
 			return true;
 		}
-		void ServerImpl::stop()
+		void ServerImpl::Stop()
 		{
 			for (auto& client : mClients)
-				client.second.disconnect();
+				client.second.Disconnect();
 			mClients.clear();
 			if (mSocket != INVALID_SOCKET)
 				Network::CloseSocket(mSocket);
 			mSocket = INVALID_SOCKET;
 		}
-		void ServerImpl::update()
+		void ServerImpl::Update()
 		{
 			if (mSocket == INVALID_SOCKET)
 				return;
@@ -63,13 +64,13 @@ namespace Network
 				if (newClientSocket == INVALID_SOCKET)
 					break;
 				Client newClient;
-				if (newClient.init(std::move(newClientSocket), addr))
+				if (newClient.Init(std::move(newClientSocket), addr))
 				{
 					auto message = std::make_unique<Messages::Connection>(Messages::Connection::Result::Success);
-					message->idFrom = newClient.id();
-					message->from = newClient.destinationAddress();
+					message->idFrom = newClient.Id();
+					message->from = newClient.DestinationAddress();
 					mMessages.push_back(std::move(message));
-					mClients[newClient.id()] = std::move(newClient);
+					mClients[newClient.Id()] = std::move(newClient);
 				}
 			}
 
@@ -79,12 +80,12 @@ namespace Network
 			for (auto itClient = mClients.begin(); itClient != mClients.end(); )
 			{
 				auto& client = itClient->second;
-				auto msg = client.poll();
+				auto msg = client.Poll();
 				if (msg)
 				{
-					msg->from = itClient->second.destinationAddress();
-					msg->idFrom = itClient->second.id();
-					if (msg->is<Messages::Disconnection>())
+					msg->from = itClient->second.DestinationAddress();
+					msg->idFrom = itClient->second.Id();
+					if (msg->Is<Messages::Disconnection>())
 					{
 						itClient = mClients.erase(itClient);
 					}
@@ -96,21 +97,21 @@ namespace Network
 					++itClient;
 			}
 		}
-		bool ServerImpl::sendTo(uint64_t clientid, const unsigned char* data, unsigned int len)
+		bool ServerImpl::SendTo(uint64_t _clientid, const unsigned char* _data, unsigned int _len)
 		{
-			auto itClient = mClients.find(clientid);
-			return itClient != mClients.end() && itClient->second.send(data, len);
+			auto itClient = mClients.find(_clientid);
+			return itClient != mClients.end() && itClient->second.Send(_data, _len);
 		}
 
-		bool ServerImpl::sendToAll(const unsigned char* data, unsigned int len)
+		bool ServerImpl::SendToAll(const unsigned char* _data, unsigned int _len)
 		{
 			bool ret = true;
 			for (auto& client : mClients)
-				ret &= client.second.send(data, len);
+				ret &= client.second.Send(_data, _len);
 			return ret;
 		}
 
-		std::unique_ptr<Messages::Base> ServerImpl::poll()
+		std::unique_ptr<Messages::Base> ServerImpl::Poll()
 		{
 			if (mMessages.empty())
 				return nullptr;
@@ -120,54 +121,63 @@ namespace Network
 			return msg;
 		}
 
+		const std::map<uint64_t, Client>& ServerImpl::GetClients() const
+		{
+			return mClients;
+		}
 
 		// permet de d�placer les ressources de "other" vers l'instance de "Server"
-		Server::Server(Server&& other)
-			: mImpl(std::move(other.mImpl))
+		Server::Server(Server&& _other)
+			: mImpl(std::move(_other.mImpl))
 		{}
 
-		Server& Server::operator=(Server&& other)
+		Server& Server::operator=(Server&& _other)
 		{
-			mImpl = std::move(other.mImpl);
+			mImpl = std::move(_other.mImpl);
 			return *this;
 		}
 
 		// permet de d�marrer le port du serveur
-		bool Server::start(unsigned short _port)
+		bool Server::Start(unsigned short _port)
 		{
 			if (!mImpl)
 				mImpl = std::make_unique<ServerImpl>();
-			return mImpl && mImpl->start(_port);
+			return mImpl && mImpl->Start(_port);
 		}
 
 		// permet de stopper le serveur
-		void Server::stop()
+		void Server::Stop()
 		{
-			if (mImpl) mImpl->stop();
+			if (mImpl) mImpl->Stop();
 		}
 
 		// permet de mettre � jour le serveur donc par exemple une connexion / deconnection ect...
-		void Server::update()
+		void Server::Update()
 		{
-			if (mImpl) mImpl->update();
+			if (mImpl) mImpl->Update();
 		}
 
 		// permet d'envoyer des donn�es � un client sp�cifique gr�ce � son ID ( clientid )
-		bool Server::sendTo(uint64_t clientid, const unsigned char* data, unsigned int len)
+		bool Server::SendTo(uint64_t _clientid, const unsigned char* _data, unsigned int _len)
 		{
-			return mImpl && mImpl->sendTo(clientid, data, len);
+			return mImpl && mImpl->SendTo(_clientid, _data, _len);
 		}
 
 		// permet d'envoyer des donn�es � tous les clients connect�s
-		bool Server::sendToAll(const unsigned char* data, unsigned int len)
+		bool Server::SendToAll(const unsigned char* _data, unsigned int _len)
 		{
-			return mImpl && mImpl->sendToAll(data, len);
+			return mImpl && mImpl->SendToAll(_data, _len);
 		}
 
 		// v�rifie s'il y a des messages en attente
-		std::unique_ptr<Messages::Base> Server::poll()
+		std::unique_ptr<Messages::Base> Server::Poll()
 		{
-			return mImpl ? mImpl->poll() : nullptr;
+			return mImpl ? mImpl->Poll() : nullptr;
+		}
+
+		const std::map<uint64_t, Client>& Server::GetClients() const
+		{
+			return mImpl->GetClients();
 		}
 	}
 }
