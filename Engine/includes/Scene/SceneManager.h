@@ -1,11 +1,20 @@
 #pragma once
 #include <filesystem>
+#include <iostream>
 #include <map>
 #include <string>
 
+#include "BaseScene.h"
 #include "Modules/Module.h"
 #include "Modules/WindowModule.h"
 #include "Scene/BaseScene.h"
+
+#include <nlohmann/json.hpp>
+
+using json = nlohmann::json;
+
+#include <filesystem>
+namespace fs = std::filesystem;
 
 /**
  * @brief Gestionnaire de scène.
@@ -209,6 +218,50 @@ class SceneManager final : public Module
 		void Finalize() override;
 
 #pragma endregion
+
+		void SceneManager::SaveSceneToFile(const BaseScene& _scene, const std::string& _filename)
+		{
+			// Convertir la scène en JSON
+			const json scene_json = _scene.toJson();
+
+			// Enregistrer le JSON dans un fichier
+			std::ofstream file(_filename);
+			if (file.is_open()) {
+				file << std::setw(4) << scene_json << std::endl;
+				file.close();
+				std::cout << "La scène a été enregistrée dans " << _filename << std::endl;
+			}
+			else {
+				std::cerr << "Erreur: Impossible d'ouvrir le fichier pour l'enregistrement" << std::endl;
+			}
+		}
+
+		void SceneManager::SaveScenesToFile()
+		{
+			const std::string directory("Saves");
+			if (!fs::exists(directory)) {
+				fs::create_directory(directory);
+			}
+
+			for (const auto& scene_ptr : scenes)
+			{
+				const BaseScene& scene = *scene_ptr; // Déréférencer le pointeur unique pour accéder à l'objet Scene
+				std::string filename = directory + "/" + scene.name + ".json";
+				// Convertir la scène en JSON
+				json scene_json = scene.toJson();
+
+				// Enregistrer le JSON dans un fichier
+				if (std::ofstream file(filename); file.is_open()) {
+					file << std::setw(4) << scene_json << std::endl;
+					file.close();
+					std::cout << "La scène a été enregistrée dans " << filename << std::endl;
+				}
+				else {
+					std::cerr << "Erreur: Impossible d'ouvrir le fichier pour l'enregistrement" << std::endl;
+				}
+			}
+
+		}
 
 	private:
 

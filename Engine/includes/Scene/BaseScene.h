@@ -5,6 +5,11 @@
 #include "GameObject/GameObject.h"
 #include "LveEngine/lve_window.h"
 #include <GameObject/PreGameObject/LightGameObject.h>
+
+#include <nlohmann/json.hpp>
+
+class GameObject;
+using json = nlohmann::json;
 /**
  * @brief Interface de base pour les scènes du jeu.
  *
@@ -403,6 +408,22 @@ class BaseScene
 		 * @return Un pointeur vers le GameObject créé.
 		 */
 		GameObject* CreatePlaneGameObject();
+
+		json toJson() const {
+			json j;
+			j["id"] = id;
+			j["name"] = name;
+			// Créer un tableau JSON pour stocker les GameObjects
+			json gameObjectsJson = json::array();
+			for (const auto& gameObjectPtr : rootObjects) {
+				if (gameObjectPtr) { // Vérifier si le pointeur est valide
+					// Appeler toJson() sur le GameObject pointé et l'ajouter au tableau
+					gameObjectsJson.push_back(gameObjectPtr->toJson());
+				}
+			}
+			j["gameObjects"] = gameObjectsJson; // Assigner le tableau JSON à la clé "gameObjects"
+			return j;
+		}
 
 		std::string name; /**< Le nom de la scène. */
 		std::string fileName; /**< Le nom du fichier de la scène. */

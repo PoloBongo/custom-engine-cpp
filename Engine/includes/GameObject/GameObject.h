@@ -11,6 +11,10 @@
 #include "Components/Component.h"
 #include "LveEngine/lve_model.h"
 
+#include <nlohmann/json.hpp>
+
+using json = nlohmann::json;
+
 enum class GameObjectType {
 	Cube,
 	Light,
@@ -37,7 +41,6 @@ class Transform;
 
 
 struct PointLightComponent;
-
 
 /**
  * @brief Représente un objet générique dans le jeu.
@@ -635,6 +638,20 @@ class  GameObject
 
 		#pragma endregion
 
+		json toJson() const {
+			json j;
+			j["id"] = id;
+			j["name"] = name;
+			j["fileModel"] = fileModel;
+			j["parent_id"] = parent->GetId();
+			j["model_name"] = model->GetName();
+			j["texture"] = texture;
+			j["color"] = { color.x, color.y,color.z };
+			j["isActive"] = isActive;
+			j["isVisible"] = isVisible;
+
+			return j;
+		}
 	protected:
 
 		float						texMultiplier = 1;
