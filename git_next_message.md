@@ -1,3 +1,3 @@
-OK : Test
+NEW : Fix Load
 
-- Test : ok
+- Load fix mais tous les objets spawn en 0 0 0

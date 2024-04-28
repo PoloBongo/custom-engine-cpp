@@ -156,7 +156,7 @@ GameObject* SceneManager::CreateGameObjectFromSceneData()
  * @param _fileName Nom du fichier de scène à charger.
  * @return true si la scène a été chargée avec succès, sinon false.
  */
-bool SceneManager::LoadSceneFromFile(const std::string& _fileName)
+bool SceneManager::LoaddSceneFromFile(const std::string& _fileName)
 {
 	// Vérifier si le fichier existe
 	if (!SceneFileExists(_fileName))
