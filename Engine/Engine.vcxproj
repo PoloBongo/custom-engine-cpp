@@ -457,7 +457,9 @@ xcopy /E /I /Y "$(ProjectDir)Textures" "$(TargetDir)Textures"</Command>
       <Command>call "$(ProjectDir)compile.bat"
 xcopy /E /I /Y "$(ProjectDir)Shaders" "$(TargetDir)Shaders"
 xcopy /E /I /Y "$(ProjectDir)Models" "$(TargetDir)Models"
-xcopy /E /I /Y "$(ProjectDir)Textures" "$(TargetDir)Textures"</Command>
+xcopy /E /I /Y "$(ProjectDir)Textures" "$(TargetDir)Textures"
+
+xcopy /E /I /Y "$(ProjectDir)Saves" "$(TargetDir)Saves"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='ENGINECORE_EXPORTS|x64'">

@@ -129,6 +129,7 @@ class  Component
 		// Méthode virtuelle pour convertir en JSON
 		virtual json toJson() const {
 			json j;
+			j["type"] = type;
 			j["name"] = name;
 			j["isActive"] = isActive;
 			j["isVisible"] = isVisible;
@@ -137,6 +138,7 @@ class  Component
 
 		// Méthode virtuelle pour initialiser à partir de JSON
 		virtual void fromJson(const json& j) {
+			type = j["type"];
 			name = j["name"];
 			isActive = j["isActive"];
 			isVisible = j["isVisible"];
@@ -148,6 +150,7 @@ class  Component
 
 		GameObject* owner = nullptr; /**< Pointeur vers le GameObject propriétaire de ce composant. */
 		std::string name = "Component"; /**< Nom de ce composant. */
+		std::string type = "Component"; /**< Nom de ce composant. */
 		bool isActive = true; /**< Indique si ce composant est actif. */
 		bool isVisible = true; /**< Indique si ce composant est visible. */
 };

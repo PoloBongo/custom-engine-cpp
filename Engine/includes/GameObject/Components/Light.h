@@ -10,6 +10,7 @@ public:
 	Light()
 	{
 		name = "Light";
+		type = "Light";
 	}
 
 #pragma region Event
