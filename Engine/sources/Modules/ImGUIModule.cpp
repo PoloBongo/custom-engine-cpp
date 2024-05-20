@@ -165,6 +165,8 @@ void ImGuiModule::Update()
 {
 	Module::Update();
 
+	HandleShortcuts();
+
 	// Mise à jour d'ImGui
 	ImGui_ImplVulkan_NewFrame();
 	ImGui_ImplGlfw_NewFrame();
@@ -180,6 +182,8 @@ void ImGuiModule::PreRender()
 void ImGuiModule::Render()
 {
 	Module::Render();
+
+
 
 	// Rendu d'ImGui
 	ImGui::Render();
@@ -257,6 +261,10 @@ void ImGuiModule::ImmediateSubmit(std::function<void(vk::CommandBuffer _cmd)>&& 
 
 void ImGuiModule::GetGui()
 {
+
+	
+
+
 	ImVec2 mainWindowSize = ImGui::GetMainViewport()->Size;
 
 	// Flags pour les fenêtres déplaçables et non-redimensionnables
@@ -722,51 +730,14 @@ void ImGuiModule::DrawHierarchyWindow() {
 
 						ImGui::Separator();
 						if (ImGui::MenuItem("Delete")) { 
-							auto& gameObjects = sceneManager->GetCurrentScene()->rootObjects;
-							std::vector<GameObject*> updatedObjects;
-
-							for (auto obj : gameObjects) {
-								if (obj->GetId() != gameObject->GetId()) {
-									updatedObjects.push_back(obj);
-								}
-								else {
-									std::string name = gameObject->GetName();
-									obj->SetModel(nullptr);
-									delete obj;
-									AddLog("Object Deleted : " + name);
-								}
-							}
-
-							//sceneManager->GetCurrentScene()->RemoveAllObjects();
-							//std::cout << "Size 1: " << sceneManager->GetCurrentScene()->rootObjects.size(); // 13
-							//std::cout << "Size 2:" << updatedObjects.size(); // 12
-							sceneManager->GetCurrentScene()->rootObjects = updatedObjects;
-							selectedGameObject = nullptr;
+							DeleteGameObject(gameObject);
 						}
 
 						ImGui::Separator();
 
 						if (ImGui::MenuItem("Duplicate")) 
 						{
-							auto& gameObjects = sceneManager->GetCurrentScene()->rootObjects;
-							std::vector<GameObject*> updatedObjects = gameObjects;
-
-							const auto newGameObject = GameObject::CreatePGameObject();
-							newGameObject->SetName(gameObject->GetName());
-							newGameObject->SetFileModel(gameObject->GetFileModel());
-							newGameObject->SetModel(gameObject->GetModel());
-							newGameObject->GetTransform()->SetPosition(gameObject->GetPosition());
-							newGameObject->GetTransform()->SetScale(gameObject->GetScale());
-							newGameObject->GetTransform()->SetRotation(gameObject->GetRotation());
-							newGameObject->SetTexture(gameObject->GetTexture());
-
-
-							//sceneManager->GetCurrentScene()->AddRootObject(newGameObject);
-
-							updatedObjects.push_back(newGameObject);
-							gameObjects = updatedObjects;
-							// Le game object est pas instant add avec le "AddRootObject"
-							selectedGameObject = gameObjects[gameObjects.size()-1];
+							DuplicateGameObject(gameObject);
 						}
 
 						ImGui::EndPopup();
@@ -1455,21 +1426,21 @@ void ImGuiModule::RenameGameObject(GameObject* _gameObject, const std::string& _
 		_gameObject->SetName(_newName);
 	}
 }
-void ImGuiModule::DeleteGameObject(GameObject* _gameObject) {
-	//AddLog("Try 1 delete");
-	if (_gameObject) {
-		//AddLog("Try 2 delete");
-		BaseScene* currentScene = sceneManager->GetCurrentScene();
-		if (currentScene) {
-			//AddLog("Try 3 delete");
-
-			// Forcément vu que personne a fait de delete sur les gameobjects
-			currentScene->RemoveObject(_gameObject, true); // Suppression de l'objet
-		}
-	}
-}
-void ImGuiModule::DuplicateGameObject(GameObject* _gameObject) {
-}
+//void ImGuiModule::DeleteGameObject(GameObject* _gameObject) {
+//	//AddLog("Try 1 delete");
+//	if (_gameObject) {
+//		//AddLog("Try 2 delete");
+//		BaseScene* currentScene = sceneManager->GetCurrentScene();
+//		if (currentScene) {
+//			//AddLog("Try 3 delete");
+//
+//			// Forcément vu que personne a fait de delete sur les gameobjects
+//			currentScene->RemoveObject(_gameObject, true); // Suppression de l'objet
+//		}
+//	}
+//}
+//void ImGuiModule::DuplicateGameObject(GameObject* _gameObject) {
+//}
 
 void            ImGuiModule::CreateSpecificGameObject(const GameObjectType _type, const int _otherType) {
 	if (BaseScene* current_scene = sceneManager->GetCurrentScene()) {
@@ -1506,4 +1477,75 @@ void            ImGuiModule::CreateSpecificGameObject(const GameObjectType _type
 			current_scene->AddRootObject(new_game_object);
 		}
 	}
+}
+
+void ImGuiModule::HandleShortcuts()
+{
+	ImGuiIO& io = ImGui::GetIO();
+
+	bool ctrlPressed = io.KeyCtrl;
+	bool shiftPressed = io.KeyShift;
+	bool altPressed = io.KeyAlt;
+
+	if (ctrlPressed && ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_D)))
+	{
+		if (selectedGameObject != nullptr) {
+			DuplicateGameObject(selectedGameObject);
+		}
+	}
+
+	if (ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_Delete))) {
+		if (selectedGameObject != nullptr) {
+			DeleteGameObject(selectedGameObject);
+		}
+	}
+
+
+}
+
+void ImGuiModule::DuplicateGameObject(GameObject* _gameObject) {
+	auto& gameObjects = sceneManager->GetCurrentScene()->rootObjects;
+	std::vector<GameObject*> updatedObjects = gameObjects;
+
+	const auto newGameObject = GameObject::CreatePGameObject();
+	newGameObject->SetName(_gameObject->GetName());
+	newGameObject->SetFileModel(_gameObject->GetFileModel());
+	newGameObject->SetModel(_gameObject->GetModel());
+	newGameObject->GetTransform()->SetPosition(_gameObject->GetPosition());
+	newGameObject->GetTransform()->SetScale(_gameObject->GetScale());
+	newGameObject->GetTransform()->SetRotation(_gameObject->GetRotation());
+	newGameObject->SetTexture(_gameObject->GetTexture());
+
+
+	//sceneManager->GetCurrentScene()->AddRootObject(newGameObject);
+
+	updatedObjects.push_back(newGameObject);
+	gameObjects = updatedObjects;
+	// Le game object est pas instant add avec le "AddRootObject"
+	selectedGameObject = gameObjects[gameObjects.size() - 1];
+
+	AddLog("One object as been duplicated ! From : "+_gameObject->GetName());
+}
+
+void ImGuiModule::DeleteGameObject(GameObject* _gameObject) {
+	auto& gameObjects = sceneManager->GetCurrentScene()->rootObjects;
+	std::vector<GameObject*> updatedObjects;
+
+	for (auto obj : gameObjects) {
+		if (obj->GetId() != _gameObject->GetId()) {
+			updatedObjects.push_back(obj);
+		}
+		else {
+			std::string name = _gameObject->GetName();
+			obj->SetModel(nullptr);
+			delete obj;
+			AddLog("Object Deleted : " + name);
+		}
+	}
+
+	//sceneManager->GetCurrentScene()->RemoveAllObjects();
+	//std::cout << "Size 1: " << sceneManager->GetCurrentScene()->rootObjects.size(); // 13
+	//std::cout << "Size 2:" << updatedObjects.size(); // 12
+	sceneManager->GetCurrentScene()->rootObjects = updatedObjects;
+	selectedGameObject = nullptr;
 }
