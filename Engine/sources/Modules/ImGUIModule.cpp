@@ -643,8 +643,11 @@ void ImGuiModule::DrawHierarchyWindow() {
 	bool showErrorPopup = false;
 
 	// Barre de recherche
-	static char searchBuffer[100];
-	ImGui::InputText("Search", searchBuffer, IM_ARRAYSIZE(searchBuffer));
+	char* searchBuffer = new char[100];
+	strcpy_s(searchBuffer, 100, GetSearch().c_str());
+	if (ImGui::InputText("Search", searchBuffer, 100)) { SetSearch(searchBuffer); }
+	delete[] searchBuffer;
+
 
 	// Affichage des scènes et de leurs GameObjects
 	const auto& scenes = sceneManager->GetScenes();
@@ -702,12 +705,15 @@ void ImGuiModule::DrawHierarchyWindow() {
 
 			// Affichage des GameObjects
 			const auto& gameObjects = scene->GetRootObjects();
+
+			FilesDirs filesdirs;
+
 			for (size_t j = 0; j < gameObjects.size(); ++j) {
 				const auto& gameObject = gameObjects[j];
 
-				ImGui::PushID(j); // Identifiant unique pour chaque GameObject
 
-				if (strstr(gameObject->GetName().c_str(), searchBuffer)) {
+				if (filesdirs.ContainsSubstringIns(gameObject->GetName(), GetSearch())) {
+					ImGui::PushID(j); // Identifiant unique pour chaque GameObject
 					if (ImGui::Selectable(gameObject->GetName().c_str(), selectedGameObject == gameObject)) {
 						selectedGameObject = gameObject;
 					}

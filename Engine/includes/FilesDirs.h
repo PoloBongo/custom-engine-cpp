@@ -100,6 +100,8 @@ class FilesDirs
 		 */
 		bool ContainsSubstring(const std::string& _main_string, const std::string& _substring);
 
+		bool ContainsSubstringIns(const std::string& _main_string, const std::string& _substring);
+
 		/**
 		 * @brief Vérifie si une extension de fichier est une image.
 		 * @param ext L'extension de fichier à vérifier.

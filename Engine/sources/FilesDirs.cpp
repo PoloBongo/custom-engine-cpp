@@ -2,6 +2,7 @@
 #include <unordered_set>
 #include <shlobj_core.h>
 #include <commdlg.h>
+#include <algorithm>
 
 #pragma comment(lib, "Comdlg32.lib")
 
@@ -122,6 +123,15 @@ void FilesDirs::ExtractFilenameAndExtension(const std::string& _filePath, std::s
 
 bool FilesDirs::ContainsSubstring(const std::string& _main_string, const std::string& _substring) {
     return _main_string.find(_substring) != std::string::npos;
+}
+
+bool FilesDirs::ContainsSubstringIns(const std::string& _main_string, const std::string& _substring) {
+    auto it = std::search(
+        _main_string.begin(), _main_string.end(),
+        _substring.begin(), _substring.end(),
+        [](char ch1, char ch2) { return std::tolower(ch1) == std::tolower(ch2); }
+    );
+    return it != _main_string.end();
 }
 
 bool FilesDirs::IsImageExtension(const std::string& _ext) {

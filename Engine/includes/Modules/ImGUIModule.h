@@ -350,6 +350,9 @@ public:
 	 */
 	void SetSceneToName(std::string _newString) { sceneToName = _newString; }
 
+	std::string GetSearch() { return search; }
+	void SetSearch(std::string _newSearch) { search = _newSearch; }
+
 protected:
 	vk::Device device; ///< P�riph�rique utilis� pour le rendu avec Vulkan.
 	vk::Queue graphicsQueue; ///< File d'attente graphique pour la soumission des commandes Vulkan.
@@ -399,6 +402,8 @@ protected:
 	std::vector<std::wstring> fileNames; ///< Liste des noms de fichiers.
 
 	std::vector<VkDescriptorSet>* ListDescriptorsImGui = new std::vector<VkDescriptorSet>(); ///< Liste des descripteurs ImGui.
+
+	std::string search;
 
 	std::string fileSearch; ///< Recherche de fichier.
 
