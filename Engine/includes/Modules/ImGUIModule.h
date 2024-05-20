@@ -176,23 +176,17 @@ public:
 	void RenameGameObject(GameObject* _gameObject, const std::string& _newName);
 
 	/**
-	 * @brief Supprime l'objet de jeu s�lectionn� de la sc�ne.
-	 * @param _gameObject Pointeur vers l'objet de jeu � supprimer.
-	 */
-	void DeleteGameObject(GameObject* _gameObject);
-
-	/**
-	 * @brief Duplique l'objet de jeu situ� � l'index sp�cifi�.
-	 * @param _gameObject Pointeur vers l'objet de jeu � � dupliquer.
-	 */
-	void DuplicateGameObject(GameObject* _gameObject);
-
-	/**
 	 * @brief Cr�e un nouveau GameObject du type sp�cifi� et l'ajoute � la sc�ne active.
 	 * @param _type Type de GameObject � cr�er, comme Cube, Light ou Plane.
 	 * @param _otherType
 	 */
 	void CreateSpecificGameObject(GameObjectType _type, int _otherType = 0);
+
+	void HandleShortcuts();
+
+	void DuplicateGameObject(GameObject* _gameObject);
+
+	void DeleteGameObject(GameObject* _gameObject);
 
 	/**
 	* @brief Ajoute un nouveau texte aux logs de la console.
