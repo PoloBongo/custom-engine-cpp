@@ -745,9 +745,6 @@ void ImGuiModule::DrawHierarchyWindow() {
 						}
 
 						ImGui::Separator();
-						// En mode y a rien ? Mathias chatgpt fait pas tout ton code non plus
-						// this ->>>>>>>>  //if (ImGui::MenuItem("Duplicate")) {}
-						// SI tu tombe sur ça adrien, donne moi un tabouret stp
 
 						if (ImGui::MenuItem("Duplicate")) 
 						{
